@@ -1,0 +1,76 @@
+test_that("agreement() is exact on cases with known answers", {
+  x <- c(1, 2, 3, 4, 5)
+
+  a <- agreement(x, x)
+  expect_equal(a$n, 5L)
+  expect_equal(a$cor, 1)
+  expect_equal(a$rmse, 0)
+  expect_equal(a$bias, 0)
+  expect_equal(a$rel_bias, 0)
+  expect_equal(a$slope, 1)
+
+  # a constant offset moves bias, not slope
+  b <- agreement(x, x + 0.5)
+  expect_equal(b$bias, 0.5)
+  expect_equal(b$slope, 1)
+  expect_equal(b$rel_bias, 0.5 / mean(x))
+
+  # a pure scaling moves slope, and bias with it
+  s <- agreement(x, 1.1 * x)
+  expect_equal(s$slope, 1.1)
+  expect_equal(s$rel_bias, 0.1)
+
+  # rmse is the root mean square of the differences, not of anything else
+  d <- agreement(x, x + c(1, -1, 1, -1, 1))
+  expect_equal(d$rmse, 1)
+  expect_equal(d$bias, 1 / 5)
+})
+
+test_that("slope and rel_bias are different statements", {
+  # a fan through the origin: slope 1.2, and a positive relative bias
+  x <- 1:10
+  f <- agreement(x, 1.2 * x)
+  expect_equal(f$slope, 1.2)
+  expect_equal(f$rel_bias, 0.2)
+
+  # an offset with no scaling: slope exactly 1, bias positive. Reporting only
+  # the slope here would say "no bias", which is why both are returned.
+  o <- agreement(x, x + 3)
+  expect_equal(o$slope, 1)
+  expect_gt(o$rel_bias, 0)
+})
+
+test_that("agreement() handles missing and degenerate input", {
+  expect_equal(agreement(c(1, 2, NA), c(1, 2, 5))$n, 2L)
+  expect_true(is.na(agreement(1, 1)$cor))
+  expect_true(is.na(agreement(c(0, 0), c(1, 1))$rel_bias))
+  expect_error(agreement(1:3, 1:4))
+})
+
+test_that("band_position is 0 inside and a signed fraction outside", {
+  expect_equal(band_position(5, 4, 6), 0)
+  expect_equal(band_position(4, 4, 6), 0)   # edges count as inside
+  expect_equal(band_position(6, 4, 6), 0)
+
+  # 0.24% below a lower edge of 100 reads as -0.0024
+  expect_equal(band_position(99.76, 100, 110), -0.0024)
+  expect_equal(band_position(110.11, 100, 110), 0.001)
+
+  expect_true(inside_band(5, 4, 6))
+  expect_false(inside_band(3, 4, 6))
+  expect_error(band_position(5, 6, 4))
+})
+
+test_that("band_summary reports the worst excursion, not the last", {
+  v <- c(5, 99.76, 7, 121)
+  lo <- c(4, 100, 6, 100)
+  hi <- c(6, 110, 8, 110)
+  s <- band_summary(v, lo, hi)
+  expect_equal(s$n, 4L)
+  expect_equal(s$n_inside, 2L)
+  expect_equal(s$worst, 0.1)          # 121 against an upper edge of 110
+
+  clean <- band_summary(c(5, 7), c(4, 6), c(6, 8))
+  expect_equal(clean$n_inside, 2L)
+  expect_equal(clean$worst, 0)
+})

@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.tar.gz
+
+# raw model output: never committed. Only summaries and stamps.
+validations/*/results/raw/
+*.rds

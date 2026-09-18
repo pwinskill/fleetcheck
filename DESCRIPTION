@@ -1,0 +1,17 @@
+Package: fleetcheck
+Title: Twin-Fidelity Checks for the fleet Malaria Model
+Version: 0.0.0.9000
+Authors@R: person("Peter", "Winskill", email = "p.winskill@imperial.ac.uk",
+                  role = c("aut", "cre"))
+Description: Measures how closely the fleet mean-field ODE model reproduces the
+    malariasimulation individual-based model. Holds the claims register, the
+    comparison statistics, and the code that produces the evidence behind each
+    claim. This measures agreement between two models, not agreement with data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends: R (>= 4.1)
+Imports: stats, utils, yaml, jsonlite
+Suggests: testthat (>= 3.0.0), fleet, malariasimulation, postie, ggplot2
+Config/testthat/edition: 3

@@ -1,0 +1,141 @@
+# The claims register.
+#
+# One entry per claim fleet makes about agreeing with malariasimulation. Each
+# carries the criterion that decides it, the measured value, and a verdict.
+#
+# The criteria were written RETROSPECTIVELY at first pass, which is weaker than
+# declaring them in advance, and they are marked `declared: retrospective` where
+# that is so. They are drawn from the mechanism rather than from the observed
+# number -- "inside the IBM replicate band" because that band is the noise floor
+# a deterministic model should land inside, not "at five of six EIRs" because
+# five is what happened. Any claim added from here on declares its criterion
+# before the run, and says `declared: in-advance`.
+#
+# tier: what it costs to reproduce.
+#   0  seconds, from committed summaries          anyone
+#   1  ~2 min, re-runs fleet only                 anyone
+#   2  ~25 min, re-runs both models               anyone with ~10 cores
+#   3  ~7 h, 63-country site files                cluster, restricted inputs
+#
+# status: pass | fail | open | undeclared
+#   open        criterion met but something material is unresolved
+#   undeclared  no criterion exists yet; the claim is reported, not tested
+
+- id: seed-stability
+  claim: An undisturbed run holds the equilibrium it was seeded at.
+  criterion: PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20
+  declared: retrospective
+  tier: 1
+  evidence: validations/01-seed-stability
+  measured: 0.28% maximum excursion; flat to 0.02% over the last five years
+  status: pass
+
+- id: prevalence-eir
+  claim: LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
+  criterion: inside the IBM 10-90% replicate band at every EIR on the grid
+  declared: retrospective
+  tier: 2
+  evidence: validations/02-transmission
+  measured: inside at 6 of 6; largest gap in PfPR 0.004
+  status: pass
+
+- id: clinical-under5-eir
+  claim: Under-5 clinical incidence tracks the IBM across transmission intensity.
+  criterion: inside the IBM 10-90% replicate band at every EIR on the grid
+  declared: retrospective
+  tier: 2
+  evidence: validations/02-transmission
+  measured: inside at 5 of 6; 0.1% above the upper edge at EIR 120
+  status: open
+  note: >
+    Marginal rather than clean. Ten replicates pin the IBM to about +/-1% at
+    EIR 120, so the band is tight and the exceedance is small against it.
+
+- id: clinical-allage-eir
+  claim: All-age clinical incidence tracks the IBM across transmission intensity.
+  criterion: inside the IBM 10-90% replicate band at every EIR on the grid
+  declared: retrospective
+  tier: 2
+  evidence: validations/02-transmission
+  measured: inside at 5 of 6; 0.24% below the lower edge at EIR 50
+  status: open
+  note: >
+    A marginal miss rather than a pattern: the excursion is a quarter of a
+    percent of the band edge, at one EIR, and the sign is opposite to the
+    under-5 miss at EIR 120. Decomposing the EIR 20 gap band by band puts more
+    than the whole deficit in the 5-20 year olds, partly offset by adults where
+    fleet runs high, so it is most likely the same age-profile effect as
+    severe-allage-eir seen through a much smaller lens.
+
+- id: severe-allage-eir
+  claim: All-age severe incidence tracks the IBM across transmission intensity.
+  criterion: inside the IBM 10-90% replicate band at every EIR on the grid
+  declared: retrospective
+  tier: 2
+  evidence: validations/02-transmission
+  measured: inside at 4 of 6; outside at EIR 20 and EIR 50, by 0.20% and 0.37% of the lower edge
+  status: fail
+  note: >
+    The largest open discrepancy. All-age severe runs 6.2% below the IBM at
+    EIR 20, 4.0% at EIR 50 and 4.6% at EIR 120. The mechanism is identified and
+    derived in fleet's model vignette, section B.3: theta sits on its convex
+    tail from about age 3, so averaging it over a stratum mean rather than over
+    individuals returns the smaller number. Direction and order of magnitude are
+    understood; the magnitude is not closed.
+
+- id: age-structure
+  claim: The age profile of incidence tracks the IBM.
+  criterion: NONE DECLARED
+  declared: none
+  tier: 2
+  evidence: validations/02-transmission
+  measured: clinical within -4.9% to +2.6% under age 20; severe 15-25% low in the 5-20 year bands
+  status: undeclared
+  note: >
+    Reported but not tested. A criterion here has to say something about narrow
+    age bands specifically, where the severe deficit concentrates, and about
+    what tolerance a band-level comparison deserves given replicate noise grows
+    as the bands narrow.
+
+- id: intervention-impact
+  claim: The modelled impact of each intervention matches the IBM.
+  criterion: within 0.6 percentage points of the IBM replicate band on every outcome
+  declared: retrospective
+  tier: 2
+  evidence: validations/03-interventions
+  measured: inside the band on 16 of 20; within 0.6 pp on the other four
+  status: pass
+
+- id: real-settings-correlation
+  claim: Agreement holds across real transmission settings, not just synthetic scenarios.
+  criterion: r > 0.95 and |slope - 1| < 0.10 on both clinical and severe incidence
+  declared: retrospective
+  tier: 3
+  evidence: validations/04-real-settings
+  measured: clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946
+  status: pass
+
+- id: real-settings-bias
+  claim: fleet carries no systematic bias across real transmission settings.
+  criterion: NONE DECLARED
+  declared: none
+  tier: 3
+  evidence: validations/04-real-settings
+  measured: +8.7% on clinical, +8.8% on severe, across 1391 sub-sites in 63 countries
+  status: undeclared
+  note: >
+    This is the gap the register exists to expose. The excess is reported
+    honestly everywhere it appears, but nothing has ever said what magnitude
+    would be too much, so it has been carried as a known curiosity rather than
+    as a failing test. Declaring a criterion forces the question: is 9%
+    acceptable for the uses fleet is intended for, and if so on what argument?
+    Until that is answered this claim is untested, not passed.
+
+- id: speed
+  claim: fleet is fast enough to be worth using in place of the IBM.
+  criterion: at least 10x faster than the IBM on the same scenario set
+  declared: retrospective
+  tier: 2
+  evidence: validations/03-interventions
+  measured: 28x pooled; 9x to 113x per scenario, spread dominated by variation in the IBM's own cost
+  status: pass
