@@ -35,7 +35,7 @@
   criterion: inside the IBM 10-90% replicate band at every EIR on the grid
   declared: retrospective
   tier: 2
-  evidence: validations/02-transmission
+  evidence: validations/02-scenarios
   measured: inside at 6 of 6; largest gap in PfPR 0.004
   status: pass
 
@@ -44,7 +44,7 @@
   criterion: inside the IBM 10-90% replicate band at every EIR on the grid
   declared: retrospective
   tier: 2
-  evidence: validations/02-transmission
+  evidence: validations/02-scenarios
   measured: inside at 5 of 6; 0.1% above the upper edge at EIR 120
   status: open
   note: >
@@ -56,7 +56,7 @@
   criterion: inside the IBM 10-90% replicate band at every EIR on the grid
   declared: retrospective
   tier: 2
-  evidence: validations/02-transmission
+  evidence: validations/02-scenarios
   measured: inside at 5 of 6; 0.24% below the lower edge at EIR 50
   status: open
   note: >
@@ -72,7 +72,7 @@
   criterion: inside the IBM 10-90% replicate band at every EIR on the grid
   declared: retrospective
   tier: 2
-  evidence: validations/02-transmission
+  evidence: validations/02-scenarios
   measured: inside at 4 of 6; outside at EIR 20 and EIR 50, by 0.20% and 0.37% of the lower edge
   status: fail
   note: >
@@ -88,7 +88,7 @@
   criterion: NONE DECLARED
   declared: none
   tier: 2
-  evidence: validations/02-transmission
+  evidence: validations/02-scenarios
   measured: clinical within -4.9% to +2.6% under age 20; severe 15-25% low in the 5-20 year bands
   status: undeclared
   note: >
@@ -102,7 +102,7 @@
   criterion: within 0.6 percentage points of the IBM replicate band on every outcome
   declared: retrospective
   tier: 2
-  evidence: validations/03-interventions
+  evidence: validations/02-scenarios
   measured: inside the band on 16 of 20; within 0.6 pp on the other four
   status: pass
 
@@ -111,7 +111,7 @@
   criterion: r > 0.95 and |slope - 1| < 0.10 on both clinical and severe incidence
   declared: retrospective
   tier: 3
-  evidence: validations/04-real-settings
+  evidence: validations/03-real-settings
   measured: clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946
   status: pass
 
@@ -120,7 +120,7 @@
   criterion: NONE DECLARED
   declared: none
   tier: 3
-  evidence: validations/04-real-settings
+  evidence: validations/03-real-settings
   measured: +8.7% on clinical, +8.8% on severe, across 1391 sub-sites in 63 countries
   status: undeclared
   note: >
@@ -136,6 +136,6 @@
   criterion: at least 10x faster than the IBM on the same scenario set
   declared: retrospective
   tier: 2
-  evidence: validations/03-interventions
+  evidence: validations/02-scenarios
   measured: 28x pooled; 9x to 113x per scenario, spread dominated by variation in the IBM's own cost
   status: pass
