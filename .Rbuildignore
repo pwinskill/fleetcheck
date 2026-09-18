@@ -3,3 +3,5 @@
 ^claims\.yml$
 ^\.github$
 ^LICENSE\.md$
+^_pkgdown\.yml$
+^docs$

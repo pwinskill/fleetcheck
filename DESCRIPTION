@@ -11,7 +11,10 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
+URL: https://pwinskill.github.io/fleetcheck, https://github.com/pwinskill/fleetcheck
+BugReports: https://github.com/pwinskill/fleetcheck/issues
 Depends: R (>= 4.1)
 Imports: stats, utils, yaml, jsonlite
-Suggests: testthat (>= 3.0.0), fleet, malariasimulation, postie, ggplot2
+Suggests: testthat (>= 3.0.0), withr, pkgload, fleet, malariasimulation, postie,
+    ggplot2
 Config/testthat/edition: 3

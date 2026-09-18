@@ -1,0 +1,34 @@
+# The site. Scoreboard first: a reader should meet the verdict before the
+# figures, which is the whole reason this repository is organised by claim.
+url: https://pwinskill.github.io/fleetcheck
+
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left:  [intro, evidence, methods, reference]
+    right: [search, github]
+  components:
+    intro:
+      text: Scoreboard
+      href: index.html
+    evidence:
+      text: Evidence
+      href: articles/evidence.html
+    methods:
+      text: How it is produced
+      href: articles/methods.html
+
+reference:
+- title: The claims register
+  contents: [read_claims, claims_summary, scoreboard, scoreboard_md, check_claims]
+- title: Comparison statistics
+  desc: >
+    Every statistic quoted anywhere in this project. Defined once and
+    unit-tested, because the alternative is what happened to fleet's own
+    documentation: the same quantity derived twice, in two articles, wrong both
+    times.
+  contents: [agreement, band_position, band_summary]
+- title: Provenance and paths
+  contents: [stamp, write_result, fc_root, fc_results, replace_block, md_cell]

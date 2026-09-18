@@ -3,7 +3,9 @@
 .RData
 .Ruserdata
 *.tar.gz
+docs/
 
 # raw model output: never committed. Only summaries and stamps.
 validations/*/results/raw/
+validations/*/results/plots/
 *.rds
