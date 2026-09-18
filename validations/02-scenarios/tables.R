@@ -29,6 +29,13 @@ if (requireNamespace("pkgload", quietly = TRUE) &&
 } else {
   suppressMessages(library(fleetcheck))
 }
+
+## Scenario definitions, run_fleet() and the digest helpers. Runner code
+## rather than package code: it builds malariasimulation parameter lists at
+## the top level, so it needs that package attached and cannot load with
+## fleetcheck. One copy, sourced by everything that needs it.
+suppressMessages(library(malariasimulation))
+source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
 SMOKE <- nzchar(Sys.getenv("CMP_SMOKE"))
 DDIR  <- file.path(ROOT, "validations", "02-scenarios", "results"); if (SMOKE) { DDIR <- file.path(DDIR, "smoke"); BURN_Y <- 1L }
 rd <- function(part) read.csv(file.path(DDIR, paste0("rep_", part, ".csv")), stringsAsFactors = FALSE)
@@ -157,8 +164,8 @@ say("seasonal realised EIR: IBM %.1f, fleet %.1f (target %s); annual PfPR IBM %s
 ## CMP_REFRESH_SITES=1, with the validation results present, re-takes it.
 site_f <- file.path(DDIR, "site_snapshot.json")
 if (nzchar(Sys.getenv("CMP_REFRESH_SITES"))) {
-  fs <- list.files(file.path(VDIR, "results"), pattern = "_compare.rds$", full.names = TRUE)
-  if (!length(fs)) stop("CMP_REFRESH_SITES is set but there are no results in ", VDIR)
+  fs <- list.files(file.path(VDIR(), "results"), pattern = "_compare.rds$", full.names = TRUE)
+  if (!length(fs)) stop("CMP_REFRESH_SITES is set but there are no results in ", VDIR())
   v <- bind_rows(lapply(fs, readRDS))
   ag2 <- function(x, y) { ok <- is.finite(x) & is.finite(y); x <- x[ok]; y <- y[ok]
     list(n = length(x), r = cor(x, y), slope = unname(coef(lm(y ~ x))[2]),

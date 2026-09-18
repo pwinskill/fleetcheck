@@ -46,6 +46,12 @@ if (requireNamespace("pkgload", quietly = TRUE) &&
   suppressMessages(library(fleetcheck))
 }
 
+## Scenario definitions, run_fleet() and the digest helpers. Runner code
+## rather than package code: it builds malariasimulation parameter lists at
+## the top level, so it needs that package attached and cannot load with
+## fleetcheck. One copy, sourced by everything that needs it.
+source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
+
 DDIR <- file.path(ROOT, "validations", "02-scenarios", "results")
 STRICT <- nzchar(Sys.getenv("CMP_STRICT"))
 

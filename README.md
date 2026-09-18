@@ -18,20 +18,21 @@ plots.
 
 <!-- BEGIN scoreboard -->
 
-**10 claims — 5 pass, 2 open, 1 failing, 2 with no criterion declared.**
+**11 claims — 8 pass, 0 open, 0 failing, 3 with no criterion declared.**
 
 | claim | tier | criterion | measured | verdict |
 | --- | --- | --- | --- | --- |
-| `severe-allage-eir` | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 4 of 6; outside at EIR 20 and EIR 50, by 0.20% and 0.37% of the lower edge | **FAIL** |
-| `age-structure` | 2 | NONE DECLARED | clinical within -4.9% to +2.6% under age 20; severe 15-25% low in the 5-20 year bands | *no criterion* |
-| `real-settings-bias` | 3 | NONE DECLARED | +8.7% on clinical, +8.8% on severe, across 1391 sub-sites in 63 countries | *no criterion* |
-| `clinical-under5-eir` | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 5 of 6; 0.1% above the upper edge at EIR 120 | open |
-| `clinical-allage-eir` | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 5 of 6; 0.24% below the lower edge at EIR 50 | open |
-| `seed-stability` | 1 | PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20 | 0.28% maximum excursion; flat to 0.02% over the last five years | **pass** |
-| `prevalence-eir` | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6; largest gap in PfPR 0.004 | **pass** |
-| `intervention-impact` | 2 | within 0.6 percentage points of the IBM replicate band on every outcome | inside the band on 16 of 20; within 0.6 pp on the other four | **pass** |
-| `speed` | 2 | at least 10x faster than the IBM on the same scenario set | 28x pooled; 9x to 113x per scenario, spread dominated by variation in the IBM's own cost | **pass** |
-| `real-settings-correlation` | 3 | r > 0.95 and \|slope - 1\| < 0.10 on both clinical and severe incidence | clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946 | **pass** |
+| [`severe-allage-bias`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#severe-allage-bias) | 2 | NONE DECLARED | fleet sits below the IBM median at every EIR, by 2.7% 3.1% 2.8% 4.0% 3.5% at EIR 3 10 20 50 120 | *no criterion* |
+| [`age-structure`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-structure) | 2 | NONE DECLARED | clinical within -11.5% to +11.8% under age 20; severe -21% to +11%, and -16% to -21% in three of the four 5-20 year bands | *no criterion* |
+| [`real-settings-bias`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-bias) | 3 | NONE DECLARED | +8.7% on clinical, +8.8% on severe, across 1391 sub-sites in 63 countries | *no criterion* |
+| [`seed-stability`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#seed-stability) | 1 | PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20 | 0.28% maximum excursion; flat to 0.02% over the last five years | **pass** |
+| [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6; largest departure 0.94% of the IBM median | **pass** |
+| [`clinical-under5-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-under5-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | **pass** |
+| [`clinical-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | **pass** |
+| [`severe-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#severe-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | **pass** |
+| [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact) | 2 | within 0.6 percentage points of the IBM replicate band on every outcome | inside the band on 18 of 20; worst excursion 0.36 percentage points | **pass** |
+| [`speed`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#speed) | 2 | at least 10x faster than the IBM on the same scenario set | 19x on cost per simulated year; 10.7 CPU-hours for the IBM against 103 s for fleet | **pass** |
+| [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation) | 3 | r > 0.95 and \|slope - 1\| < 0.10 on both clinical and severe incidence | clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946 | **pass** |
 
 <!-- END scoreboard -->
 

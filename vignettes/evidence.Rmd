@@ -1,0 +1,80 @@
+---
+title: "The evidence, claim by claim"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{The evidence, claim by claim}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", echo = FALSE)
+claims <- fleetcheck::read_claims(
+  system.file("claims.yml", package = "fleetcheck"))
+if (!nrow(claims)) claims <- fleetcheck::read_claims("../claims.yml")
+```
+
+Every section below is generated from `claims.yml`. Nothing on this page is typed
+by hand, so it cannot disagree with the register, and the register cannot be
+edited without this page following.
+
+```{r scoreboard, results = "asis"}
+cat(fleetcheck::scoreboard_md(claims), sep = "\n")
+```
+
+```{r sections, results = "asis"}
+label <- c(pass = "PASS", open = "OPEN", fail = "FAIL",
+           undeclared = "NO CRITERION DECLARED")
+declared <- c(`in-advance` = "declared before the run",
+              retrospective = "written retrospectively, at first pass",
+              none = "no criterion exists")
+ord <- order(match(claims$status, c("fail", "undeclared", "open", "pass")),
+             claims$tier)
+
+for (i in ord) {
+  cl <- claims[i, ]
+  cat(sprintf("\n## %s {#%s}\n\n", cl$id, cl$id))
+  cat(sprintf("**%s** &mdash; %s\n\n", label[[cl$status]], cl$claim))
+  cat("| | |\n| --- | --- |\n")
+  cat(sprintf("| Criterion | %s |\n", fleetcheck::md_cell(cl$criterion)))
+  cat(sprintf("| Measured | %s |\n", fleetcheck::md_cell(cl$measured)))
+  cat(sprintf("| Tier | %d |\n", cl$tier))
+  cat(sprintf("| Evidence | `%s` |\n", cl$evidence))
+  cat(sprintf("| Criterion was | %s |\n\n", declared[[cl$declared]]))
+  if (nzchar(cl$note)) cat(cl$note, "\n\n")
+
+  # Each claim shows the figure that is evidence for THAT claim. The four
+  # transmission-intensity claims each get their own panel rather than sharing
+  # the four-panel composite, because a figure showing four things is not
+  # evidence for any one of them.
+  fig <- cl$figure
+  if (nzchar(fig) && !fig %in% c("NA", "~") && file.exists(fig)) {
+    cat(sprintf("![](%s)\n\n", fig))
+  } else {
+    cat("*No figure. This claim is a single measured quantity rather than a",
+        "relationship across a range, and a chart of one number carries less",
+        "than the number.*\n\n")
+  }
+}
+```
+
+## What "tier" means
+
+Reproducing a result costs something, and that cost is a property of the result,
+so it is recorded against every claim rather than mentioned once in prose.
+
+| tier | cost | who can reproduce it |
+| --- | --- | --- |
+| 0 | seconds | anyone, from the committed summaries |
+| 1 | ~2 min | anyone; re-runs `fleet` only |
+| 2 | ~25 min | anyone with about ten cores |
+| 3 | ~7 h | a cluster, and inputs that are not redistributable |
+
+Tier 3 is the 63-country site-file comparison. **Its figures and statistics are
+public; the underlying runs are not.** The code that produced them is in this
+repository and can be read and audited. Re-running it needs the malariaverse
+site files and a cluster, so nobody outside the project can repeat it, and that
+is a limitation of this evidence rather than a property of the result.

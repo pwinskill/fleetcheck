@@ -16,6 +16,7 @@ read_claims <- function(path = find_claims()) {
     declared  = field(x, "declared", "unknown"),
     tier      = suppressWarnings(as.integer(x[["tier"]])),
     evidence  = field(x, "evidence"),
+    figure    = field(x, "figure", ""),
     measured  = field(x, "measured"),
     status    = field(x, "status"),
     note      = field(x, "note", ""),

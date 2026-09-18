@@ -36,6 +36,13 @@ if (requireNamespace("pkgload", quietly = TRUE) &&
 } else {
   suppressMessages(library(fleetcheck))
 }
+
+## Scenario definitions, run_fleet() and the digest helpers. Runner code
+## rather than package code: it builds malariasimulation parameter lists at
+## the top level, so it needs that package attached and cannot load with
+## fleetcheck. One copy, sourced by everything that needs it.
+suppressMessages(library(malariasimulation))
+source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
 SMOKE <- nzchar(Sys.getenv("CMP_SMOKE"))
 DDIR  <- file.path(ROOT, "validations", "02-scenarios", "results")
 if (SMOKE) {                                   # smoke data must never overwrite the real figures
@@ -110,6 +117,18 @@ g <- patchwork::wrap_plots(ps, ncol = 2) + plot_layout(guides = "collect") +
     theme = theme_cmp()) &
   theme(legend.position = "top", legend.justification = "left")
 save_fig(g, "core_eir", width = 10, height = 9)
+
+## Each panel is also saved alone, because each is the evidence for a DIFFERENT
+## claim in the register: prevalence-eir, clinical-under5-eir, clinical-allage-eir
+## and severe-allage-eir. Showing the same four-panel figure against all four
+## would not be evidence for any one of them.
+for (i in seq_along(EIR_MET)) {
+  m <- EIR_MET[[i]]
+  one <- ps[[i]] + labs(x = "EIR passed to set_equilibrium()") +
+    plot_annotation(caption = cap(ibm_note), theme = theme_cmp()) &
+    theme(legend.position = "top", legend.justification = "left")
+  save_fig(one, paste0("eir_", m$key), width = 6.2, height = 4.4)
+}
 
 ## ============================================================================
 ## 2. core_age -- age profiles at the reference EIR
@@ -226,7 +245,7 @@ save_fig(g, "core_seasonal", width = 10, height = 5)
 ##
 ##   CMP_REFRESH_SITES=1 Rscript comparison/render_figures.R
 ##   CMP_REFRESH_SITES=1 Rscript comparison/summary_tables.R
-vdir <- VDIR
+vdir <- VDIR()
 if (!nzchar(Sys.getenv("CMP_REFRESH_SITES"))) {
   message("core_sites: keeping the committed snapshot ",
           "(CMP_REFRESH_SITES=1 to re-draw it from ", vdir, ")")

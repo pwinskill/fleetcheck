@@ -21,7 +21,12 @@ VDIR <- function() Sys.getenv("FLEET_VALIDATE",
 ## ---- shared scenario constants (must match run_replicates.R) ----------------
 BURN_Y   <- 30L                 # IBM burn-in years before observation / intervention
 POP      <- 10000L              # IBM population
-N_REP    <- 10L                  # IBM replicates per scenario
+N_REP    <- 20L                  # IBM replicates per scenario. Was 10, which put
+                               # the 10th and 90th percentiles at essentially the
+                               # min and max of the sample -- the least stable
+                               # statistics available -- while three claims in the
+                               # register turn on excursions of 0.1 to 0.4% from
+                               # those very edges.
 AGE_EDGES <- c(0, 1, 2, 3, 5, 7, 10, 15, 20, 30, 40, 60, 85)   # age-profile bands, years
 SEASON   <- list(g0 = 0.285, g = c(-0.33, -0.13, 0.052), h = c(-0.35, 0.020, 0.10))
 EIR_GRID <- c(1, 3, 10, 20, 50, 120)

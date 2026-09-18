@@ -37,10 +37,9 @@ jobs:
         run: Rscript report/make_scoreboard.R --check
 
       - name: No claim has regressed
-        # A failing claim is not a broken build: severe-allage-eir is a known,
-        # documented failure. It is listed here explicitly, and check_claims()
-        # refuses an allow_fail entry that carries no explanation, so tolerating
+        # No claim is currently failing, so allow_fail is empty and any failure
+        # turns this red. If one is ever tolerated it goes in the list here, and
+        # check_claims() refuses an entry with no explanatory note, so tolerating
         # a failure always costs a written reason.
         run: |
-          Rscript -e 'pkgload::load_all(quiet = TRUE);
-                      check_claims(allow_fail = "severe-allage-eir")'
+          Rscript -e 'pkgload::load_all(quiet = TRUE); check_claims()'

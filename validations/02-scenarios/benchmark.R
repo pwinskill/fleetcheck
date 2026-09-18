@@ -33,6 +33,13 @@ while (!file.exists(file.path(ROOT, "DESCRIPTION")) && dirname(ROOT) != ROOT)
 if (!file.exists(file.path(ROOT, "DESCRIPTION")))
   stop("run this from inside the fleet checkout (no DESCRIPTION found above ", getwd(), ")")
 suppressMessages({library(malariasimulation); library(fleet)})
+if (requireNamespace("pkgload", quietly = TRUE) &&
+    file.exists(file.path(ROOT, "DESCRIPTION"))) {
+  suppressMessages(pkgload::load_all(ROOT, quiet = TRUE))
+} else {
+  suppressMessages(library(fleetcheck))
+}
+source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
 DDIR <- file.path(ROOT, "validations", "02-scenarios", "results")
 N_REP <- 5L
 POP   <- 1e5                       # output scaling only; see the population table

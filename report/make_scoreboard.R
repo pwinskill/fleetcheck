@@ -23,7 +23,8 @@ claims <- read_claims(file.path(root, "claims.yml"))
 targets <- list(
   list(path = file.path(root, "README.md"),
        block = "scoreboard",
-       lines = scoreboard_md(claims, link_prefix = "")),
+       lines = scoreboard_md(claims,
+         link_prefix = "https://pwinskill.github.io/fleetcheck/articles/evidence.html")),
   list(path = file.path(root, "report", "index.md"),
        block = "scoreboard",
        lines = scoreboard_md(claims, link_prefix = "evidence.html"))

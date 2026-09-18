@@ -101,7 +101,9 @@ envelope <- function(d, by, value = "y") {
 ## save to BOTH homes: man/figures (README, GitHub) and vignettes (pkgdown article)
 save_fig <- function(g, name, width, height, dpi = 200) {
   for (dir in c("man/figures", "vignettes")) {
-    f <- file.path(fc_root(), dir, paste0("cmp_", name, ".png"))
+    d <- file.path(fc_root(), dir)
+    dir.create(d, recursive = TRUE, showWarnings = FALSE)
+    f <- file.path(d, paste0("cmp_", name, ".png"))
     ggsave(f, g, width = width, height = height, dpi = dpi, device = ragg::agg_png,
            bg = SURFACE)
   }

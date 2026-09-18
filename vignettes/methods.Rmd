@@ -1,0 +1,98 @@
+---
+title: "How it is produced"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{How it is produced}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+```
+
+## What this measures, and what it does not
+
+`fleetcheck` measures how closely [`fleet`](https://pwinskill.github.io/fleet)
+reproduces `malariasimulation`. **It is a twin-fidelity check, not validation
+against data.** Every number here compares two models to each other; none
+compares either to an observation.
+
+That matters for how far the result carries. `fleet` inherits its
+epidemiological standing from the IBM, and inherits it only as far as the gap
+measured here is small relative to the IBM's own uncertainty against data. A
+result that reproduces the IBM faithfully reproduces its biases too.
+
+## Organised by claim
+
+The unit is a claim, not a scenario. Each one declares the criterion that
+decides it before the evidence is read, and carries a verdict that can be
+`fail` or `undeclared` rather than only a number to interpret.
+
+A criterion drawn from the mechanism is worth more than one drawn from the
+result. *Inside the IBM replicate band*, because that band is the noise floor a
+deterministic model ought to land inside; not *at five of six EIRs*, because
+five is what happened to come out.
+
+Two claims currently have no criterion at all and are reported as `undeclared`
+rather than as passing. One of them is the roughly 9% excess across 1,391
+sub-sites: reported honestly wherever it appears, but never measured against a
+stated bar, and so carried as a known curiosity rather than as a failing test.
+
+## One definition of each statistic
+
+`R/metrics.R` holds every comparison statistic used anywhere in the project,
+unit-tested. `agreement()` returns `cor`, `rmse`, `bias`, `rel_bias` and
+`slope` together, because a slope of 1 with a positive bias is a constant
+offset while a slope above 1 with no bias is a fan, and quoting one of them
+alone hides which you have.
+
+This is not ceremony. `fleet`'s own documentation once carried two independent
+derivations of the same immunity figures, in two different articles, and both
+were wrong by 20 to 35%.
+
+## Provenance
+
+`stamp()` records, on every result: the `fleet` version and commit, the
+`malariasimulation` version, the R version, the platform, the date, and
+whatever the run wants to add.
+
+It exists because the provenance used to be inverted. The 25-minute comparison
+recorded the IBM version, the replicate count and a digest of the scenario
+definitions; the seven-hour site-file run, which nobody can repeat, recorded a
+date and a version of `fleet`. The tier that cannot be re-run is the tier that
+most needs to say what made it.
+
+## Stored precision
+
+Simulation output is quoted to three or four significant figures wherever it is
+reported, and was stored at fifteen. Rounding the stored copies to six took the
+committed summaries from 11.1 MB to 6.4 MB, which git compresses to about 1.8
+MB, with nothing lost that anyone reads.
+
+One file keeps full precision: `rep_eq.csv`, which the drift check asserts
+against at 1e-6, and which is 24 KB.
+
+## Reproducing a claim
+
+```r
+# tier 0 and 1, seconds to minutes, no special hardware
+Rscript validations/02-scenarios/assess.R
+
+# tier 2, about 25 minutes on ten cores
+Rscript validations/02-scenarios/run.R
+
+# a few-minute end-to-end check of the same path
+CMP_SMOKE=1 Rscript validations/02-scenarios/run.R
+```
+
+The register itself is data, so it can be queried rather than read:
+
+```r
+library(fleetcheck)
+scoreboard()
+subset(read_claims(), status != "pass")
+```
