@@ -28,8 +28,7 @@ while (!file.exists(file.path(ROOT, "DESCRIPTION")) && dirname(ROOT) != ROOT)
 if (!file.exists(file.path(ROOT, "DESCRIPTION")))
   stop("run this from inside the fleet checkout (no DESCRIPTION found above ", getwd(), ")")
 suppressMessages({library(dplyr); library(tidyr)})
-## constants.R, scenarios.R and theme.R are package code in R/, so they arrive
-## with the package rather than being sourced by path.
+## The constants are package code in R/ and arrive with the package.
 if (requireNamespace("pkgload", quietly = TRUE) &&
     file.exists(file.path(ROOT, "DESCRIPTION"))) {
   suppressMessages(pkgload::load_all(ROOT, quiet = TRUE))
@@ -37,12 +36,14 @@ if (requireNamespace("pkgload", quietly = TRUE) &&
   suppressMessages(library(fleetcheck))
 }
 
-## Scenario definitions, run_fleet() and the digest helpers. Runner code
-## rather than package code: it builds malariasimulation parameter lists at
-## the top level, so it needs that package attached and cannot load with
-## fleetcheck. One copy, sourced by everything that needs it.
-suppressMessages(library(malariasimulation))
-source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
+## No scenarios.R here, and so no malariasimulation. This script reads the saved
+## CSVs and draws; it referred to nothing scenarios.R defines, but sourcing it
+## built every malariasimulation parameter list in the file at load time and
+## made an unrelated package a hard requirement for redrawing a figure.
+## Plot theme: runner code. It attaches ggplot2 and patchwork and probes the
+## system fonts, none of which a package may do at load time, and none of which
+## the light CI job installs. Sourced by the two scripts that draw.
+source(file.path(ROOT, "validations", "_shared", "theme.R"))
 SMOKE <- nzchar(Sys.getenv("CMP_SMOKE"))
 DDIR  <- file.path(ROOT, "validations", "02-scenarios", "results")
 if (SMOKE) {                                   # smoke data must never overwrite the real figures
@@ -125,7 +126,7 @@ save_fig(g, "core_eir", width = 10, height = 9)
 for (i in seq_along(EIR_MET)) {
   m <- EIR_MET[[i]]
   one <- ps[[i]] + labs(x = "EIR passed to set_equilibrium()") +
-    plot_annotation(caption = cap(ibm_note), theme = theme_cmp()) &
+    plot_annotation(caption = cap(ibm_note, fig_width = 6.2), theme = theme_cmp()) &
     theme(legend.position = "top", legend.justification = "left")
   save_fig(one, paste0("eir_", m$key), width = 6.2, height = 4.4)
 }
@@ -254,9 +255,14 @@ if (!nzchar(Sys.getenv("CMP_REFRESH_SITES"))) {
 fs <- list.files(file.path(vdir, "results"), pattern = "_compare.rds$", full.names = TRUE)
 if (length(fs)) {
   v <- bind_rows(lapply(fs, readRDS))
-  ag <- function(x, y) { ok <- is.finite(x) & is.finite(y); x <- x[ok]; y <- y[ok]
-    list(n = length(x), r = cor(x, y), slope = unname(coef(lm(y ~ x))[2]), bias = mean(y - x) / mean(x)) }
-  st_c <- ag(v$ms_clinical, v$mo_clinical); st_s <- ag(v$ms_severe, v$mo_severe)
+  ## agreement() from the package, not a local copy. There were two local
+  ## copies -- this one and ag2() in tables.R -- computing the same four numbers
+  ## from the same data for the same claim, and they had already diverged in
+  ## naming: this one called mean(y - x) / mean(x) "bias" and printed it as a
+  ## percentage of the IBM mean, which is what the other one called "rel_bias".
+  ## Deriving one quantity twice is the thing this project exists to catch.
+  st_c <- agreement(v$ms_clinical, v$mo_clinical)
+  st_s <- agreement(v$ms_severe, v$mo_severe)
   hexp <- function(x, y, st, unit, title) {
     d <- data.frame(x = x, y = y) %>% filter(is.finite(x), is.finite(y))
     top <- unname(quantile(c(d$x, d$y), 0.999))
@@ -277,7 +283,7 @@ if (length(fs)) {
                           labels = scales::label_comma()) +
       coord_equal(xlim = c(0, top), ylim = c(0, top), expand = FALSE) +
       labs(title = title,
-           subtitle = sprintf("r = %.2f \u00b7 slope = %.2f\nfleet \u2212 IBM on average: %+.1f%% of the IBM mean", st$r, st$slope, 100 * st$bias),
+           subtitle = sprintf("r = %.2f \u00b7 slope = %.2f\nfleet \u2212 IBM on average: %+.1f%% of the IBM mean", st$cor, st$slope, 100 * st$rel_bias),
            x = sprintf("IBM (%s)", unit), y = sprintf("fleet (%s)", unit)) +
       theme_cmp() + theme(legend.position = "right", legend.justification = "center",
                           legend.title = element_text(size = rel(0.8), colour = INK2),

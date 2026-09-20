@@ -22,12 +22,15 @@ by hand, so it cannot disagree with the register, and the register cannot be
 edited without this page following.
 
 ```{r scoreboard, results = "asis"}
-cat(fleetcheck::scoreboard_md(claims), sep = "\n")
+# link_prefix = "" targets anchors on this page: the scoreboard at the top of
+# the evidence article used to be the one copy with no links at all, so the
+# reader met eleven verdicts and then had to scroll to find any of them.
+cat(fleetcheck::scoreboard_md(claims, link_prefix = ""), sep = "\n")
 ```
 
 ```{r sections, results = "asis"}
 label <- c(pass = "PASS", open = "OPEN", fail = "FAIL",
-           undeclared = "NO CRITERION DECLARED")
+           undeclared = "UNTESTED")
 declared <- c(`in-advance` = "declared before the run",
               retrospective = "written retrospectively, at first pass",
               none = "no criterion exists")
@@ -52,7 +55,10 @@ for (i in ord) {
   # evidence for any one of them.
   fig <- cl$figure
   if (nzchar(fig) && !fig %in% c("NA", "~") && file.exists(fig)) {
-    cat(sprintf("![](%s)\n\n", fig))
+    # Alt text is the claim the figure is evidence for. Every figure here was
+    # shipped with an empty `![]()`, which tells a screen reader the image is
+    # decorative -- on a page whose entire content is evidence.
+    cat(sprintf("![%s](%s)\n\n", cl$claim, fig))
   } else {
     cat("*No figure. This claim is a single measured quantity rather than a",
         "relationship across a range, and a chart of one number carries less",

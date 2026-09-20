@@ -31,4 +31,9 @@ reference:
     times.
   contents: [agreement, band_position, band_summary]
 - title: Provenance and paths
-  contents: [stamp, write_result, fc_root, fc_results, replace_block, md_cell]
+  contents: [stamp, round_sig, fc_root, fc_results, find_claims, replace_block, md_cell]
+- title: Scenario constants
+  desc: >
+    The settings the comparison scripts share. Exported so the scripts run
+    against an installed package and not only under pkgload::load_all().
+  contents: [scenario-constants]

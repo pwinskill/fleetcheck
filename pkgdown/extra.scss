@@ -1,0 +1,434 @@
+/* =========================================================================
+   fleetcheck pkgdown theme
+
+   A sibling of fleet's theme, not a copy of it. The structural decisions --
+   the column arithmetic, the type scale, the hairline navbar, the index-style
+   contents rail, the focus ring -- are the same, deliberately, so the two
+   sites read as one project. The colour is not: fleet is violet, fleetcheck
+   is teal, and a reader who follows a link between them should be able to
+   tell which one they are on without reading the title.
+
+   Teal also stays clear of both series colours in the figures (#E5533F for the
+   IBM, #4338CA for fleet), so nothing in the chrome can be mistaken for a
+   model. #0e7490 is 4.98:1 on white and 5.9:1 on the light surface, so unlike
+   fleet's rim colour it is usable for text as well as for marks.
+
+   Nothing on this page depends on colour to carry meaning. The scoreboard has
+   exactly two signals -- the sort order and the word in the verdict column --
+   and both survive in greyscale, in a terminal and on GitHub.
+   ========================================================================= */
+
+/* ---- Palette (Sass) ---------------------------------------------------- */
+$fc-accent:      #0e7490;   // cyan-800
+$fc-accent-deep: #155e75;
+$fc-accent-soft: #67e8f9;
+$fc-accent-pale: #a5f3fc;
+
+/* ---- Theme-aware custom properties ------------------------------------- */
+:root {
+  --fc-accent:      #{$fc-accent};
+
+  --bs-body-color:  #1f2937;
+  --fc-heading:     #0f172a;
+  --fc-muted:       #5b6673;   /* 4.71:1 on white */
+  --fc-link:        #{$fc-accent};
+  --fc-link-hover:  #{$fc-accent-deep};
+
+  --fc-surface:     #f1f5f9;
+  --fc-border:      #e2e8f0;
+  --fc-code:        #0f766e;
+
+  --fc-nav-bg:      #ffffff;
+  --fc-nav-fg:      #1f2937;
+  --fc-nav-muted:   #5b6673;
+  --fc-nav-hover:   #{$fc-accent};
+  --fc-nav-border:  #e2e8f0;
+  --fc-nav-input:   #f1f5f9;
+  --fc-nav-input-bd: #dbe2ea;
+  --fc-nav-ph:      #666f7d;
+
+}
+
+[data-bs-theme="dark"] {
+  --bs-body-bg:     #0f172a;
+  --bs-body-color:  #cbd5e1;
+  --fc-heading:     #f1f5f9;
+  --fc-muted:       #94a3b8;
+  --fc-link:        #{$fc-accent-soft};
+  --fc-link-hover:  #{$fc-accent-pale};
+
+  --fc-surface:     #1e293b;
+  --fc-border:      #334155;
+  --fc-code:        #5eead4;
+
+  --fc-nav-bg:      #0f172a;
+  --fc-nav-fg:      #ffffff;
+  --fc-nav-muted:   rgba(255, 255, 255, .78);
+  --fc-nav-hover:   #{$fc-accent-soft};
+  --fc-nav-border:  rgba(255, 255, 255, .09);
+  --fc-nav-input:   rgba(255, 255, 255, .06);
+  --fc-nav-input-bd: rgba(255, 255, 255, .13);
+  --fc-nav-ph:      rgba(255, 255, 255, .45);
+}
+
+/* Point Bootstrap's own border, muted and heading variables at the same values,
+   or every hairline on the page is a slightly different grey. */
+:root,
+[data-bs-theme="dark"] {
+  --bs-border-color: var(--fc-border);
+  --bs-secondary-color: var(--fc-muted);
+  --bs-heading-color: var(--fc-heading);
+}
+
+/* ---- Motion ------------------------------------------------------------ */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+
+/* ---- Page layout ------------------------------------------------------- */
+/* Same arithmetic as fleet's: size the container from its contents rather than
+   letting a 25% sidebar take a quarter of whatever the window happens to be.
+   50rem of text + 5rem gutter + 15rem of contents = 70rem, and above 1600px
+   64 + 6 + 18 = 88, so nothing is left over at either size. The reasoning is
+   written out in full in fleet/pkgdown/extra.scss; the three details that make
+   a simpler version break are the max-width (not width) on the aside, the
+   shrinkable main, and the gutter moved down to xl. */
+@include media-breakpoint-up(md) {
+  .row > aside { max-width: 15rem; }
+}
+@include media-breakpoint-up(xl) {
+  .container { max-width: 70rem; }
+  .row > main { flex: 1 1 auto; }
+  .row > aside { margin-left: 5rem; }
+}
+@media (min-width: 1600px) {
+  .container { max-width: 88rem; }
+  .row > main { max-width: 64rem; }
+  .row > aside { max-width: 18rem; margin-left: 6rem; }
+}
+
+/* ---- Type -------------------------------------------------------------- */
+main {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+main h1, main h2, main h3, main h4 {
+  color: var(--fc-heading);
+  font-weight: 600;
+  letter-spacing: -.011em;
+}
+main h1 { font-size: 2.05rem; letter-spacing: -.021em; line-height: 1.15; }
+main h2 { font-size: 1.45rem; margin-top: 2.4rem; }
+main h3 { font-size: 1.15rem; margin-top: 1.8rem; }
+main h4 { font-size: 1rem; }
+main p, main li { text-wrap: pretty; }
+
+/* The evidence article is one h2 per claim, each headed by a claim id in code
+   voice. Those are identifiers, so they keep the mono face rather than being
+   set in the heading face at heading size. */
+main h2 code, main h3 code {
+  font-size: .82em;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* ---- Links ------------------------------------------------------------- */
+main a {
+  color: var(--fc-link);
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--fc-link) 32%, transparent);
+  text-underline-offset: .18em;
+  transition: color .15s ease, text-decoration-color .15s ease;
+}
+main a:hover,
+main a:focus {
+  color: var(--fc-link-hover);
+  text-decoration-color: currentColor;
+}
+
+/* A visible focus ring on everything focusable, in the accent. Bootstrap's own
+   is blue and belongs to a different site; more to the point, the navbar search
+   box and the hamburger toggler were reachable by keyboard with no visible ring
+   at all, so a keyboard reader could not see where they were. */
+:focus-visible {
+  outline: 2px solid var(--fc-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.navbar .form-control:focus-visible,
+.navbar .navbar-toggler:focus-visible,
+.navbar .nav-link:focus-visible,
+#toc a:focus-visible {
+  outline: 2px solid var(--fc-accent);
+  outline-offset: 2px;
+}
+/* Bootstrap's toggler adds its own blue box-shadow on focus, which sits under
+   the ring and reads as a second, contradicting highlight. */
+.navbar .navbar-toggler:focus { box-shadow: none; }
+
+/* ---- Page headers ------------------------------------------------------ */
+.page-header {
+  border-bottom: 1px solid var(--fc-border);
+  padding-bottom: .9rem;
+  margin-bottom: 1.6rem;
+}
+
+/* ---- Navbar ------------------------------------------------------------ */
+.navbar {
+  background-color: var(--fc-nav-bg) !important;
+  background-image: none !important;
+  border-bottom: 1px solid var(--fc-nav-border);
+  box-shadow: none;
+}
+.navbar .navbar-brand {
+  color: var(--fc-nav-fg);
+  font-weight: 600;
+  letter-spacing: -.015em;
+}
+.navbar .nav-link { color: var(--fc-nav-fg); }
+.navbar .navbar-brand small,
+.navbar .navbar-brand .version,
+.navbar small,
+.navbar .nav-text,
+.navbar .dropdown-toggle,
+.navbar .navbar-toggler,
+.navbar .text-muted { color: var(--fc-nav-muted) !important; }
+.navbar .nav-link {
+  position: relative;
+  font-weight: 500;
+  transition: color .15s ease;
+  white-space: nowrap;   /* "How it is produced" must not wrap mid-label */
+}
+.navbar .nav-link:hover,
+.navbar .nav-link:focus { color: var(--fc-nav-hover); }
+.navbar .nav-link::after {
+  content: "";
+  position: absolute;
+  left: .6rem; right: .6rem; bottom: .25rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--fc-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .18s cubic-bezier(.4, 0, .2, 1);
+}
+.navbar .nav-link:hover::after,
+.navbar .nav-link.active::after { transform: scaleX(1); }
+.navbar .form-control {
+  background: var(--fc-nav-input);
+  border-color: var(--fc-nav-input-bd);
+  color: var(--fc-nav-fg);
+}
+.navbar .form-control::placeholder { color: var(--fc-nav-ph); }
+.navbar .form-control:focus { border-color: var(--fc-accent); box-shadow: none; }
+.navbar .navbar-toggler { border-color: var(--fc-nav-border); }
+[data-bs-theme="dark"] .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* ---- Table of contents ------------------------------------------------- */
+#toc > .nav a.nav-link {
+  color: var(--fc-muted);
+  border-left: 2px solid transparent;
+  border-radius: 0;
+  padding: .2rem .5rem;
+  font-size: .875rem;
+  line-height: 1.45;
+  transition: color .15s ease, border-color .15s ease;
+}
+#toc > .nav a.nav-link:hover,
+#toc > .nav a.nav-link:focus {
+  background-color: transparent;
+  color: var(--fc-link);
+  border-left-color: var(--fc-border);
+}
+#toc > .nav a.nav-link.active {
+  background-color: transparent;
+  color: var(--fc-heading);
+  border-left-color: var(--fc-accent);
+  font-weight: 500;
+}
+#toc h2,
+aside h2,
+.template-home aside .h2 {
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--fc-muted);
+  margin-bottom: .6rem;
+}
+
+/* ---- Inline code ------------------------------------------------------- */
+main :not(pre) > code {
+  color: var(--fc-code);
+  background: var(--fc-surface);
+  padding: .1em .35em;
+  border-radius: .3rem;
+  font-size: .855em;
+}
+main a > code { color: inherit; background: transparent; padding: 0; }
+
+/* ---- Code blocks ------------------------------------------------------- */
+main div.sourceCode,
+main pre {
+  background-color: var(--fc-surface) !important;
+  border: 1px solid var(--fc-border);
+  border-radius: .5rem;
+  box-shadow: none;
+}
+main pre {
+  padding: .9rem 1rem;
+  font-size: .855rem;
+  line-height: 1.6;
+}
+
+/* ---- Tables ------------------------------------------------------------ */
+main table.table thead th,
+main table thead th {
+  background: var(--fc-surface);
+  border-bottom: 1px solid var(--fc-border);
+  font-weight: 600;
+  font-size: .9em;
+  letter-spacing: .01em;
+}
+
+/* The scoreboard is five columns, two of which hold a sentence. Left to
+   Bootstrap it divides the width evenly, which on a phone gives the criterion
+   and the measured value about 78px each and pushes the verdict -- the column
+   the whole table exists for -- off the right edge.
+
+   So: the table scrolls inside the column rather than squeezing (`display:
+   block` is what makes overflow-x apply to a table), columns size to their
+   content, and the two ends are held to one line so the browser hands the
+   slack to the two prose columns in the middle. `min-width` stops it
+   collapsing back to even columns at narrow widths. */
+main table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  font-size: .925rem;
+}
+main table > thead > tr > th,
+main table > tbody > tr > td { vertical-align: top; }
+
+main table > thead > tr > th:first-child,
+main table > tbody > tr > td:first-child,
+main table > thead > tr > th:last-child,
+main table > tbody > tr > td:last-child { white-space: nowrap; }
+
+/* Without a floor the table shrinks to whatever is available instead of
+   scrolling, and "available" on a phone is 358px for five columns: the
+   criterion and the measured value come out about seven characters wide and
+   wrap into towers.
+   The floor goes on the two prose CELLS, not on the table. A min-width on the
+   table wins over its own max-width: 100%, so the scroll container itself grows
+   past the column and the whole page scrolls sideways instead of the table
+   scrolling inside it. Widening the cells pushes the table's internal layout
+   out while the block box stays put, which is the difference between a table
+   that scrolls and a page that does. */
+main table:has(thead th:nth-child(5)) > thead > tr > th:nth-child(3),
+main table:has(thead th:nth-child(5)) > tbody > tr > td:nth-child(3),
+main table:has(thead th:nth-child(5)) > thead > tr > th:nth-child(4),
+main table:has(thead th:nth-child(5)) > tbody > tr > td:nth-child(4) {
+  min-width: 15rem;
+}
+
+/* And the verdict column is pinned to the right edge, so what the table exists
+   to say stays on screen while the criterion and the measurement scroll under
+   it. Without this the one column a reader came for is the one that is off the
+   side of a phone.
+   border-collapse must be separate for a sticky table cell to stick at all, so
+   the rules Bootstrap would have collapsed are drawn explicitly here. */
+main table:has(thead th:nth-child(5)) {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+main table:has(thead th:nth-child(5)) > tbody > tr > td {
+  border-top: 1px solid var(--fc-border);
+}
+main table:has(thead th:nth-child(5)) > thead > tr > th,
+main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child {
+  position: sticky;
+}
+main table:has(thead th:nth-child(5)) > thead > tr > th { top: 0; z-index: 2; }
+main table:has(thead th:nth-child(5)) > thead > tr > th:last-child { right: 0; z-index: 3; }
+main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child {
+  right: 0;
+  background: var(--bs-body-bg, #fff);
+  border-left: 1px solid var(--fc-border);
+}
+main table:has(thead th:nth-child(5)) > thead > tr > th:last-child {
+  border-left: 1px solid var(--fc-border);
+}
+
+/* The per-claim tables on the evidence page are two columns, label and value,
+   and the value is a sentence: nowrap on the last column would run them off
+   the page. Those have an empty header row, which is how they are told apart. */
+main table:has(thead th:empty) > tbody > tr > td:last-child { white-space: normal; }
+main table:has(thead th:empty) { min-width: 100%; }
+
+/* ---- Verdict chips ----------------------------------------------------- */
+/* FAIL and UNTESTED are the two states a reader has to be able to find by
+   scanning, and they are the two the sort deliberately puts at the top. In the
+   register they are the only bold verdicts -- a pass is set plain, because
+   there are eight of them and they are the baseline -- so a bold cell in the
+   last column of the scoreboard is exactly an unresolved verdict, and that is
+   the hook used here.
+   The chip is one neutral treatment for both, not red for one and amber for
+   the other. CSS cannot read the text of a cell, so a severity colour would
+   have to be carried by a class, which would mean emitting HTML into a
+   register that is also read as markdown on GitHub and as plain text in a
+   terminal. The word already says which state it is; the chip only has to make
+   the column scannable, and a chip that means "not a pass" does that without
+   claiming a severity it cannot see.
+
+   Scoped by shape rather than by class: five columns is the scoreboard, and
+   the two-column tables on the evidence page are left alone. */
+main table:has(thead th:nth-child(5)) td:last-child > strong {
+  display: inline-block;
+  padding: .12em .55em;
+  border-radius: 999px;
+  border: 1px solid var(--fc-border);
+  background: var(--fc-surface);
+  color: var(--fc-heading);
+  font-size: .78em;
+  font-weight: 600;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+/* ---- Figures ----------------------------------------------------------- */
+main img {
+  max-width: 100%;
+  height: auto;
+}
+figure, main p > img { margin-block: 1.4rem; }
+
+/* The comparison figures are opaque-white PNGs with dark linework, so in dark
+   mode they land as a bright slab. Framing them makes the white read as paper.
+   Local images only: remote badges bring their own background. */
+[data-bs-theme="dark"] main img:not([src$=".svg"]):not([src^="http"]) {
+  background: #fff;
+  padding: .75rem;
+  border-radius: .5rem;
+  border: 1px solid var(--fc-border);
+}
+
+/* ---- Footer ------------------------------------------------------------ */
+footer {
+  border-top: 1px solid var(--fc-border);
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  color: var(--fc-muted);
+  font-size: .9rem;
+}
+
+/* ---- Text selection ---------------------------------------------------- */
+::selection { background: color-mix(in srgb, var(--fc-accent) 26%, transparent); }

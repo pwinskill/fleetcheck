@@ -22,21 +22,21 @@ plots.
 
 | claim | tier | criterion | measured | verdict |
 | --- | --- | --- | --- | --- |
-| [`severe-allage-bias`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#severe-allage-bias) | 2 | NONE DECLARED | fleet sits below the IBM median at all six EIRs, by 0.1% 2.7% 3.1% 2.8% 4.0% 3.5% at EIR 1 3 10 20 50 120 | **UNTESTED** |
-| [`age-structure`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-structure) | 2 | NONE DECLARED | clinical within -11.5% to +11.8% under age 20; severe -21% to +11%, and -16% to -21% in three of the four 5-20 year bands | **UNTESTED** |
-| [`real-settings-bias`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-bias) | 3 | NONE DECLARED | +8.7% on clinical, +8.8% on severe, across 1391 sub-sites in 63 countries | **UNTESTED** |
-| [`seed-stability`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#seed-stability) | 1 | PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20 | 0.28% maximum excursion; flat to 0.02% over the last five years | pass |
-| [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6; largest departure 0.94% of the IBM median | pass |
-| [`clinical-under5-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-under5-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
-| [`clinical-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
-| [`severe-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#severe-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
-| [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact) | 2 | within 0.6 percentage points of the IBM replicate band on every outcome | inside the band on 18 of 20; worst excursion 0.36 percentage points | pass |
-| [`speed`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#speed) | 2 | at least 10x faster than the IBM on the same scenario set | 19x on cost per simulated year; 10.7 CPU-hours for the IBM against 103 s for fleet | pass |
-| [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation) | 3 | r > 0.95 and \|slope - 1\| < 0.10 on both clinical and severe incidence | clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946 | pass |
+| [`severe-allage-bias`](articles/evidence.html#severe-allage-bias) | 2 | NONE DECLARED | fleet sits below the IBM median at all six EIRs, by 0.1% 2.7% 3.1% 2.8% 4.0% 3.5% at EIR 1 3 10 20 50 120 | **UNTESTED** |
+| [`age-structure`](articles/evidence.html#age-structure) | 2 | NONE DECLARED | clinical within -11.5% to +11.8% under age 20; severe -21% to +11%, and -16% to -21% in three of the four 5-20 year bands | **UNTESTED** |
+| [`real-settings-bias`](articles/evidence.html#real-settings-bias) | 3 | NONE DECLARED | +8.7% on clinical, +8.8% on severe, across 1391 sub-sites in 63 countries | **UNTESTED** |
+| [`seed-stability`](articles/evidence.html#seed-stability) | 1 | PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20 | 0.28% maximum excursion; flat to 0.02% over the last five years | pass |
+| [`prevalence-eir`](articles/evidence.html#prevalence-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6; largest departure 0.94% of the IBM median | pass |
+| [`clinical-under5-eir`](articles/evidence.html#clinical-under5-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
+| [`clinical-allage-eir`](articles/evidence.html#clinical-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
+| [`severe-allage-eir`](articles/evidence.html#severe-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
+| [`intervention-impact`](articles/evidence.html#intervention-impact) | 2 | within 0.6 percentage points of the IBM replicate band on every outcome | inside the band on 18 of 20; worst excursion 0.36 percentage points | pass |
+| [`speed`](articles/evidence.html#speed) | 2 | at least 10x faster than the IBM on the same scenario set | 19x on cost per simulated year; 10.7 CPU-hours for the IBM against 103 s for fleet | pass |
+| [`real-settings-correlation`](articles/evidence.html#real-settings-correlation) | 3 | r > 0.95 and \|slope - 1\| < 0.10 on both clinical and severe incidence | clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946 | pass |
 
 <!-- END scoreboard -->
 
-Regenerated from `claims.yml` by `report/make_scoreboard.R`; CI fails if it is
+Regenerated from [`claims.yml`](https://github.com/pwinskill/fleetcheck/blob/main/claims.yml) by `report/make_scoreboard.R`; CI fails if it is
 stale. From R, `fleetcheck::scoreboard()` and `fleetcheck::read_claims()` give
 the same thing as data rather than as a page.
 
@@ -44,8 +44,8 @@ the same thing as data rather than as a page.
 `allow_fail`, and an `allow_fail` entry with no explanatory note is itself an
 error: a tolerated failure has to say why it is tolerated.
 
-**A claim with no criterion is reported as `UNTESTED`, not as passing.** Three of
-the eleven are in that state, and one of them matters: `fleet` runs about 9% above
+**A claim with no criterion is reported as `undeclared`, not as passing.** Two of
+the ten are in that state, and one of them matters: `fleet` runs about 9% above
 the IBM on clinical and severe incidence across 1,391 sub-sites, and nothing has
 ever said what magnitude would be too much. It has been carried as a known
 curiosity rather than as a failing test. Writing the criterion down forces the
@@ -93,9 +93,8 @@ That is not ceremony: `fleet`'s own documentation once carried two derivations
 of the same immunity figures, in two articles, and both were wrong. One
 definition, imported everywhere, tested.
 
-`R/provenance.R` stamps every result with the `fleet` and `malariasimulation`
-versions, the commits they were installed from, the R version and the date, and
-holds the rounding rule the stored summaries are written under. It exists because the
+`R/provenance.R` stamps every result with the `fleet` version and commit, the
+`malariasimulation` version, the R version and the date. It exists because the
 provenance used to be inverted — the 25-minute comparison recorded the IBM
 version, the replicate count and a digest of the scenarios, while the seven-hour
 run that nobody can repeat recorded only a date. The tier that cannot be re-run

@@ -39,7 +39,8 @@ agreement <- function(reference, candidate, na.rm = TRUE) {
     cor      = suppressWarnings(stats::cor(reference, candidate)),
     rmse     = sqrt(mean(d^2)),
     bias     = mean(d),
-    rel_bias = if (mr == 0) NA_real_ else mean(d) / mr,
+    # guarded for na.rm = FALSE, where mr is NA and a bare if() errors
+    rel_bias = if (is.na(mr) || mr == 0) NA_real_ else mean(d) / mr,
     slope    = unname(stats::coef(stats::lm(candidate ~ reference))[2L])
   )
 }
@@ -76,7 +77,12 @@ inside_band <- function(value, lower, upper) {
 #' @export
 band_summary <- function(value, lower, upper) {
   pos <- band_position(value, lower, upper)
+  # an NA band edge is a live possibility -- the edges come from quantile()
+  # over replicates -- so it must not turn all() into NA and error
+  ok <- !is.na(pos)
   list(n = length(pos),
-       n_inside = sum(pos == 0),
-       worst = if (all(pos == 0)) 0 else pos[which.max(abs(pos))])
+       n_inside = sum(pos == 0, na.rm = TRUE),
+       n_missing = sum(!ok),
+       worst = if (!any(ok)) NA_real_ else if (all(pos[ok] == 0)) 0 else
+         pos[ok][which.max(abs(pos[ok]))])
 }

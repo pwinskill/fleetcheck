@@ -82,8 +82,14 @@ scale_models <- function(shapes = TRUE, lines = TRUE) {
 ## a legend that shows line + point together, in the same order everywhere
 guide_models <- function() guides(
   colour = guide_legend(override.aes = list(linewidth = 0.9, size = 2.6)))
-## captions do not wrap on their own; fold them at the width a 10-inch figure holds
-cap <- function(..., width = 135) paste(strwrap(paste(...), width = width), collapse = "\n")
+## Captions do not wrap on their own, so they are folded here -- and how many
+## characters fit is a property of the DEVICE, not a constant. The default was a
+## bare 135, tuned for the 10-inch figures, while the four single-outcome EIR
+## panels are saved at 6.2 inches: their caption was folded a third wider than
+## the panel and ran off both edges. Pass fig_width, or width to set the
+## character count directly, which is what the hand-tuned subtitles do.
+cap <- function(..., fig_width = 10, width = round(13.5 * fig_width))
+  paste(strwrap(paste(...), width = width), collapse = "\n")
 
 ## ---- data helpers -----------------------------------------------------------
 ## IBM replicate summary: median and 10-90% band per x, for a value column.

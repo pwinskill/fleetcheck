@@ -14,8 +14,8 @@ RoxygenNote: 7.3.3
 URL: https://pwinskill.github.io/fleetcheck, https://github.com/pwinskill/fleetcheck
 BugReports: https://github.com/pwinskill/fleetcheck/issues
 Depends: R (>= 4.1)
-Imports: stats, utils, yaml, jsonlite
-Suggests: knitr, rmarkdown, testthat (>= 3.0.0), withr, pkgload, fleet, malariasimulation, postie,
-    ggplot2
+Imports: stats, utils, yaml
+Suggests: knitr, rmarkdown, testthat (>= 3.0.0), withr, pkgload, codetools,
+    jsonlite, fleet, malariasimulation, postie, ggplot2
 VignetteBuilder: knitr
 Config/testthat/edition: 3

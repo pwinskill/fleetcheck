@@ -73,7 +73,7 @@ clinical peak (per child-year): IBM 4.36 (day 305), fleet 4.50 (day 298); annual
 
 seasonal realised EIR: IBM 18.7, fleet 18.7 (target 20); annual PfPR IBM 0.491 (0.485–0.498), fleet 0.490
 
-## Country site files (snapshot: 2026-09-09, fleet 0.0.0.9000)
+## Country site files (run: 2026-09-09, fleet 0.0.0.9000; summarised 2026-09-18)
 
 countries: 63; sub-sites: 1391; years 2000–2026
 clinical: n = 450,684, r = 0.982, slope = 0.997, relative bias = 8.7%

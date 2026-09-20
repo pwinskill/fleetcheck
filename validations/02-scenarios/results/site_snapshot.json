@@ -1,6 +1,21 @@
 {
-  "taken": "2026-09-09",
-  "fleet": "0.0.0.9000",
+  "run": {
+    "taken": "2026-09-09",
+    "fleet": "0.0.0.9000"
+  },
+  "summarised": {
+    "taken": "2026-09-18T19:03:40+0100",
+    "fleet": "0.0.0.9001",
+    "fleet_sha": null,
+    "fleet_built": "R 4.5.2; aarch64-w64-mingw32; 2026-09-14 08:02:48 UTC; windows",
+    "malariasimulation": "3.0.0",
+    "malariasimulation_sha": "5f63ccd",
+    "postie": "1.1.0",
+    "R": "4.5.2",
+    "platform": "aarch64-w64-mingw32",
+    "fleetcheck_sha": "20c00e9",
+    "files": 63
+  },
   "note": "A SNAPSHOT. The 63-country site-file comparison is a ~7-hour run against the malariaverse site files and is NOT refreshed by the comparison harness or by CI; it is re-taken deliberately, at a release. The figure and these statistics therefore describe the fleet version named above, not necessarily the current HEAD.",
   "countries": 63,
   "sub_sites": 1391,
@@ -8,14 +23,18 @@
   "year_to": 2026,
   "clinical": {
     "n": 450684,
-    "r": 0.982202,
-    "slope": 0.997093,
-    "rel_bias": 0.08689
+    "cor": 0.982202,
+    "rmse": 0.076838,
+    "bias": 0.026136,
+    "rel_bias": 0.08689,
+    "slope": 0.997093
   },
   "severe": {
     "n": 450684,
-    "r": 0.957825,
-    "slope": 0.946464,
-    "rel_bias": 0.08807
+    "cor": 0.957825,
+    "rmse": 0.001702,
+    "bias": 0.000425,
+    "rel_bias": 0.08807,
+    "slope": 0.946464
   }
 }

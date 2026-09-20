@@ -193,7 +193,12 @@ if (!nrow(e)) {
     st <- merge(st, new_eq[, c("scenario", m)], by = "scenario")
     v <- st[[m]]
     rel <- max(abs(v / st$med - 1))
-    outb <- sum(v < st$lo | v > st$hi)
+    ## band_summary() from the package rather than `sum(v < lo | v > hi)` here.
+    ## Same arithmetic, but "inside the IBM 10-90% replicate band" is the
+    ## criterion four claims in the register are decided by, so it is defined
+    ## once and unit-tested rather than re-spelled at each place that asks it.
+    bs <- band_summary(v, st$lo, st$hi)
+    outb <- bs$n - bs$n_inside
     bad <- rel > lim$rel || outb > lim$out
     cat(sprintf("    %-20s %9.1f%% %7.1f%% %9d of %-3d %6d  %s\n", lim$label,
                 100 * rel, 100 * lim$rel, outb, nrow(st), lim$out,

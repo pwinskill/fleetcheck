@@ -39,7 +39,8 @@ if (requireNamespace("pkgload", quietly = TRUE) &&
 } else {
   suppressMessages(library(fleetcheck))
 }
-source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
+## No scenarios.R: this file builds its own parameter lists below, and used
+## nothing that one defines.
 DDIR <- file.path(ROOT, "validations", "02-scenarios", "results")
 N_REP <- 5L
 POP   <- 1e5                       # output scaling only; see the population table

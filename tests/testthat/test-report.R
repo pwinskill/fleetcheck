@@ -9,7 +9,7 @@ test_that("md_cell survives the things a human writes in a criterion", {
 })
 
 test_that("every scoreboard row has the same number of columns", {
-  cl <- read_claims(testthat::test_path("..", "..", "claims.yml"))
+  cl <- read_claims(find_claims())
   md <- scoreboard_md(cl)
   rows <- grep("^\\|", md, value = TRUE)
   # count unescaped pipes only
@@ -21,14 +21,56 @@ test_that("every scoreboard row has the same number of columns", {
 })
 
 test_that("the scoreboard leads with what is unresolved", {
-  cl <- read_claims(testthat::test_path("..", "..", "claims.yml"))
+  # built here rather than read from claims.yml, which currently has nothing
+  # failing and nothing open -- so this test used to run no expectations at all
+  # and testthat reported it as empty
+  cl <- read_claims(write_register(
+    list(id = "passing",  status = "pass"),
+    list(id = "untested", status = "undeclared", declared = "none",
+         criterion = "NONE DECLARED"),
+    list(id = "opened",   status = "open"),
+    list(id = "broken",   status = "fail")))
+  body <- grep("^\\| `", scoreboard_md(cl), value = TRUE)
+
+  expect_equal(length(body), 4L)
+  expect_equal(sub("^\\| `([^`]+)`.*", "\\1", body),
+               c("broken", "untested", "opened", "passing"))
+})
+
+test_that("an unresolved verdict is not set in a lighter type than a pass", {
+  # The sort deliberately puts untested claims at the top, and an earlier
+  # version then set `pass` in bold and `undeclared` in grey italic, so the
+  # thing the reader was meant to meet first read as a footnote. Weight has to
+  # agree with order: unresolved verdicts carry emphasis, a pass does not.
+  cl <- read_claims(write_register(
+    list(id = "passing",  status = "pass"),
+    list(id = "untested", status = "undeclared", declared = "none",
+         criterion = "NONE DECLARED"),
+    list(id = "broken",   status = "fail")))
   md <- scoreboard_md(cl)
-  body <- grep("^\\| `", md, value = TRUE)
-  skip_if(length(body) < 2, "need at least two claims")
-  # anything failing must appear above anything passing
-  fail_at <- grep("FAIL", body)
-  pass_at <- grep("\\*\\*pass\\*\\*", body)
-  if (length(fail_at) && length(pass_at)) expect_lt(max(fail_at), min(pass_at))
+  verdict <- function(id) sub(".*\\| ([^|]*) \\|$", "\\1",
+                              grep(paste0("`", id, "`"), md, value = TRUE))
+
+  expect_equal(verdict("broken"), "**FAIL**")
+  expect_equal(verdict("untested"), "**UNTESTED**")
+  expect_equal(verdict("passing"), "pass")
+  # and the summary counts in the same order the rows are in
+  expect_match(md[1], "^\\*\\*3 claims — 1 failing, 1 untested, 0 open, 1 pass\\.\\*\\*$")
+  # no verdict relies on colour, italics or a symbol alone
+  expect_true(all(grepl("^[A-Za-z*]+$", c(verdict("broken"), verdict("untested"),
+                                          verdict("passing")))))
+})
+
+test_that("link_prefix distinguishes no link, a same-page anchor and a site URL", {
+  cl <- read_claims(write_register(list(id = "only")))
+  row <- function(...) grep("^\\| ", scoreboard_md(cl, ...), value = TRUE)[3]
+
+  expect_match(row(), "^\\| `only` \\|", fixed = FALSE)
+  # "" is the evidence article linking to anchors on itself -- the one copy of
+  # the scoreboard that used to have no links at all
+  expect_match(row(link_prefix = ""), "[`only`](#only)", fixed = TRUE)
+  expect_match(row(link_prefix = "evidence.html"),
+               "[`only`](evidence.html#only)", fixed = TRUE)
 })
 
 test_that("replace_block is idempotent and insists on its markers", {

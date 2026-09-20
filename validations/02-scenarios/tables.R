@@ -21,8 +21,7 @@ while (!file.exists(file.path(ROOT, "DESCRIPTION")) && dirname(ROOT) != ROOT)
 if (!file.exists(file.path(ROOT, "DESCRIPTION")))
   stop("run this from inside the fleet checkout (no DESCRIPTION found above ", getwd(), ")")
 suppressMessages({library(dplyr); library(tidyr)})
-## constants.R, scenarios.R and theme.R are package code in R/, so they arrive
-## with the package rather than being sourced by path.
+## The constants are package code in R/ and arrive with the package.
 if (requireNamespace("pkgload", quietly = TRUE) &&
     file.exists(file.path(ROOT, "DESCRIPTION"))) {
   suppressMessages(pkgload::load_all(ROOT, quiet = TRUE))
@@ -30,12 +29,10 @@ if (requireNamespace("pkgload", quietly = TRUE) &&
   suppressMessages(library(fleetcheck))
 }
 
-## Scenario definitions, run_fleet() and the digest helpers. Runner code
-## rather than package code: it builds malariasimulation parameter lists at
-## the top level, so it needs that package attached and cannot load with
-## fleetcheck. One copy, sourced by everything that needs it.
-suppressMessages(library(malariasimulation))
-source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
+## Neither scenarios.R nor theme.R. This script reads the saved CSVs and prints
+## markdown: it drew nothing and ran nothing, but sourcing those two attached
+## malariasimulation, ggplot2 and patchwork and probed the system fonts before
+## printing a table.
 SMOKE <- nzchar(Sys.getenv("CMP_SMOKE"))
 DDIR  <- file.path(ROOT, "validations", "02-scenarios", "results"); if (SMOKE) { DDIR <- file.path(DDIR, "smoke"); BURN_Y <- 1L }
 rd <- function(part) read.csv(file.path(DDIR, paste0("rep_", part, ".csv")), stringsAsFactors = FALSE)
@@ -162,17 +159,31 @@ say("seasonal realised EIR: IBM %.1f, fleet %.1f (target %s); annual PfPR IBM %s
 ## figures CI job for a reason that has nothing to do with the model.
 ##
 ## CMP_REFRESH_SITES=1, with the validation results present, re-takes it.
+`%||%` <- function(x, y) if (is.null(x)) y else x
 site_f <- file.path(DDIR, "site_snapshot.json")
 if (nzchar(Sys.getenv("CMP_REFRESH_SITES"))) {
   fs <- list.files(file.path(VDIR(), "results"), pattern = "_compare.rds$", full.names = TRUE)
   if (!length(fs)) stop("CMP_REFRESH_SITES is set but there are no results in ", VDIR())
   v <- bind_rows(lapply(fs, readRDS))
-  ag2 <- function(x, y) { ok <- is.finite(x) & is.finite(y); x <- x[ok]; y <- y[ok]
-    list(n = length(x), r = cor(x, y), slope = unname(coef(lm(y ~ x))[2]),
-         rel_bias = mean(y - x) / mean(x)) }
+  ## agreement() from the package; see the note in render.R about the two local
+  ## copies this replaces. as.list() because the snapshot is JSON, not a frame.
+  ag2 <- function(x, y) as.list(agreement(x, y))
   prev <- if (file.exists(site_f)) jsonlite::read_json(site_f, simplifyVector = TRUE) else list()
-  snap <- list(taken = format(Sys.Date()),
-               fleet = as.character(utils::packageVersion("fleet")),
+
+  ## Two provenances, and they are not the same one.
+  ##
+  ## `run` is the seven-hour comparison itself: the fleet version and the date
+  ## the per-country results were produced. `summarised` is this pass over those
+  ## results, which is seconds and can happen at any later version.
+  ##
+  ## Collapsing them is how the snapshot came to claim the wrong thing: a single
+  ## stamp taken here records today's fleet, while the numbers under it are
+  ## whatever the run produced months ago. `run` is carried forward untouched
+  ## and is only ever changed by hand, when the run is actually repeated.
+  run <- prev$run %||% list(taken = prev$taken, fleet = prev$fleet)
+  snap <- list(
+               run = run,
+               summarised = stamp(files = length(fs)),
                note = prev$note,
                countries = length(unique(v$iso3c)),
                sub_sites = nrow(distinct(v, iso3c, name_1, urban_rural)),
@@ -185,8 +196,9 @@ if (nzchar(Sys.getenv("CMP_REFRESH_SITES"))) {
 if (file.exists(site_f)) {
   sn <- jsonlite::read_json(site_f, simplifyVector = TRUE)
   agz <- function(z) sprintf("n = %s, r = %.3f, slope = %.3f, relative bias = %s",
-                             format(z$n, big.mark = ","), z$r, z$slope, pct(z$rel_bias, 1))
-  say("## Country site files (snapshot: %s, fleet %s)\n", sn$taken, sn$fleet)
+                             format(z$n, big.mark = ","), z$cor, z$slope, pct(z$rel_bias, 1))
+  say("## Country site files (run: %s, fleet %s; summarised %s)\n",
+      sn$run$taken, sn$run$fleet, substr(sn$summarised$taken, 1, 10))
   say("countries: %d; sub-sites: %d; years %d\u2013%d", sn$countries, sn$sub_sites,
       sn$year_from, sn$year_to)
   say("clinical: %s", agz(sn$clinical))

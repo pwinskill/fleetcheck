@@ -87,7 +87,7 @@
   declared: none
   tier: 2
   evidence: validations/02-scenarios
-  measured: fleet sits below the IBM median at every EIR, by 2.7% 3.1% 2.8% 4.0% 3.5% at EIR 3 10 20 50 120
+  measured: fleet sits below the IBM median at all six EIRs, by 0.1% 2.7% 3.1% 2.8% 4.0% 3.5% at EIR 1 3 10 20 50 120
   status: undeclared
   note: >
     Added after the twenty-replicate run, because severe-allage-eir passing is
@@ -96,9 +96,13 @@
     A band test asks whether one number lands inside a spread. It is blind to a
     small offset repeated every time: severe incidence has the widest replicate
     spread of any outcome here, 15.4% of the median, so a 3% deficit sits
-    comfortably inside the band while being present at all six EIRs with the
-    same sign. Six of six is not evidence of no bias; under a coin-flip it would
-    happen once in thirty-two runs.
+    comfortably inside the band while being present at every EIR with the same
+    sign. Six of six the same sign is not evidence of no bias; under a coin-flip
+    it would happen once in thirty-two runs.
+    The EIR 1 point is the exception worth naming: 0.1% is not a deficit, it is
+    a rounding difference, and the offset only establishes itself from EIR 3
+    upwards. So the substantive statement is 2.7-4.0% at the five EIRs from 3
+    up, not 3% across the whole grid.
     The mechanism is known and derived in fleet's model vignette, section B.3.
     What is missing is a criterion. It should be stated on the median, not the
     band -- something of the form "within x% of the IBM median at every EIR" --

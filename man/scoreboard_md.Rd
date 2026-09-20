@@ -4,12 +4,14 @@
 \alias{scoreboard_md}
 \title{The scoreboard as a markdown table}
 \usage{
-scoreboard_md(claims = read_claims(), link_prefix = "")
+scoreboard_md(claims = read_claims(), link_prefix = NULL)
 }
 \arguments{
 \item{claims}{as returned by \code{\link[=read_claims]{read_claims()}}.}
 
-\item{link_prefix}{prefix for the per-claim anchors, e.g. \code{"evidence.html"}.}
+\item{link_prefix}{prefix for the per-claim anchors, e.g. \code{"evidence.html"}.
+\code{""} links to anchors on the same page, which is what the evidence article
+itself needs. \code{NULL} renders the ids as plain code, with no links at all.}
 }
 \value{
 a character vector of markdown lines.

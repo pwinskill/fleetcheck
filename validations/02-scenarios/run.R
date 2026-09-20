@@ -117,7 +117,12 @@ for (part in c("eq", "age", "monthly", "doy", "timing")) {
     for (nm in setdiff(names(old), names(d))) d[[nm]] <- NA
     d <- rbind(old[names(d)], d)
   }
-  write.csv(d, f, row.names = FALSE)
+  ## Six significant figures, except rep_eq.csv, which assess.R asserts against
+  ## at 1e-6 and which is 46 KB anyway. Rounding is done HERE rather than by
+  ## hand afterwards: it was done by hand once, and the next run of this script
+  ## wrote full precision again and took rep_monthly.csv from 6.4 MB back to
+  ## 19.9 MB with nothing noticing.
+  write.csv(round_sig(d, if (part == "eq") NULL else 6), f, row.names = FALSE)
   log_msg("wrote rep_%s.csv (%d rows)", part, nrow(d))
 }
 ## the IBM rows just changed, so stamp what produced them. Skipped under
