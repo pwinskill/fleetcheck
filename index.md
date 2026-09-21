@@ -18,7 +18,7 @@ The register is the point of the repository: a reader should meet the
 verdict before the figures, not be left to infer it from a wall of
 plots.
 
-**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
+**11 claims — 1 failing, 0 untested, 1 open, 9 pass.**
 
 1.  pass
     [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir)
@@ -45,7 +45,7 @@ plots.
 7.  pass
     [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact)
     — The modelled impact of each intervention matches the IBM.
-8.  pass
+8.  open
     [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation)
     — Agreement holds across real transmission settings, not just
     synthetic scenarios.
