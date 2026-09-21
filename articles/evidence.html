@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Validation evidence • fleetcheck</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -51,8 +56,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Validation evidence</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Validation evidence</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/pwinskill/fleetcheck/blob/main/vignettes/evidence.Rmd" class="external-link"><code>vignettes/evidence.Rmd</code></a></small>
@@ -71,7 +75,7 @@ them at the end.</p>
 <p>Every section is generated from <code>claims.yml</code>, so this page
 cannot disagree with the register, and the register cannot be changed
 without the page following.</p>
-<p><strong>11 claims — 1 failing, 0 untested, 1 open, 9
+<p><strong>11 claims — 1 failing, 0 untested, 0 open, 10
 pass.</strong></p>
 <table class="table">
 <colgroup>
@@ -151,9 +155,9 @@ points</td>
 <td>3</td>
 <td>r &gt; 0.95 and |slope - 1| &lt; 0.10 on both clinical and severe
 incidence</td>
-<td>clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946 – on the
-age grid fleet used before it was log-spaced</td>
-<td><span class="verdict open">open</span></td>
+<td>clinical r 0.983 slope 0.996; severe r 0.959 slope 0.929, over
+450,684 sub-site-months in 1,391 sub-sites of 63 countries</td>
+<td><span class="verdict pass">pass</span></td>
 </tr>
 <tr class="odd">
 <td><a href="#population-age-structure"><code>population-age-structure</code></a></td>
@@ -287,26 +291,22 @@ is outside what this claim tests.</p>
 <div class="section level2">
 <h2 id="real-settings-correlation">real-settings-correlation<a class="anchor" aria-label="anchor" href="#real-settings-correlation"></a>
 </h2>
-<p><span class="verdict open">OPEN</span> — Agreement holds across real
+<p><span class="verdict pass">PASS</span> — Agreement holds across real
 transmission settings, not just synthetic scenarios.</p>
 <p class="claim-meta">
 tier 3 · <code>validations/03-real-settings</code>
 </p>
-<p>STALE, and open rather than pass for that reason. These statistics
-were measured on the fixed monthly/quarterly/yearly grid; the default is
-now log-spaced, which moved every tier-2 outcome by 0.5 to 2.5%. The
-criterion was met when it was measured and nothing suggests it would not
-be met again – a near-uniform multiplicative shift moves slope rather
-than r, and the shift is upward, which takes clinical slope 0.997 toward
-1.007 and severe 0.946 toward 0.955, both still well inside 0.10. But
-that is an inference from the direction of the shift, not a measurement.
-Re-running it needs the malariaverse site files and about seven hours on
-a cluster, so it cannot be refreshed from this machine. Until someone
-does, this claim rests on a version of the model that no longer exists.
-What it tests, when it is current: whether fleet TRACKS the IBM across
-1,391 sub-sites, not whether it sits on top of it. fleet ran about 9%
-above on both outcomes, an excess near zero at high transmission with
-low treatment coverage that grew as either moved.</p>
+<p>r and slope test whether fleet TRACKS the IBM across the sub-sites,
+not whether it sits on top of it. It runs 8.2% above on clinical
+incidence and 6.9% above on severe, an excess near zero at high
+transmission with low treatment coverage that grows as either moves, and
+that is not explained. Severe is the weaker of the two: its slope,
+0.929, is the closest anything in this register comes to the 0.10
+tolerance. The comparison is monthly. Averaging to annual means once
+made a real seasonal-amplitude mismatch look like agreement. Both arms
+are P. falciparum only. The shipped diagnostics carry vivax rows too,
+and including them inflates the baseline where pf transmission is
+low.</p>
 <p><img src="cmp_core_sites.png" alt="Agreement holds across real transmission settings, not just synthetic scenarios."></p>
 </div>
 <div class="section level2">
@@ -358,6 +358,11 @@ the number.</em></p>
 <p>What it costs to reproduce a result is a property of that result, so
 it is recorded against every claim rather than stated once in prose.</p>
 <table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
 <thead><tr class="header">
 <th>tier</th>
 <th>cost</th>
@@ -381,17 +386,18 @@ it is recorded against every claim rather than stated once in prose.</p>
 </tr>
 <tr class="even">
 <td>3</td>
-<td>~7 h</td>
-<td>a cluster, and inputs that are not redistributable</td>
+<td>~40 min</td>
+<td>about ten cores, and inputs that are not redistributable</td>
 </tr>
 </tbody>
 </table>
 <p>Tier 3 is the 63-country site-file comparison. <strong>Its figures
-and statistics are public; the underlying runs are not.</strong> The
-code that produces them is in this repository and can be read and
-audited, but re-running it needs the malariaverse site files, which are
-not redistributable, and about seven hours on a cluster. Nobody outside
-the project can repeat it. That is a limitation of this evidence, not a
+and statistics are public; the site files behind them are not.</strong>
+The constraint is the inputs rather than the compute: the sweep re-runs
+<code>fleet</code> only, because the IBM arm is the pre-run diagnostic
+shipped with each site file, so forty minutes on ten cores refreshes it.
+But the site files are not redistributable, so nobody outside the
+project can repeat it. That is a limitation of this evidence, not a
 property of the result, and
 <code>validations/03-real-settings/example-one-site.R</code> runs the
 same pipeline on a single sub-site for anyone who has one site file.</p>

@@ -11,7 +11,7 @@ Every section is generated from `claims.yml`, so this page cannot
 disagree with the register, and the register cannot be changed without
 the page following.
 
-**11 claims — 1 failing, 0 untested, 1 open, 9 pass.**
+**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
 
 | claim | tier | criterion | measured | verdict |
 |----|----|----|----|----|
@@ -22,7 +22,7 @@ the page following.
 | [`age-profile-clinical`](#age-profile-clinical) | 2 | inside the IBM 10-90% replicate band in every age band, at EIR 3, 20 and 120 | inside at 35 of 36 bands across the three EIRs – 12 of 12 at EIR 3, 11 of 12 at EIR 20, 12 of 12 at EIR 120; largest departure 7.7% of the IBM median | FAIL |
 | [`age-profile-severe`](#age-profile-severe) | 2 | inside the IBM 10-90% replicate band in every age band with non-zero IBM incidence, at EIR 3, 20 and 120 | inside at 31 of 31 bands across the three EIRs; largest departure 83% of the IBM median, in a band an order of magnitude wider than that | pass |
 | [`intervention-impact`](#intervention-impact) | 2 | within 0.6 percentage points of the IBM replicate band on every outcome | inside the band on 22 of 24; worst excursion 0.36 percentage points | pass |
-| [`real-settings-correlation`](#real-settings-correlation) | 3 | r \> 0.95 and \|slope - 1\| \< 0.10 on both clinical and severe incidence | clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946 – on the age grid fleet used before it was log-spaced | open |
+| [`real-settings-correlation`](#real-settings-correlation) | 3 | r \> 0.95 and \|slope - 1\| \< 0.10 on both clinical and severe incidence | clinical r 0.983 slope 0.996; severe r 0.959 slope 0.929, over 450,684 sub-site-months in 1,391 sub-sites of 63 countries | pass |
 | [`population-age-structure`](#population-age-structure) | 2 | inside the IBM 10-90% replicate band in every age band below 60 years, on shares renormalised to the 0-60 population | inside at 11 of 11; largest departure 1.3% of the IBM median | pass |
 | [`speed`](#speed) | 2 | at least 10x faster than the IBM on the same scenario set | 20x on cost per simulated year; 12.4 CPU-hours for the IBM against 110 s for fleet | pass |
 | [`seed-stability`](#seed-stability) | 1 | PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20 | 0.28% maximum excursion; flat to 0.02% over the last five years | pass |
@@ -132,26 +132,21 @@ IBM.](cmp_int_impact.png)
 
 ## real-settings-correlation
 
-OPEN — Agreement holds across real transmission settings, not just
+PASS — Agreement holds across real transmission settings, not just
 synthetic scenarios.
 
 tier 3 · `validations/03-real-settings`
 
-STALE, and open rather than pass for that reason. These statistics were
-measured on the fixed monthly/quarterly/yearly grid; the default is now
-log-spaced, which moved every tier-2 outcome by 0.5 to 2.5%. The
-criterion was met when it was measured and nothing suggests it would not
-be met again – a near-uniform multiplicative shift moves slope rather
-than r, and the shift is upward, which takes clinical slope 0.997 toward
-1.007 and severe 0.946 toward 0.955, both still well inside 0.10. But
-that is an inference from the direction of the shift, not a measurement.
-Re-running it needs the malariaverse site files and about seven hours on
-a cluster, so it cannot be refreshed from this machine. Until someone
-does, this claim rests on a version of the model that no longer exists.
-What it tests, when it is current: whether fleet TRACKS the IBM across
-1,391 sub-sites, not whether it sits on top of it. fleet ran about 9%
-above on both outcomes, an excess near zero at high transmission with
-low treatment coverage that grew as either moved.
+r and slope test whether fleet TRACKS the IBM across the sub-sites, not
+whether it sits on top of it. It runs 8.2% above on clinical incidence
+and 6.9% above on severe, an excess near zero at high transmission with
+low treatment coverage that grows as either moves, and that is not
+explained. Severe is the weaker of the two: its slope, 0.929, is the
+closest anything in this register comes to the 0.10 tolerance. The
+comparison is monthly. Averaging to annual means once made a real
+seasonal-amplitude mismatch look like agreement. Both arms are P.
+falciparum only. The shipped diagnostics carry vivax rows too, and
+including them inflates the baseline where pf transmission is low.
 
 ![Agreement holds across real transmission settings, not just synthetic
 scenarios.](cmp_core_sites.png)
@@ -196,19 +191,19 @@ across a range, and a chart of one number carries less than the number.*
 What it costs to reproduce a result is a property of that result, so it
 is recorded against every claim rather than stated once in prose.
 
-| tier | cost    | who can reproduce it                               |
-|------|---------|----------------------------------------------------|
-| 0    | seconds | anyone, from the committed summaries               |
-| 1    | ~2 min  | anyone; re-runs `fleet` only                       |
-| 2    | ~25 min | anyone with about ten cores                        |
-| 3    | ~7 h    | a cluster, and inputs that are not redistributable |
+| tier | cost    | who can reproduce it                                     |
+|------|---------|----------------------------------------------------------|
+| 0    | seconds | anyone, from the committed summaries                     |
+| 1    | ~2 min  | anyone; re-runs `fleet` only                             |
+| 2    | ~25 min | anyone with about ten cores                              |
+| 3    | ~40 min | about ten cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and
-statistics are public; the underlying runs are not.** The code that
-produces them is in this repository and can be read and audited, but
-re-running it needs the malariaverse site files, which are not
-redistributable, and about seven hours on a cluster. Nobody outside the
-project can repeat it. That is a limitation of this evidence, not a
-property of the result, and
-`validations/03-real-settings/example-one-site.R` runs the same pipeline
-on a single sub-site for anyone who has one site file.
+statistics are public; the site files behind them are not.** The
+constraint is the inputs rather than the compute: the sweep re-runs
+`fleet` only, because the IBM arm is the pre-run diagnostic shipped with
+each site file, so forty minutes on ten cores refreshes it. But the site
+files are not redistributable, so nobody outside the project can repeat
+it. That is a limitation of this evidence, not a property of the result,
+and `validations/03-real-settings/example-one-site.R` runs the same
+pipeline on a single sub-site for anyone who has one site file.

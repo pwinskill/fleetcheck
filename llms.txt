@@ -18,7 +18,7 @@ The register is the point of the repository: a reader should meet the
 verdict before the figures, not be left to infer it from a wall of
 plots.
 
-**11 claims — 1 failing, 0 untested, 1 open, 9 pass.**
+**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
 
 1.  pass
     [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir)
@@ -45,7 +45,7 @@ plots.
 7.  pass
     [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact)
     — The modelled impact of each intervention matches the IBM.
-8.  open
+8.  pass
     [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation)
     — Agreement holds across real transmission settings, not just
     synthetic scenarios.
@@ -92,19 +92,21 @@ EIRs* because five is what happened.
 What it costs to reproduce a result is a property of the result, so it
 is recorded against every claim rather than mentioned in prose.
 
-| tier | cost    | who can reproduce it                             |
-|------|---------|--------------------------------------------------|
-| 0    | seconds | anyone, from committed summaries                 |
-| 1    | ~2 min  | anyone; re-runs `fleet` only                     |
-| 2    | ~25 min | anyone with about 10 cores                       |
-| 3    | ~7 h    | cluster, and inputs that are not redistributable |
+| tier | cost    | who can reproduce it                               |
+|------|---------|----------------------------------------------------|
+| 0    | seconds | anyone, from committed summaries                   |
+| 1    | ~2 min  | anyone; re-runs `fleet` only                       |
+| 2    | ~25 min | anyone with about 10 cores                         |
+| 3    | ~40 min | ~10 cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and
-statistics are public; the underlying runs are not.** The code that
-produced them is here and can be read and audited; re-running it needs
-the malariaverse site files and a cluster. A smoke mode covering a
-handful of sites keeps that path demonstrably runnable rather than left
-to rot.
+statistics are public; the site files behind them are not.** The code
+that produces them is here and can be read, audited and run — the
+constraint is the inputs, not the compute. It re-runs `fleet` only,
+because the IBM arm is the pre-run diagnostic shipped with each site
+file, so forty minutes on ten cores refreshes it.
+`validations/03-real-settings/example-one-site.R` demonstrates the same
+pipeline on a single sub-site for anyone who has one site file.
 
 ## Running it yourself
 

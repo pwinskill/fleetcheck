@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Twin-Fidelity Checks for the fleet Malaria Model • fleetcheck</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -13,6 +18,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Twin-Fidelity Checks for the fleet Malaria Model">
 <meta name="description" content="Measures how closely the fleet mean-field ODE model reproduces the malariasimulation individual-based model. Holds the claims register, the comparison statistics, and the code that produces the evidence behind each claim. This measures agreement between two models, not agreement with data.">
 <meta property="og:description" content="Measures how closely the fleet mean-field ODE model reproduces the malariasimulation individual-based model. Holds the claims register, the comparison statistics, and the code that produces the evidence behind each claim. This measures agreement between two models, not agreement with data.">
+<meta property="og:image" content="https://pwinskill.github.io/fleetcheck/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -49,8 +55,10 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="fleetcheck">fleetcheck<a class="anchor" aria-label="anchor" href="#fleetcheck"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="fleetcheck-">fleetcheck <a class="anchor" aria-label="anchor" href="#fleetcheck-"></a>
+</h1>
+</div>
 <p>How closely does <a href="https://github.com/pwinskill/fleet" class="external-link"><code>fleet</code></a> reproduce <a href="https://github.com/mrc-ide/malariasimulation" class="external-link"><code>malariasimulation</code></a>?</p>
 <p><strong>This measures agreement between two models, not agreement with data.</strong> It is a twin-fidelity check. <code>fleet</code> inherits its epidemiological standing from the IBM, and inherits it only as far as the gap measured here is small relative to the IBM’s own uncertainty. Nothing on this page is validation against observation.</p>
 <div class="section level2">
@@ -58,7 +66,7 @@
 </h2>
 <p>Every claim <code>fleet</code> makes about agreeing with the IBM lives in <a href="https://github.com/pwinskill/fleetcheck/blob/main/claims.yml" class="external-link"><code>claims.yml</code></a>, with the criterion that decides it, the measured value, and a verdict. The register is the point of the repository: a reader should meet the verdict before the figures, not be left to infer it from a wall of plots.</p>
 <!-- BEGIN scoreboard -->
-<p><strong>11 claims — 1 failing, 0 untested, 1 open, 9 pass.</strong></p>
+<p><strong>11 claims — 1 failing, 0 untested, 0 open, 10 pass.</strong></p>
 <ol style="list-style-type: decimal">
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence.html#prevalence-eir"><code>prevalence-eir</code></a> — LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.</li>
@@ -75,7 +83,7 @@
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence.html#intervention-impact"><code>intervention-impact</code></a> — The modelled impact of each intervention matches the IBM.</li>
 <li>
-<span class="verdict open">open</span> <a href="articles/evidence.html#real-settings-correlation"><code>real-settings-correlation</code></a> — Agreement holds across real transmission settings, not just synthetic scenarios.</li>
+<span class="verdict pass">pass</span> <a href="articles/evidence.html#real-settings-correlation"><code>real-settings-correlation</code></a> — Agreement holds across real transmission settings, not just synthetic scenarios.</li>
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence.html#population-age-structure"><code>population-age-structure</code></a> — The population age structure matches the IBM’s.</li>
 <li>
@@ -117,12 +125,12 @@
 </tr>
 <tr>
 <td>3</td>
-<td>~7 h</td>
-<td>cluster, and inputs that are not redistributable</td>
+<td>~40 min</td>
+<td>~10 cores, and inputs that are not redistributable</td>
 </tr>
 </tbody>
 </table>
-<p>Tier 3 is the 63-country site-file comparison. <strong>Its figures and statistics are public; the underlying runs are not.</strong> The code that produced them is here and can be read and audited; re-running it needs the malariaverse site files and a cluster. A smoke mode covering a handful of sites keeps that path demonstrably runnable rather than left to rot.</p>
+<p>Tier 3 is the 63-country site-file comparison. <strong>Its figures and statistics are public; the site files behind them are not.</strong> The code that produces them is here and can be read, audited and run — the constraint is the inputs, not the compute. It re-runs <code>fleet</code> only, because the IBM arm is the pre-run diagnostic shipped with each site file, so forty minutes on ten cores refreshes it. <code>validations/03-real-settings/example-one-site.R</code> demonstrates the same pipeline on a single sub-site for anyone who has one site file.</p>
 </div>
 <div class="section level2">
 <h2 id="running-it-yourself">Running it yourself<a class="anchor" aria-label="anchor" href="#running-it-yourself"></a>
