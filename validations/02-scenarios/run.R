@@ -113,9 +113,20 @@ for (part in c("eq", "age", "monthly", "doy", "timing")) {
     old <- read.csv(f, stringsAsFactors = FALSE)
     drop <- old$scenario %in% names(scenarios) & (if (FLEET_ONLY) old$model == "fleet" else TRUE)
     old <- old[!drop, ]
-    for (nm in setdiff(names(d), names(old))) old[[nm]] <- NA
-    for (nm in setdiff(names(old), names(d))) d[[nm]] <- NA
-    d <- rbind(old[names(d)], d)
+    ## A part can be EMPTY for this run: only the scenarios carrying age-profile
+    ## bands produce `age` rows, so CMP_ONLY=pmc produces none at all. bind()
+    ## then returns NULL, and `d[[nm]] <- NA` on NULL builds a one-row list
+    ## rather than a zero-row frame -- which rbind() appended to the file as a
+    ## row of NAs, under a scenario named NA. One such row is enough to poison
+    ## every subset of the file, because `x[x$scenario == "eir_3", ]` matches it
+    ## as NA and carries it along. Keep the old rows untouched instead.
+    if (is.null(d) || !nrow(d)) {
+      d <- old
+    } else {
+      for (nm in setdiff(names(d), names(old))) old[[nm]] <- NA
+      for (nm in setdiff(names(old), names(d))) d[[nm]] <- NA
+      d <- rbind(old[names(d)], d)
+    }
   }
   ## Six significant figures, except rep_eq.csv, which assess.R asserts against
   ## at 1e-6 and which is 46 KB anyway. Rounding is done HERE rather than by
@@ -125,12 +136,47 @@ for (part in c("eq", "age", "monthly", "doy", "timing")) {
   write.csv(round_sig(d, if (part == "eq") NULL else 6), f, row.names = FALSE)
   log_msg("wrote rep_%s.csv (%d rows)", part, nrow(d))
 }
-## the IBM rows just changed, so stamp what produced them. Skipped under
-## FLEET_ONLY and CMP_ONLY, where the committed IBM rows are only partly
-## refreshed and the existing stamp still describes the rest.
-if (!FLEET_ONLY && !length(ONLY) && !SMOKE) {
-  jsonlite::write_json(ibm_reference(), file.path(DDIR, "ibm_reference.json"),
-                       auto_unbox = TRUE, pretty = TRUE)
-  log_msg("wrote ibm_reference.json (scenario digest %s)", scenario_digest())
+## The IBM rows just changed, so stamp what produced them.
+##
+## The stamp is a PER-SCENARIO record, so a partial run updates the entries for
+## the scenarios it actually refreshed and leaves the rest alone. It used to skip
+## the stamp entirely, on the reasoning that "the existing stamp still describes
+## the rest" -- true of the scenarios it did not touch, and false of the ones it
+## did, whose rows were now newer than their stamped digest. assess.R then failed
+## on scenarios it had just been handed fresh rows for, every time, which is
+## worse than no check: a gate that cries wolf makes a real staleness invisible.
+##
+## The aggregate digest is only refreshed when the merged map turns out to be
+## fully current. Writing the current aggregate after a partial refresh would
+## claim the untouched rows had been rebuilt too.
+##
+## CMP_FLEET_ONLY touches no IBM rows at all, so it stamps nothing.
+if (!FLEET_ONLY && !SMOKE) {
+  p_ref <- file.path(DDIR, "ibm_reference.json")
+  now <- ibm_reference()
+  if (length(ONLY) && file.exists(p_ref)) {
+    old <- jsonlite::read_json(p_ref)
+    ## A partial refresh under a different IBM would leave the file describing
+    ## two versions at once, and nothing downstream could tell which rows came
+    ## from which. Refuse rather than record a version that is wrong for half
+    ## the rows.
+    if (!identical(old$malariasimulation, now$malariasimulation))
+      stop("malariasimulation has changed since the committed IBM rows were made (",
+           old$malariasimulation, " -> ", now$malariasimulation, "), so a partial ",
+           "run would leave ibm_reference.json describing two versions at once. ",
+           "Re-run the whole set without CMP_ONLY.", call. = FALSE)
+    merged <- old$scenario_digests
+    for (nm in ONLY) merged[[nm]] <- now$scenario_digests[[nm]]
+    current <- identical(lapply(merged, unlist),
+                         lapply(as.list(scenario_digests_each()), unname))
+    now$scenario_digests <- merged
+    now$scenarios        <- old$scenarios
+    now$generated        <- old$generated   # describes the oldest rows in the file
+    if (!current) now$scenario_digest <- old$scenario_digest
+  }
+  jsonlite::write_json(now, p_ref, auto_unbox = TRUE, pretty = TRUE)
+  log_msg("wrote ibm_reference.json (%s%d scenario digests)",
+          if (length(ONLY)) sprintf("%d of ", length(ONLY)) else "",
+          length(now$scenario_digests))
 }
 log_msg("ALL DONE")

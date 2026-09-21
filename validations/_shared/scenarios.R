@@ -91,6 +91,24 @@ scenarios$pev <- local({
   list(p = set_equilibrium(p, init_EIR = EIR_REF), eir = EIR_REF, years = BURN_Y + 6L)
 })
 
+## Perennial malaria chemoprevention: SP-AQ delivered alongside the EPI contacts
+## at ~10 weeks, ~14 weeks and ~9 months. Here to test the one intervention whose
+## DELIVERY the two models disagree about by construction -- the IBM doses each
+## child on reaching a dose age, and fleet, having no individuals to trigger on,
+## approximates that as monthly pulses over a 30-day band at each dose age. Every
+## other builder is a schedule both models can follow literally.
+##
+## Its effect is small on three of the four reported outcomes, which is the
+## point: the interesting number is all-age severe incidence, where protecting
+## infants delays immunity and fleet predicts an INCREASE. Whether the IBM agrees
+## on the sign and size of that rebound is not something any other scenario asks.
+scenarios$pmc <- local({
+  p <- set_drugs(base_params(), list(SP_AQ_params))
+  p <- set_pmc(p, drug = 1, timesteps = Y_INT, coverages = 0.8,
+               ages = round(c(10 * 7, 14 * 7, 9 * 30.4)))
+  list(p = set_equilibrium(p, init_EIR = EIR_REF), eir = EIR_REF, years = BURN_Y + 6L)
+})
+
 scenarios$treatment <- local({
   p <- set_drugs(base_params(), list(AL_params))
   p <- set_clinical_treatment(p, drug = 1, timesteps = c(1, Y_INT), coverages = c(0.2, 0.6))

@@ -105,42 +105,50 @@ if (!file.exists(ref_f)) {
   if (!identical(ref$malariasimulation, as.character(utils::packageVersion("malariasimulation"))))
     fail <- c(fail, sprintf("malariasimulation has changed since the IBM rows were made (%s -> %s), so the agreement below compares fleet against a reference the installed IBM would no longer reproduce. Re-run validations/02-scenarios/run.R (without CMP_FLEET_ONLY) to rebuild the IBM rows.",
                             ref$malariasimulation, utils::packageVersion("malariasimulation")))
-  now <- scenario_digest()
-  if (!identical(ref$scenario_digest, now)) {
-    ## a FAIL, not a warning: with the scenarios changed, section 2 below is
-    ## comparing fleet-on-new-scenarios against IBM-on-old-scenarios, which is
-    ## not a valid answer to "is the match still good" no matter what it prints
-    fail <- c(fail, sprintf("the scenario definitions have changed since the IBM rows were made (digest %s -> %s), so the agreement below compares fleet on the new scenarios against the IBM on the old ones. Re-run validations/02-scenarios/run.R.",
-                            ref$scenario_digest, now))
-    cat("  scenario digest    CHANGED\n")
-    ## Name the culprit. An aggregate mismatch on its own is not actionable: it
-    ## says something moved across eighteen scenarios and fifty-odd parameters
-    ## each. The committed per-scenario map turns that into a short list, and for
-    ## the offenders the per-key digests say which parameter. Added after an
-    ## aggregate mismatch in CI took several runs to localise.
-    if (!is.null(ref$scenario_digests)) {
-      mine <- scenario_digests_each()
-      shared <- intersect(names(ref$scenario_digests), names(mine))
-      bad <- shared[vapply(shared, function(n)
-        !identical(unlist(ref$scenario_digests[[n]]), unname(mine[[n]])), logical(1))]
-      gone <- setdiff(names(ref$scenario_digests), names(mine))
-      new_s <- setdiff(names(mine), names(ref$scenario_digests))
-      if (length(gone))  cat("    removed since the reference:", paste(gone, collapse = ", "), "\n")
-      if (length(new_s)) cat("    added since the reference:  ", paste(new_s, collapse = ", "), "\n")
-      if (length(bad)) {
-        cat("    differing scenarios:", paste(bad, collapse = ", "), "\n")
-        for (n in head(bad, 2L)) {
-          cat(sprintf("    [%s] per-key digests:\n", n))
-          kd <- scenario_key_digests(scenarios[[n]])
-          for (k in names(kd)) cat(sprintf("      %-42s %s\n", k, kd[[k]]))
-        }
-      } else if (!length(gone) && !length(new_s)) {
-        cat("    every scenario matches individually, so the difference is in the\n",
-            "   aggregate ordering rather than any one scenario.\n", sep = "")
-      }
-    }
+  ## PER-SCENARIO, not aggregate. The question this gate has to answer is "were
+  ## these IBM rows made from the scenario definition that is in the file now",
+  ## and that is a question about each scenario separately. Gating on the
+  ## aggregate could not distinguish a scenario that changed and was refreshed
+  ## from one that changed and was not -- so after any CMP_ONLY run that altered
+  ## a definition, which is the workflow the README recommends, it failed with
+  ## nothing wrong. It stayed red through a correct refresh of eir_3 and eir_120
+  ## while the other sixteen scenarios matched perfectly.
+  mine <- scenario_digests_each()
+  if (is.null(ref$scenario_digests)) {
+    fail <- c(fail, "ibm_reference.json has no per-scenario digests, so there is no way to tell which scenarios' rows are current. Re-run validations/02-scenarios/run.R.")
+    cat("  scenario digests   ABSENT\n")
   } else {
-    cat(sprintf("  scenario digest    %s (unchanged)\n", now))
+    shared <- intersect(names(ref$scenario_digests), names(mine))
+    bad <- shared[vapply(shared, function(n)
+      !identical(unlist(ref$scenario_digests[[n]]), unname(mine[[n]])), logical(1))]
+    gone  <- setdiff(names(ref$scenario_digests), names(mine))
+    new_s <- setdiff(names(mine), names(ref$scenario_digests))
+    if (length(bad) || length(new_s)) {
+      ## a FAIL, not a warning: for these scenarios section 2 below is comparing
+      ## fleet-on-the-new-definition against IBM-on-the-old one, which is not a
+      ## valid answer to "is the match still good" no matter what it prints
+      fail <- c(fail, sprintf("%d scenario definition(s) have changed since their IBM rows were made (%s), so the agreement below compares fleet on the new definitions against the IBM on the old ones. Re-run validations/02-scenarios/run.R, or CMP_ONLY=%s for just these.",
+                              length(bad) + length(new_s),
+                              paste(c(bad, new_s), collapse = ", "),
+                              paste(c(bad, new_s), collapse = ",")))
+      if (length(bad))   cat("    stale scenarios:  ", paste(bad, collapse = ", "), "\n")
+      if (length(new_s)) cat("    never run:        ", paste(new_s, collapse = ", "), "\n")
+      ## For the offenders the per-key digests say WHICH parameter moved. An
+      ## unlocalised mismatch is not actionable: it says something changed across
+      ## fifty-odd parameters. Added after one took several CI runs to find.
+      for (n in head(bad, 2L)) {
+        cat(sprintf("    [%s] per-key digests:\n", n))
+        kd <- scenario_key_digests(scenarios[[n]])
+        for (k in names(kd)) cat(sprintf("      %-42s %s\n", k, kd[[k]]))
+      }
+    } else {
+      cat(sprintf("  scenario digests   %d of %d current\n", length(shared), length(mine)))
+    }
+    ## A scenario dropped from the set is not a staleness: its rows are stale by
+    ## definition, but nothing reads them any more. Worth saying, not worth
+    ## failing on.
+    if (length(gone))
+      cat("    in the reference but no longer defined:", paste(gone, collapse = ", "), "\n")
   }
 }
 

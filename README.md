@@ -18,7 +18,7 @@ of plots.
 
 <!-- BEGIN scoreboard -->
 
-**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
+**11 claims — 1 failing, 0 untested, 1 open, 9 pass.**
 
 1. <span class="verdict pass">pass</span> [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
 2. <span class="verdict pass">pass</span> [`clinical-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
@@ -27,7 +27,7 @@ of plots.
 5. <span class="verdict fail">FAIL</span> [`age-profile-clinical`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-clinical) &mdash; The age distribution of clinical incidence tracks the IBM.
 6. <span class="verdict pass">pass</span> [`age-profile-severe`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-severe) &mdash; The age distribution of severe incidence tracks the IBM.
 7. <span class="verdict pass">pass</span> [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact) &mdash; The modelled impact of each intervention matches the IBM.
-8. <span class="verdict pass">pass</span> [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
+8. <span class="verdict open">open</span> [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
 9. <span class="verdict pass">pass</span> [`population-age-structure`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#population-age-structure) &mdash; The population age structure matches the IBM's.
 10. <span class="verdict pass">pass</span> [`speed`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#speed) &mdash; fleet is fast enough to be worth using in place of the IBM.
 11. <span class="verdict pass">pass</span> [`seed-stability`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#seed-stability) &mdash; An undisturbed run holds the equilibrium it was seeded at.

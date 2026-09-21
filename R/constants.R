@@ -73,6 +73,7 @@ EIR_REF  <- 20                  # reference transmission for age profiles + inte
 #' @rdname scenario-constants
 #' @export
 INT_LABELS <- c(
+  pmc       = "Perennial chemoprevention\nSP-AQ at 10 wk, 14 wk, 9 mo",
   treatment = "Treatment scale-up\n20% \u2192 60% of clinical cases",
   pev       = "RTS,S via EPI\n90% at 5 months, booster",
   smc       = "Seasonal SMC\n4 rounds/yr, ages 0.25\u20135",

@@ -23,6 +23,14 @@
 90% at 5 months, booster","clinical incidence, all ages",0.05613859865,0.04242392804,0.07365732283,"IBM"
 "RTS,S via EPI
 90% at 5 months, booster","severe incidence, all ages",0.1014682736,0.04530922389,0.1985116071,"IBM"
+"Perennial chemoprevention
+SP-AQ at 10 wk, 14 wk, 9 mo","LM prevalence, ages 2–10",-0.001811888571,-0.007542432295,0.01436859717,"IBM"
+"Perennial chemoprevention
+SP-AQ at 10 wk, 14 wk, 9 mo","clinical incidence, ages 0–5",0.02539967045,-0.001637360931,0.05247126519,"IBM"
+"Perennial chemoprevention
+SP-AQ at 10 wk, 14 wk, 9 mo","clinical incidence, all ages",0.01679449272,8.385158073e-05,0.03962362419,"IBM"
+"Perennial chemoprevention
+SP-AQ at 10 wk, 14 wk, 9 mo","severe incidence, all ages",0.01992384477,-0.09172752139,0.1287194405,"IBM"
 "Seasonal SMC
 4 rounds/yr, ages 0.25–5","LM prevalence, ages 2–10",0.2279115678,0.2162939518,0.2498096948,"IBM"
 "Seasonal SMC
@@ -40,42 +48,50 @@
 "Treatment scale-up
 20% → 60% of clinical cases","severe incidence, all ages",0.03020419627,-0.1121223207,0.101876886,"IBM"
 "Indoor residual spraying
-80% coverage, annual","LM prevalence, ages 2–10",0.7894112969,NA,NA,"fleet"
+80% coverage, annual","LM prevalence, ages 2–10",0.7893659726,NA,NA,"fleet"
 "Indoor residual spraying
-80% coverage, annual","clinical incidence, ages 0–5",0.9764411256,NA,NA,"fleet"
+80% coverage, annual","clinical incidence, ages 0–5",0.9764671668,NA,NA,"fleet"
 "Indoor residual spraying
-80% coverage, annual","clinical incidence, all ages",0.9769768133,NA,NA,"fleet"
+80% coverage, annual","clinical incidence, all ages",0.9769681713,NA,NA,"fleet"
 "Indoor residual spraying
-80% coverage, annual","severe incidence, all ages",0.9703434904,NA,NA,"fleet"
+80% coverage, annual","severe incidence, all ages",0.9704195872,NA,NA,"fleet"
 "Bed-net campaign
-80% coverage, one round","LM prevalence, ages 2–10",0.4653713405,NA,NA,"fleet"
+80% coverage, one round","LM prevalence, ages 2–10",0.4649637701,NA,NA,"fleet"
 "Bed-net campaign
-80% coverage, one round","clinical incidence, ages 0–5",0.6553448003,NA,NA,"fleet"
+80% coverage, one round","clinical incidence, ages 0–5",0.6559872405,NA,NA,"fleet"
 "Bed-net campaign
-80% coverage, one round","clinical incidence, all ages",0.661112562,NA,NA,"fleet"
+80% coverage, one round","clinical incidence, all ages",0.6605413561,NA,NA,"fleet"
 "Bed-net campaign
-80% coverage, one round","severe incidence, all ages",0.4929297274,NA,NA,"fleet"
+80% coverage, one round","severe incidence, all ages",0.4935482842,NA,NA,"fleet"
 "RTS,S via EPI
-90% at 5 months, booster","LM prevalence, ages 2–10",0.00810811893,NA,NA,"fleet"
+90% at 5 months, booster","LM prevalence, ages 2–10",0.008330625702,NA,NA,"fleet"
 "RTS,S via EPI
-90% at 5 months, booster","clinical incidence, ages 0–5",0.1018112687,NA,NA,"fleet"
+90% at 5 months, booster","clinical incidence, ages 0–5",0.1018345131,NA,NA,"fleet"
 "RTS,S via EPI
-90% at 5 months, booster","clinical incidence, all ages",0.05049283653,NA,NA,"fleet"
+90% at 5 months, booster","clinical incidence, all ages",0.04999365971,NA,NA,"fleet"
 "RTS,S via EPI
-90% at 5 months, booster","severe incidence, all ages",0.1023213912,NA,NA,"fleet"
+90% at 5 months, booster","severe incidence, all ages",0.1001662627,NA,NA,"fleet"
+"Perennial chemoprevention
+SP-AQ at 10 wk, 14 wk, 9 mo","LM prevalence, ages 2–10",0.002557373398,NA,NA,"fleet"
+"Perennial chemoprevention
+SP-AQ at 10 wk, 14 wk, 9 mo","clinical incidence, ages 0–5",0.0232457054,NA,NA,"fleet"
+"Perennial chemoprevention
+SP-AQ at 10 wk, 14 wk, 9 mo","clinical incidence, all ages",0.01390370378,NA,NA,"fleet"
+"Perennial chemoprevention
+SP-AQ at 10 wk, 14 wk, 9 mo","severe incidence, all ages",0.0107444365,NA,NA,"fleet"
 "Seasonal SMC
-4 rounds/yr, ages 0.25–5","LM prevalence, ages 2–10",0.2339780262,NA,NA,"fleet"
+4 rounds/yr, ages 0.25–5","LM prevalence, ages 2–10",0.235050284,NA,NA,"fleet"
 "Seasonal SMC
-4 rounds/yr, ages 0.25–5","clinical incidence, ages 0–5",0.535239495,NA,NA,"fleet"
+4 rounds/yr, ages 0.25–5","clinical incidence, ages 0–5",0.5347900335,NA,NA,"fleet"
 "Seasonal SMC
-4 rounds/yr, ages 0.25–5","clinical incidence, all ages",0.2570457326,NA,NA,"fleet"
+4 rounds/yr, ages 0.25–5","clinical incidence, all ages",0.2546063609,NA,NA,"fleet"
 "Seasonal SMC
-4 rounds/yr, ages 0.25–5","severe incidence, all ages",0.383255653,NA,NA,"fleet"
+4 rounds/yr, ages 0.25–5","severe incidence, all ages",0.3789910628,NA,NA,"fleet"
 "Treatment scale-up
-20% → 60% of clinical cases","LM prevalence, ages 2–10",0.1923418813,NA,NA,"fleet"
+20% → 60% of clinical cases","LM prevalence, ages 2–10",0.1935942083,NA,NA,"fleet"
 "Treatment scale-up
-20% → 60% of clinical cases","clinical incidence, ages 0–5",0.05370563574,NA,NA,"fleet"
+20% → 60% of clinical cases","clinical incidence, ages 0–5",0.05404714594,NA,NA,"fleet"
 "Treatment scale-up
-20% → 60% of clinical cases","clinical incidence, all ages",0.05156502579,NA,NA,"fleet"
+20% → 60% of clinical cases","clinical incidence, all ages",0.05176511451,NA,NA,"fleet"
 "Treatment scale-up
-20% → 60% of clinical cases","severe incidence, all ages",0.03372488751,NA,NA,"fleet"
+20% → 60% of clinical cases","severe incidence, all ages",0.03389221866,NA,NA,"fleet"
