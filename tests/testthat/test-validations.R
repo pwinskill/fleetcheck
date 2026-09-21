@@ -34,13 +34,13 @@ script_symbols <- function(path) {
   f <- eval(call("function", NULL, as.call(c(as.name("{"), as.list(exprs)))))
   g <- codetools::findGlobals(f, merge = TRUE)
   assigned <- unlist(lapply(exprs, function(e)
-    if (is.call(e) && length(e) >= 2L &&
+    if (is.call(e) && length(e) >= 2L && is.name(e[[1L]]) &&
         as.character(e[[1L]]) %in% c("<-", "=", "<<-") && is.name(e[[2L]]))
       as.character(e[[2L]])))
   list(uses = g, defines = unique(c(assigned, character())))
 }
 
-# which _shared files a script sources, by the filename in the source() call
+# which library files a script sources, by the filename in the source() call
 sourced_shared <- function(path) {
   txt <- readLines(path, warn = FALSE)
   hits <- regmatches(txt, gregexpr('"[A-Za-z0-9_]+\\.R"', txt))
@@ -48,13 +48,20 @@ sourced_shared <- function(path) {
   unique(gsub('"', "", unlist(hits[on_source])))
 }
 
-shared_files <- if (have_validations)
-  list.files(file.path(vdir, "_shared"), "\\.R$", full.names = TRUE) else character()
+# A LIBRARY is any .R under validations/ that another script source()s.
+# `_shared/` holds the cross-tier ones; `03-real-settings/sites_lib.R` is tier
+# 3's, sourced by its run.R, its assess.R and by the figure renderer. Deriving
+# the set from the source() calls rather than from the directory keeps this
+# right when a library is added outside `_shared/`: it would otherwise be
+# treated as a runner and fail the loads-the-package check below, which a file
+# that is sourced rather than executed has no reason to satisfy.
+all_R <- if (have_validations)
+  list.files(vdir, "\\.R$", recursive = TRUE, full.names = TRUE) else character()
+sourced_names <- unique(unlist(lapply(all_R, sourced_shared)))
+shared_files <- all_R[basename(all_R) %in% sourced_names]
 shared <- stats::setNames(lapply(shared_files, script_symbols),
                           basename(shared_files))
-runners <- if (have_validations)
-  setdiff(list.files(vdir, "\\.R$", recursive = TRUE, full.names = TRUE),
-          shared_files) else character()
+runners <- setdiff(all_R, shared_files)
 
 test_that("there are validation scripts to check", {
   needs_source_tree()
@@ -69,7 +76,7 @@ test_that("every project symbol a runner uses is one it has loaded", {
 
   for (path in runners) {
     s <- script_symbols(path)
-    from <- sourced_shared(path)
+    from <- intersect(sourced_shared(path), names(shared))
     available <- unique(c(pkg, s$defines,
                           unlist(lapply(shared[from], `[[`, "defines"))))
     missing <- setdiff(intersect(s$uses, universe), available)
@@ -86,11 +93,11 @@ test_that("the shared files get their own project symbols from the package", {
   universe <- unique(c(pkg, unlist(lapply(shared, `[[`, "defines"))))
   for (nm in names(shared)) {
     s <- shared[[nm]]
-    from <- sourced_shared(file.path(vdir, "_shared", nm))
+    from <- sourced_shared(shared_files[basename(shared_files) == nm])
     available <- unique(c(pkg, s$defines,
                           unlist(lapply(shared[from], `[[`, "defines"))))
     expect_equal(setdiff(intersect(s$uses, universe), available), character(0),
-                 info = sprintf("_shared/%s", nm))
+                 info = nm)
   }
 })
 
@@ -106,7 +113,7 @@ test_that("nothing is sourced that is never used", {
   # for what it defines, this is the test that will complain about it.
   for (path in runners) {
     s <- script_symbols(path)
-    for (nm in sourced_shared(path)) {
+    for (nm in intersect(sourced_shared(path), names(shared))) {
       used <- intersect(s$uses, setdiff(shared[[nm]]$defines, s$defines))
       expect_gt(length(used), 0)
     }

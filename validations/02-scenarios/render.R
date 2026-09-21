@@ -363,32 +363,38 @@ save_fig(g, "core_seasonal", width = 10, height = 5)
 ## 4. core_sites -- 63-country monthly comparison (a SNAPSHOT)
 ## ============================================================================
 ## The committed cmp_core_sites.png is a snapshot and is deliberately NOT redrawn
-## on an ordinary render. Its inputs are a ~7-hour validation run against the
-## malariaverse site files, living in a separate checkout that is not part of this
-## repo, so on any machine without that checkout this block would otherwise be
-## skipped silently -- which is fine for the figure (the committed PNG survives)
-## but leaves no record of the fact. Re-draw it deliberately, alongside re-taking
-## the statistics in summary_tables.R:
+## on an ordinary render. Its inputs are the tier-3 sweep, which needs the
+## malariaverse site files -- not redistributable, and not in this repo -- so on
+## a machine without them this block would otherwise be skipped silently. That is
+## fine for the figure, since the committed PNG survives, but leaves no record of
+## the fact. Re-draw it deliberately, after running the sweep, alongside
+## re-taking the statistics in tables.R:
+##
+##   FLEET_VALIDATE=... Rscript validations/03-real-settings/run.R
 ##
 ##   CMP_REFRESH_SITES=1 Rscript validations/02-scenarios/render.R
 ##   CMP_REFRESH_SITES=1 Rscript validations/02-scenarios/tables.R
-vdir <- VDIR()
+raw <- fc_results("03-real-settings", "raw")
 if (!nzchar(Sys.getenv("CMP_REFRESH_SITES"))) {
   message("core_sites: keeping the committed snapshot ",
-          "(CMP_REFRESH_SITES=1 to re-draw it from ", vdir, ")")
-  vdir <- ""                                   # skips the block below
+          "(CMP_REFRESH_SITES=1 to re-draw it from ", raw, ")")
+  raw <- ""                                    # skips the block below
 }
-fs <- list.files(file.path(vdir, "results"), pattern = "_compare.rds$", full.names = TRUE)
+fs <- list.files(raw, pattern = "_compare[.]rds$", full.names = TRUE)
 if (length(fs)) {
-  v <- bind_rows(lapply(fs, readRDS))
+  ## read_compare() normalises the model columns to fleet_*: files written
+  ## before the blink -> fleet rename carry them as mo_*, and reading raw
+  ## readRDS() here is what broke when the sweep stopped writing both names.
+  source(file.path(ROOT, "validations", "03-real-settings", "sites_lib.R"))
+  v <- bind_rows(lapply(fs, read_compare))
   ## agreement() from the package, not a local copy. There were two local
   ## copies -- this one and ag2() in tables.R -- computing the same four numbers
   ## from the same data for the same claim, and they had already diverged in
   ## naming: this one called mean(y - x) / mean(x) "bias" and printed it as a
   ## percentage of the IBM mean, which is what the other one called "rel_bias".
   ## Deriving one quantity twice is the thing this project exists to catch.
-  st_c <- agreement(v$ms_clinical, v$mo_clinical)
-  st_s <- agreement(v$ms_severe, v$mo_severe)
+  st_c <- agreement(v$ms_clinical, v$fleet_clinical)
+  st_s <- agreement(v$ms_severe, v$fleet_severe)
   hexp <- function(x, y, st, unit, title) {
     d <- data.frame(x = x, y = y) %>% filter(is.finite(x), is.finite(y))
     top <- unname(quantile(c(d$x, d$y), 0.999))
@@ -415,8 +421,8 @@ if (length(fs)) {
                           legend.title = element_text(size = rel(0.8), colour = INK2),
                           panel.grid.major = element_blank())
   }
-  g <- (hexp(v$ms_clinical, v$mo_clinical, st_c, "episodes per person-year", "Monthly clinical incidence") |
-        hexp(v$ms_severe, v$mo_severe, st_s, "episodes per person-year", "Monthly severe incidence")) +
+  g <- (hexp(v$ms_clinical, v$fleet_clinical, st_c, "episodes per person-year", "Monthly clinical incidence") |
+        hexp(v$ms_severe, v$fleet_severe, st_s, "episodes per person-year", "Monthly severe incidence")) +
     plot_annotation(
       title = sprintf("Country site files: %s sub-site-months across %d countries",
                       format(st_c$n, big.mark = ","), length(unique(v$iso3c))),

@@ -17,7 +17,7 @@
 #   0  seconds, from committed summaries          anyone
 #   1  ~2 min, re-runs fleet only                 anyone
 #   2  ~25 min, re-runs both models               anyone with ~10 cores
-#   3  ~7 h, 63-country site files                cluster, restricted inputs
+#   3  ~40 min, 63-country site files              ~10 cores, restricted inputs
 #
 # status: pass | fail | open | undeclared
 #   open        criterion met but something material is unresolved
@@ -129,25 +129,20 @@
   criterion: r > 0.95 and |slope - 1| < 0.10 on both clinical and severe incidence
   tier: 3
   evidence: validations/03-real-settings
-  measured: clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946 -- on the
-    age grid fleet used before it was log-spaced
-  status: open
+  measured: clinical r 0.983 slope 0.996; severe r 0.959 slope 0.929, over
+    450,684 sub-site-months in 1,391 sub-sites of 63 countries
+  status: pass
   note: >
-    STALE, and open rather than pass for that reason. These statistics were
-    measured on the fixed monthly/quarterly/yearly grid; the default is now
-    log-spaced, which moved every tier-2 outcome by 0.5 to 2.5%. The criterion
-    was met when it was measured and nothing suggests it would not be met again
-    -- a near-uniform multiplicative shift moves slope rather than r, and the
-    shift is upward, which takes clinical slope 0.997 toward 1.007 and severe
-    0.946 toward 0.955, both still well inside 0.10. But that is an inference
-    from the direction of the shift, not a measurement.
-    Re-running it needs the malariaverse site files and about seven hours on a
-    cluster, so it cannot be refreshed from this machine. Until someone does,
-    this claim rests on a version of the model that no longer exists.
-    What it tests, when it is current: whether fleet TRACKS the IBM across 1,391
-    sub-sites, not whether it sits on top of it. fleet ran about 9% above on
-    both outcomes, an excess near zero at high transmission with low treatment
-    coverage that grew as either moved.
+    r and slope test whether fleet TRACKS the IBM across the sub-sites, not
+    whether it sits on top of it. It runs 8.2% above on clinical incidence and
+    6.9% above on severe, an excess near zero at high transmission with low
+    treatment coverage that grows as either moves, and that is not explained.
+    Severe is the weaker of the two: its slope, 0.929, is the closest anything
+    in this register comes to the 0.10 tolerance.
+    The comparison is monthly. Averaging to annual means once made a real
+    seasonal-amplitude mismatch look like agreement.
+    Both arms are P. falciparum only. The shipped diagnostics carry vivax rows
+    too, and including them inflates the baseline where pf transmission is low.
 
 - id: population-age-structure
   figure: cmp_core_pop_age.png

@@ -172,6 +172,25 @@ main a:focus {
    the ring and reads as a second, contradicting highlight. */
 .navbar .navbar-toggler:focus { box-shadow: none; }
 
+/* ---- The logo ---------------------------------------------------------- */
+/* The one thing on the page allowed to be loud, which is the job of a logo and
+   the reason the chrome around it is not.
+   The README gives it `width="30%"`, which GitHub draws at about 270px against
+   its content column; pkgdown renders the same README with the logo fixed at
+   120px, so the site's front page would show it at under half the size of the
+   repository's. Matched here.
+   Home page only: elsewhere it is a marker beside the page title, and 270px of
+   hexagon next to every article heading would be shouting. The percentage is a
+   cap for narrow windows, where `.template-home img.logo` outranks pkgdown's
+   own 80px rule and the logo would otherwise eat most of a phone. 36% rather
+   than 34% so that it stays a cap: percentages resolve against the content box
+   of main, 776px rather than 800px, and 34% of that is 264px -- which would
+   quietly beat the 270px it is meant to be defending. */
+.template-home img.logo {
+  width: 270px;
+  max-width: 36%;
+}
+
 /* ---- Page headers ------------------------------------------------------ */
 .page-header {
   border-bottom: 1px solid var(--fc-border);

@@ -5,9 +5,8 @@ every admin-1 × urban/rural sub-site in the malariaverse site files. **1,391
 sub-sites, 450,684 sub-site-months, 2000–2026**, monthly and *P. falciparum*
 only on both sides.
 
-Two claims in the register rest on it, `real-settings-correlation` and
-`real-settings-bias`, and both are marked `tier: 3` because of what reproducing
-them costs.
+One claim in the register rests on it, `real-settings-correlation`, marked
+`tier: 3` because reproducing it needs inputs that cannot be redistributed.
 
 ## What you can and cannot run
 
@@ -102,10 +101,26 @@ not the median of replicates. Read the shape, not the third decimal. Its output
 is written to `results/example_*.csv` and is gitignored — it is a demonstration,
 not evidence.
 
-## Status
+## Running it
 
-This directory is otherwise a stub. `results/` is empty, and the numbers
-`real-settings-correlation` and `real-settings-bias` report were produced by the
-separate site-file harness, not from here. Porting the full run — as
-`run.R` for the cluster sweep and `assess.R` for the measured values — is
-outstanding.
+The sweep runs **fleet only**, and not as an option. The IBM arm is the pre-run
+diagnostic shipped with each site file, so there is no second model to run and
+nothing that needs a cluster: the full 63 countries take about forty minutes on
+ten cores. That is why a fleet-side change can be re-measured here directly.
+
+```bash
+FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
+Rscript validations/03-real-settings/assess.R
+```
+
+`run.R` puts each country in its own subprocess from a worker pool, so a crash
+in one is logged and the rest are unaffected, and it is resumable -- a country
+whose result exists is skipped. `CMP_ONLY=BFA,GHA` runs a subset;
+`FLEET_WORKERS=4` shrinks the pool. Raw per-country output lands in
+`results/raw/` and is not committed. `assess.R` turns it into the two summaries
+that are -- `stats_monthly.csv` and `per_site_monthly.csv` -- plus a provenance
+stamp recording the fleet version and the age grid the numbers were measured
+on, which is the thing that was missing when the previous statistics went stale.
+
+Statistics come from `fleetcheck::agreement()`, the same definition every other
+claim in the register uses.

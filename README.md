@@ -1,4 +1,4 @@
-# fleetcheck
+# fleetcheck <img src="man/figures/logo.png" align="right" width="30%" alt="fleetcheck hex logo: a mosquito trailing light over a network of connected points, with a green tick" />
 
 How closely does [`fleet`](https://github.com/pwinskill/fleet) reproduce
 [`malariasimulation`](https://github.com/mrc-ide/malariasimulation)?
@@ -18,7 +18,7 @@ of plots.
 
 <!-- BEGIN scoreboard -->
 
-**11 claims — 1 failing, 0 untested, 1 open, 9 pass.**
+**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
 
 1. <span class="verdict pass">pass</span> [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
 2. <span class="verdict pass">pass</span> [`clinical-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
@@ -27,7 +27,7 @@ of plots.
 5. <span class="verdict fail">FAIL</span> [`age-profile-clinical`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-clinical) &mdash; The age distribution of clinical incidence tracks the IBM.
 6. <span class="verdict pass">pass</span> [`age-profile-severe`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-severe) &mdash; The age distribution of severe incidence tracks the IBM.
 7. <span class="verdict pass">pass</span> [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact) &mdash; The modelled impact of each intervention matches the IBM.
-8. <span class="verdict open">open</span> [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
+8. <span class="verdict pass">pass</span> [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
 9. <span class="verdict pass">pass</span> [`population-age-structure`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#population-age-structure) &mdash; The population age structure matches the IBM's.
 10. <span class="verdict pass">pass</span> [`speed`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#speed) &mdash; fleet is fast enough to be worth using in place of the IBM.
 11. <span class="verdict pass">pass</span> [`seed-stability`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#seed-stability) &mdash; An undisturbed run holds the equilibrium it was seeded at.
@@ -67,13 +67,15 @@ recorded against every claim rather than mentioned in prose.
 | 0 | seconds | anyone, from committed summaries |
 | 1 | ~2 min | anyone; re-runs `fleet` only |
 | 2 | ~25 min | anyone with about 10 cores |
-| 3 | ~7 h | cluster, and inputs that are not redistributable |
+| 3 | ~40 min | ~10 cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and statistics are
-public; the underlying runs are not.** The code that produced them is here and
-can be read and audited; re-running it needs the malariaverse site files and a
-cluster. A smoke mode covering a handful of sites keeps that path demonstrably
-runnable rather than left to rot.
+public; the site files behind them are not.** The code that produces them is
+here and can be read, audited and run — the constraint is the inputs, not the
+compute. It re-runs `fleet` only, because the IBM arm is the pre-run diagnostic
+shipped with each site file, so forty minutes on ten cores refreshes it.
+`validations/03-real-settings/example-one-site.R` demonstrates the same pipeline
+on a single sub-site for anyone who has one site file.
 
 ## Running it yourself
 

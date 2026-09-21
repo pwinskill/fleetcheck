@@ -80,13 +80,14 @@ recorded against every claim rather than stated once in prose.
 | 0 | seconds | anyone, from the committed summaries |
 | 1 | ~2 min | anyone; re-runs `fleet` only |
 | 2 | ~25 min | anyone with about ten cores |
-| 3 | ~7 h | a cluster, and inputs that are not redistributable |
+| 3 | ~40 min | about ten cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and statistics are
-public; the underlying runs are not.** The code that produces them is in this
-repository and can be read and audited, but re-running it needs the malariaverse
-site files, which are not redistributable, and about seven hours on a cluster.
-Nobody outside the project can repeat it. That is a limitation of this evidence,
-not a property of the result, and
+public; the site files behind them are not.** The constraint is the inputs
+rather than the compute: the sweep re-runs `fleet` only, because the IBM arm is
+the pre-run diagnostic shipped with each site file, so forty minutes on ten
+cores refreshes it. But the site files are not redistributable, so nobody
+outside the project can repeat it. That is a limitation of this evidence, not a
+property of the result, and
 `validations/03-real-settings/example-one-site.R` runs the same pipeline on a
 single sub-site for anyone who has one site file.

@@ -162,9 +162,13 @@ say("seasonal realised EIR: IBM %.1f, fleet %.1f (target %s); annual PfPR IBM %s
 `%||%` <- function(x, y) if (is.null(x)) y else x
 site_f <- file.path(DDIR, "site_snapshot.json")
 if (nzchar(Sys.getenv("CMP_REFRESH_SITES"))) {
-  fs <- list.files(file.path(VDIR(), "results"), pattern = "_compare.rds$", full.names = TRUE)
-  if (!length(fs)) stop("CMP_REFRESH_SITES is set but there are no results in ", VDIR())
-  v <- bind_rows(lapply(fs, readRDS))
+  fs <- list.files(fc_results("03-real-settings", "raw"), pattern = "_compare[.]rds$", full.names = TRUE)
+  if (!length(fs)) stop("CMP_REFRESH_SITES is set but there are no results in ", fc_results("03-real-settings", "raw"), " -- run validations/03-real-settings/run.R first.")
+  ## read_compare() normalises the model columns to fleet_*: files written
+  ## before the blink -> fleet rename carry them as mo_*, and reading raw
+  ## readRDS() here is what broke when the sweep stopped writing both names.
+  source(file.path(ROOT, "validations", "03-real-settings", "sites_lib.R"))
+  v <- bind_rows(lapply(fs, read_compare))
   ## agreement() from the package; see the note in render.R about the two local
   ## copies this replaces. as.list() because the snapshot is JSON, not a frame.
   ag2 <- function(x, y) as.list(agreement(x, y))
@@ -172,24 +176,39 @@ if (nzchar(Sys.getenv("CMP_REFRESH_SITES"))) {
 
   ## Two provenances, and they are not the same one.
   ##
-  ## `run` is the seven-hour comparison itself: the fleet version and the date
-  ## the per-country results were produced. `summarised` is this pass over those
-  ## results, which is seconds and can happen at any later version.
+  ## `run` is the sweep itself: the fleet version and the date the per-country
+  ## results were produced. `summarised` is this pass over those results, which
+  ## is seconds and can happen at any later version. Collapsing them is how the
+  ## snapshot came to claim the wrong thing: one stamp taken here records
+  ## today's fleet while the numbers under it are whatever the sweep produced
+  ## weeks ago.
   ##
-  ## Collapsing them is how the snapshot came to claim the wrong thing: a single
-  ## stamp taken here records today's fleet, while the numbers under it are
-  ## whatever the run produced months ago. `run` is carried forward untouched
-  ## and is only ever changed by hand, when the run is actually repeated.
-  run <- prev$run %||% list(taken = prev$taken, fleet = prev$fleet)
+  ## `run` is read from the sweep's own stamp, which run.R writes beside its
+  ## results. It used to be carried forward here and changed by hand when the
+  ## sweep was repeated, which is a manual step that gets forgotten: the
+  ## snapshot went on reporting fleet 0.0.0.9000 for a run that had been
+  ## repeated twice since.
+  ref <- file.path(fc_results("03-real-settings"), "sites_reference.json")
+  run <- if (file.exists(ref)) {
+    r <- jsonlite::read_json(ref, simplifyVector = TRUE)
+    list(taken = substr(r$generated, 1, 10), fleet = r$fleet,
+         n_age_groups = r$n_age_groups)
+  } else prev$run %||% list(taken = prev$taken, fleet = prev$fleet)
   snap <- list(
                run = run,
                summarised = stamp(files = length(fs)),
-               note = prev$note,
+               note = paste(
+                 "The 63-country site-file comparison. It re-runs fleet only --",
+                 "the IBM arm is the pre-run diagnostic shipped with each site",
+                 "file -- so it is about forty minutes on ten cores, but it needs",
+                 "the malariaverse site files, which are not redistributable.",
+                 "Re-take it with validations/03-real-settings/run.R followed by",
+                 "CMP_REFRESH_SITES=1 on render.R and tables.R."),
                countries = length(unique(v$iso3c)),
                sub_sites = nrow(distinct(v, iso3c, name_1, urban_rural)),
                year_from = min(v$year), year_to = max(v$year),
-               clinical = ag2(v$ms_clinical, v$mo_clinical),
-               severe = ag2(v$ms_severe, v$mo_severe))
+               clinical = ag2(v$ms_clinical, v$fleet_clinical),
+               severe = ag2(v$ms_severe, v$fleet_severe))
   jsonlite::write_json(snap, site_f, auto_unbox = TRUE, pretty = TRUE, digits = 6)
   message("re-took the site snapshot (", snap$countries, " countries)")
 }

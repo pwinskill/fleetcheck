@@ -1,0 +1,12 @@
+{
+  "generated": "2026-09-21T17:36:31+0100",
+  "fleet": "0.0.0.9002",
+  "malariasimulation": "3.0.0",
+  "postie": "1.1.0",
+  "site": "1.0.13",
+  "R": "4.5.2",
+  "n_age_groups": 53,
+  "countries": 63,
+  "sub_sites": 1391,
+  "sub_site_months": 450684
+}
