@@ -13,7 +13,7 @@
 write_register <- function(..., envir = parent.frame()) {
   claims <- list(...)
   tmpl <- list(id = "x", claim = "a claim.", criterion = "a criterion",
-               declared = "retrospective", tier = 1L, evidence = "validations/00",
+               tier = 1L, evidence = "validations/00",
                measured = "a number", status = "pass")
   yml <- vapply(seq_along(claims), function(i) {
     cl <- utils::modifyList(tmpl, claims[[i]])

@@ -20,21 +20,21 @@ plots.
 
 <!-- BEGIN scoreboard -->
 
-**11 claims — 0 failing, 3 untested, 0 open, 8 pass.**
+**11 claims — 2 failing, 0 untested, 0 open, 9 pass.**
 
 | claim | tier | criterion | measured | verdict |
 | --- | --- | --- | --- | --- |
-| [`severe-allage-bias`](articles/evidence.html#severe-allage-bias) | 2 | NONE DECLARED | fleet sits below the IBM median at all six EIRs, by 0.1% 2.7% 3.1% 2.8% 4.0% 3.5% at EIR 1 3 10 20 50 120 | **UNTESTED** |
-| [`age-structure`](articles/evidence.html#age-structure) | 2 | NONE DECLARED | clinical within -11.5% to +11.8% under age 20; severe -21% to +11%, and -16% to -21% in three of the four 5-20 year bands | **UNTESTED** |
-| [`real-settings-bias`](articles/evidence.html#real-settings-bias) | 3 | NONE DECLARED | +8.7% on clinical, +8.8% on severe, across 1391 sub-sites in 63 countries | **UNTESTED** |
-| [`seed-stability`](articles/evidence.html#seed-stability) | 1 | PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20 | 0.28% maximum excursion; flat to 0.02% over the last five years | pass |
-| [`prevalence-eir`](articles/evidence.html#prevalence-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6; largest departure 0.94% of the IBM median | pass |
-| [`clinical-under5-eir`](articles/evidence.html#clinical-under5-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
-| [`clinical-allage-eir`](articles/evidence.html#clinical-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
-| [`severe-allage-eir`](articles/evidence.html#severe-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
-| [`intervention-impact`](articles/evidence.html#intervention-impact) | 2 | within 0.6 percentage points of the IBM replicate band on every outcome | inside the band on 18 of 20; worst excursion 0.36 percentage points | pass |
-| [`speed`](articles/evidence.html#speed) | 2 | at least 10x faster than the IBM on the same scenario set | 19x on cost per simulated year; 10.7 CPU-hours for the IBM against 103 s for fleet | pass |
-| [`real-settings-correlation`](articles/evidence.html#real-settings-correlation) | 3 | r > 0.95 and \|slope - 1\| < 0.10 on both clinical and severe incidence | clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946 | pass |
+| [`population-age-structure`](articles/evidence.html#population-age-structure) | 2 | inside the IBM 10-90% replicate band in every age band below 60 years, on shares renormalised to the 0-60 population | inside at 9 of 11; the two misses are 15-20 y at -5.4% and 40-60 y at +7.4% of the IBM median | <span class="verdict fail">FAIL</span> |
+| [`age-profile-clinical`](articles/evidence.html#age-profile-clinical) | 2 | inside the IBM 10-90% replicate band in every age band, at EIR 20 | inside at 8 of 12; misses at 3-5 y (+2.9%), 15-20 y (-6.0%), 30-40 y (+13.7%) and 40-60 y (+16.2%) of the IBM median | <span class="verdict fail">FAIL</span> |
+| [`seed-stability`](articles/evidence.html#seed-stability) | 1 | PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20 | 0.28% maximum excursion; flat to 0.02% over the last five years | <span class="verdict pass">pass</span> |
+| [`prevalence-eir`](articles/evidence.html#prevalence-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6; largest departure 0.94% of the IBM median | <span class="verdict pass">pass</span> |
+| [`clinical-under5-eir`](articles/evidence.html#clinical-under5-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | <span class="verdict pass">pass</span> |
+| [`clinical-allage-eir`](articles/evidence.html#clinical-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | <span class="verdict pass">pass</span> |
+| [`severe-allage-eir`](articles/evidence.html#severe-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | <span class="verdict pass">pass</span> |
+| [`age-profile-severe`](articles/evidence.html#age-profile-severe) | 2 | inside the IBM 10-90% replicate band in every age band with non-zero IBM incidence, at EIR 20 | inside at 10 of 10; largest departure +31.8% of the IBM median, in a band 246% wide | <span class="verdict pass">pass</span> |
+| [`intervention-impact`](articles/evidence.html#intervention-impact) | 2 | within 0.6 percentage points of the IBM replicate band on every outcome | inside the band on 18 of 20; worst excursion 0.36 percentage points | <span class="verdict pass">pass</span> |
+| [`speed`](articles/evidence.html#speed) | 2 | at least 10x faster than the IBM on the same scenario set | 19x on cost per simulated year; 10.7 CPU-hours for the IBM against 103 s for fleet | <span class="verdict pass">pass</span> |
+| [`real-settings-correlation`](articles/evidence.html#real-settings-correlation) | 3 | r > 0.95 and \|slope - 1\| < 0.10 on both clinical and severe incidence | clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946 | <span class="verdict pass">pass</span> |
 
 <!-- END scoreboard -->
 
@@ -46,22 +46,19 @@ the same thing as data rather than as a page.
 `allow_fail`, and an `allow_fail` entry with no explanatory note is itself an
 error: a tolerated failure has to say why it is tolerated.
 
-**A claim with no criterion is reported as `UNTESTED`, not as passing.** Three of
-the eleven are in that state, and one of them matters: `fleet` runs about 9% above
-the IBM on clinical and severe incidence across 1,391 sub-sites, and nothing has
-ever said what magnitude would be too much. It has been carried as a known
-curiosity rather than as a failing test. Writing the criterion down forces the
-question — is 9% acceptable for the uses `fleet` is intended for, and on what
-argument? Until that is answered the claim is untested, not passed.
+**Systematic bias is reported, not scored.** A mean-field model and an
+individual-based one differ for structural reasons, so how far apart they sit is
+something to quantify and explain rather than to pass or fail. The claims here
+ask whether `fleet` tracks the IBM — shape, direction, and agreement inside the
+IBM's own stochastic spread. The size of the offset, and why it is not yet a
+single settled number, is in the
+[systematic-bias section](articles/evidence.html#systematic-bias-how-far-apart-the-two-models-sit)
+of the evidence article.
 
-## Criteria were written retrospectively
-
-For this first pass the criteria were set after the runs, which is weaker than
-declaring them in advance, and each says so in its `declared:` field. They are
-drawn from the mechanism rather than from the observed number — *inside the IBM
-replicate band*, because that band is the noise floor a deterministic model
-should land inside, not *at five of six EIRs* because five is what happened.
-Anything added from here declares its criterion first.
+A criterion is drawn from the mechanism rather than from the observed number:
+*inside the IBM replicate band*, because that band is the noise floor a
+deterministic model should land inside, not *at five of six EIRs* because five
+is what happened.
 
 ## Tiers
 

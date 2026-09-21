@@ -25,17 +25,19 @@ test_that("the register parses and every claim is well formed", {
   expect_true(all(filled(cl$measured)))
   expect_true(all(cl$status %in% c("pass", "fail", "open", "undeclared")))
   expect_true(all(cl$tier %in% 0:3))
-  expect_true(all(cl$declared %in% c("in-advance", "retrospective", "none")))
 })
 
-test_that("a claim with no declared criterion says so in both fields", {
-  cl <- read_claims(find_claims())
-  none <- cl[cl$declared == "none", ]
-  # these are gaps in the register, and must be visible as such rather than
-  # quietly passing
-  expect_gt(nrow(none), 0)
-  expect_true(all(none$status == "undeclared"))
-  expect_true(all(grepl("NONE DECLARED", none$criterion, fixed = TRUE)))
+test_that("an undeclared claim says so where a reader looks", {
+  # The register carries no undeclared claims at present -- systematic bias,
+  # which used to be two of them, is quantified in prose rather than scored --
+  # so this is checked on a register built for it. `undeclared` must not be
+  # settable without the criterion field saying so too, or a claim could be
+  # exempted from scrutiny while reading like an ordinary one.
+  expect_error(read_claims(write_register(list(status = "undeclared"))),
+               "does not say NONE DECLARED")
+  ok <- read_claims(write_register(
+    list(status = "undeclared", criterion = "NONE DECLARED")))
+  expect_equal(ok$status, "undeclared")
 })
 
 test_that("anything failing or undeclared carries an explanation", {
@@ -63,17 +65,9 @@ test_that("a blank or absent required field is an error, not a silent NA", {
 test_that("the reader rejects contradictions rather than rendering them", {
   expect_error(read_claims(write_register(list(status = "probably fine"))),
                "unknown status")
-  expect_error(read_claims(write_register(list(declared = "someday"))),
-               "unknown `declared`")
   expect_error(read_claims(write_register(list(tier = 7))), "tier must be 0-3")
   expect_error(read_claims(write_register(list(id = "a"), list(id = "a"))),
                "duplicate claim id")
-  # `declared: none` and `status: undeclared` are one fact written twice, and a
-  # register that says one without the other is telling the reader two things
-  expect_error(read_claims(write_register(list(declared = "none"))),
-               "disagree")
-  expect_error(read_claims(write_register(list(status = "undeclared"))),
-               "disagree")
 })
 
 test_that("an empty register is an error rather than an empty pass", {

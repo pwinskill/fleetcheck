@@ -374,35 +374,36 @@ main table:has(thead th:nth-child(5)) > thead > tr > th:last-child {
 main table:has(thead th:empty) > tbody > tr > td:last-child { white-space: normal; }
 main table:has(thead th:empty) { min-width: 100%; }
 
-/* ---- Verdict chips ----------------------------------------------------- */
-/* FAIL and UNTESTED are the two states a reader has to be able to find by
-   scanning, and they are the two the sort deliberately puts at the top. In the
-   register they are the only bold verdicts -- a pass is set plain, because
-   there are eight of them and they are the baseline -- so a bold cell in the
-   last column of the scoreboard is exactly an unresolved verdict, and that is
-   the hook used here.
-   The chip is one neutral treatment for both, not red for one and amber for
-   the other. CSS cannot read the text of a cell, so a severity colour would
-   have to be carried by a class, which would mean emitting HTML into a
-   register that is also read as markdown on GitHub and as plain text in a
-   terminal. The word already says which state it is; the chip only has to make
-   the column scannable, and a chip that means "not a pass" does that without
-   claiming a severity it cannot see.
+/* ---- Verdict lozenges -------------------------------------------------- */
+/* Three states, three treatments. scoreboard_md() emits each verdict as
+   <span class="verdict pass|fail|untested">, because CSS cannot read the text of
+   a cell and a stylesheet needs a hook to colour one.
 
-   Scoped by shape rather than by class: five columns is the scoreboard, and
-   the two-column tables on the evidence page are left alone. */
-main table:has(thead th:nth-child(5)) td:last-child > strong {
+   Colour is never the only signal: each lozenge carries its own word, so the
+   column reads correctly in greyscale, in a terminal, and on GitHub, where the
+   class is stripped and the text remains. The reds and greens are dark enough
+   to pass AA on their own tint, and the pair is separable under the common
+   red-green deficiencies because they differ in lightness as well as hue --
+   but the word is what does the work, not the hue. */
+main .verdict {
   display: inline-block;
-  padding: .12em .55em;
+  padding: .12em .6em;
   border-radius: 999px;
-  border: 1px solid var(--fc-border);
-  background: var(--fc-surface);
-  color: var(--fc-heading);
+  border: 1px solid transparent;
   font-size: .78em;
   font-weight: 600;
   letter-spacing: .04em;
   white-space: nowrap;
 }
+main .verdict.pass     { color: #14624a; background: #e8f5ef; border-color: #b7ddcb; }
+main .verdict.fail     { color: #9b1c1c; background: #fdecec; border-color: #f4b8b8; }
+main .verdict.untested { color: #6b5312; background: #fdf6e3; border-color: #ecd9a0; }
+main .verdict.open     { color: #1e4e79; background: #eaf2fa; border-color: #b8d3ea; }
+
+[data-bs-theme="dark"] main .verdict.pass     { color: #6ee7b7; background: rgba(110,231,183,.12); border-color: rgba(110,231,183,.3); }
+[data-bs-theme="dark"] main .verdict.fail     { color: #fca5a5; background: rgba(252,165,165,.12); border-color: rgba(252,165,165,.3); }
+[data-bs-theme="dark"] main .verdict.untested { color: #fcd34d; background: rgba(252,211,77,.11); border-color: rgba(252,211,77,.28); }
+[data-bs-theme="dark"] main .verdict.open     { color: #93c5fd; background: rgba(147,197,253,.12); border-color: rgba(147,197,253,.3); }
 
 /* ---- Figures ----------------------------------------------------------- */
 main img {

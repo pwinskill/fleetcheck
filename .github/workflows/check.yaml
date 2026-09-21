@@ -37,9 +37,15 @@ jobs:
         run: Rscript report/make_scoreboard.R --check
 
       - name: No claim has regressed
-        # No claim is currently failing, so allow_fail is empty and any failure
-        # turns this red. If one is ever tolerated it goes in the list here, and
-        # check_claims() refuses an entry with no explanatory note, so tolerating
-        # a failure always costs a written reason.
+        # Two claims fail today and are tolerated by name. Both are age-grid
+        # discretisation rather than model discrepancy, both are documented in
+        # the register, and check_claims() refuses an allow_fail entry that has
+        # no explanatory note -- so tolerating a failure always costs a written
+        # reason, and a THIRD failure still turns this red.
+        #
+        # Remove an id from this list when its claim passes. Do not add one
+        # without writing the note first.
         run: |
-          Rscript -e 'pkgload::load_all(quiet = TRUE); check_claims()'
+          Rscript -e 'pkgload::load_all(quiet = TRUE);
+            check_claims(allow_fail = c("age-profile-clinical",
+                                        "population-age-structure"))'

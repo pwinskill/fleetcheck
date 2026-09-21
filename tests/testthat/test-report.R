@@ -51,14 +51,17 @@ test_that("an unresolved verdict is not set in a lighter type than a pass", {
   verdict <- function(id) sub(".*\\| ([^|]*) \\|$", "\\1",
                               grep(paste0("`", id, "`"), md, value = TRUE))
 
-  expect_equal(verdict("broken"), "**FAIL**")
-  expect_equal(verdict("untested"), "**UNTESTED**")
-  expect_equal(verdict("passing"), "pass")
+  expect_equal(verdict("broken"), '<span class="verdict fail">FAIL</span>')
+  expect_equal(verdict("untested"), '<span class="verdict untested">UNTESTED</span>')
+  expect_equal(verdict("passing"), '<span class="verdict pass">pass</span>')
   # and the summary counts in the same order the rows are in
   expect_match(md[1], "^\\*\\*3 claims — 1 failing, 1 untested, 0 open, 1 pass\\.\\*\\*$")
-  # no verdict relies on colour, italics or a symbol alone
-  expect_true(all(grepl("^[A-Za-z*]+$", c(verdict("broken"), verdict("untested"),
-                                          verdict("passing")))))
+  # Colour is a stylesheet's job and must never be the only signal: each verdict
+  # carries its own word, so the column survives greyscale, a terminal, and
+  # GitHub, which strips the class and keeps the text.
+  word <- function(id) sub(".*>([A-Za-z]+)<.*", "\\1", verdict(id))
+  expect_equal(c(word("broken"), word("untested"), word("passing")),
+               c("FAIL", "UNTESTED", "pass"))
 })
 
 test_that("link_prefix distinguishes no link, a same-page anchor and a site URL", {

@@ -12,18 +12,20 @@
 #' @return a character vector of markdown lines.
 #' @export
 scoreboard_md <- function(claims = read_claims(), link_prefix = NULL) {
-  # The weight of a verdict has to agree with the order the rows are in. An
-  # earlier version set `pass` in bold and `undeclared` in grey italic, so the
-  # three untested claims -- the ones the sort deliberately puts at the top,
-  # including a 9% excess across 1,391 sub-sites -- read as footnotes to eight
-  # confident-looking passes. The architecture was right and the typography
-  # undid it. An untested claim is an unresolved state, so it carries a
-  # failure's weight; passing is the baseline and needs none. "UNTESTED" rather
-  # than "no criterion" because the reader's question is what is known about
-  # the claim, not what is absent from the register. Nothing here depends on
-  # colour: the word is the signal.
-  badge <- c(pass = "pass", open = "open", fail = "**FAIL**",
-             undeclared = "**UNTESTED**")
+  # Verdicts are emitted as HTML spans, not as markdown emphasis, because three
+  # states need three visually distinct treatments and CSS cannot read the text
+  # of a cell. A span with a class gives the stylesheet the hook: red for a
+  # failure, green for a pass, grey for an untested claim.
+  #
+  # This degrades rather than breaks where the class is ignored. On GitHub the
+  # markdown renderer strips the attribute but keeps the element and its text,
+  # so the column still reads FAIL / pass / UNTESTED; in a terminal,
+  # scoreboard() prints its own plain-text version and never sees this.
+  badge <- c(
+    pass       = '<span class="verdict pass">pass</span>',
+    open       = '<span class="verdict open">open</span>',
+    fail       = '<span class="verdict fail">FAIL</span>',
+    undeclared = '<span class="verdict untested">UNTESTED</span>')
   # unresolved first: a reader should meet what is wrong before what is right
   ord <- order(match(claims$status, c("fail", "undeclared", "open", "pass")),
                claims$tier)

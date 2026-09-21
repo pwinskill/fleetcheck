@@ -29,24 +29,22 @@ cat(fleetcheck::scoreboard_md(claims, link_prefix = ""), sep = "\n")
 ```
 
 ```{r sections, results = "asis"}
-label <- c(pass = "PASS", open = "OPEN", fail = "FAIL",
-           undeclared = "UNTESTED")
-declared <- c(`in-advance` = "declared before the run",
-              retrospective = "written retrospectively, at first pass",
-              none = "no criterion exists")
+label <- c(pass = '<span class="verdict pass">PASS</span>',
+           open = '<span class="verdict open">OPEN</span>',
+           fail = '<span class="verdict fail">FAIL</span>',
+           undeclared = '<span class="verdict untested">UNTESTED</span>')
 ord <- order(match(claims$status, c("fail", "undeclared", "open", "pass")),
              claims$tier)
 
 for (i in ord) {
   cl <- claims[i, ]
   cat(sprintf("\n## %s {#%s}\n\n", cl$id, cl$id))
-  cat(sprintf("**%s** &mdash; %s\n\n", label[[cl$status]], cl$claim))
+  cat(sprintf("%s &mdash; %s\n\n", label[[cl$status]], cl$claim))
   cat("| | |\n| --- | --- |\n")
   cat(sprintf("| Criterion | %s |\n", fleetcheck::md_cell(cl$criterion)))
   cat(sprintf("| Measured | %s |\n", fleetcheck::md_cell(cl$measured)))
   cat(sprintf("| Tier | %d |\n", cl$tier))
-  cat(sprintf("| Evidence | `%s` |\n", cl$evidence))
-  cat(sprintf("| Criterion was | %s |\n\n", declared[[cl$declared]]))
+  cat(sprintf("| Evidence | `%s` |\n\n", cl$evidence))
   if (nzchar(cl$note)) cat(cl$note, "\n\n")
 
   # Each claim shows the figure that is evidence for THAT claim. The four
@@ -66,6 +64,88 @@ for (i in ord) {
   }
 }
 ```
+
+## Systematic bias: how far apart the two models sit
+
+The claims above ask whether `fleet` **tracks** the IBM — whether it has the
+right shape, the right direction, and lands inside the IBM's own stochastic
+spread. They do not ask whether it sits exactly on top of it, and it does not.
+
+That is expected rather than a defect, and it is not a pass-or-fail question, so
+it is quantified here instead of being carried as a claim with a verdict. A
+mean-field model and an individual-based one differ for a structural reason.
+`fleet` evaluates each immunity-dependent probability **once per stratum, at
+that stratum's mean immunity**; the IBM averages the same function over
+individuals whose exposure histories differ *within* the stratum. Averaging a
+convex function the second way gives the larger answer, so the mean field
+returns the smaller one. Severe disease is the most exposed to this because
+$I_{V0}$ is sixteen times smaller than $I_{C0}$, which puts $\theta$ out on its
+convex tail by age 3 while $\phi$ is still nearly linear.
+
+**The size of that bias is not yet settled, and the register should not pretend
+otherwise.** Two things are in the way.
+
+### It is entangled with the age grid
+
+`fleet` represents age as 52 discrete groups, and within a group everyone
+carries one immunity value. That is a first-order approximation, and for severe
+incidence it is not converged. Refining the grid — each level subdividing every
+band of the default grid, so the comparison-band edges survive — moves all-age
+severe incidence against the IBM median like this:
+
+| age groups | EIR 3 | EIR 20 | EIR 120 |
+| --- | --- | --- | --- |
+| 52 (the default) | −2.7% | −2.8% | −3.5% |
+| 103 | −0.6% | +0.6% | +1.7% |
+| 205 | +0.5% | +2.4% | +4.5% |
+| 409 | **+1.1%** | **+3.3% ** | **+6.0%** |
+
+The convergence is clean and first-order, and the values are the model's rather
+than the solver's — they hold to 1e-13 as the tolerance is tightened from 1e-8
+to 1e-11. **So the deficit visible on the default grid has the opposite sign to
+the converged answer.** Prevalence is converged and does not move; clinical
+incidence behaves like severe but less so.
+
+What that means for a reader: the mean-field argument above sets the direction,
+and a discretisation error of comparable size and opposite sign sits on top of
+it. Quoting either number alone would be misleading. Intervention **impact** —
+the reduction one deployment produces, which is what `fleet` is mostly used for
+— is far less affected, because it is a ratio of two runs that share the grid:
+a four-fold refinement moves it by at most 0.9 percentage points.
+
+### Across real settings it is a range, not a number
+
+The 63-country comparison reports `fleet` about 9% above the IBM on clinical and
+severe incidence across 1,391 sub-sites. That is a mean over a strong structure,
+and the mean on its own is the least useful summary of it. Stratified by the
+IBM's own incidence and by treatment coverage, the ratio of `fleet` to the IBM
+on clinical incidence runs:
+
+| | lowest coverage | → | highest coverage |
+| --- | --- | --- | --- |
+| highest transmission | **1.00** | 1.03 | 1.07 |
+| lowest transmission | 1.16 | 1.54 | 1.70 |
+
+At high transmission with low treatment coverage the two models agree almost
+exactly. The excess grows as transmission falls and as treatment coverage rises,
+and within Burkina Faso alone it runs from 0.96 to 1.08. A single figure of
+"+9%" describes none of those cells well.
+
+A controlled test of the treatment half of that — one setting, one EIR, coverage
+swept from 0 to 0.8 against 20 IBM replicates — found the effect on incidence
+statistically real but **smaller than the IBM's own replicate spread**, so most
+of the observational gradient is other things varying alongside coverage. The
+site-file numbers also predate a `fleet` change that affects exactly the
+time-varying demography every site file carries.
+
+### What to take from this
+
+- `fleet` tracks the IBM's shape well: prevalence agrees to about 1% everywhere
+  tested, and correlation across 1,391 real settings is 0.98 on clinical.
+- On **levels**, expect a few per cent, in a direction and of a size that depends
+  on the age grid and on the setting. Do not quote a single bias figure.
+- On **intervention impact**, the agreement is much tighter than either of the
+  above, and that is the use this matters least for.
 
 ## What "tier" means
 

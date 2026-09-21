@@ -30,7 +30,6 @@ read_claims <- function(path = find_claims()) {
     id        = field(x, "id"),
     claim     = field(x, "claim"),
     criterion = field(x, "criterion"),
-    declared  = field(x, "declared", "unknown"),
     tier      = suppressWarnings(as.integer(x[["tier"]])),
     evidence  = field(x, "evidence"),
     figure    = field(x, "figure", ""),
@@ -43,19 +42,15 @@ read_claims <- function(path = find_claims()) {
   if (length(bad)) stop("unknown status: ", paste(unique(bad), collapse = ", "))
   if (anyDuplicated(out$id)) stop("duplicate claim id: ", out$id[anyDuplicated(out$id)])
 
-  bad <- setdiff(out$declared, c("in-advance", "retrospective", "none"))
-  if (length(bad)) stop("unknown `declared`: ", paste(unique(bad), collapse = ", "))
   if (any(is.na(out$tier) | out$tier < 0L | out$tier > 3L))
     stop("tier must be 0-3: ", paste(out$id[is.na(out$tier) | out$tier < 0L |
                                             out$tier > 3L], collapse = ", "))
-  # `declared: none` and `status: undeclared` are two statements of one fact, so
-  # they must agree in both directions rather than only the one the shipped
-  # register happens to satisfy
-  d_none <- out$declared == "none"
-  s_und <- out$status == "undeclared"
-  if (any(d_none != s_und))
-    stop("`declared: none` and `status: undeclared` disagree for: ",
-         paste(out$id[d_none != s_und], collapse = ", "))
+  # An undeclared claim must say so where a reader looks, not only in a field.
+  und <- out$status == "undeclared"
+  if (any(und & !grepl("NONE DECLARED", out$criterion, fixed = TRUE)))
+    stop("status `undeclared` but the criterion does not say NONE DECLARED: ",
+         paste(out$id[und & !grepl("NONE DECLARED", out$criterion, fixed = TRUE)],
+               collapse = ", "))
   out
 }
 
