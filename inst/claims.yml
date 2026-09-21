@@ -88,7 +88,7 @@
     systematic-bias section of the evidence article.
 
 - id: population-age-structure
-  figure: cmp_core_age.png
+  figure: cmp_core_pop_age.png
   claim: The population age structure matches the IBM's.
   criterion: >
     inside the IBM 10-90% replicate band in every age band below 60 years, on
@@ -108,6 +108,9 @@
     eleven bands.
     The two misses are real and small, and they are worth a criterion that can
     see them rather than an all-ages comparison that cannot.
+    The figure is the age pyramid itself and the band-by-band test, not the age
+    distribution of disease -- those are different quantities and this claim had
+    been illustrated with the wrong one.
 
 - id: age-profile-clinical
   figure: cmp_core_age.png

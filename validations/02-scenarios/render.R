@@ -167,6 +167,93 @@ g <- (panel_age("prev") | panel_age("clin") | panel_age("sev")) + plot_annotatio
 save_fig(g, "core_age", width = 10, height = 5.2)
 
 ## ============================================================================
+## 2a. core_pop_age -- the POPULATION age structure, default demography
+## ============================================================================
+## Evidence for population-age-structure, which is about the denominator and
+## nothing else. It had been illustrated with the age-profile figure, which
+## shows prevalence and incidence by age -- a different quantity entirely.
+##
+## Shares are divided by band width, because the bands are unequal (one year
+## wide in infancy, twenty-five at the top) and a raw share makes a wide band
+## look populous for no reason but its width. So the y axis is the share of the
+## population per year of age, which is comparable across bands and is what an
+## age pyramid actually plots.
+pa <- age %>% filter(scenario == "eir_20")
+.edges <- pa %>% distinct(age_lo, age_hi) %>% arrange(age_lo)
+.labs <- sprintf("%g-%g", .edges$age_lo, .edges$age_hi)
+pa <- pa %>% mutate(dens = 100 * pop_frac / (age_hi - age_lo),
+                    band = factor(sprintf("%g-%g", age_lo, age_hi), levels = .labs))
+pa_i <- pa %>% filter(model == "IBM") %>% group_by(band) %>%
+  summarise(mid = median(dens), lo = quantile(dens, .1), hi = quantile(dens, .9),
+            .groups = "drop") %>% mutate(model = "IBM")
+pa_o <- pa %>% filter(model == "fleet") %>%
+  transmute(band, mid = dens, lo = NA_real_, hi = NA_real_, model = "fleet")
+pa_b <- bind_rows(pa_i, pa_o) %>% mutate(model = factor(model, levels = c("IBM", "fleet")))
+
+## The top band is not a like-for-like comparison and is drawn but marked.
+## fleet's oldest age group is ABSORBING -- open-ended above 80 -- and the
+## renderer assigns an open-ended group wholly to the band containing its lower
+## edge, so fleet's 60-85 bar holds everyone over 80 however old while the IBM's
+## holds 60-85 year olds only.
+top <- levels(pa_b$band)[nlevels(pa_b$band)]
+
+p_struct <- ggplot(pa_b, aes(band, mid, fill = model, colour = model)) +
+  annotate("rect", xmin = nlevels(pa_b$band) - 0.5, xmax = nlevels(pa_b$band) + 0.5,
+           ymin = -Inf, ymax = Inf, fill = MUTED, alpha = 0.10) +
+  geom_col(position = position_dodge(width = 0.72), width = 0.66, linewidth = 0.4) +
+  geom_linerange(aes(ymin = lo, ymax = hi), position = position_dodge(width = 0.72),
+                 colour = INK, linewidth = 0.5, na.rm = TRUE) +
+  scale_fill_manual(values = c(IBM = "#F3B3A9", fleet = "#B3ADEA"), name = NULL) +
+  scale_colour_manual(values = COL, name = NULL) +
+  scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.14))) +
+  ## right-aligned and inside the panel: centred on the band it labels, the
+  ## text is wider than the band and was clipped by the panel edge
+  annotate("text", x = nlevels(pa_b$band) + 0.45, y = Inf, vjust = 1.3, hjust = 1,
+           size = 2.6, lineheight = 0.95, colour = INK2, label = "not\ncomparable") +
+  labs(x = "age band (years)", y = "% of the population per year of age",
+       title = "The age pyramid, band by band") +
+  theme_cmp() +
+  theme(legend.position = "top", legend.justification = "left",
+        axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.85)))
+
+## Panel 2 is the test itself: fleet against the IBM median, with the IBM's own
+## 10-90% replicate range as the tolerance. A bar inside the grey is a band the
+## claim passes; outside it is a miss. Shares are renormalised to the 0-60
+## population first, exactly as the criterion states, so the top band's
+## convention does not move every other bar.
+rn <- function(d) d %>% filter(age_hi <= 60) %>% mutate(share = pop_frac / sum(pop_frac))
+pa_rn_i <- pa %>% filter(model == "IBM") %>% group_by(rep) %>% group_modify(~ rn(.x)) %>%
+  ungroup() %>% group_by(band) %>%
+  summarise(mid = median(share), lo = quantile(share, .1), hi = quantile(share, .9),
+            .groups = "drop")
+pa_rn_o <- pa %>% filter(model == "fleet") %>% rn() %>% select(band, share)
+dev <- pa_rn_o %>% inner_join(pa_rn_i, by = "band") %>%
+  mutate(rel = 100 * (share / mid - 1),
+         tol_lo = 100 * (lo / mid - 1), tol_hi = 100 * (hi / mid - 1),
+         miss = share < lo | share > hi)
+
+p_dev <- ggplot(dev, aes(band, rel)) +
+  geom_rect(aes(xmin = as.numeric(band) - 0.45, xmax = as.numeric(band) + 0.45,
+                ymin = tol_lo, ymax = tol_hi), fill = MUTED, alpha = 0.22) +
+  geom_hline(yintercept = 0, colour = AXIS, linewidth = 0.5) +
+  geom_col(aes(fill = miss), width = 0.5, show.legend = FALSE) +
+  scale_fill_manual(values = c(`FALSE` = COL[["fleet"]], `TRUE` = REF)) +
+  labs(x = "age band (years)", y = "fleet vs the IBM median (%)",
+       title = "Where it sits inside the IBM's own spread",
+       subtitle = cap(sprintf("grey = the IBM 10-90%% replicate range; %d of %d bands inside it",
+                              sum(!dev$miss), nrow(dev)), fig_width = 5)) +
+  theme_cmp() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.85)))
+
+g <- (p_struct | p_dev) +
+  plot_annotation(
+    title = sprintf("Population age structure at EIR %s", EIR_REF),
+    subtitle = cap("The denominator every per-capita rate is divided by, compared on its own terms. Default demography: a constant death rate, so the pyramid is close to exponential.", width = 125),
+    caption = cap("Shares are divided by band width, so bands of unequal width are comparable. The right panel renormalises to the 0-60 population, as the claim's criterion does.", ibm_note),
+    theme = theme_cmp())
+save_fig(g, "core_pop_age", width = 11, height = 5.2)
+
+## ============================================================================
 ## 2b. core_demography -- custom demography: age structure and age-prevalence
 ## ============================================================================
 if ("demography" %in% age$scenario) {
