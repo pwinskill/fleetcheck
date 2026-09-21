@@ -58,24 +58,37 @@ if (!length(todo)) {
 }
 
 W <- suppressWarnings(as.integer(Sys.getenv("FLEET_WORKERS")))
-if (is.na(W) || W < 1L) W <- max(1L, min(10L, parallel::detectCores(logical = TRUE) - 2L))
+if (is.na(W) || W < 1L) {
+  n <- parallel::detectCores(logical = TRUE)   # NA on some platforms
+  W <- if (is.na(n)) 2L else max(1L, min(10L, n - 2L))
+}
 log_msg("pool of %d workers; fleet only, the IBM arm is the shipped diagnostic", W)
 
 t0 <- Sys.time()
 queue <- todo; running <- list(); failed <- character()
-started <- 0L; finished <- 0L
+finished <- 0L
+logfile <- function(nm) file.path(RAW, paste0(nm, ".log"))
 repeat {
   while (length(running) < W && length(queue)) {
-    nm <- queue[1]; queue <- queue[-1]; started <- started + 1L
+    nm <- queue[1]; queue <- queue[-1]
     running[[nm]] <- callr::r_bg(
       function(root, iso, out) {
         source(file.path(root, "validations", "03-real-settings", "sites_lib.R"))
         r <- run_country(iso)
-        if (!is.null(r)) saveRDS(r, out)
+        ## write to a temporary name and rename, so a worker killed mid-write
+        ## cannot leave a truncated file that the resume glob counts as done
+        if (!is.null(r)) { saveRDS(r, paste0(out, ".part")); file.rename(paste0(out, ".part"), out) }
         !is.null(r)
       },
       args = list(root = ROOT, iso = nm, out = file.path(RAW, paste0(nm, "_compare.rds"))),
-      supervise = TRUE, stdout = "|", stderr = "2>&1")
+      ## A FILE, not a pipe. With stdout = "|" nothing drains the pipe, so once
+      ## a worker has written ~64 KB the OS buffer fills, the child blocks
+      ## mid-write, is_alive() stays TRUE and the pool hangs for ever with no
+      ## timeout. A large country runs 100+ sub-sites through five packages that
+      ## message() freely, so that is reachable. A file has no such limit, and it
+      ## also keeps the traceback of a failed country instead of discarding it
+      ## into a pipe nothing reads.
+      supervise = TRUE, stdout = logfile(nm), stderr = "2>&1")
   }
   if (!length(running)) break
   Sys.sleep(0.5)
@@ -86,6 +99,11 @@ repeat {
     finished <- finished + 1L
     if (!ok) failed <- c(failed, nm)
     log_msg("%-4s %-4s  (%d/%d)", nm, if (ok) "ok" else "FAIL", finished, length(todo))
+    ## a failure is only useful with its reason attached
+    if (!ok && file.exists(logfile(nm))) {
+      tail_lines <- utils::tail(readLines(logfile(nm), warn = FALSE), 6L)
+      if (length(tail_lines)) cat(paste0("       | ", tail_lines, "\n"), sep = "")
+    }
     running[[nm]] <- NULL
   }
 }

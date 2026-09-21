@@ -4,6 +4,8 @@
 ##
 ## Expects ROOT to be set by the caller.
 
+`%||%` <- function(x, y) if (is.null(x)) y else x
+
 suppressMessages({
   library(dplyr)
 })
@@ -37,6 +39,11 @@ site_isos <- function() {
            basename(Sys.glob(file.path(d, "calibration_epi_output", "*_diagnostic_epi.rds"))))
   sort(intersect(s, i))
 }
+
+## The solver controls the sweep runs under. Named rather than inline so that
+## assess.R can stamp the tuning the numbers were produced at -- the omission
+## that made the previous tier-3 statistics unreproducible was of this kind.
+TIER3_TUNING <- list(atol = 1e-6, rtol = 1e-6, step_size_max = 10)
 
 load_fleet <- function() {
   if (nzchar(src <- Sys.getenv("FLEET_SRC"))) {
@@ -86,18 +93,29 @@ fleet_monthly_subsite <- function(s1) {
   ## Fast controls first; on a numerical failure -- the ultra-low-EIR fringe
   ## sites are where this happens -- retry once with the conservative default,
   ## then give up on that sub-site rather than failing the country.
+  ##
+  ## A dropped sub-site is SELECTION, not a nuisance: the fringe is exactly
+  ## where fleet departs most from the IBM, so dropping silently biases every
+  ## statistic toward agreement. Which arm each sub-site used, and whether it
+  ## was dropped at all, is recorded on the returned frame so assess.R can
+  ## report the counts rather than leaving them invisible.
   o <- suppressWarnings(tryCatch(
     fleet::run_simulation_ode(timesteps = p$timesteps, parameters = p,
-                              tuning = list(atol = 1e-6, rtol = 1e-6, step_size_max = 10)),
-    error = function(e) tryCatch(
+                              tuning = TIER3_TUNING),
+    error = function(e) NULL))
+  arm <- "primary"
+  if (is.null(o)) {
+    arm <- "retry"
+    o <- suppressWarnings(tryCatch(
       fleet::run_simulation_ode(timesteps = p$timesteps, parameters = p),
-      error = function(e2) NULL)))
+      error = function(e2) NULL))
+  }
   if (is.null(o)) return(NULL)
   suppressWarnings(postie::get_rates(o)) |>
     group_by(year, month) |>
     summarise(fleet_clinical = weighted.mean(clinical, person_days) * 365,
               fleet_severe   = weighted.mean(severe,   person_days) * 365, .groups = "drop") |>
-    mutate(iso3c = s1$sites$iso3c, name_1 = s1$sites$name_1,
+    mutate(arm = arm, iso3c = s1$sites$iso3c, name_1 = s1$sites$name_1,
            urban_rural = s1$sites$urban_rural)
 }
 
@@ -123,18 +141,27 @@ ibm_monthly <- function(iso) {
 run_country <- function(iso) {
   load_fleet()
   sf <- readRDS(file.path(site_dir(), "sites", paste0(iso, ".RDS")))
-  mo <- list()
+  mo <- list(); attempted <- 0L
   for (i in seq_len(nrow(sf$sites))) {
     s1 <- tryCatch(
       site::subset_site(sf, sf$sites[i, c("country", "iso3c", "name_1", "urban_rural")]),
       error = function(e) NULL)
     if (is.null(s1)) next
+    attempted <- attempted + 1L
     r <- tryCatch(fleet_monthly_subsite(s1), error = function(e) NULL)
     if (!is.null(r)) mo[[length(mo) + 1]] <- r
   }
   if (!length(mo)) return(NULL)
-  dplyr::inner_join(ibm_monthly(iso), dplyr::bind_rows(mo),
-                    by = c("iso3c", "name_1", "urban_rural", "year", "month"))
+  ## na_matches = "never": dplyr joins NA to NA by default, so an unnamed
+  ## admin-1 on both arms would match and fan out if more than one exists.
+  out <- dplyr::inner_join(ibm_monthly(iso), dplyr::bind_rows(mo),
+                           by = c("iso3c", "name_1", "urban_rural", "year", "month"),
+                           na_matches = "never")
+  ## how many sub-sites fleet was asked for against how many it returned: the
+  ## difference is the silent selection assess.R has to report
+  attr(out, "attempted") <- attempted
+  attr(out, "solved") <- length(mo)
+  out
 }
 
 ## ---- reading results back -----------------------------------------------------
@@ -152,9 +179,14 @@ read_compare <- function(f) {
 }
 
 read_all_compare <- function(dir) {
+  ## attributes do not survive bind_rows(), so total them first
   files <- list.files(dir, pattern = "_compare[.]rds$", full.names = TRUE)
   if (!length(files))
     stop("no *_compare.rds in ", dir, " -- run validations/03-real-settings/run.R first.",
          call. = FALSE)
-  dplyr::bind_rows(lapply(files, read_compare))
+  parts <- lapply(files, read_compare)
+  out <- dplyr::bind_rows(parts)
+  attr(out, "attempted") <- sum(vapply(parts, function(x) attr(x, "attempted") %||% NA_integer_, integer(1)), na.rm = TRUE)
+  attr(out, "solved") <- sum(vapply(parts, function(x) attr(x, "solved") %||% NA_integer_, integer(1)), na.rm = TRUE)
+  out
 }

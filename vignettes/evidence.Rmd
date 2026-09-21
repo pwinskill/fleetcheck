@@ -32,15 +32,12 @@ cat(fleetcheck::scoreboard_md(claims, link_prefix = ""), sep = "\n")
 ```
 
 ```{r sections, results = "asis"}
-label <- c(pass = '<span class="verdict pass">PASS</span>',
-           open = '<span class="verdict open">OPEN</span>',
-           fail = '<span class="verdict fail">FAIL</span>',
-           undeclared = '<span class="verdict untested">UNTESTED</span>')
-
 for (i in seq_len(nrow(claims))) {   # register order, same as the table above
   cl <- claims[i, ]
   cat(sprintf("\n## %s {#%s}\n\n", cl$id, cl$id))
-  cat(sprintf("%s &mdash; %s\n\n", label[[cl$status]], cl$claim))
+  # verdict_html(), not a second copy of the map: this file used to hold one in
+  # different case, so a claim read `pass` in the table and `PASS` here
+  cat(sprintf("%s &mdash; %s\n\n", fleetcheck::verdict_html(cl$status), cl$claim))
   # The criterion and the measurement are in the table above and are not
   # repeated here. What this line carries is what a reader needs while looking
   # at the figure: what the result cost to produce, and where the code that
@@ -60,7 +57,15 @@ for (i in seq_len(nrow(claims))) {   # register order, same as the table above
     # markdown image into a <figure> and prints the alt text as a caption --
     # which put the claim on screen a second time, directly under the heading
     # that had just said it. Every plot carries its own title and footnote.
-    cat(sprintf('<img src="%s" alt="%s">\n\n', fig,
+    # Width and height are emitted so the browser can reserve the space before
+    # the image arrives. Without them the figures are 29% of the page height
+    # with nothing holding it open, so a deep link to a claim anchor -- which is
+    # how every link from the README and the front page arrives -- jumps to a
+    # position that then moves hundreds of pixels as the images load.
+    # max-width: 100% in the stylesheet still scales them down.
+    d <- tryCatch(dim(png::readPNG(fig)), error = function(e) NULL)
+    cat(sprintf('<img src="%s"%s alt="%s">\n\n', fig,
+                if (length(d) >= 2) sprintf(' width="%d" height="%d"', d[2], d[1]) else "",
                 gsub('"', "&quot;", cl$claim, fixed = TRUE)))
   } else {
     cat("*No figure: this claim is a single number rather than a relationship",

@@ -111,20 +111,29 @@ for (part in c("eq", "age", "monthly", "doy", "timing")) {
   d <- bind(part); f <- file.path(DDIR, paste0("rep_", part, ".csv"))
   if ((length(ONLY) || FLEET_ONLY) && file.exists(f)) {   # partial run: replace just those rows
     old <- read.csv(f, stringsAsFactors = FALSE)
-    drop <- old$scenario %in% names(scenarios) & (if (FLEET_ONLY) old$model == "fleet" else TRUE)
-    old <- old[!drop, ]
-    ## A part can be EMPTY for this run: only the scenarios carrying age-profile
-    ## bands produce `age` rows, so CMP_ONLY=pmc produces none at all. bind()
-    ## then returns NULL, and `d[[nm]] <- NA` on NULL builds a one-row list
-    ## rather than a zero-row frame -- which rbind() appended to the file as a
-    ## row of NAs, under a scenario named NA. One such row is enough to poison
-    ## every subset of the file, because `x[x$scenario == "eir_3", ]` matches it
-    ## as NA and carries it along. Keep the old rows untouched instead.
+    ## `%in%` is NA-safe; `==` is not. An NA in `model` gives TRUE & NA = NA,
+    ## !NA = NA, and `old[NA, ]` MATERIALISES a row of NAs -- the same poison
+    ## row the guard below exists to prevent, regenerated one line above it.
+    ## which() drops NA outright, so a malformed row is discarded rather than
+    ## propagated.
+    drop <- old$scenario %in% names(scenarios) &
+      (if (FLEET_ONLY) !is.na(old$model) & old$model == "fleet" else TRUE)
+    old <- old[which(!drop), ]
+    ## A part can be EMPTY on either side. Only the scenarios carrying
+    ## age-profile bands produce `age` rows, so CMP_ONLY=pmc produces none at
+    ## all and bind() returns NULL; and `old` is empty whenever the run covers
+    ## every scenario a part holds. `x[[nm]] <- NA` on a NULL builds a one-row
+    ## list (which rbind appended as a row of NAs, under a scenario named NA,
+    ## poisoning every subset of the file because `x[x$scenario == "eir_3", ]`
+    ## matches NA and carries it along); on a zero-row frame it errors outright
+    ## with "replacement has 1 row, data has 0" -- AFTER the 25-minute sweep.
     if (is.null(d) || !nrow(d)) {
       d <- old
+    } else if (!nrow(old)) {
+      ## nothing to merge: d already carries every scenario this part holds
     } else {
-      for (nm in setdiff(names(d), names(old))) old[[nm]] <- NA
-      for (nm in setdiff(names(old), names(d))) d[[nm]] <- NA
+      for (nm in setdiff(names(d), names(old))) old[[nm]] <- rep(NA, nrow(old))
+      for (nm in setdiff(names(old), names(d))) d[[nm]] <- rep(NA, nrow(d))
       d <- rbind(old[names(d)], d)
     }
   }
@@ -167,11 +176,27 @@ if (!FLEET_ONLY && !SMOKE) {
            "Re-run the whole set without CMP_ONLY.", call. = FALSE)
     merged <- old$scenario_digests
     for (nm in ONLY) merged[[nm]] <- now$scenario_digests[[nm]]
+    ## SORTED. scenario_digests_each() returns sorted names while `merged` keeps
+    ## the old insertion order with new keys appended, and identical() compares
+    ## list names IN ORDER -- so adding a scenario made `current` FALSE for ever,
+    ## and the aggregate digest could never catch up again.
+    merged <- merged[order(names(merged))]
     current <- identical(lapply(merged, unlist),
                          lapply(as.list(scenario_digests_each()), unname))
     now$scenario_digests <- merged
-    now$scenarios        <- old$scenarios
-    now$generated        <- old$generated   # describes the oldest rows in the file
+    ## derived from the map, not carried over: taking `scenarios` from `old`
+    ## left a scenario present in the digests and absent from the list.
+    now$scenarios        <- sort(names(merged))
+    ## `%||%` is a package internal, not an export, so a runner cannot use it:
+    ## it resolves under pkgload::load_all() and not under library(fleetcheck).
+    keep <- function(a, b) if (is.null(a)) b else a
+    now$generated        <- keep(old$generated, now$generated)  # the oldest rows
+    ## n_rep / population describe rows this run did not touch, so they must not
+    ## silently take today's values: changing N_REP and running CMP_ONLY would
+    ## otherwise restamp the whole file, which is the staleness this file exists
+    ## to catch.
+    now$n_rep            <- keep(old$n_rep, now$n_rep)
+    now$population       <- keep(old$population, now$population)
     if (!current) now$scenario_digest <- old$scenario_digest
   }
   jsonlite::write_json(now, p_ref, auto_unbox = TRUE, pretty = TRUE)

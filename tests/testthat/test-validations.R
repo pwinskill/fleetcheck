@@ -40,25 +40,35 @@ script_symbols <- function(path) {
   list(uses = g, defines = unique(c(assigned, character())))
 }
 
-# which library files a script sources, by the filename in the source() call
+# which library files a script sources, by the filename in the source() call.
+# Comments are excluded: a line like `## afterwards: source("assess.R")` was
+# harvested as a real source() call, and since two files are named assess.R the
+# lookup below then got a length-2 path and died in file(). Hyphens and a
+# leading path are allowed, so `source("_shared/theme.R")` is seen.
 sourced_shared <- function(path) {
   txt <- readLines(path, warn = FALSE)
-  hits <- regmatches(txt, gregexpr('"[A-Za-z0-9_]+\\.R"', txt))
-  on_source <- grepl("source\\(", txt)
-  unique(gsub('"', "", unlist(hits[on_source])))
+  on_source <- grepl("^[^#]*source\\s*\\(", txt)
+  hits <- regmatches(txt, gregexpr('"[^"]*?([A-Za-z0-9_.-]+\\.R)"', txt))
+  unique(basename(gsub('"', "", unlist(hits[on_source]))))
 }
 
-# A LIBRARY is any .R under validations/ that another script source()s.
-# `_shared/` holds the cross-tier ones; `03-real-settings/sites_lib.R` is tier
-# 3's, sourced by its run.R, its assess.R and by the figure renderer. Deriving
-# the set from the source() calls rather than from the directory keeps this
-# right when a library is added outside `_shared/`: it would otherwise be
-# treated as a runner and fail the loads-the-package check below, which a file
-# that is sourced rather than executed has no reason to satisfy.
+# A LIBRARY is any .R under validations/ that is DECLARED one by living in
+# `_shared/` or being named `*_lib.R`, or that another script source()s.
+#
+# The declaration half is load-bearing, and inferring the set purely from the
+# surviving source() calls broke exactly the regression this file exists for.
+# The original bug deleted the source() line from four of five scripts; delete
+# it from the fifth and the library stops being a library, its symbols leave
+# `universe`, and the missing-symbol check below goes quiet. The suite then
+# passes on a set of scripts that cannot run -- one file further along than the
+# bug that prompted this test. A library also reclassifies as a runner and
+# satisfies "loads the package" on its own pkgload call, which loads a
+# DIFFERENT package.
 all_R <- if (have_validations)
   list.files(vdir, "\\.R$", recursive = TRUE, full.names = TRUE) else character()
 sourced_names <- unique(unlist(lapply(all_R, sourced_shared)))
-shared_files <- all_R[basename(all_R) %in% sourced_names]
+is_lib <- grepl("(^|/)_shared/", all_R) | grepl("_lib\\.R$", basename(all_R))
+shared_files <- all_R[is_lib | basename(all_R) %in% sourced_names]
 shared <- stats::setNames(lapply(shared_files, script_symbols),
                           basename(shared_files))
 runners <- setdiff(all_R, shared_files)

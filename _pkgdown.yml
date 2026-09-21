@@ -23,7 +23,7 @@ navbar:
 reference:
 - title: The claims register
   contents: [read_claims, claims_summary, scoreboard, claims_list_md, scoreboard_md,
-             check_claims]
+             verdict_html, check_claims]
 - title: Comparison statistics
   desc: >
     Every statistic quoted anywhere in this project. Defined once and

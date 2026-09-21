@@ -47,11 +47,10 @@ clinical         324    0.997    1.009       3.7%
 severe           324    0.903    0.884       8.5%
 ```
 
-That severe bias of +8.5% is worth noticing: the full 1,391-sub-site run reports
-+8.8%, and BFA's own median across its sub-sites is +8.9%. One sub-site against
-one IBM replicate landing that close is a sanity check on the pipeline, not
-independent evidence -- the same method on the same kind of input should give
-the same kind of answer, and it does.
+One sub-site against one IBM replicate is a check that the pipeline runs, not
+evidence about the model. Do not read a single sub-site's bias against the
+sweep's: the excess varies by two orders of magnitude with transmission
+intensity, so whether one site looks close says nothing.
 
 ## The flow, step by step
 
@@ -89,12 +88,16 @@ severe count.
 
 ## How the example differs from the production run
 
-One deliberate difference. The real sweep compares `fleet` against **pre-run**
+Two deliberate differences. The real sweep compares `fleet` against **pre-run**
 IBM diagnostics shipped with the site files
-(`calibration_epi_output/<ISO>_diagnostic_epi.rds`) — re-running the IBM for
-1,391 sub-sites is the seven hours. The example runs the IBM live on the same
-parameter list instead, so it needs nothing but the one site file and shows both
-halves of the comparison actually being produced.
+(`calibration_epi_output/<ISO>_diagnostic_epi.rds`); re-running the IBM for
+1,391 sub-sites is what would need a cluster, and nothing here does it. The
+example runs the IBM live on the same parameter list instead, so it needs
+nothing but the one site file and shows both halves actually being produced.
+
+The example also runs at `fleet`'s default solver tolerances, where the sweep
+uses `atol = rtol = 1e-6, step_size_max = 10`. So a sub-site's numbers here will
+not match `results/per_site_monthly.csv` in its last digits.
 
 The consequence: the example is **one stochastic realisation at 5,000 people**,
 not the median of replicates. Read the shape, not the third decimal. Its output

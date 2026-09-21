@@ -13,6 +13,22 @@ VERDICT <- c(
   fail       = '<span class="verdict fail">FAIL</span>',
   undeclared = '<span class="verdict untested">UNTESTED</span>')
 
+#' A verdict as its HTML lozenge
+#'
+#' Exported so the evidence article does not keep a second copy of the map. It
+#' did, in different case, so the same claim read `pass` in the scoreboard and
+#' `PASS` in its own section -- and the quiet-pass / shouted-FAIL contrast, which
+#' is how the table shows what needs attention, was flattened in the sections.
+#'
+#' @param status one of `pass`, `open`, `fail`, `undeclared`.
+#' @return one span per status.
+#' @export
+verdict_html <- function(status) {
+  bad <- setdiff(status, names(VERDICT))
+  if (length(bad)) stop("unknown status: ", paste(unique(bad), collapse = ", "))
+  unname(VERDICT[status])
+}
+
 # One headline, used by every rendered form so they cannot come to differ.
 headline_md <- function(claims) {
   s <- claims_summary(claims)

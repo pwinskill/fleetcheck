@@ -18,13 +18,28 @@ while (!file.exists(file.path(ROOT, "DESCRIPTION")) && dirname(ROOT) != ROOT)
 suppressMessages(pkgload::load_all(ROOT, quiet = TRUE))
 source(file.path(ROOT, "validations", "03-real-settings", "sites_lib.R"))
 
-DDIR <- file.path(ROOT, "validations", "03-real-settings", "results")
+DDIR <- fc_results("03-real-settings")
 d <- read_all_compare(file.path(DDIR, "raw"))
+attempted <- attr(d, "attempted"); solved <- attr(d, "solved")
 d$site <- paste(d$iso3c, d$name_1, d$urban_rural, sep = "_")
+## The same finite filter agreement() applies, applied once here, so the
+## per-site table and the headline count the same rows. They did not: this file
+## used raw cor()/mean()/n() while agreement() drops non-finite pairs first.
+d <- d[is.finite(d$ms_clinical) & is.finite(d$fleet_clinical) &
+         is.finite(d$ms_severe) & is.finite(d$fleet_severe), ]
 
 cat(sprintf("%d countries, %d sub-sites, %s sub-site-months\n",
             length(unique(d$iso3c)), length(unique(d$site)),
             format(nrow(d), big.mark = ",")))
+## Sub-sites fleet could not solve are SELECTION, not noise: the ultra-low-EIR
+## fringe is where fleet departs most from the IBM, so dropping them silently
+## biases every statistic below toward agreement. Say how many.
+if (!is.na(attempted) && attempted > 0L)
+  cat(sprintf("fleet solved %d of %d sub-sites attempted (%d dropped)%s\n",
+              solved, attempted, attempted - solved,
+              if ("arm" %in% names(d))
+                sprintf("; %d sub-site-months came from the retry arm",
+                        sum(d$arm == "retry", na.rm = TRUE)) else ""))
 
 ## ---- the statistics the register quotes ---------------------------------------
 stats <- rbind(
@@ -52,6 +67,9 @@ stamp <- list(
   site = as.character(utils::packageVersion("site")),
   R = paste0(R.version$major, ".", R.version$minor),
   n_age_groups = length(fleet::default_age_lower()),
+  ## the solver controls too: a statistic is not reproducible without them
+  tuning = TIER3_TUNING,
+  sub_sites_attempted = attempted, sub_sites_solved = solved,
   countries = length(unique(d$iso3c)), sub_sites = length(unique(d$site)),
   sub_site_months = nrow(d))
 jsonlite::write_json(stamp, file.path(DDIR, "sites_reference.json"),
@@ -65,7 +83,8 @@ cat(sprintf("  %-9s %8s %8s %9s %9s\n", "", "r", "slope", "rel bias", "verdict")
 ok <- TRUE
 for (i in seq_len(nrow(stats))) {
   s <- stats[i, ]
-  good <- is.finite(s$cor) && s$cor > R_MIN && abs(s$slope - 1) < SLOPE_TOL
+  good <- is.finite(s$cor) && is.finite(s$slope) &&
+    s$cor > R_MIN && abs(s$slope - 1) < SLOPE_TOL
   ok <- ok && good
   cat(sprintf("  %-9s %8.3f %8.3f %8.1f%% %9s\n", s$metric, s$cor, s$slope,
               100 * s$rel_bias, if (good) "ok" else "OUTSIDE"))
