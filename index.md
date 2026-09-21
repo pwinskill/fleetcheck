@@ -257,20 +257,30 @@ Rscript -e 'pkgdown::build_site()'
 | `FLEET_LIB` | an extra library path, prepended — for installs that miss `R_LIBS_USER` |
 | `FLEETCHECK_ROOT` | the checkout root, for a cluster job that runs from elsewhere |
 
-### What you cannot run here
+### What you need inputs for
 
-**Tier 3, the 63-country site-file comparison, is not reproducible from
-this repository.** It needs the malariaverse site files, which are not
-redistributable, and about seven hours on a cluster. Its figures and
-statistics are public and committed here; the runs behind them are not.
-`claims.yml` marks those claims `tier: 3` so the cost is attached to the
-claim rather than buried in prose.
+**Tier 3, the 63-country site-file comparison, runs from this repository
+— but only if you have the malariaverse site files, which are not
+redistributable.** The constraint is the inputs, not the compute: the
+sweep re-runs `fleet` alone, because the IBM arm is the pre-run
+diagnostic shipped with each site file, so it is about forty minutes on
+ten cores.
 
-You can still run the *method*, on any one sub-site you have a site file
-for. `validations/03-real-settings/example-one-site.R` is the same
-pipeline — subset the site file, convert ITN usage to a distribution,
-build the parameter list, seed both models off it, reduce both through
-`postie`, and score with the same
+``` bash
+FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
+Rscript validations/03-real-settings/assess.R
+```
+
+Its figures and statistics are public and committed here; the runs
+behind them are not. `claims.yml` marks those claims `tier: 3` so the
+cost is attached to the claim rather than buried in prose.
+
+Without the site files you can still run the *method*, on any one
+sub-site you have a file for.
+`validations/03-real-settings/example-one-site.R` is the same pipeline —
+subset the site file, convert ITN usage to a distribution, build the
+parameter list, seed both models off it, reduce both through `postie`,
+and score with the same
 [`agreement()`](https://pwinskill.github.io/fleetcheck/reference/agreement.md)
 the register uses — applied to a single sub-site in about two minutes:
 
@@ -278,19 +288,15 @@ the register uses — applied to a single sub-site in about two minutes:
 FLEET_VALIDATE=/path/to/fleet_validate   Rscript validations/03-real-settings/example-one-site.R BFA
 ```
 
-On Burkina Faso’s Sahel rural sub-site that reports `r` 0.997 and +3.7%
-relative bias on clinical, and `r` 0.903 and +8.5% on severe — against
-the +8.8% severe excess the full run reports.
 `validations/03-real-settings/README.md` walks through each step and
-says which details are load-bearing.
+says which details are load-bearing. Read the shape of the output rather
+than its third decimal: one sub-site against one IBM replicate is a
+check that the pipeline runs, not evidence about the model.
 
 Tier 2, in `validations/02-scenarios/`, is complete, and is what steps 4
 to 6 exercise. `validations/01-seed-stability/` is still a **stub** — a
-README and an empty `results/` — and `validations/03-real-settings/` has
-the worked example above but not the cluster sweep itself. The numbers
-those two tiers’ claims report were produced by the original harness in
-the `fleet` repository and by the separate site-file checkout; porting
-them here is outstanding work.
+README and an empty `results/` — so `seed-stability` is the one claim in
+the register whose measured value no script here reproduces.
 
 ## Layout
 
@@ -307,18 +313,19 @@ and both were wrong. One definition, imported everywhere, tested.
 `R/provenance.R` stamps every result with the `fleet` and
 `malariasimulation` versions, the commits they were installed from, the
 R version and the date, and holds the rounding rule the stored summaries
-are written under. It exists because the provenance used to be inverted
-— the 25-minute comparison recorded the IBM version, the replicate count
-and a digest of the scenarios, while the seven-hour run that nobody can
-repeat recorded only a date. The tier that cannot be re-run is the tier
-that most needs to say what made it.
+are written under. It exists because the provenance used to be inverted:
+the 25-minute comparison recorded the IBM version, the replicate count
+and a digest of the scenarios, while the site-file sweep — which needs
+inputs nobody outside the project has — recorded only a date. The tier
+that is hardest to re-run is the one that most needs to say what made
+it, and its stamp now carries the `fleet` version and the age grid too.
 
 ## Status
 
 The register, the tested metrics layer and **tier 2** are in place: the
 scenario comparison in `validations/02-scenarios/` runs end to end, has
-a two-minute smoke path, and is what CI checks. Tier 3 has a runnable
-worked example for a single sub-site but not the cluster sweep; tier 1
-is still a stub. The numbers those two tiers’ claims report come from
-the original harness in the `fleet` repository and from the separate
-site-file checkout, and porting them is the outstanding work.
+a two-minute smoke path, and is what CI checks. **Tier 3** runs from
+here too — `run.R`, `assess.R` and `diagnose.R` — given the site files
+it cannot ship. Tier 1 is still a stub, so `seed-stability` is the one
+claim in the register whose measured value no script here reproduces;
+porting it is the outstanding work.

@@ -48,7 +48,7 @@ An object of class `numeric` of length 6.
 
 An object of class `numeric` of length 1.
 
-An object of class `character` of length 5.
+An object of class `character` of length 6.
 
 An object of class `character` of length 5.
 

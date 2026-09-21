@@ -12,6 +12,8 @@
   : The register as a numbered list
 - [`scoreboard_md()`](https://pwinskill.github.io/fleetcheck/reference/scoreboard_md.md)
   : The register as a markdown table
+- [`verdict_html()`](https://pwinskill.github.io/fleetcheck/reference/verdict_html.md)
+  : A verdict as its HTML lozenge
 - [`check_claims()`](https://pwinskill.github.io/fleetcheck/reference/check_claims.md)
   : Fail if the register has regressed
 
