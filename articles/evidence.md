@@ -82,18 +82,16 @@ FAIL — The age distribution of clinical incidence tracks the IBM.
 
 tier 2 · `validations/02-scenarios`
 
-One band is outside, 40-60 y at EIR 20, by 7.7%. It holds 1.7% of
-clinical episodes. At EIR 3 and EIR 120 every band is inside.
-Log-spacing the age grid is what moved this, from 28 of 36 bands to 35.
-What did not work was simply using more groups: refining the old grid
-uniformly took it to 30 of 36 and then back to 27 at 409 age groups,
-because the departure converges rather than vanishing. Where the groups
-are placed mattered, and the count did not. The remaining gap is the
-mean-field approximation, not discretisation. fleet evaluates each
+One band is outside: 40-60 y at EIR 20, by 7.7%, holding 1.7% of
+clinical episodes. At EIR 3 and EIR 120 every band is inside. What is
+left is not discretisation, and no age grid removes it. Refining the
+grid drives the departure to a limit rather than to zero – past about
+200 age groups it grows again – because fleet evaluates each
 immunity-dependent probability once per age group, at that group’s mean
 immunity, and averaging a convex function that way is biased however
-finely age is resolved. The claim is carried as a failure while one band
-is outside, rather than widening the criterion to fit.
+finely age is resolved. Where the groups are placed matters more than
+how many there are. The claim is carried as a failure while a band is
+outside, rather than widening the criterion to fit.
 
 ![The age distribution of clinical incidence tracks the
 IBM.](cmp_age_clin.png)
@@ -117,22 +115,17 @@ PASS — The modelled impact of each intervention matches the IBM.
 
 tier 2 · `validations/02-scenarios`
 
-Impact is a ratio of two runs that share the age grid, so grid bias
-largely divides out – and replacing the grid outright is the sharpest
-test of that available. Log-spacing it moved absolute incidence on every
-scenario and left the worst excursion here at 0.36 percentage points,
-the same value to two decimals as before. Perennial chemoprevention is
-included because it is the one intervention whose DELIVERY the two
-models disagree about by construction. The IBM doses each child on
-reaching a dose age; fleet has no individuals to trigger on and
-approximates that as monthly pulses over a 30-day band at each dose age.
-Over the three years after deployment the two agree on all four
-outcomes. Note this is a three-year window, and for chemoprevention that
-is the protective phase: measured instead at equilibrium 15 years on,
-fleet has all-age severe incidence 2% HIGHER with PMC than without, as
-protected infants reach older ages with less immunity. Whether the IBM
-produces the same rebound is not tested here and would need a longer
-horizon.
+Impact is a ratio of two runs sharing an age grid, so grid
+discretisation largely divides out: a wholesale change of the grid
+leaves the worst excursion here unchanged. Perennial chemoprevention is
+the one intervention whose delivery the two models cannot share. The IBM
+doses each child on reaching a dose age; fleet, having no individuals to
+trigger on, approximates that as monthly pulses over a 30-day band at
+each dose age. The window is the three years after deployment, which for
+chemoprevention is the protective phase. At equilibrium fifteen years
+on, fleet has all-age severe incidence 2% higher with PMC than without,
+as protected infants reach older ages with less immunity. That rebound
+is outside what this claim tests.
 
 ![The modelled impact of each intervention matches the
 IBM.](cmp_int_impact.png)

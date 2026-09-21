@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   evidence: evidence.html
   methods: methods.html
-last_built: 2026-09-21T15:02Z
+last_built: 2026-09-21T15:18Z
 urls:
   reference: https://pwinskill.github.io/fleetcheck/reference
   article: https://pwinskill.github.io/fleetcheck/articles
