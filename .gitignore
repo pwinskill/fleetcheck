@@ -10,4 +10,7 @@ validations/*/results/raw/
 validations/*/results/plots/
 # CMP_SMOKE=1 output: a throwaway end-to-end check, not evidence
 validations/*/results/smoke/
+# example-one-site.R output: a demonstration of the tier-3 flow, not evidence.
+# The register's tier-3 claims come from 1,391 sub-sites, not from one.
+validations/03-real-settings/results/example_*.csv
 *.rds

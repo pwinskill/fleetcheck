@@ -228,11 +228,28 @@ are public and committed here; the runs behind them are not. `claims.yml` marks
 those claims `tier: 3` so the cost is attached to the claim rather than buried in
 prose.
 
-`validations/01-seed-stability/` and `validations/03-real-settings/` are
-currently **stubs** — a README and an empty `results/`. The numbers those claims
+You can still run the *method*, on any one sub-site you have a site file for.
+`validations/03-real-settings/example-one-site.R` is the same pipeline — subset
+the site file, convert ITN usage to a distribution, build the parameter list,
+seed both models off it, reduce both through `postie`, and score with the same
+`agreement()` the register uses — applied to a single sub-site in about two
+minutes:
+
+```bash
+FLEET_VALIDATE=/path/to/fleet_validate   Rscript validations/03-real-settings/example-one-site.R BFA
+```
+
+On Burkina Faso's Sahel rural sub-site that reports `r` 0.997 and +3.7% relative
+bias on clinical, and `r` 0.903 and +8.5% on severe — against the +8.8% severe
+excess the full run reports. `validations/03-real-settings/README.md` walks
+through each step and says which details are load-bearing.
+
+Tier 2, in `validations/02-scenarios/`, is complete, and is what steps 4 to 6
+exercise. `validations/01-seed-stability/` is still a **stub** — a README and an
+empty `results/` — and `validations/03-real-settings/` has the worked example
+above but not the cluster sweep itself. The numbers those two tiers' claims
 report were produced by the original harness in the `fleet` repository and by the
-separate site-file checkout, and porting them here is outstanding work. Tier 2,
-in `validations/02-scenarios/`, is complete and is what steps 4 to 6 exercise.
+separate site-file checkout; porting them here is outstanding work.
 
 ## Layout
 
