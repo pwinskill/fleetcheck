@@ -1,6 +1,6 @@
 # Indicative run times for fleet, for the table in README.md (issue #1).
 #
-#   Rscript comparison/benchmark.R          # ~6 min; writes comparison/data/timing.csv
+#   Rscript validations/02-scenarios/benchmark.R          # ~6 min; writes validations/02-scenarios/results/timing.csv
 #                                           # and prints the markdown tables
 #
 # Three questions a user actually has:
@@ -187,4 +187,4 @@ st <- timing[timing$table == "settings", c("settings", "seconds")]
 md(data.frame(Settings = st$settings, Seconds = st$seconds))
 
 cat("machine: ", R.version$version.string, " / ", R.version$platform, "\n", sep = "")
-log_msg("wrote comparison/data/timing.csv (%d rows)", nrow(timing))
+log_msg("wrote validations/02-scenarios/results/timing.csv (%d rows)", nrow(timing))

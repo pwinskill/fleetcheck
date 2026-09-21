@@ -1,7 +1,7 @@
 # The numbers quoted in vignettes/comparison.Rmd, computed from the saved CSVs.
 #
-#   Rscript comparison/summary_tables.R          # writes comparison/data/tables.md
-#   CMP_SMOKE=1 Rscript comparison/summary_tables.R
+#   Rscript validations/02-scenarios/tables.R          # writes validations/02-scenarios/results/tables.md
+#   CMP_SMOKE=1 Rscript validations/02-scenarios/tables.R
 #
 # Markdown tables + one-line statistics, so the article's figures and its prose
 # come from the same data. Paste from tables.md; do not hand-edit numbers.

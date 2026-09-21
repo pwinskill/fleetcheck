@@ -1,7 +1,7 @@
 # Build every comparison figure from the saved CSVs (no model runs).
 #
-#   Rscript comparison/render_figures.R                 # figures -> man/figures + vignettes
-#   CMP_SMOKE=1 Rscript comparison/render_figures.R     # from data/smoke -> comparison/plots/smoke
+#   Rscript validations/02-scenarios/render.R                 # figures -> man/figures + vignettes
+#   CMP_SMOKE=1 Rscript validations/02-scenarios/render.R     # from validations/02-scenarios/results/smoke -> validations/02-scenarios/results/plots/smoke
 #
 # Writes cmp_*.png. All visual decisions live in theme.R; this file only shapes
 # data and composes panels. Figures:
@@ -244,8 +244,8 @@ save_fig(g, "core_seasonal", width = 10, height = 5)
 ## but leaves no record of the fact. Re-draw it deliberately, alongside re-taking
 ## the statistics in summary_tables.R:
 ##
-##   CMP_REFRESH_SITES=1 Rscript comparison/render_figures.R
-##   CMP_REFRESH_SITES=1 Rscript comparison/summary_tables.R
+##   CMP_REFRESH_SITES=1 Rscript validations/02-scenarios/render.R
+##   CMP_REFRESH_SITES=1 Rscript validations/02-scenarios/tables.R
 vdir <- VDIR()
 if (!nzchar(Sys.getenv("CMP_REFRESH_SITES"))) {
   message("core_sites: keeping the committed snapshot ",
@@ -492,7 +492,7 @@ g <- ggplot(both, aes(y = scenario)) +
 save_fig(g, "int_impact", width = 11, height = 8.6)
 
 ## ---- console summary ---------------------------------------------------------
-cat("figures written", if (SMOKE) "to comparison/plots/smoke" else "to man/figures and vignettes", "\n\n")
+cat("figures written", if (SMOKE) "to validations/02-scenarios/results/plots/smoke" else "to man/figures and vignettes", "\n\n")
 print(both %>% select(scenario, metric, model, mid) %>% mutate(mid = round(mid, 3)) %>%
         pivot_wider(names_from = model, values_from = mid) %>% mutate(scenario = sub("\n.*", "", scenario)), n = 20)
 cat("\nrealised EIR (final 3 years):\n")

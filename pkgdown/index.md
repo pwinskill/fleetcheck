@@ -79,6 +79,161 @@ can be read and audited; re-running it needs the malariaverse site files and a
 cluster. A smoke mode covering a handful of sites keeps that path demonstrably
 runnable rather than left to rot.
 
+## Running it yourself
+
+Every command below is run **from the root of this repository**. No script has a
+hardcoded path — each finds the checkout by walking up to the `DESCRIPTION` — so
+they work from any working directory and on anyone's machine.
+
+Work down the list. Each step is useful on its own, and the later ones cost more.
+
+### 1. Get the code
+
+```bash
+git clone https://github.com/pwinskill/fleetcheck.git
+cd fleetcheck
+```
+
+### 2. Install what you need for the tier you want
+
+**Tier 0 only** (read the verdicts, check the register is consistent — no models
+run, a few seconds):
+
+```r
+install.packages(c("yaml", "pkgload", "devtools"))
+```
+
+**Tier 1 and 2** (re-run the models) additionally need `fleet`, the IBM, and the
+output post-processor. `fleet` pulls `odin2`, `dust2`, `monty` and
+`malariaEquilibrium` with it, and compiles C++, so allow some time:
+
+```r
+install.packages("remotes")
+remotes::install_github("pwinskill/fleet")
+remotes::install_github("mrc-ide/malariasimulation")
+remotes::install_github("mrc-ide/postie")
+remotes::install_deps(dependencies = TRUE)
+```
+
+### 3. Read the verdicts without running anything — tier 0, seconds
+
+```bash
+Rscript -e 'pkgload::load_all(quiet = TRUE); writeLines(scoreboard())'
+```
+
+This prints the same table as the top of this page, straight from `claims.yml`.
+To check the register is internally consistent and that nothing has regressed —
+which is what CI does:
+
+```bash
+Rscript -e 'devtools::test()'
+Rscript report/make_scoreboard.R --check
+Rscript -e 'pkgload::load_all(quiet = TRUE); check_claims()'
+```
+
+### 4. Check whether a change to `fleet` has moved anything — tier 1, ~2 min
+
+**This is the one to run often.** It re-runs `fleet` alone against the committed
+IBM rows. The IBM does not depend on `fleet`, so its rows stay valid for any
+`fleet`-side change and there is no reason to spend 25 minutes re-running it.
+
+```bash
+Rscript validations/02-scenarios/assess.R
+```
+
+It answers two questions separately, because they mean different things. *Did
+anything move?* — `fleet` now against `fleet`'s committed rows. *Is the match
+still good?* — `fleet` now against the IBM medians and 10–90% bands, at the
+thresholds the claims rest on. Only the second fails the run by default. It
+exits non-zero on drift, so it works in CI.
+
+```bash
+CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R   # a subset, ~20 s
+CMP_STRICT=1 Rscript validations/02-scenarios/assess.R          # also fail if ANY number moved
+```
+
+### 5. Re-run the whole comparison — tier 2, ~25 min on 10 cores
+
+Try the smoke path first. It runs every scenario end to end at a 4-year horizon
+with one replicate, in about two minutes, and writes to
+`validations/02-scenarios/results/smoke/` so it cannot touch the committed
+results:
+
+```bash
+CMP_SMOKE=1 Rscript validations/02-scenarios/run.R
+```
+
+Then the real thing. It runs the IBM `N_REP` times per scenario on a PSOCK
+cluster (`N_WORKERS`, set at the top of `run.R`) and re-stamps
+`ibm_reference.json`:
+
+```bash
+Rscript validations/02-scenarios/run.R
+```
+
+If you changed `fleet` and only need `fleet`'s rows refreshed, keep the IBM's:
+
+```bash
+CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # ~1 min
+```
+
+### 6. Redraw the figures and tables — seconds
+
+```bash
+Rscript validations/02-scenarios/render.R   # cmp_*.png -> man/figures/ and vignettes/
+Rscript validations/02-scenarios/tables.R   # -> validations/02-scenarios/results/tables.md
+```
+
+`render.R` does not redraw the 63-country site-file panel: that is a snapshot
+from a run this repository cannot repeat (see tier 3 below). `CMP_REFRESH_SITES=1`
+re-takes it, and needs the validation results present.
+
+### 7. Update the register, then regenerate every rendered copy of it
+
+Edit `claims.yml` — the criterion, the measured value, the verdict — and then:
+
+```bash
+Rscript report/make_scoreboard.R
+```
+
+That rewrites the scoreboard in `README.md`, in `pkgdown/index.md` and in
+`inst/claims.yml` from the register. Never edit those tables by hand: CI runs the
+same script with `--check` and fails if they do not match.
+
+### 8. Rebuild the site
+
+```bash
+Rscript -e 'pkgdown::build_site()'
+```
+
+### What the environment variables do
+
+| variable | what it does |
+| --- | --- |
+| `CMP_SMOKE=1` | 4-year, 1-replicate end-to-end check into `results/smoke/` |
+| `CMP_ONLY=a,b` | run or check only these scenarios, merging into the existing CSVs |
+| `CMP_FLEET_ONLY=1` | re-run `fleet`'s rows only, keeping the committed IBM rows |
+| `CMP_STRICT=1` | make `assess.R` fail on *any* movement, not just on lost agreement |
+| `CMP_REFRESH_SITES=1` | re-take the tier-3 site snapshot from a local validation checkout |
+| `FLEET_VALIDATE` | where those site-file results live (default: `../fleet_validate`) |
+| `FLEET_LIB` | an extra library path, prepended — for installs that miss `R_LIBS_USER` |
+| `FLEETCHECK_ROOT` | the checkout root, for a cluster job that runs from elsewhere |
+
+### What you cannot run here
+
+**Tier 3, the 63-country site-file comparison, is not reproducible from this
+repository.** It needs the malariaverse site files, which are not
+redistributable, and about seven hours on a cluster. Its figures and statistics
+are public and committed here; the runs behind them are not. `claims.yml` marks
+those claims `tier: 3` so the cost is attached to the claim rather than buried in
+prose.
+
+`validations/01-seed-stability/` and `validations/03-real-settings/` are
+currently **stubs** — a README and an empty `results/`. The numbers those claims
+report were produced by the original harness in the `fleet` repository and by the
+separate site-file checkout, and porting them here is outstanding work. Tier 2,
+in `validations/02-scenarios/`, is complete and is what steps 4 to 6 exercise.
+
 ## Layout
 
 ```
@@ -102,5 +257,9 @@ is the tier that most needs to say what made it.
 
 ## Status
 
-Skeleton. The register and the tested metrics layer are in place; the validation
-runs are being ported from `fleet/comparison/` and the site-file harness.
+The register, the tested metrics layer and **tier 2** are in place: the scenario
+comparison in `validations/02-scenarios/` runs end to end, has a two-minute
+smoke path, and is what CI checks. Tiers 1 and 3 are stubs — a README and an
+empty `results/` — and the numbers their claims report still come from the
+original harness in the `fleet` repository and from the separate site-file
+checkout. Porting those is the outstanding work.

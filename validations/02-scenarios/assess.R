@@ -1,8 +1,8 @@
 # Has a change moved fleet, and is it still matching the IBM?
 #
-#   Rscript comparison/check_drift.R              # ~2 min
-#   CMP_ONLY=eir_20,smc Rscript comparison/check_drift.R    # a subset, faster
-#   CMP_STRICT=1 Rscript comparison/check_drift.R # also fail if ANY number moved
+#   Rscript validations/02-scenarios/assess.R              # ~2 min
+#   CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R    # a subset, faster
+#   CMP_STRICT=1 Rscript validations/02-scenarios/assess.R # also fail if ANY number moved
 #
 # The IBM does not depend on fleet, so its committed rows stay valid for any
 # fleet-side change and there is no reason to re-run a 25-minute IBM sweep to
@@ -87,7 +87,7 @@ rule <- function(t) cat("\n", t, "\n", strrep("-", nchar(t)), "\n", sep = "")
 rule("Reference")
 ref_f <- file.path(DDIR, "ibm_reference.json")
 if (!file.exists(ref_f)) {
-  warn <- c(warn, "no ibm_reference.json: the committed IBM rows have no provenance. Re-run comparison/run_replicates.R to stamp one.")
+  warn <- c(warn, "no ibm_reference.json: the committed IBM rows have no provenance. Re-run validations/02-scenarios/run.R to stamp one.")
   cat("  (absent)\n")
 } else {
   ref <- jsonlite::read_json(ref_f, simplifyVector = TRUE)
@@ -103,14 +103,14 @@ if (!file.exists(ref_f)) {
   ## `fleet` exists to be a twin of one specific version. This is the condition
   ## the weekly run exists to catch, so it must be loud enough to stop the build.
   if (!identical(ref$malariasimulation, as.character(utils::packageVersion("malariasimulation"))))
-    fail <- c(fail, sprintf("malariasimulation has changed since the IBM rows were made (%s -> %s), so the agreement below compares fleet against a reference the installed IBM would no longer reproduce. Re-run comparison/run_replicates.R (without CMP_FLEET_ONLY) to rebuild the IBM rows.",
+    fail <- c(fail, sprintf("malariasimulation has changed since the IBM rows were made (%s -> %s), so the agreement below compares fleet against a reference the installed IBM would no longer reproduce. Re-run validations/02-scenarios/run.R (without CMP_FLEET_ONLY) to rebuild the IBM rows.",
                             ref$malariasimulation, utils::packageVersion("malariasimulation")))
   now <- scenario_digest()
   if (!identical(ref$scenario_digest, now)) {
     ## a FAIL, not a warning: with the scenarios changed, section 2 below is
     ## comparing fleet-on-new-scenarios against IBM-on-old-scenarios, which is
     ## not a valid answer to "is the match still good" no matter what it prints
-    fail <- c(fail, sprintf("the scenario definitions have changed since the IBM rows were made (digest %s -> %s), so the agreement below compares fleet on the new scenarios against the IBM on the old ones. Re-run comparison/run_replicates.R.",
+    fail <- c(fail, sprintf("the scenario definitions have changed since the IBM rows were made (digest %s -> %s), so the agreement below compares fleet on the new scenarios against the IBM on the old ones. Re-run validations/02-scenarios/run.R.",
                             ref$scenario_digest, now))
     cat("  scenario digest    CHANGED\n")
     ## Name the culprit. An aggregate mismatch on its own is not actionable: it
@@ -174,7 +174,7 @@ if (is.null(moved)) {
     "    %-12s %-20s %12.5g %12.5g %+8.2f%%\n", scenario, outcome, committed, now, 100 * rel)))
   if (nrow(moved) > 25) cat(sprintf("    ... and %d more\n", nrow(moved) - 25))
   cat("\n  Movement is not automatically wrong. If it was intended, refresh the\n",
-      "  committed rows with CMP_FLEET_ONLY=1 Rscript comparison/run_replicates.R\n", sep = "")
+      "  committed rows with CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R\n", sep = "")
   if (STRICT) fail <- c(fail, sprintf("%d values moved (CMP_STRICT)", nrow(moved)))
 }
 

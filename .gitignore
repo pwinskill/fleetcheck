@@ -8,4 +8,6 @@ docs/
 # raw model output: never committed. Only summaries and stamps.
 validations/*/results/raw/
 validations/*/results/plots/
+# CMP_SMOKE=1 output: a throwaway end-to-end check, not evidence
+validations/*/results/smoke/
 *.rds

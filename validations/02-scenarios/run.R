@@ -1,8 +1,8 @@
 # Run every comparison scenario through BOTH models and save tidy CSVs.
 #
-#   Rscript comparison/run_replicates.R          # ~25 min on 10 workers (see cost note)
-#   Rscript comparison/render_figures.R          # seconds: figures from the CSVs
-#   CMP_ONLY=nets,smc Rscript comparison/run_replicates.R   # re-run a subset, merge into the CSVs
+#   Rscript validations/02-scenarios/run.R          # ~25 min on 10 workers (see cost note)
+#   Rscript validations/02-scenarios/render.R          # seconds: figures from the CSVs
+#   CMP_ONLY=nets,smc Rscript validations/02-scenarios/run.R   # re-run a subset, merge into the CSVs
 #
 # The IBM (malariasimulation) is run N_REP times per scenario with different
 # seeds, in parallel on a PSOCK cluster, and summarised per replicate; fleet is
@@ -50,7 +50,7 @@ source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
 DDIR <- file.path(ROOT, "validations", "02-scenarios", "results"); dir.create(DDIR, showWarnings = FALSE)
 N_WORKERS <- 10L
 ## CMP_SMOKE=1 -> a few-minute end-to-end check: 4-year horizon, one replicate,
-## interventions at year 1 so every builder actually fires, output to data/smoke/.
+## interventions at year 1 so every builder actually fires, output to validations/02-scenarios/results/smoke/.
 SMOKE <- nzchar(Sys.getenv("CMP_SMOKE"))
 if (SMOKE) { N_REP <- 1L; N_WORKERS <- 3L; BURN_Y <- 1L
   DDIR <- file.path(DDIR, "smoke"); dir.create(DDIR, showWarnings = FALSE) }
