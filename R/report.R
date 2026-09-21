@@ -1,8 +1,60 @@
-#' The scoreboard as a markdown table
+# Verdicts are emitted as HTML spans, not as markdown emphasis, because four
+# states need four distinct treatments and CSS cannot read the text of
+# a cell. A span with a class gives the stylesheet the hook: red for a failure,
+# green for a pass, amber for an untested claim.
+#
+# This degrades rather than breaks where the class is ignored. On GitHub the
+# markdown renderer strips the attribute but keeps the element and its text, so
+# it still reads FAIL / pass / UNTESTED; in a terminal, scoreboard() prints its
+# own plain-text version and never sees this.
+VERDICT <- c(
+  pass       = '<span class="verdict pass">pass</span>',
+  open       = '<span class="verdict open">open</span>',
+  fail       = '<span class="verdict fail">FAIL</span>',
+  undeclared = '<span class="verdict untested">UNTESTED</span>')
+
+# One headline, used by every rendered form so they cannot come to differ.
+headline_md <- function(claims) {
+  s <- claims_summary(claims)
+  sprintf("**%d claims \u2014 %d failing, %d untested, %d open, %d pass.**",
+          nrow(claims), s$fail, s$undeclared, s$open, s$pass)
+}
+
+# Register order is display order everywhere. The claims are written in the
+# order they are meant to be read -- transmission, clinical burden, severe
+# burden, how each is distributed by age, interventions, real settings, then the
+# checks that support all of it -- so re-sorting by status here would put the
+# list, the table and the article's sections in three different orders from the
+# register all three are generated from.
+claim_link <- function(claims, link_prefix)
+  if (is.null(link_prefix)) sprintf("`%s`", claims$id) else
+    sprintf("[`%s`](%s#%s)", claims$id, link_prefix, claims$id)
+
+#' The register as a numbered list
 #'
-#' Rendered into README.md and into the site's front page by
-#' `report/make_scoreboard.R`, never typed by hand. A scoreboard maintained in
-#' prose alongside a register in YAML is two copies of the same facts, and this
+#' What README and the site's front page carry. A reader arriving there wants to
+#' know what was compared and how it came out; the criterion each claim was
+#' judged against and the number that met it are a level of detail below that,
+#' and they live in the table on the evidence page. Printing both put every one
+#' of those sentences on the site twice.
+#'
+#' @inheritParams scoreboard_md
+#' @return a character vector of markdown lines.
+#' @export
+claims_list_md <- function(claims = read_claims(), link_prefix = NULL) {
+  c(headline_md(claims), "",
+    sprintf("%d. %s %s &mdash; %s",
+            seq_len(nrow(claims)), VERDICT[claims$status],
+            claim_link(claims, link_prefix), claims$claim))
+}
+
+#' The register as a markdown table
+#'
+#' What the evidence article carries, above the section for each claim. This is
+#' where the detail lives: the criterion, what was measured against it, and the
+#' verdict. Rendered by `report/make_scoreboard.R` and by the
+#' article itself, never typed by hand -- a scoreboard maintained in prose
+#' alongside a register in YAML is two copies of the same facts, and this
 #' project exists partly because of what that did to `fleet`'s documentation.
 #'
 #' @param claims as returned by [read_claims()].
@@ -12,37 +64,13 @@
 #' @return a character vector of markdown lines.
 #' @export
 scoreboard_md <- function(claims = read_claims(), link_prefix = NULL) {
-  # Verdicts are emitted as HTML spans, not as markdown emphasis, because three
-  # states need three visually distinct treatments and CSS cannot read the text
-  # of a cell. A span with a class gives the stylesheet the hook: red for a
-  # failure, green for a pass, grey for an untested claim.
-  #
-  # This degrades rather than breaks where the class is ignored. On GitHub the
-  # markdown renderer strips the attribute but keeps the element and its text,
-  # so the column still reads FAIL / pass / UNTESTED; in a terminal,
-  # scoreboard() prints its own plain-text version and never sees this.
-  badge <- c(
-    pass       = '<span class="verdict pass">pass</span>',
-    open       = '<span class="verdict open">open</span>',
-    fail       = '<span class="verdict fail">FAIL</span>',
-    undeclared = '<span class="verdict untested">UNTESTED</span>')
-  # unresolved first: a reader should meet what is wrong before what is right
-  ord <- order(match(claims$status, c("fail", "undeclared", "open", "pass")),
-               claims$tier)
-  cl <- claims[ord, ]
-  id <- if (is.null(link_prefix)) sprintf("`%s`", cl$id) else
-    sprintf("[`%s`](%s#%s)", cl$id, link_prefix, cl$id)
-
-  s <- claims_summary(claims)
-  # counted in the order the rows are sorted in, most unresolved first
-  c(sprintf("**%d claims \u2014 %d failing, %d untested, %d open, %d pass.**",
-            nrow(claims), s$fail, s$undeclared, s$open, s$pass),
-    "",
+  c(headline_md(claims), "",
     "| claim | tier | criterion | measured | verdict |",
     "| --- | --- | --- | --- | --- |",
     sprintf("| %s | %d | %s | %s | %s |",
-            id, cl$tier, md_cell(cl$criterion), md_cell(cl$measured),
-            badge[cl$status]))
+            claim_link(claims, link_prefix), claims$tier,
+            md_cell(claims$criterion), md_cell(claims$measured),
+            VERDICT[claims$status]))
 }
 
 #' Make a string safe inside a markdown table cell

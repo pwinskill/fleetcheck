@@ -20,10 +20,13 @@ test_that("every scoreboard row has the same number of columns", {
   expect_equal(length(rows), nrow(cl) + 2L)   # header + separator + one per claim
 })
 
-test_that("the scoreboard leads with what is unresolved", {
-  # built here rather than read from claims.yml, which currently has nothing
-  # failing and nothing open -- so this test used to run no expectations at all
-  # and testthat reported it as empty
+test_that("the scoreboard is in register order and is not re-sorted by status", {
+  # The register is written in the order the claims are meant to be read, so
+  # the order is a fact about the register and belongs to it. An earlier
+  # version sorted unresolved claims to the top here, which meant the table,
+  # the article's sections and claims.yml itself could all be in three
+  # different orders.
+  ids <- c("passing", "untested", "opened", "broken")
   cl <- read_claims(write_register(
     list(id = "passing",  status = "pass"),
     list(id = "untested", status = "undeclared", declared = "none",
@@ -33,23 +36,24 @@ test_that("the scoreboard leads with what is unresolved", {
   body <- grep("^\\| `", scoreboard_md(cl), value = TRUE)
 
   expect_equal(length(body), 4L)
-  expect_equal(sub("^\\| `([^`]+)`.*", "\\1", body),
-               c("broken", "untested", "opened", "passing"))
+  expect_equal(sub("^\\| `([^`]+)`.*", "\\1", body), ids)
+  # the terminal form reads from the same register and must not diverge
+  expect_equal(sub("^\\s+\\S+\\s+\\S+\\s+(\\S+).*", "\\1", scoreboard(cl)[-(1:2)]),
+               ids)
 })
 
 test_that("an unresolved verdict is not set in a lighter type than a pass", {
-  # The sort deliberately puts untested claims at the top, and an earlier
-  # version then set `pass` in bold and `undeclared` in grey italic, so the
-  # thing the reader was meant to meet first read as a footnote. Weight has to
-  # agree with order: unresolved verdicts carry emphasis, a pass does not.
+  # Nothing re-sorts the rows, so the verdict column is the only thing that
+  # tells a reader which claims are unresolved. An earlier version set `pass`
+  # in bold and `undeclared` in grey italic, which made the one that needed
+  # attention read as a footnote.
   cl <- read_claims(write_register(
     list(id = "passing",  status = "pass"),
     list(id = "untested", status = "undeclared", declared = "none",
          criterion = "NONE DECLARED"),
     list(id = "broken",   status = "fail")))
   md <- scoreboard_md(cl)
-  verdict <- function(id) sub(".*\\| ([^|]*) \\|$", "\\1",
-                              grep(paste0("`", id, "`"), md, value = TRUE))
+  verdict <- function(id) cell(md, id, 1)   # the verdict is the last column
 
   expect_equal(verdict("broken"), '<span class="verdict fail">FAIL</span>')
   expect_equal(verdict("untested"), '<span class="verdict untested">UNTESTED</span>')
@@ -62,6 +66,28 @@ test_that("an unresolved verdict is not set in a lighter type than a pass", {
   word <- function(id) sub(".*>([A-Za-z]+)<.*", "\\1", verdict(id))
   expect_equal(c(word("broken"), word("untested"), word("passing")),
                c("FAIL", "UNTESTED", "pass"))
+})
+
+test_that("the list says what was compared and how it came out, and no more", {
+  # README and the front page carry the list; the criterion and the measurement
+  # are the evidence page's table, and printing both put every one of those
+  # sentences on the site twice.
+  cl <- read_claims(write_register(
+    list(id = "one", status = "fail", claim = "One tracks the IBM.",
+         criterion = "a criterion", measured = "a measurement"),
+    list(id = "two", status = "pass", claim = "Two tracks the IBM.")))
+  md <- claims_list_md(cl)
+  items <- grep("^[0-9]+[.]", md, value = TRUE)
+
+  expect_equal(length(items), 2L)
+  expect_match(items[1], "^1[.] ")
+  expect_match(items[1], "verdict fail")
+  expect_match(items[1], "One tracks the IBM.", fixed = TRUE)
+  expect_false(any(grepl("a criterion|a measurement", md)))
+  # the headline is the one the table carries, computed once
+  expect_equal(md[1], scoreboard_md(cl)[1])
+  # register order, not status order
+  expect_equal(sub(".*`([^`]+)`.*", "\\1", items), c("one", "two"))
 })
 
 test_that("link_prefix distinguishes no link, a same-page anchor and a site URL", {

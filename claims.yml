@@ -8,12 +8,10 @@
 # deterministic model should land inside, not "at five of six EIRs" because five
 # is what happened.
 #
-# SYSTEMATIC BIAS IS NOT A CLAIM. A mean-field model and an individual-based one
-# differ for reasons that are structural, not accidental, and the size of that
-# difference is something to quantify and explain rather than to pass or fail.
-# It is reported in its own section of the evidence article. What belongs here
-# is whether fleet tracks the IBM -- shape, direction, and agreement inside the
-# IBM's own stochastic spread.
+# Each claim asks whether fleet TRACKS the IBM: shape, direction, and agreement
+# inside the IBM's own stochastic spread. A mean-field model and an
+# individual-based one sit a few per cent apart for structural reasons, and that
+# offset is noted against the claims it bears on rather than scored as one.
 #
 # tier: what it costs to reproduce.
 #   0  seconds, from committed summaries          anyone
@@ -25,22 +23,22 @@
 #   open        criterion met but something material is unresolved
 #   undeclared  no criterion exists yet; the claim is reported, not tested
 
-- id: seed-stability
-  figure: ~
-  claim: An undisturbed run holds the equilibrium it was seeded at.
-  criterion: PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20
-  tier: 1
-  evidence: validations/01-seed-stability
-  measured: 0.28% maximum excursion; flat to 0.02% over the last five years
-  status: pass
-
 - id: prevalence-eir
   figure: cmp_eir_pfpr_2_10.png
   claim: LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
   criterion: inside the IBM 10-90% replicate band at every EIR on the grid
   tier: 2
   evidence: validations/02-scenarios
-  measured: inside at 6 of 6; largest departure 0.94% of the IBM median
+  measured: inside at 6 of 6; largest departure 1.00% of the IBM median
+  status: pass
+
+- id: clinical-allage-eir
+  figure: cmp_eir_clin_all.png
+  claim: All-age clinical incidence tracks the IBM across transmission intensity.
+  criterion: inside the IBM 10-90% replicate band at every EIR on the grid
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: inside at 6 of 6
   status: pass
 
 - id: clinical-under5-eir
@@ -52,21 +50,7 @@
   measured: inside at 6 of 6
   status: pass
   note: >
-    Was open at ten replicates, where it sat 0.1% outside the upper edge at EIR
-    120. The edge, not the model, was wrong: see the note on severe-allage-eir.
-    fleet runs consistently a little above the IBM median here, +0.7% to +2.0%
-    across the grid.
-
-- id: clinical-allage-eir
-  figure: cmp_eir_clin_all.png
-  claim: All-age clinical incidence tracks the IBM across transmission intensity.
-  criterion: inside the IBM 10-90% replicate band at every EIR on the grid
-  tier: 2
-  evidence: validations/02-scenarios
-  measured: inside at 6 of 6
-  status: pass
-  note: >
-    Was open at ten replicates, 0.24% outside the lower edge at EIR 50.
+    fleet sits within 1.6% of the IBM median at every EIR on the grid.
 
 - id: severe-allage-eir
   figure: cmp_eir_sev_all.png
@@ -77,77 +61,48 @@
   measured: inside at 6 of 6
   status: pass
   note: >
-    This FAILED at ten replicates, 4 of 6, and the change is in the yardstick
-    rather than in fleet. Ten replicates estimate a 10-90% band too NARROW,
-    because a small sample rarely reaches into the tails, so the interior
-    percentiles come in tight. Doubling to twenty widened the severe band from
-    13.9% to 15.4% of the median and the claim moved inside it.
-    The criterion is met. That is not the same as saying fleet and the IBM agree
-    on the level of severe incidence: a band test is blind to a small offset
-    repeated at every point. The size and direction of that offset are in the
-    systematic-bias section of the evidence article.
-
-- id: population-age-structure
-  figure: cmp_core_pop_age.png
-  claim: The population age structure matches the IBM's.
-  criterion: >
-    inside the IBM 10-90% replicate band in every age band below 60 years, on
-    shares renormalised to the 0-60 population
-  tier: 2
-  evidence: validations/02-scenarios
-  measured: inside at 9 of 11; the two misses are 15-20 y at -5.4% and 40-60 y at +7.4% of the IBM median
-  status: fail
-  note: >
-    This is the denominator, not an outcome, and it had never been tested. It is
-    tested on the 0-60 population because of a rendering convention rather than
-    a model difference: fleet's top age group is ABSORBING, open-ended above 80,
-    and the renderer assigns an open-ended group wholly to the band containing
-    its lower edge. So fleet's 60-85 band holds everyone over 80 however old,
-    while the IBM's holds 60-85 year olds only, and fleet's share there comes out
-    78% high by construction. Excluding it, the two agree to about 2% in nine of
-    eleven bands.
-    The two misses are real and small, and they are worth a criterion that can
-    see them rather than an all-ages comparison that cannot.
-    The figure is the age pyramid itself and the band-by-band test, not the age
-    distribution of disease -- those are different quantities and this claim had
-    been illustrated with the wrong one.
+    Severe incidence has the widest replicate spread of any outcome here, 15.4%
+    of the median, which is what sets the twenty-replicate count: ten put the
+    10th and 90th percentiles at the extremes of the sample and understate the
+    band by about a tenth.
+    A band test is blind to a small offset repeated at every point, and fleet
+    sits a little below the IBM at every EIR above 1.
 
 - id: age-profile-clinical
-  figure: cmp_core_age.png
+  figure: cmp_age_clin.png
   claim: The age distribution of clinical incidence tracks the IBM.
-  criterion: inside the IBM 10-90% replicate band in every age band, at EIR 20
+  criterion: inside the IBM 10-90% replicate band in every age band, at EIR 3, 20 and 120
   tier: 2
   evidence: validations/02-scenarios
-  measured: inside at 8 of 12; misses at 3-5 y (+2.9%), 15-20 y (-6.0%), 30-40 y (+13.7%) and 40-60 y (+16.2%) of the IBM median
+  measured: inside at 28 of 36 bands across the three EIRs -- 11 of 12 at EIR 3, 7 of 12 at EIR 20, 10 of 12 at EIR 120; largest departure 13.8% of the IBM median
   status: fail
   note: >
-    Splitting the IBM by age makes it much noisier, so the replicate band widens
-    where the counts thin out and the test gets correspondingly forgiving -- the
-    band is 4% of the median in the 3-5 y group and 30% in the 60-85 y one. These
-    four misses survive that.
-    Three of the four are adults, which is where fleet's age grid is least
-    converged: refining it moves adult clinical incidence in the 30-60 y bands
-    from +14-16% to about +6%. So most of this is discretisation rather than
-    model discrepancy, and the register should carry it as a failure until the
-    grid question is settled rather than widen the criterion until it passes.
+    The misses are not confined to bands where the disease is rare: the five
+    outside the range at EIR 20 hold 39% of clinical episodes.
+    Only part of this is discretisation, and refining the age grid does not fix
+    it. Doubling the resolution everywhere brings the adult bands inside and
+    takes the count from 28 of 36 to 30, but further refinement makes it worse
+    again -- 27 of 36 at 409 age groups -- because the departure converges to a
+    +4 to +7% excess in children under 7 that is no smaller at 409 groups than
+    at 205. Those bands carry the IBM's tightest replicate range, about 4% of
+    the median, so a converged offset of that size fails them at any resolution.
+    What remains is the mean-field approximation itself: fleet evaluates each
+    immunity-dependent probability once per age group, at that group's mean
+    immunity, and averaging a convex function that way is biased however finely
+    age is resolved.
 
 - id: age-profile-severe
-  figure: cmp_core_age.png
+  figure: cmp_age_sev.png
   claim: The age distribution of severe incidence tracks the IBM.
-  criterion: inside the IBM 10-90% replicate band in every age band with non-zero IBM incidence, at EIR 20
+  criterion: inside the IBM 10-90% replicate band in every age band with non-zero IBM incidence, at EIR 3, 20 and 120
   tier: 2
   evidence: validations/02-scenarios
-  measured: inside at 10 of 10; largest departure +31.8% of the IBM median, in a band 246% wide
+  measured: inside at 31 of 31 bands across the three EIRs; largest departure 88% of the IBM median, in a band an order of magnitude wider than that
   status: pass
   note: >
-    Passing here is a weaker statement than passing elsewhere in this register,
-    and the measured value says why. Severe disease in a narrow age band is the
-    rarest thing either model counts: in a 10,000-person IBM the 10-90% replicate
-    band runs from 22% of the median in infancy to 246% above age 30. fleet is
-    inside all ten, but a test whose yardstick is that wide cannot distinguish
-    agreement from the absence of evidence in the upper bands.
-    The shape is right, and that is the claim. The level is a separate question
-    and is in the systematic-bias section.
+    The claim rests on the bands below age 5, where 88% of severe episodes fall
+    and the IBM's replicate range is 22% of its median. Above age 30 that range
+    reaches 246%, so agreement there is not evidence of much.
 
 - id: intervention-impact
   figure: cmp_int_impact.png
@@ -158,11 +113,10 @@
   measured: inside the band on 18 of 20; worst excursion 0.36 percentage points
   status: pass
   note: >
-    This is the claim that matters most for what fleet is used for, and it is the
-    most robust in the register. Refining the age grid four-fold -- which moves
-    absolute incidence by several per cent -- changes these reductions by at most
-    0.9 percentage points and usually under 0.3, because impact is a ratio of two
-    runs that share the grid and the bias largely divides out.
+    Refining the age grid four-fold moves absolute incidence by several per cent
+    but changes these reductions by at most 1.0 percentage point, and by under
+    0.4 on eight of the ten intervention x outcome pairs: impact is a ratio of
+    two runs that share the grid, so the bias largely divides out.
 
 - id: real-settings-correlation
   figure: cmp_core_sites.png
@@ -173,10 +127,31 @@
   measured: clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946
   status: pass
   note: >
-    r and slope test whether fleet tracks the IBM across 1,391 sub-sites; they do
-    not test whether it sits on top of it. The offset is in the systematic-bias
-    section, where it can be reported with the structure it actually has rather
-    than as one number.
+    r and slope test whether fleet tracks the IBM across 1,391 sub-sites, not
+    whether it sits on top of it: fleet runs about 9% above on both outcomes,
+    an excess near zero at high transmission with low treatment coverage that
+    grows as either moves.
+
+- id: population-age-structure
+  figure: cmp_core_pop_age.png
+  claim: The population age structure matches the IBM's.
+  criterion: >
+    inside the IBM 10-90% replicate band in every age band below 60 years, on
+    shares renormalised to the 0-60 population
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: inside at 11 of 11; largest departure 1.3% of the IBM median
+  status: pass
+  note: >
+    The 0-60 restriction is a rendering convention, not a model difference:
+    fleet's oldest age group is absorbing and open-ended above 80, and the
+    renderer assigns an open-ended group wholly to the band containing its lower
+    edge, so fleet's 60-85 band holds everyone over 80 and its share there is
+    41% higher by construction.
+    Agreement at this level depends on the ageing rate being exponentially
+    fitted, r = mu/expm1(mu*width), which makes each band's stationary ratio
+    exactly exp(-mu*width) instead of the 1/(1+mu*width) a plain linear chain
+    gives.
 
 - id: speed
   figure: ~
@@ -186,3 +161,13 @@
   evidence: validations/02-scenarios
   measured: 19x on cost per simulated year; 10.7 CPU-hours for the IBM against 103 s for fleet
   status: pass
+
+- id: seed-stability
+  figure: ~
+  claim: An undisturbed run holds the equilibrium it was seeded at.
+  criterion: PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20
+  tier: 1
+  evidence: validations/01-seed-stability
+  measured: 0.28% maximum excursion; flat to 0.02% over the last five years
+  status: pass
+

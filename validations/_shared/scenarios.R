@@ -40,8 +40,15 @@ base_params <- function(seasonal = FALSE, age_profile = FALSE) {
 Y_INT <- BURN_Y * 365                       # intervention start (day)
 scenarios <- list()
 
+## Age-profile bands are carried at LOW, REFERENCE and HIGH transmission, not
+## only at the reference. An age profile at one EIR cannot say whether the shape
+## tracks the IBM as transmission changes, which is most of what an age profile
+## is for -- the peak moves into older children as transmission falls. The bands
+## roughly double the IBM's rendering cost, so they are on three scenarios
+## rather than all six.
+AGE_PROFILE_EIR <- c(3, EIR_REF, 120)
 for (E in EIR_GRID) scenarios[[paste0("eir_", E)]] <- list(
-  p = set_equilibrium(base_params(age_profile = (E == EIR_REF)), init_EIR = E),
+  p = set_equilibrium(base_params(age_profile = (E %in% AGE_PROFILE_EIR)), init_EIR = E),
   eir = E, years = BURN_Y + 3L)
 
 scenarios$seasonal <- list(

@@ -132,39 +132,78 @@ for (i in seq_along(EIR_MET)) {
 }
 
 ## ============================================================================
-## 2. core_age -- age profiles at the reference EIR
+## 2. age_clin / age_sev -- one figure per outcome, across transmission
 ## ============================================================================
-a <- age %>% filter(scenario == paste0("eir_", EIR_REF)) %>%
-  pivot_longer(c(prev, clin, sev), names_to = "metric", values_to = "y")
-ibm_a <- a %>% filter(model == "IBM") %>% group_by(metric) %>%
-  group_modify(~ envelope(.x, by = "age_mid")) %>% ungroup()
-ode_a <- a %>% filter(model == "fleet") %>% rename(mid = y)
-lab_a <- c(prev = "LM prevalence", clin = "clinical episodes per person-year",
+## One figure per outcome, because each is the evidence for a DIFFERENT claim:
+## a reader looking at age-profile-clinical should not have to find the clinical
+## panel among three. And across low, reference and high EIR rather than at the
+## reference alone -- the age profile's whole point is that it MOVES with
+## transmission, and one EIR cannot show that.
+##
+## No interpretive panel titles. The axes say what is plotted and the claim says
+## what to make of it; a title asserting "disease concentrates in the young" is
+## the figure arguing with the reader instead of showing them.
+age_eirs <- sort(unique(as.numeric(sub("^eir_", "",
+  grep("^eir_", unique(age$scenario), value = TRUE)))))
+ap <- age %>% filter(scenario %in% paste0("eir_", age_eirs)) %>%
+  mutate(eir = factor(sprintf("EIR %g", as.numeric(sub("^eir_", "", scenario))),
+                      levels = sprintf("EIR %g", age_eirs)))
+lab_a <- c(clin = "clinical episodes per person-year",
            sev = "severe episodes per 1,000 person-years")
-ttl_a <- c(prev = "Prevalence peaks in\nschool-age children",
-           clin = "Clinical disease\nconcentrates in the young",
-           sev  = "Severe disease is rarer\nand earlier still")
-panel_age <- function(m) {
-  gi <- filter(ibm_a, metric == m); go <- filter(ode_a, metric == m)
-  ggplot() +
-    geom_ribbon(data = gi, aes(age_mid, ymin = lo, ymax = hi, fill = model), alpha = ENV_ALPHA) +
-    geom_line(data = go, aes(age_mid, mid, colour = model, linetype = model), linewidth = 0.8) +
-    geom_line(data = gi, aes(age_mid, mid, colour = model, linetype = model), linewidth = 0.8) +
-    geom_point(data = gi, aes(age_mid, mid, colour = model, shape = model, fill = model), size = 2, stroke = 0.4) +
-    geom_point(data = go, aes(age_mid, mid, colour = model, shape = model, fill = model), size = 2, stroke = 0.4) +
+
+## x is the age BAND, not a continuous age. Three reasons, and the last is the
+## important one.
+##  * The bands are unequal -- one year wide in infancy, twenty-five at the top
+##    -- so a continuous axis gives a quarter of its width to the last band.
+##  * On a linear age axis both outcomes are flat and near zero above age 20, so
+##    most of the panel carried no information.
+##  * The criterion is band by band. Drawing bands as bands means the reader
+##    sees exactly what is being tested: is fleet inside the IBM's range HERE.
+panel_outcome <- function(m) {
+  d <- ap %>% rename(y = !!m)
+  bl <- d %>% distinct(age_lo, age_hi) %>% arrange(age_lo)
+  lv <- sprintf("%g-%g", bl$age_lo, bl$age_hi)
+  d$band <- factor(sprintf("%g-%g", d$age_lo, d$age_hi), levels = lv)
+  gi <- d %>% filter(model == "IBM") %>% group_by(eir, band) %>%
+    summarise(mid = median(y), lo = quantile(y, .1), hi = quantile(y, .9),
+              .groups = "drop") %>% mutate(model = "IBM")
+  go <- d %>% filter(model == "fleet") %>% transmute(eir, band, mid = y, model = "fleet")
+  ggplot(mapping = aes(band, mid, colour = model)) +
+    geom_linerange(data = gi, aes(ymin = lo, ymax = hi), linewidth = 2.4,
+                   alpha = 0.30, show.legend = FALSE) +
+    geom_line(data = go, aes(group = 1, linetype = model), linewidth = 0.7) +
+    geom_line(data = gi, aes(group = 1, linetype = model), linewidth = 0.7) +
+    geom_point(data = gi, aes(shape = model, fill = model), size = 2, stroke = 0.4) +
+    geom_point(data = go, aes(shape = model, fill = model), size = 2, stroke = 0.4) +
+    facet_wrap(~ eir, nrow = 1, scales = "free_y") +
     scale_models() + guide_models() +
-    scale_x_continuous(breaks = c(0, 10, 20, 40, 60, 80)) +
-    scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.06)),
-                       labels = if (m == "prev") scales::percent else waiver()) +
-    labs(title = ttl_a[[m]], x = "age (years)", y = lab_a[[m]]) +
-    theme_cmp() + theme(legend.position = if (m == "prev") "top" else "none")
+    scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.06))) +
+    labs(x = "age band (years)", y = lab_a[[m]]) +
+    theme_cmp() +
+    theme(legend.position = "top", legend.justification = "left",
+          axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.8)))
 }
-g <- (panel_age("prev") | panel_age("clin") | panel_age("sev")) + plot_annotation(
-  title = sprintf("Age structure of infection and disease at EIR %s", EIR_REF),
-  subtitle = "Both models share the immunity functions that shape these profiles; fleet tracks them on a 52-group age grid",
-  caption = cap("Points at age-band midpoints; bands are finer in childhood. Severe incidence is the most immunity-sensitive output and the noisiest in the IBM.", ibm_note),
+
+## Width follows the number of panels: only some EIR scenarios carry the 12-band
+## age profile, because it roughly doubles the IBM's rendering cost. Captions are
+## folded to the figure's own width -- at 6 inches a line that fits a 10-inch
+## figure runs off both edges, which is what it did.
+n_ap <- length(age_eirs)
+fw <- 2.0 + 4.0 * n_ap
+band_note <- "Thick bars are the IBM's 10-90% range across replicates; fleet is one deterministic run. Bands are finer in childhood, so equal spacing here is not equal width in years."
+
+g <- panel_outcome("clin") + plot_annotation(
+  title = "Clinical incidence by age band",
+  caption = cap(band_note, fig_width = fw),
   theme = theme_cmp())
-save_fig(g, "core_age", width = 10, height = 5.2)
+save_fig(g, "age_clin", width = fw, height = 4.6)
+
+g <- panel_outcome("sev") + plot_annotation(
+  title = "Severe incidence by age band",
+  subtitle = cap("Severe disease in a narrow age band is the rarest thing either model counts, so the IBM's range is very wide above age 5.", fig_width = fw),
+  caption = cap(band_note, fig_width = fw),
+  theme = theme_cmp())
+save_fig(g, "age_sev", width = fw, height = 4.6)
 
 ## ============================================================================
 ## 2a. core_pop_age -- the POPULATION age structure, default demography

@@ -30,6 +30,18 @@ write_register <- function(..., envir = parent.frame()) {
   p
 }
 
+#' One cell of a scoreboard row, counted from the right.
+#'
+#' Counting from the right rather than the left because the columns a test cares
+#' about are the last two, and a row's leading cells contain free text.
+#'
+#' @param md scoreboard lines, @param id claim id, @param from_end 1 = last cell.
+cell <- function(md, id, from_end) {
+  row <- grep(paste0("`", id, "`"), md, value = TRUE)
+  parts <- strsplit(row, " | ", fixed = TRUE)[[1]]
+  trimws(sub("\\|$", "", parts[length(parts) - from_end + 1L]))
+}
+
 format_yaml <- function(v) {
   if (is.numeric(v)) return(as.character(v))
   # quoted, so a criterion containing a colon or a pipe stays one scalar

@@ -12,29 +12,32 @@ IBM's own uncertainty. Nothing on this page is validation against observation.
 
 Every claim `fleet` makes about agreeing with the IBM lives in
 [`claims.yml`](https://github.com/pwinskill/fleetcheck/blob/main/claims.yml), with the criterion that decides it, the measured
-value, and a verdict. The scoreboard is the point of the repository: a reader
-should meet the verdict before the figures, not be left to infer it from eight
-plots.
+value, and a verdict. The register is the point of the repository: a reader
+should meet the verdict before the figures, not be left to infer it from a wall
+of plots.
 
 <!-- BEGIN scoreboard -->
 
-**11 claims — 2 failing, 0 untested, 0 open, 9 pass.**
+**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
 
-| claim | tier | criterion | measured | verdict |
-| --- | --- | --- | --- | --- |
-| [`population-age-structure`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#population-age-structure) | 2 | inside the IBM 10-90% replicate band in every age band below 60 years, on shares renormalised to the 0-60 population | inside at 9 of 11; the two misses are 15-20 y at -5.4% and 40-60 y at +7.4% of the IBM median | <span class="verdict fail">FAIL</span> |
-| [`age-profile-clinical`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-clinical) | 2 | inside the IBM 10-90% replicate band in every age band, at EIR 20 | inside at 8 of 12; misses at 3-5 y (+2.9%), 15-20 y (-6.0%), 30-40 y (+13.7%) and 40-60 y (+16.2%) of the IBM median | <span class="verdict fail">FAIL</span> |
-| [`seed-stability`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#seed-stability) | 1 | PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20 | 0.28% maximum excursion; flat to 0.02% over the last five years | <span class="verdict pass">pass</span> |
-| [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6; largest departure 0.94% of the IBM median | <span class="verdict pass">pass</span> |
-| [`clinical-under5-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-under5-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | <span class="verdict pass">pass</span> |
-| [`clinical-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | <span class="verdict pass">pass</span> |
-| [`severe-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#severe-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | <span class="verdict pass">pass</span> |
-| [`age-profile-severe`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-severe) | 2 | inside the IBM 10-90% replicate band in every age band with non-zero IBM incidence, at EIR 20 | inside at 10 of 10; largest departure +31.8% of the IBM median, in a band 246% wide | <span class="verdict pass">pass</span> |
-| [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact) | 2 | within 0.6 percentage points of the IBM replicate band on every outcome | inside the band on 18 of 20; worst excursion 0.36 percentage points | <span class="verdict pass">pass</span> |
-| [`speed`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#speed) | 2 | at least 10x faster than the IBM on the same scenario set | 19x on cost per simulated year; 10.7 CPU-hours for the IBM against 103 s for fleet | <span class="verdict pass">pass</span> |
-| [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation) | 3 | r > 0.95 and \|slope - 1\| < 0.10 on both clinical and severe incidence | clinical r 0.982 slope 0.997; severe r 0.958 slope 0.946 | <span class="verdict pass">pass</span> |
+1. <span class="verdict pass">pass</span> [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
+2. <span class="verdict pass">pass</span> [`clinical-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
+3. <span class="verdict pass">pass</span> [`clinical-under5-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-under5-eir) &mdash; Under-5 clinical incidence tracks the IBM across transmission intensity.
+4. <span class="verdict pass">pass</span> [`severe-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#severe-allage-eir) &mdash; All-age severe incidence tracks the IBM across transmission intensity.
+5. <span class="verdict fail">FAIL</span> [`age-profile-clinical`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-clinical) &mdash; The age distribution of clinical incidence tracks the IBM.
+6. <span class="verdict pass">pass</span> [`age-profile-severe`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-severe) &mdash; The age distribution of severe incidence tracks the IBM.
+7. <span class="verdict pass">pass</span> [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact) &mdash; The modelled impact of each intervention matches the IBM.
+8. <span class="verdict pass">pass</span> [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
+9. <span class="verdict pass">pass</span> [`population-age-structure`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#population-age-structure) &mdash; The population age structure matches the IBM's.
+10. <span class="verdict pass">pass</span> [`speed`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#speed) &mdash; fleet is fast enough to be worth using in place of the IBM.
+11. <span class="verdict pass">pass</span> [`seed-stability`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#seed-stability) &mdash; An undisturbed run holds the equilibrium it was seeded at.
 
 <!-- END scoreboard -->
+
+The criterion each claim was judged against, the number measured against it, and
+the figure it rests on are on the
+[evidence page](https://pwinskill.github.io/fleetcheck/articles/evidence.html),
+one section per claim.
 
 Regenerated from [`claims.yml`](https://github.com/pwinskill/fleetcheck/blob/main/claims.yml) by `report/make_scoreboard.R`; CI fails if it is
 stale. From R, `fleetcheck::scoreboard()` and `fleetcheck::read_claims()` give
@@ -44,14 +47,10 @@ the same thing as data rather than as a page.
 `allow_fail`, and an `allow_fail` entry with no explanatory note is itself an
 error: a tolerated failure has to say why it is tolerated.
 
-**Systematic bias is reported, not scored.** A mean-field model and an
-individual-based one differ for structural reasons, so how far apart they sit is
-something to quantify and explain rather than to pass or fail. The claims here
-ask whether `fleet` tracks the IBM — shape, direction, and agreement inside the
-IBM's own stochastic spread. The size of the offset, and why it is not yet a
-single settled number, is in the
-[systematic-bias section](https://pwinskill.github.io/fleetcheck/articles/evidence.html#systematic-bias-how-far-apart-the-two-models-sit)
-of the evidence article.
+**These claims ask whether `fleet` tracks the IBM** — shape, direction, and
+agreement inside the IBM's own stochastic spread. A mean-field model and an
+individual-based one sit a few per cent apart for structural reasons; where that
+matters it is noted against the claim it bears on.
 
 A criterion is drawn from the mechanism rather than from the observed number:
 *inside the IBM replicate band*, because that band is the noise floor a
@@ -118,7 +117,7 @@ remotes::install_deps(dependencies = TRUE)
 Rscript -e 'pkgload::load_all(quiet = TRUE); writeLines(scoreboard())'
 ```
 
-This prints the same table as the top of this page, straight from `claims.yml`.
+This prints the same list as the top of this page, straight from `claims.yml`.
 To check the register is internally consistent and that nothing has regressed —
 which is what CI does:
 
@@ -193,8 +192,8 @@ Edit `claims.yml` — the criterion, the measured value, the verdict — and the
 Rscript report/make_scoreboard.R
 ```
 
-That rewrites the scoreboard in `README.md`, in `pkgdown/index.md` and in
-`inst/claims.yml` from the register. Never edit those tables by hand: CI runs the
+That rewrites the register list in `README.md`, in `pkgdown/index.md` and in
+`inst/claims.yml` from the register. Never edit those copies by hand: CI runs the
 same script with `--check` and fails if they do not match.
 
 ### 8. Rebuild the site

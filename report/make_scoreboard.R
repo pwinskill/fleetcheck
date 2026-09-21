@@ -11,9 +11,12 @@
 ##
 ## There are two sources and three generated things:
 ##
-##   claims.yml  -> the scoreboard block inside README.md
+##   claims.yml  -> the numbered register list inside README.md
 ##               -> inst/claims.yml, the copy an installed package can find
 ##   README.md   -> pkgdown/index.md, the site's front page
+##
+## The evidence article renders its own table from claims.yml at build time, so
+## it is not generated here.
 ##
 ## README.md is the ONE place the landing-page prose is written. index.md used
 ## to be a second hand-maintained copy of it, and drifted: two corrections --
@@ -45,8 +48,10 @@ readme <- file.path(root, "README.md")
 if (!file.exists(readme))
   stop("README.md is missing. It is the source for pkgdown/index.md, so this ",
        "script cannot run without it.", call. = FALSE)
+## The list, not the table: the table is the evidence page's, and carrying both
+## put every criterion and every measurement on the site twice.
 if (replace_block(readme, "scoreboard",
-                  scoreboard_md(claims, link_prefix = paste0(SITE, "articles/evidence.html")),
+                  claims_list_md(claims, link_prefix = paste0(SITE, "articles/evidence.html")),
                   write = !check_only))
   note("README.md")
 

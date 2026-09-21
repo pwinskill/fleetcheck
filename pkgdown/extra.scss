@@ -301,7 +301,7 @@ main table thead th {
 
 /* The scoreboard is five columns, two of which hold a sentence. Left to
    Bootstrap it divides the width evenly, which on a phone gives the criterion
-   and the measured value about 78px each and pushes the verdict -- the column
+   and the measured value about 65px each and pushes the verdict -- the column
    the whole table exists for -- off the right edge.
 
    So: the table scrolls inside the column rather than squeezing (`display:
@@ -325,7 +325,7 @@ main table > tbody > tr > td:last-child { white-space: nowrap; }
 
 /* Without a floor the table shrinks to whatever is available instead of
    scrolling, and "available" on a phone is 358px for five columns: the
-   criterion and the measured value come out about seven characters wide and
+   criterion and the measured value come out about six characters wide and
    wrap into towers.
    The floor goes on the two prose CELLS, not on the table. A min-width on the
    table wins over its own max-width: 100%, so the scroll container itself grows
@@ -342,8 +342,8 @@ main table:has(thead th:nth-child(5)) > tbody > tr > td:nth-child(4) {
 
 /* And the verdict column is pinned to the right edge, so what the table exists
    to say stays on screen while the criterion and the measurement scroll under
-   it. Without this the one column a reader came for is the one that is off the
-   side of a phone.
+   it. Without this the one column a reader came for is the one off the side of
+   a phone.
    border-collapse must be separate for a sticky table cell to stick at all, so
    the rules Bootstrap would have collapsed are drawn explicitly here. */
 main table:has(thead th:nth-child(5)) {
@@ -357,22 +357,37 @@ main table:has(thead th:nth-child(5)) > thead > tr > th,
 main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child {
   position: sticky;
 }
+/* A pinned cell sits over scrolling content, so it needs its own background --
+   the header already has one and keeps it -- and an explicit z-index. Painting
+   order would put a sticky cell above the text it covers on z-index: auto
+   alone, but only by the letter of the spec: leaving it implicit let long rows
+   render with the criterion showing straight through the pinned column. */
+main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child {
+  background: var(--bs-body-bg, #fff);
+  z-index: 1;
+}
 main table:has(thead th:nth-child(5)) > thead > tr > th { top: 0; z-index: 2; }
-main table:has(thead th:nth-child(5)) > thead > tr > th:last-child { right: 0; z-index: 3; }
+main table:has(thead th:nth-child(5)) > thead > tr > th:last-child,
 main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child {
   right: 0;
-  background: var(--bs-body-bg, #fff);
   border-left: 1px solid var(--fc-border);
 }
-main table:has(thead th:nth-child(5)) > thead > tr > th:last-child {
-  border-left: 1px solid var(--fc-border);
-}
+main table:has(thead th:nth-child(5)) > thead > tr > th:last-child { z-index: 3; }
 
 /* The per-claim tables on the evidence page are two columns, label and value,
-   and the value is a sentence: nowrap on the last column would run them off
-   the page. Those have an empty header row, which is how they are told apart. */
-main table:has(thead th:empty) > tbody > tr > td:last-child { white-space: normal; }
-main table:has(thead th:empty) { min-width: 100%; }
+   and the value is a sentence: nowrap on the last column runs them off the
+   page. They are written with an empty header row, and pandoc drops an empty
+   header rather than rendering it, so having no `thead` at all is what tells
+   them apart -- matching on an empty `th` matches nothing. */
+/* One quiet line under each claim's heading: what the result cost to produce,
+   where the code is, and how the figure reads. The criterion and the
+   measurement are in the table at the top of the page and are not repeated. */
+main .claim-meta {
+  margin: -.35rem 0 1.1rem;
+  color: var(--fc-muted);
+  font-size: .86rem;
+}
+main .claim-meta code { font-size: .95em; }
 
 /* ---- Verdict lozenges -------------------------------------------------- */
 /* Three states, three treatments. scoreboard_md() emits each verdict as

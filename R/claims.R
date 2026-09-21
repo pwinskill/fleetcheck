@@ -45,12 +45,14 @@ read_claims <- function(path = find_claims()) {
   if (any(is.na(out$tier) | out$tier < 0L | out$tier > 3L))
     stop("tier must be 0-3: ", paste(out$id[is.na(out$tier) | out$tier < 0L |
                                             out$tier > 3L], collapse = ", "))
+
   # An undeclared claim must say so where a reader looks, not only in a field.
   und <- out$status == "undeclared"
   if (any(und & !grepl("NONE DECLARED", out$criterion, fixed = TRUE)))
     stop("status `undeclared` but the criterion does not say NONE DECLARED: ",
          paste(out$id[und & !grepl("NONE DECLARED", out$criterion, fixed = TRUE)],
                collapse = ", "))
+
   out
 }
 
@@ -94,9 +96,11 @@ claims_summary <- function(claims = read_claims()) {
 
 #' The scoreboard, as printable text
 #'
-#' Deliberately leads with what is unresolved. A reader of a comparison page
-#' should meet the verdict before the figures, not be left to infer it from
-#' eight plots.
+#' Claims are listed in register order, which is the order they are meant to be
+#' read in: transmission, then clinical burden, then severe, then how each is
+#' distributed by age, then interventions and real settings, and the checks that
+#' support all of it last. What is unresolved is carried by the count on the
+#' first line and by the verdict against each row, not by moving rows about.
 #'
 #' @param claims as returned by [read_claims()].
 #' @export
@@ -105,10 +109,9 @@ scoreboard <- function(claims = read_claims()) {
   # `----` for undeclared made an untested claim look like an absent row rather
   # than an unresolved one; see the note in scoreboard_md()
   mark <- c(pass = "PASS", open = "OPEN", fail = "FAIL", undeclared = "UNTESTED")
-  ord <- order(match(claims$status, c("fail", "undeclared", "open", "pass")))
   lines <- sprintf("  %-8s  t%-2s  %-26s  %s",
-                   mark[claims$status[ord]], claims$tier[ord],
-                   claims$id[ord], claims$measured[ord])
+                   mark[claims$status], claims$tier,
+                   claims$id, claims$measured)
   c(sprintf("%d claims: %d failing, %d untested (no criterion declared), %d open, %d pass",
             nrow(claims), s$fail, s$undeclared, s$open, s$pass),
     "", lines)

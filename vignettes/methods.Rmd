@@ -12,6 +12,15 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+# counts quoted in the prose below are read from the register, never typed:
+# this article once said two claims were failing after one had been fixed
+claims <- fleetcheck::read_claims(
+  system.file("claims.yml", package = "fleetcheck"))
+if (!nrow(claims)) claims <- fleetcheck::read_claims("../claims.yml")
+n_fail <- sum(claims$status == "fail")
+n_band <- sum(grepl("replicate band", claims$criterion, fixed = TRUE))
+eng <- function(n) c("no", "one", "two", "three", "four", "five", "six",
+                     "seven", "eight", "nine", "ten")[n + 1L]
 ```
 
 ## What this measures, and what it does not
@@ -30,7 +39,7 @@ result that reproduces the IBM faithfully reproduces its biases too.
 
 The unit is a claim, not a scenario. Each one carries the criterion that decides
 it and a verdict, so a reader meets a decision rather than a number to
-interpret. A claim can fail, and two currently do.
+interpret. A claim can fail, and `r eng(n_fail)` currently `r if (n_fail == 1) "does" else "do"`.
 
 A criterion drawn from the mechanism is worth more than one drawn from the
 result. *Inside the IBM replicate band*, because that band is the noise floor a
@@ -40,13 +49,6 @@ comparison gets harder: splitting the IBM by age thins its counts and widens its
 own spread, so the test becomes forgiving exactly where the yardstick becomes
 uncertain — and says so in the measured value rather than hiding it.
 
-**What is not a claim: systematic bias.** A mean-field model and an
-individual-based one sit a few per cent apart for structural reasons, and the
-size of that gap depends on the age grid and on the setting. That is something
-to quantify and explain, not to score, so it has its own section in
-`vignette("evidence")` instead of a verdict in the register. The claims ask
-whether `fleet` tracks the IBM; the bias section asks how far apart they sit.
-
 ## One definition of each statistic
 
 `R/metrics.R` holds every comparison statistic used anywhere in the project,
@@ -54,7 +56,8 @@ unit-tested. `agreement()` returns `cor`, `rmse`, `bias`, `rel_bias` and
 `slope` together, because a slope of 1 with a positive bias is a constant
 offset while a slope above 1 with no bias is a fan, and quoting one of them
 alone hides which you have. `band_summary()` answers "inside the IBM replicate
-band", which is the criterion four claims in the register are decided by.
+band", which is the criterion `r eng(n_band)` claims in the register are
+decided by.
 
 This is not ceremony. `fleet`'s own documentation once carried two independent
 derivations of the same immunity figures, in two different articles, and both

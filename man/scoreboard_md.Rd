@@ -2,7 +2,7 @@
 % Please edit documentation in R/report.R
 \name{scoreboard_md}
 \alias{scoreboard_md}
-\title{The scoreboard as a markdown table}
+\title{The register as a markdown table}
 \usage{
 scoreboard_md(claims = read_claims(), link_prefix = NULL)
 }
@@ -17,8 +17,10 @@ itself needs. \code{NULL} renders the ids as plain code, with no links at all.}
 a character vector of markdown lines.
 }
 \description{
-Rendered into README.md and into the site's front page by
-\code{report/make_scoreboard.R}, never typed by hand. A scoreboard maintained in
-prose alongside a register in YAML is two copies of the same facts, and this
+What the evidence article carries, above the section for each claim. This is
+where the detail lives: the criterion, what was measured against it, and the
+verdict. Rendered by \code{report/make_scoreboard.R} and by the
+article itself, never typed by hand -- a scoreboard maintained in prose
+alongside a register in YAML is two copies of the same facts, and this
 project exists partly because of what that did to \code{fleet}'s documentation.
 }
