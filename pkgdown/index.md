@@ -1,3 +1,5 @@
+<!-- Generated from README.md by report/make_scoreboard.R. Do not edit. -->
+
 # fleetcheck
 
 How closely does [`fleet`](https://github.com/pwinskill/fleet) reproduce
@@ -44,8 +46,8 @@ the same thing as data rather than as a page.
 `allow_fail`, and an `allow_fail` entry with no explanatory note is itself an
 error: a tolerated failure has to say why it is tolerated.
 
-**A claim with no criterion is reported as `undeclared`, not as passing.** Two of
-the ten are in that state, and one of them matters: `fleet` runs about 9% above
+**A claim with no criterion is reported as `UNTESTED`, not as passing.** Three of
+the eleven are in that state, and one of them matters: `fleet` runs about 9% above
 the IBM on clinical and severe incidence across 1,391 sub-sites, and nothing has
 ever said what magnitude would be too much. It has been carried as a known
 curiosity rather than as a failing test. Writing the criterion down forces the
@@ -265,8 +267,9 @@ That is not ceremony: `fleet`'s own documentation once carried two derivations
 of the same immunity figures, in two articles, and both were wrong. One
 definition, imported everywhere, tested.
 
-`R/provenance.R` stamps every result with the `fleet` version and commit, the
-`malariasimulation` version, the R version and the date. It exists because the
+`R/provenance.R` stamps every result with the `fleet` and `malariasimulation`
+versions, the commits they were installed from, the R version and the date, and
+holds the rounding rule the stored summaries are written under. It exists because the
 provenance used to be inverted — the 25-minute comparison recorded the IBM
 version, the replicate count and a digest of the scenarios, while the seven-hour
 run that nobody can repeat recorded only a date. The tier that cannot be re-run
@@ -276,7 +279,8 @@ is the tier that most needs to say what made it.
 
 The register, the tested metrics layer and **tier 2** are in place: the scenario
 comparison in `validations/02-scenarios/` runs end to end, has a two-minute
-smoke path, and is what CI checks. Tiers 1 and 3 are stubs — a README and an
-empty `results/` — and the numbers their claims report still come from the
-original harness in the `fleet` repository and from the separate site-file
-checkout. Porting those is the outstanding work.
+smoke path, and is what CI checks. Tier 3 has a runnable worked example for a
+single sub-site but not the cluster sweep; tier 1 is still a stub. The numbers
+those two tiers' claims report come from the original harness in the `fleet`
+repository and from the separate site-file checkout, and porting them is the
+outstanding work.

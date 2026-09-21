@@ -36,7 +36,7 @@ plots.
 
 <!-- END scoreboard -->
 
-Regenerated from `claims.yml` by `report/make_scoreboard.R`; CI fails if it is
+Regenerated from [`claims.yml`](https://github.com/pwinskill/fleetcheck/blob/main/claims.yml) by `report/make_scoreboard.R`; CI fails if it is
 stale. From R, `fleetcheck::scoreboard()` and `fleetcheck::read_claims()` give
 the same thing as data rather than as a page.
 
@@ -277,7 +277,8 @@ is the tier that most needs to say what made it.
 
 The register, the tested metrics layer and **tier 2** are in place: the scenario
 comparison in `validations/02-scenarios/` runs end to end, has a two-minute
-smoke path, and is what CI checks. Tiers 1 and 3 are stubs — a README and an
-empty `results/` — and the numbers their claims report still come from the
-original harness in the `fleet` repository and from the separate site-file
-checkout. Porting those is the outstanding work.
+smoke path, and is what CI checks. Tier 3 has a runnable worked example for a
+single sub-site but not the cluster sweep; tier 1 is still a stub. The numbers
+those two tiers' claims report come from the original harness in the `fleet`
+repository and from the separate site-file checkout, and porting them is the
+outstanding work.
