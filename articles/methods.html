@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fleetcheck</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,7 +83,7 @@ reproduces its biases too.</p>
 </h2>
 <p>The unit is a claim, not a scenario. Each one carries the criterion
 that decides it and a verdict, so a reader meets a decision rather than
-a number to interpret. A claim can fail, and one currently does.</p>
+a number to interpret. A claim can fail, and two currently do.</p>
 <p>A criterion drawn from the mechanism is worth more than one drawn
 from the result. <em>Inside the IBM replicate band</em>, because that
 band is the noise floor a deterministic model ought to land inside; not
@@ -165,7 +165,7 @@ for.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># tier 0 and 1, seconds to minutes, no special hardware</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>assess.R</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># tier 2, about 25 minutes on ten cores</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># tier 2, about two hours on ten cores</span></span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># a few-minute end-to-end check of the same path</span></span>

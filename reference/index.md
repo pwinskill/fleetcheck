@@ -12,6 +12,8 @@
   : The register as a numbered list
 - [`scoreboard_md()`](https://pwinskill.github.io/fleetcheck/reference/scoreboard_md.md)
   : The register as a markdown table
+- [`badges_md()`](https://pwinskill.github.io/fleetcheck/reference/badges_md.md)
+  : The README badge row
 - [`verdict_html()`](https://pwinskill.github.io/fleetcheck/reference/verdict_html.md)
   : A verdict as its HTML lozenge
 - [`check_claims()`](https://pwinskill.github.io/fleetcheck/reference/check_claims.md)
@@ -62,8 +64,12 @@ against an installed package and not only under pkgload::load_all().
   [`SEASON`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`EIR_GRID`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`EIR_REF`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
+  [`PROFILE_EIR`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`INT_LABELS`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`TS_LABELS`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`TS_YEARS`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`TS_NET_EVERY`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   : Shared scenario constants
+- [`int_scenario()`](https://pwinskill.github.io/fleetcheck/reference/int_scenario.md)
+  [`int_parts()`](https://pwinskill.github.io/fleetcheck/reference/int_scenario.md)
+  : Intervention scenario names across the transmission grid

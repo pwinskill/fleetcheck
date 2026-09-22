@@ -18,7 +18,7 @@ biases too.
 
 The unit is a claim, not a scenario. Each one carries the criterion that
 decides it and a verdict, so a reader meets a decision rather than a
-number to interpret. A claim can fail, and one currently does.
+number to interpret. A claim can fail, and two currently do.
 
 A criterion drawn from the mechanism is worth more than one drawn from
 the result. *Inside the IBM replicate band*, because that band is the
@@ -103,7 +103,7 @@ is for.
 # tier 0 and 1, seconds to minutes, no special hardware
 Rscript validations/02-scenarios/assess.R
 
-# tier 2, about 25 minutes on ten cores
+# tier 2, about two hours on ten cores
 Rscript validations/02-scenarios/run.R
 
 # a few-minute end-to-end check of the same path

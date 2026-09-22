@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Twin-Fidelity Checks for the fleet Malaria Model • fleetcheck</title>
+<title>fleetcheck • does fleet reproduce malariasimulation? • fleetcheck</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -15,9 +15,11 @@
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><script src="extra.js"></script><meta property="og:title" content="Twin-Fidelity Checks for the fleet Malaria Model">
-<meta name="description" content="Measures how closely the fleet mean-field ODE model reproduces the malariasimulation individual-based model. Holds the claims register, the comparison statistics, and the code that produces the evidence behind each claim. This measures agreement between two models, not agreement with data.">
-<meta property="og:description" content="Measures how closely the fleet mean-field ODE model reproduces the malariasimulation individual-based model. Holds the claims register, the comparison statistics, and the code that produces the evidence behind each claim. This measures agreement between two models, not agreement with data.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><script src="extra.js"></script><meta property="og:title" content="fleetcheck • does fleet reproduce malariasimulation?">
+<meta name="description" content="A register of claims about how closely the fleet mean-field model reproduces the malariasimulation individual-based model of Plasmodium falciparum malaria, each with the criterion that decides it, the number measured against it, and a verdict.
+">
+<meta property="og:description" content="A register of claims about how closely the fleet mean-field model reproduces the malariasimulation individual-based model of Plasmodium falciparum malaria, each with the criterion that decides it, the number measured against it, and a verdict.
+">
 <meta property="og:image" content="https://pwinskill.github.io/fleetcheck/logo.png">
 </head>
 <body>
@@ -28,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="index.html">fleetcheck</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,14 +61,19 @@
 <img src="logo.png" class="logo" alt=""><h1 id="fleetcheck-">fleetcheck <a class="anchor" aria-label="anchor" href="#fleetcheck-"></a>
 </h1>
 </div>
+<!-- BEGIN badges -->
+<p><a href="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg" alt="check"></a> <a href="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a> <a href="articles/evidence.html"><img src="https://img.shields.io/badge/claims-9%20pass%2C%202%20fail-orange.svg" alt="Claims: 9 pass, 2 fail"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://github.com/pwinskill/fleetcheck/blob/main/LICENSE" class="external-link"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a></p>
+<!-- END badges -->
+<blockquote>
 <p>How closely does <a href="https://github.com/pwinskill/fleet" class="external-link"><code>fleet</code></a> reproduce <a href="https://github.com/mrc-ide/malariasimulation" class="external-link"><code>malariasimulation</code></a>?</p>
+</blockquote>
 <p><strong>This measures agreement between two models, not agreement with data.</strong> It is a twin-fidelity check. <code>fleet</code> inherits its epidemiological standing from the IBM, and inherits it only as far as the gap measured here is small relative to the IBM’s own uncertainty. Nothing on this page is validation against observation.</p>
 <div class="section level2">
 <h2 id="the-register">The register<a class="anchor" aria-label="anchor" href="#the-register"></a>
 </h2>
 <p>Every claim <code>fleet</code> makes about agreeing with the IBM lives in <a href="https://github.com/pwinskill/fleetcheck/blob/main/claims.yml" class="external-link"><code>claims.yml</code></a>, with the criterion that decides it, the measured value, and a verdict. The register is the point of the repository: a reader should meet the verdict before the figures, not be left to infer it from a wall of plots.</p>
 <!-- BEGIN scoreboard -->
-<p><strong>11 claims — 1 failing, 0 untested, 0 open, 10 pass.</strong></p>
+<p><strong>11 claims — 2 failing, 0 untested, 0 open, 9 pass.</strong></p>
 <ol style="list-style-type: decimal">
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence.html#prevalence-eir"><code>prevalence-eir</code></a> — LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.</li>
@@ -81,7 +88,7 @@
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence.html#age-profile-severe"><code>age-profile-severe</code></a> — The age distribution of severe incidence tracks the IBM.</li>
 <li>
-<span class="verdict pass">pass</span> <a href="articles/evidence.html#intervention-impact"><code>intervention-impact</code></a> — The modelled impact of each intervention matches the IBM.</li>
+<span class="verdict fail">FAIL</span> <a href="articles/evidence.html#intervention-impact"><code>intervention-impact</code></a> — The modelled impact of each intervention matches the IBM.</li>
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence.html#real-settings-correlation"><code>real-settings-correlation</code></a> — Agreement holds across real transmission settings, not just synthetic scenarios.</li>
 <li>
@@ -120,7 +127,7 @@
 </tr>
 <tr>
 <td>2</td>
-<td>~25 min</td>
+<td>~2 h</td>
 <td>anyone with about 10 cores</td>
 </tr>
 <tr>
@@ -169,14 +176,14 @@
 <div class="section level3">
 <h3 id="id_4-check-whether-a-change-to-fleet-has-moved-anything--tier-1-2-min">4. Check whether a change to <code>fleet</code> has moved anything — tier 1, ~2 min<a class="anchor" aria-label="anchor" href="#id_4-check-whether-a-change-to-fleet-has-moved-anything--tier-1-2-min"></a>
 </h3>
-<p><strong>This is the one to run often.</strong> It re-runs <code>fleet</code> alone against the committed IBM rows. The IBM does not depend on <code>fleet</code>, so its rows stay valid for any <code>fleet</code>-side change and there is no reason to spend 25 minutes re-running it.</p>
+<p><strong>This is the one to run often.</strong> It re-runs <code>fleet</code> alone against the committed IBM rows. The IBM does not depend on <code>fleet</code>, so its rows stay valid for any <code>fleet</code>-side change and there is no reason to spend two hours re-running it.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/assess.R</span></code></pre></div>
 <p>It answers two questions separately, because they mean different things. <em>Did anything move?</em> — <code>fleet</code> now against <code>fleet</code>’s committed rows. <em>Is the match still good?</em> — <code>fleet</code> now against the IBM medians and 10–90% bands, at the thresholds the claims rest on. Only the second fails the run by default. It exits non-zero on drift, so it works in CI.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="va">CMP_ONLY</span><span class="op">=</span>eir_20,smc <span class="ex">Rscript</span> validations/02-scenarios/assess.R   <span class="co"># a subset, ~20 s</span></span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="va">CMP_STRICT</span><span class="op">=</span>1 <span class="ex">Rscript</span> validations/02-scenarios/assess.R          <span class="co"># also fail if ANY number moved</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="id_5-re-run-the-whole-comparison--tier-2-25-min-on-10-cores">5. Re-run the whole comparison — tier 2, ~25 min on 10 cores<a class="anchor" aria-label="anchor" href="#id_5-re-run-the-whole-comparison--tier-2-25-min-on-10-cores"></a>
+<h3 id="id_5-re-run-the-whole-comparison--tier-2-2-h-on-10-cores">5. Re-run the whole comparison — tier 2, ~2 h on 10 cores<a class="anchor" aria-label="anchor" href="#id_5-re-run-the-whole-comparison--tier-2-2-h-on-10-cores"></a>
 </h3>
 <p>Try the smoke path first. It runs every scenario end to end at a 4-year horizon with one replicate, in about two minutes, and writes to <code>validations/02-scenarios/results/smoke/</code> so it cannot touch the committed results:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="va">CMP_SMOKE</span><span class="op">=</span>1 <span class="ex">Rscript</span> validations/02-scenarios/run.R</span></code></pre></div>
@@ -283,11 +290,25 @@ claims.yml    the register</code></pre>
 <p>The register, the tested metrics layer and <strong>tier 2</strong> are in place: the scenario comparison in <code>validations/02-scenarios/</code> runs end to end, has a two-minute smoke path, and is what CI checks. <strong>Tier 3</strong> runs from here too — <code>run.R</code>, <code>assess.R</code> and <code>diagnose.R</code> — given the site files it cannot ship. Tier 1 is still a stub, so <code>seed-stability</code> is the one claim in the register whose measured value no script here reproduces; porting it is the outstanding work.</p>
 </div>
 </div>
-  </main><aside class="col-md-3"><div class="links">
+  </main><aside class="col-md-3"><div class="at-a-glance">
+<h2 data-toc-skip>At a glance</h2>
+<ul class="list-unstyled">
+<li><p>A <strong>twin-fidelity check</strong>, not a validation against data. Every claim carries the criterion that decides it and what it costs to reproduce, from seconds to forty minutes on ten cores.</p></li>
+</ul>
+</div>
+
+<div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/pwinskill/fleetcheck/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/pwinskill/fleetcheck/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing fleetcheck</a></li>
 </ul>
 </div>
 
@@ -297,14 +318,6 @@ claims.yml    the register</code></pre>
 <li>
 <a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a>
 </li>
-</ul>
-</div>
-
-
-<div class="citation">
-<h2 data-toc-skip>Citation</h2>
-<ul class="list-unstyled">
-<li><a href="authors.html#citation">Citing fleetcheck</a></li>
 </ul>
 </div>
 

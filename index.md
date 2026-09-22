@@ -1,7 +1,17 @@
 # fleetcheck
 
-How closely does [`fleet`](https://github.com/pwinskill/fleet) reproduce
-[`malariasimulation`](https://github.com/mrc-ide/malariasimulation)?
+[![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
+[![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
+[![Claims: 9 pass, 2
+fail](https://img.shields.io/badge/claims-9%20pass%2C%202%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![License:
+MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
+
+> How closely does [`fleet`](https://github.com/pwinskill/fleet)
+> reproduce
+> [`malariasimulation`](https://github.com/mrc-ide/malariasimulation)?
 
 **This measures agreement between two models, not agreement with data.**
 It is a twin-fidelity check. `fleet` inherits its epidemiological
@@ -18,7 +28,7 @@ The register is the point of the repository: a reader should meet the
 verdict before the figures, not be left to infer it from a wall of
 plots.
 
-**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
+**11 claims — 2 failing, 0 untested, 0 open, 9 pass.**
 
 1.  pass
     [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir)
@@ -42,7 +52,7 @@ plots.
 6.  pass
     [`age-profile-severe`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-severe)
     — The age distribution of severe incidence tracks the IBM.
-7.  pass
+7.  FAIL
     [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact)
     — The modelled impact of each intervention matches the IBM.
 8.  pass
@@ -96,7 +106,7 @@ is recorded against every claim rather than mentioned in prose.
 |------|---------|----------------------------------------------------|
 | 0    | seconds | anyone, from committed summaries                   |
 | 1    | ~2 min  | anyone; re-runs `fleet` only                       |
-| 2    | ~25 min | anyone with about 10 cores                         |
+| 2    | ~2 h    | anyone with about 10 cores                         |
 | 3    | ~40 min | ~10 cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and
@@ -168,8 +178,8 @@ Rscript -e 'pkgload::load_all(quiet = TRUE); check_claims()'
 
 **This is the one to run often.** It re-runs `fleet` alone against the
 committed IBM rows. The IBM does not depend on `fleet`, so its rows stay
-valid for any `fleet`-side change and there is no reason to spend 25
-minutes re-running it.
+valid for any `fleet`-side change and there is no reason to spend two
+hours re-running it.
 
 ``` bash
 Rscript validations/02-scenarios/assess.R
@@ -186,7 +196,7 @@ CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R   # a subset, ~20 
 CMP_STRICT=1 Rscript validations/02-scenarios/assess.R          # also fail if ANY number moved
 ```
 
-### 5. Re-run the whole comparison — tier 2, ~25 min on 10 cores
+### 5. Re-run the whole comparison — tier 2, ~2 h on 10 cores
 
 Try the smoke path first. It runs every scenario end to end at a 4-year
 horizon with one replicate, in about two minutes, and writes to

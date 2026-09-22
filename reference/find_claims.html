@@ -17,7 +17,7 @@ project exists to document – a green suite over a broken artefact."><meta prop
 
     <a class="navbar-brand me-2" href="../index.html">fleetcheck</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ project exists to document – a green suite over a broken artefact."><meta prop
 shipped inside the installed package. The fallback is not a nicety: the
 register is <code>.Rbuildignore</code>d, so under <code>R CMD check</code> the source copy is not
 there at all, and without this every test that reads it fails while
-<code>devtools::test()</code> in the source tree passes. Same shape as the incident this
+<code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code> in the source tree passes. Same shape as the incident this
 project exists to document – a green suite over a broken artefact.</p>
     </div>
 

@@ -23,6 +23,8 @@ EIR_GRID
 
 EIR_REF
 
+PROFILE_EIR
+
 INT_LABELS
 
 TS_LABELS
@@ -47,6 +49,8 @@ An object of class `list` of length 3.
 An object of class `numeric` of length 6.
 
 An object of class `numeric` of length 1.
+
+An object of class `numeric` of length 3.
 
 An object of class `character` of length 6.
 
@@ -92,6 +96,11 @@ An object of class `integer` of length 1.
 - `EIR_REF`:
 
   reference EIR for age profiles and interventions.
+
+- `PROFILE_EIR`:
+
+  the low / reference / high transmission levels that shape claims are
+  carried at.
 
 - `INT_LABELS`, `TS_LABELS`:
 

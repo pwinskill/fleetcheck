@@ -11,7 +11,7 @@ plots the result."><meta property="og:image" content="https://pwinskill.github.i
 
     <a class="navbar-brand me-2" href="../index.html">fleetcheck</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Unreleased version">0.0.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,6 +62,8 @@ plots the result.</p>
 <span></span>
 <span><span class="va">EIR_REF</span></span>
 <span></span>
+<span><span class="va">PROFILE_EIR</span></span>
+<span></span>
 <span><span class="va">INT_LABELS</span></span>
 <span></span>
 <span><span class="va">TS_LABELS</span></span>
@@ -80,6 +82,7 @@ plots the result.</p>
 <p>An object of class <code>list</code> of length 3.</p>
 <p>An object of class <code>numeric</code> of length 6.</p>
 <p>An object of class <code>numeric</code> of length 1.</p>
+<p>An object of class <code>numeric</code> of length 3.</p>
 <p>An object of class <code>character</code> of length 6.</p>
 <p>An object of class <code>character</code> of length 5.</p>
 <p>An object of class <code>integer</code> of length 1.</p>
@@ -114,6 +117,10 @@ are skipped when it is absent.</p></dd>
 
 <dt><code>EIR_REF</code></dt>
 <dd><p>reference EIR for age profiles and interventions.</p></dd>
+
+<dt><code>PROFILE_EIR</code></dt>
+<dd><p>the low / reference / high transmission levels that
+shape claims are carried at.</p></dd>
 
 <dt><code>INT_LABELS</code>, <code>TS_LABELS</code></dt>
 <dd><p>display labels, in display order.</p></dd>
