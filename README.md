@@ -271,7 +271,7 @@ measured value no script here reproduces.
 ```
 R/            metrics, provenance, the claims register  (tested)
 validations/  one directory per body of evidence
-report/       the site: scoreboard first, evidence behind it
+report/       the site: the register first, evidence behind it
 claims.yml    the register
 ```
 

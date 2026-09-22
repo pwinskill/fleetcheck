@@ -1,5 +1,5 @@
-# The site. Scoreboard first: a reader should meet the verdict before the
-# figures, which is the whole reason this repository is organised by claim.
+# The site. The verdict first: a reader should meet it before the figures,
+# which is the whole reason this repository is organised by claim.
 url: https://pwinskill.github.io/fleetcheck
 
 # Not on CRAN and no released version, so the navbar's version badge says so
@@ -22,7 +22,7 @@ navbar:
     right: [search, github]
   components:
     intro:
-      text: Scoreboard
+      text: Overview
       href: index.html
     evidence:
       text: Evidence
@@ -32,7 +32,7 @@ navbar:
       href: articles/methods.html
 
 # Same sidebar structure as fleet's, so the two front pages read the same way.
-# The glance text carries no counts: the badge row and the scoreboard already
+# The glance text carries no counts: the badge row and the register already
 # carry them, and a third hand-written copy is the drift this project exists to
 # stop.
 home:
