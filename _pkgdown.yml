@@ -62,7 +62,8 @@ reference:
     unit-tested, because the alternative is what happened to fleet's own
     documentation: the same quantity derived twice, in two articles, wrong both
     times.
-  contents: [agreement, band_position, band_summary]
+  contents: [agreement, comparison-settings, replicate_band, band_z,
+             band_position, band_summary]
 - title: Provenance and paths
   contents: [stamp, round_sig, fc_root, fc_results, find_claims, replace_block, md_cell]
 - title: Scenario constants

@@ -150,3 +150,31 @@ test_that("the scripts agree with the register about where evidence lives", {
   for (e in unique(cl$evidence))
     expect_true(dir.exists(testthat::test_path("..", "..", e)), info = e)
 })
+
+test_that("every documented topic is in the pkgdown reference index", {
+  # pkgdown refuses to build when an exported topic is missing from the index,
+  # so this was only ever caught by CI -- three times in one afternoon, each
+  # time after the package change itself had already passed. The index is a
+  # hand-written list in _pkgdown.yml and nothing else makes adding to it
+  # mandatory; this does, before the push rather than after it.
+  skip_if_not_installed("yaml")
+  root <- fc_root()
+  cfg <- file.path(root, "_pkgdown.yml")
+  skip_if_not(file.exists(cfg))
+  listed <- unlist(lapply(yaml::read_yaml(cfg)$reference, `[[`, "contents"))
+  listed <- trimws(unlist(strsplit(paste(listed, collapse = " "), "[ ,]+")))
+
+  rd <- list.files(file.path(root, "man"), pattern = "[.]Rd$", full.names = TRUE)
+  # a topic is indexed under any of its aliases, and internal topics are exempt
+  topics <- Filter(Negate(is.null), lapply(rd, function(f) {
+    txt <- readLines(f, warn = FALSE)
+    if (any(grepl("\\keyword{internal}", txt, fixed = TRUE))) return(NULL)
+    al <- regmatches(txt, regexpr("(?<=\\\\alias\\{)[^}]+", txt, perl = TRUE))
+    c(sub("[.]Rd$", "", basename(f)), al)
+  }))
+  missing <- vapply(topics, function(a) !any(a %in% listed), logical(1))
+  expect_true(!any(missing),
+              info = paste("missing from _pkgdown.yml reference index:",
+                           paste(vapply(topics[missing], `[`, "", 1),
+                                 collapse = ", ")))
+})
