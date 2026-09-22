@@ -28,6 +28,13 @@ both times.
 
 - [`agreement()`](https://pwinskill.github.io/fleetcheck/reference/agreement.md)
   : Agreement between two models on the same quantity
+- [`BAND_K`](https://pwinskill.github.io/fleetcheck/reference/comparison-settings.md)
+  [`BURDEN_MIN`](https://pwinskill.github.io/fleetcheck/reference/comparison-settings.md)
+  : How a replicate band and a burden floor are defined
+- [`replicate_band()`](https://pwinskill.github.io/fleetcheck/reference/replicate_band.md)
+  : The band a set of replicates produces
+- [`band_z()`](https://pwinskill.github.io/fleetcheck/reference/band_z.md)
+  : Standardised departure from a set of replicates
 - [`band_position()`](https://pwinskill.github.io/fleetcheck/reference/band_position.md)
   [`inside_band()`](https://pwinskill.github.io/fleetcheck/reference/band_position.md)
   : Where a value sits relative to a replicate band

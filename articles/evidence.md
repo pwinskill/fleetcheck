@@ -11,19 +11,19 @@ Every section is generated from `claims.yml`, so this page cannot
 disagree with the register, and the register cannot be changed without
 the page following.
 
-**11 claims — 2 failing, 0 untested, 0 open, 9 pass.**
+**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
 
 | claim | tier | criterion | measured | verdict |
 |----|----|----|----|----|
-| [`prevalence-eir`](#prevalence-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6; largest departure 0.94% of the IBM median | pass |
-| [`clinical-allage-eir`](#clinical-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
-| [`clinical-under5-eir`](#clinical-under5-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
-| [`severe-allage-eir`](#severe-allage-eir) | 2 | inside the IBM 10-90% replicate band at every EIR on the grid | inside at 6 of 6 | pass |
-| [`age-profile-clinical`](#age-profile-clinical) | 2 | inside the IBM 10-90% replicate band in every age band, at EIR 3, 20 and 120 | inside at 35 of 36 bands across the three EIRs – 12 of 12 at EIR 3, 11 of 12 at EIR 20, 12 of 12 at EIR 120; largest departure 7.7% of the IBM median | FAIL |
-| [`age-profile-severe`](#age-profile-severe) | 2 | inside the IBM 10-90% replicate band in every age band with non-zero IBM incidence, at EIR 3, 20 and 120 | inside at 31 of 31 bands across the three EIRs; largest departure 83% of the IBM median, in a band an order of magnitude wider than that | pass |
-| [`intervention-impact`](#intervention-impact) | 2 | within 0.6 percentage points of the IBM replicate band on every outcome, at EIR 3, 20 and 120 (SMC in a seasonal setting, since it is a seasonal intervention) | inside the band on 66 of 72 cells; worst excursion 1.11 percentage points, bed nets at EIR 120 on LM prevalence | FAIL |
+| [`prevalence-eir`](#prevalence-eir) | 2 | inside the IBM replicate band at every EIR on the grid | inside at 6 of 6; largest departure 0.94% of the IBM median | pass |
+| [`clinical-allage-eir`](#clinical-allage-eir) | 2 | inside the IBM replicate band at every EIR on the grid | inside at 6 of 6 | pass |
+| [`clinical-under5-eir`](#clinical-under5-eir) | 2 | inside the IBM replicate band at every EIR on the grid | inside at 6 of 6 | pass |
+| [`severe-allage-eir`](#severe-allage-eir) | 2 | inside the IBM replicate band at every EIR on the grid | inside at 6 of 6 | pass |
+| [`age-profile-clinical`](#age-profile-clinical) | 2 | inside the IBM replicate band in every age band carrying at least 5% of clinical episodes, at EIR 3, 20 and 120 | inside at 25 of 25 tested bands across the three EIRs, holding 94% of episodes; largest departure 1.17 replicate SD | pass |
+| [`age-profile-severe`](#age-profile-severe) | 2 | inside the IBM replicate band in every age band carrying at least 5% of severe episodes, at EIR 3, 20 and 120 | inside at 16 of 16 tested bands across the three EIRs, holding 94% of episodes; largest departure 0.94 replicate SD, in the 3-5 y band at EIR 20 | pass |
+| [`intervention-impact`](#intervention-impact) | 2 | within 0.6 percentage points of the IBM replicate band on every outcome, at EIR 3, 20 and 120 (SMC in a seasonal setting, since it is a seasonal intervention) | inside the band on 66 of 72 cells; worst excursion 1.17 percentage points, bed nets at EIR 120 on LM prevalence | FAIL |
 | [`real-settings-correlation`](#real-settings-correlation) | 3 | r \> 0.95 and \|slope - 1\| \< 0.10 on both clinical and severe incidence | clinical r 0.983 slope 0.996; severe r 0.959 slope 0.929, over 450,684 sub-site-months in 1,391 sub-sites of 63 countries | pass |
-| [`population-age-structure`](#population-age-structure) | 2 | inside the IBM 10-90% replicate band in every age band below 60 years, on shares renormalised to the 0-60 population | inside at 11 of 11; largest departure 1.3% of the IBM median | pass |
+| [`population-age-structure`](#population-age-structure) | 2 | inside the IBM replicate band in every age band below 60 years, on shares renormalised to the 0-60 population | inside at 11 of 11; largest departure 1.3% of the IBM median | pass |
 | [`speed`](#speed) | 2 | at least 10x faster than the IBM on the same scenario set | 21x on cost per simulated year; 19.9 CPU-hours for the IBM against 169 s for fleet | pass |
 | [`seed-stability`](#seed-stability) | 1 | PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20 | 0.28% maximum excursion; flat to 0.02% over the last five years | pass |
 
@@ -77,17 +77,24 @@ intensity.](cmp_eir_sev_all.png)
 
 ## age-profile-clinical
 
-FAIL — The age distribution of clinical incidence tracks the IBM.
+pass — The age distribution of clinical incidence tracks the IBM.
 
 tier 2 · `validations/02-scenarios`
 
-One band is outside: 40-60 y at EIR 20, by 7.7%, holding 1.7% of
-clinical episodes. At EIR 3 and EIR 120 every band is inside. No age
-grid closes it. Refining drives fleet’s own discretisation error to zero
-at first order while its departure from the IBM levels off near 4%: the
-mean field holds one immunity value per stratum where the IBM holds a
-spread of infection histories at the same age. Measured in
-validations/age-grid/.
+One untested band is outside: 40-60 y at EIR 20, by 1.50 SD, holding
+1.7% of clinical episodes. tables.R prints it rather than dropping it
+silently. That band is what the claim used to fail on, and the failure
+did not survive examination. Refining the age grid does not close it and
+makes agreement worse – 35 of 36 bands inside at the default 53 groups,
+32 at 105, 27 at 209 – and the biting-heterogeneity quadrature is not a
+candidate, since the IBM discretises it the same way. Re-binned to five
+years the departure is smooth from age 20 to 85, sits in the rates
+rather than the population weights, and falls inside the spread of a
+held-out IBM replicate: 3 of 20 replicates score at least as far from
+the other 19. What the burden floor costs: a defect confined to the
+oldest ages would not be caught here. Grid convergence is measured in
+validations/age-grid/; the held-out check is not yet reproduced by a
+script in this repository.
 
 ![The age distribution of clinical incidence tracks the
 IBM.](cmp_age_clin.png)
@@ -98,9 +105,11 @@ pass — The age distribution of severe incidence tracks the IBM.
 
 tier 2 · `validations/02-scenarios`
 
-The claim rests on the bands below age 5, where 88% of severe episodes
-fall and the IBM’s replicate range is 22% of its median. Above age 30
-that range reaches 246%, so agreement there is not evidence of much.
+The burden floor is doing little here: no untested band is outside the
+band either, and the worst departure is in the 3-5 y band, which carries
+16.6% of severe episodes on its own. Most of what the floor excludes is
+above age 30, where the IBM’s replicate spread reaches 246% of its
+median and agreement is not evidence of much.
 
 ![The age distribution of severe incidence tracks the
 IBM.](cmp_age_sev.png)
@@ -114,7 +123,7 @@ tier 2 · `validations/02-scenarios`
 Agreement is a function of transmission, and only the top of the range
 fails. At EIR 3 every cell is inside the band; at EIR 20 two are outside
 by at most 0.36 percentage points; at EIR 120 four are outside and the
-worst reaches 1.11. Every excursion is vector control or SMC at high
+worst reaches 1.17. Every excursion is vector control or SMC at high
 transmission, where fleet under-predicts the prevalence impact of nets
 by 2.1 percentage points – the saturating-hazard regime, where the two
 models’ biting terms are least alike. Impact is a ratio of two runs

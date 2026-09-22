@@ -18,7 +18,7 @@ biases too.
 
 The unit is a claim, not a scenario. Each one carries the criterion that
 decides it and a verdict, so a reader meets a decision rather than a
-number to interpret. A claim can fail, and two currently do.
+number to interpret. A claim can fail, and one currently does.
 
 A criterion drawn from the mechanism is worth more than one drawn from
 the result. *Inside the IBM replicate band*, because that band is the

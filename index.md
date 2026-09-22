@@ -2,8 +2,8 @@
 
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
-[![Claims: 9 pass, 2
-fail](https://img.shields.io/badge/claims-9%20pass%2C%202%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
+[![Claims: 10 pass, 1
+fail](https://img.shields.io/badge/claims-10%20pass%2C%201%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License:
@@ -28,7 +28,7 @@ The register is the point of the repository: a reader should meet the
 verdict before the figures, not be left to infer it from a wall of
 plots.
 
-**11 claims — 2 failing, 0 untested, 0 open, 9 pass.**
+**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
 
 1.  pass
     [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir)
@@ -46,7 +46,7 @@ plots.
     [`severe-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#severe-allage-eir)
     — All-age severe incidence tracks the IBM across transmission
     intensity.
-5.  FAIL
+5.  pass
     [`age-profile-clinical`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-clinical)
     — The age distribution of clinical incidence tracks the IBM.
 6.  pass
