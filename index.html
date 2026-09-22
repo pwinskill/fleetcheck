@@ -39,7 +39,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="active nav-item"><a class="nav-link" href="index.html">Scoreboard</a></li>
+<li class="active nav-item"><a class="nav-link" href="index.html">Overview</a></li>
 <li class="nav-item"><a class="nav-link" href="articles/evidence.html">Evidence</a></li>
 <li class="nav-item"><a class="nav-link" href="articles/methods.html">How it is produced</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
@@ -279,7 +279,7 @@
 </h2>
 <pre><code>R/            metrics, provenance, the claims register  (tested)
 validations/  one directory per body of evidence
-report/       the site: scoreboard first, evidence behind it
+report/       the site: the register first, evidence behind it
 claims.yml    the register</code></pre>
 <p><code>R/metrics.R</code> holds every comparison statistic, defined once and unit-tested. That is not ceremony: <code>fleet</code>’s own documentation once carried two derivations of the same immunity figures, in two articles, and both were wrong. One definition, imported everywhere, tested.</p>
 <p><code>R/provenance.R</code> stamps every result with the <code>fleet</code> and <code>malariasimulation</code> versions, the commits they were installed from, the R version and the date, and holds the rounding rule the stored summaries are written under. It exists because the provenance used to be inverted: the 25-minute comparison recorded the IBM version, the replicate count and a digest of the scenarios, while the site-file sweep — which needs inputs nobody outside the project has — recorded only a date. The tier that is hardest to re-run is the one that most needs to say what made it, and its stamp now carries the <code>fleet</code> version and the age grid too.</p>
