@@ -463,7 +463,7 @@ g <- ggplot() +
                      labels = function(b) ifelse(b == BURN_Y, "0", sprintf("%+d y", as.integer(b - BURN_Y)))) +
   scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.08))) +
   labs(title = "Intervention impact: the same deployment through both models",
-       subtitle = cap(sprintf("Monthly series, three years before to six after deployment, EIR %s. SMC: EIR 15 in a seasonal setting, three years of rounds (marked)", EIR_REF), width = 120),
+       subtitle = cap(sprintf("Monthly series, three years before to six after deployment, EIR %s. SMC: the same EIR in a seasonal setting, three years of rounds (marked). The other two transmission levels are in the impact figure", EIR_REF), width = 120),
        x = "years relative to deployment", y = NULL,
        caption = cap("Each row is one intervention layered on the same baseline with the ordinary malariasimulation set_*() builders.", ibm_note)) +
   theme_cmp() + theme(strip.text.y.left = element_text(angle = 0, hjust = 1, vjust = 1),
@@ -558,12 +558,21 @@ if (all(TS %in% monthly$scenario)) {
 ## Four outcomes: the two young-child measures a trial would report, and the two
 ## all-age measures a programme carries. Severe is the noisiest of them in the
 ## IBM, which the replicate range shows honestly.
+##
+## Three transmission levels, not one. Impact is not a property of an
+## intervention on its own: over PROFILE_EIR fleet's reduction in all-age severe
+## incidence falls by a factor of five for nets, rises for RTS,S, and changes
+## sign for perennial chemoprevention. A claim tested at a single EIR says
+## nothing about the other two, and tests the two models where they are least
+## likely to differ.
 MET_KEY <- c(pfpr = "LM prevalence, ages 2\u201310",
              clin05 = "clinical incidence, ages 0\u20135",
              clinall = "clinical incidence, all ages",
              sevall = "severe incidence, all ages")
 MET_R <- unname(MET_KEY)
-red <- monthly %>% filter(scenario %in% INT) %>%
+INT_SCEN <- unlist(lapply(PROFILE_EIR, function(E) int_scenario(INT, E)))
+EIR_LAB  <- sprintf("EIR %g", PROFILE_EIR)
+red <- monthly %>% filter(scenario %in% INT_SCEN) %>%
   mutate(phase = case_when(year >= BURN_Y - 3 & year < BURN_Y ~ "pre",
                            year >= BURN_Y & year < BURN_Y + 3 ~ "post", TRUE ~ NA_character_)) %>%
   filter(!is.na(phase)) %>%
@@ -575,13 +584,19 @@ red <- monthly %>% filter(scenario %in% INT) %>%
   mutate(reduction = 1 - post / pre,
          metric = unname(MET_KEY[metric])) %>%
   select(scenario, model, rep, metric, reduction)
-ibm_r <- red %>% filter(model == "IBM") %>% group_by(scenario, metric) %>%
+## scenario -> (intervention, EIR). The convention is int_scenario()'s, in the
+## package, so the renderer cannot drift from the runner that named the rows.
+red <- bind_cols(red, int_parts(red$scenario)) %>% select(-scenario)
+ibm_r <- red %>% filter(model == "IBM") %>% group_by(intervention, eir, metric) %>%
   summarise(mid = median(reduction), lo = unname(quantile(reduction, .1)),
             hi = unname(quantile(reduction, .9)), .groups = "drop") %>% mutate(model = "IBM")
-ode_r <- red %>% filter(model == "fleet") %>% transmute(scenario, metric, mid = reduction, model = "fleet")
+ode_r <- red %>% filter(model == "fleet") %>%
+  transmute(intervention, eir, metric, mid = reduction, model = "fleet")
 both <- bind_rows(ibm_r, ode_r) %>%
-  mutate(scenario = factor(scenario, levels = INT, labels = INT_LABELS),
-         metric = factor(metric, levels = MET_R))
+  mutate(scenario = factor(intervention, levels = INT, labels = INT_LABELS),
+         metric = factor(metric, levels = MET_R),
+         eir = factor(eir, levels = PROFILE_EIR, labels = EIR_LAB)) %>%
+  select(-intervention)
 ## Round before writing. This file is committed and CI byte-compares it against a
 ## fresh render, but the values come out of quantile() on different hardware, and
 ## cross-platform floating point is not bit-identical: a Linux runner reproduced
@@ -591,10 +606,11 @@ both <- bind_rows(ibm_r, ode_r) %>%
 ## and far above the platform noise, which makes the artifact reproducible.
 write.csv(dplyr::mutate(both, dplyr::across(where(is.numeric), ~ signif(.x, 10))),
           file.path(DDIR, "int_impact_summary.csv"), row.names = FALSE)
-seg  <- both %>% select(scenario, metric, model, mid) %>% pivot_wider(names_from = model, values_from = mid)
-XCOL <- c(IBM = 1.08, fleet = 1.22)                 # value columns to the right of the data
-vals <- both %>% mutate(x = XCOL[model], lab = scales::percent(mid, accuracy = 1))
-hdr  <- data.frame(x = XCOL, lab = names(XCOL))
+seg  <- both %>% select(scenario, eir, metric, model, mid) %>%
+  pivot_wider(names_from = model, values_from = mid)
+## The numeric columns that used to sit beside the panels are gone: at four
+## outcomes by three transmission levels they are 144 numbers, which is a table
+## and not a figure. int_impact_summary.csv carries them, and is committed.
 xmin <- min(-0.04, floor(min(c(both$lo, both$mid), na.rm = TRUE) * 20) / 20 - 0.03)
 
 g <- ggplot(both, aes(y = scenario)) +
@@ -603,28 +619,31 @@ g <- ggplot(both, aes(y = scenario)) +
                linewidth = 2.2, lineend = "round") +
   geom_linerange(data = filter(both, model == "IBM"), aes(xmin = lo, xmax = hi, colour = model),
                  linewidth = 0.9, alpha = 0.55) +
-  geom_point(aes(x = mid, colour = model, shape = model, fill = model), size = 3.2, stroke = 0.6) +
-  geom_text(data = vals, aes(x = x, label = lab), hjust = 0, size = 3.3, colour = INK2, family = FONT) +
-  geom_text(data = hdr, aes(x = x, y = Inf, label = lab), hjust = 0, vjust = 1.4, size = 3.3,
-            fontface = "bold", colour = INK2, family = FONT) +
-  facet_wrap(~metric, nrow = 2) +
+  geom_point(aes(x = mid, colour = model, shape = model, fill = model), size = 2.8, stroke = 0.6) +
+  facet_grid(eir ~ metric) +
   scale_models(lines = FALSE) + guide_models() +
-  scale_x_continuous(labels = scales::percent, breaks = seq(0, 1, 0.25), limits = c(xmin, 1.36),
-                     expand = expansion(0)) +
-  scale_y_discrete(limits = rev(unname(INT_LABELS)), expand = expansion(add = c(0.6, 1.3))) +
+  scale_x_continuous(labels = scales::percent, breaks = seq(0, 1, 0.5),
+                     minor_breaks = seq(-0.25, 1, 0.25), limits = c(xmin, 1.02),
+                     expand = expansion(mult = 0.02)) +
+  scale_y_discrete(limits = rev(unname(INT_LABELS)), expand = expansion(add = 0.7)) +
   coord_cartesian(clip = "off") +
-  labs(title = "Intervention impact summarised: reduction over the first three years",
-       subtitle = paste("At EIR 20 without seasonality, except SMC at EIR 15 with it.",
-                        "Relative to the three pre-deployment years of the same run.",
-                        "Circle = IBM median with 10\u201390% replicate range; triangle = fleet"),
+  labs(title = "Intervention impact: reduction over the first three years, at three transmission levels",
+       subtitle = cap(paste("Each intervention deployed unchanged at EIR 3, 20 and 120,",
+                            "relative to the three pre-deployment years of the same run.",
+                            "SMC is run in a seasonal setting, the other five without seasonality.",
+                            "Circle = IBM median with 10\u201390% replicate range; triangle = fleet."),
+                      width = 128),
        x = "reduction relative to baseline", y = NULL,
-       caption = cap(paste("Columns give the plotted medians. These are impacts at one",
-                           "transmission level, not general effect sizes."), ibm_note)) +
+       caption = cap(paste("Plotted medians are in int_impact_summary.csv.",
+                           "Impact varies with transmission in both directions -- nets and",
+                           "case management fall away as transmission rises, RTS,S and SMC",
+                           "strengthen -- so a single figure per intervention would not be an",
+                           "effect size."), ibm_note)) +
   theme_cmp() + theme(panel.grid.major.y = element_blank(), axis.line.x = element_blank(),
                       axis.text.y = element_text(size = rel(0.9), lineheight = 0.95, hjust = 1),
-                      panel.spacing.x = unit(1.6, "lines"),
-                      panel.spacing.y = unit(2.0, "lines"))
-save_fig(g, "int_impact", width = 11, height = 8.6)
+                      panel.spacing.x = unit(1.3, "lines"),
+                      panel.spacing.y = unit(1.3, "lines"))
+save_fig(g, "int_impact", width = 13.5, height = 11)
 
 ## ---- console summary ---------------------------------------------------------
 cat("figures written", if (SMOKE) "to validations/02-scenarios/results/plots/smoke" else "to man/figures and vignettes", "\n\n")

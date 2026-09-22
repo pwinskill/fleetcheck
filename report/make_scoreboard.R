@@ -55,6 +55,12 @@ if (replace_block(readme, "scoreboard",
                   write = !check_only))
   note("README.md")
 
+## The badge row carries the same counts as the headline, so it is generated
+## from the same register and checked by the same CI job.
+if (replace_block(readme, "badges", badges_md(claims, site = SITE),
+                  write = !check_only))
+  note("README.md (badges)")
+
 ## ---- 2. pkgdown/index.md, generated from README.md --------------------------
 ## Same prose, different link targets. On the site a link to the site itself
 ## should be relative, so it works in a local build, in a PR preview and on a

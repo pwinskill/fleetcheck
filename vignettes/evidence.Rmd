@@ -84,7 +84,7 @@ recorded against every claim rather than stated once in prose.
 | --- | --- | --- |
 | 0 | seconds | anyone, from the committed summaries |
 | 1 | ~2 min | anyone; re-runs `fleet` only |
-| 2 | ~25 min | anyone with about ten cores |
+| 2 | ~2 h | anyone with about ten cores |
 | 3 | ~40 min | about ten cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and statistics are

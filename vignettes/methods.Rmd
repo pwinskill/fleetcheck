@@ -114,7 +114,7 @@ stores it, which is what `round_sig()` is for.
 # tier 0 and 1, seconds to minutes, no special hardware
 Rscript validations/02-scenarios/assess.R
 
-# tier 2, about 25 minutes on ten cores
+# tier 2, about two hours on ten cores
 Rscript validations/02-scenarios/run.R
 
 # a few-minute end-to-end check of the same path

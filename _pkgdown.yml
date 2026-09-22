@@ -2,8 +2,19 @@
 # figures, which is the whole reason this repository is organised by claim.
 url: https://pwinskill.github.io/fleetcheck
 
+# Not on CRAN and no released version, so the navbar's version badge says so
+# rather than showing a bare number with an empty tooltip.
+development:
+  mode: unreleased
+
+# `navbar-bg` has to be set at compile time, not in extra.scss: Bootstrap picks
+# the light or dark hamburger icon from it while compiling, and a stylesheet
+# cannot reach that decision. Everything else about the theme is in
+# pkgdown/extra.scss, which is shared with fleet.
 template:
   bootstrap: 5
+  bslib:
+    navbar-bg: "#FFFFFF"
 
 navbar:
   structure:
@@ -20,10 +31,31 @@ navbar:
       text: How it is produced
       href: articles/methods.html
 
+# Same sidebar structure as fleet's, so the two front pages read the same way.
+# The glance text carries no counts: the badge row and the scoreboard already
+# carry them, and a third hand-written copy is the drift this project exists to
+# stop.
+home:
+  title: fleetcheck • does fleet reproduce malariasimulation?
+  description: >
+    A register of claims about how closely the fleet mean-field model
+    reproduces the malariasimulation individual-based model of Plasmodium
+    falciparum malaria, each with the criterion that decides it, the number
+    measured against it, and a verdict.
+  sidebar:
+    structure: [glance, links, citation, license, authors, dev]
+    components:
+      glance:
+        title: At a glance
+        text: >
+          A **twin-fidelity check**, not a validation against data. Every claim
+          carries the criterion that decides it and what it costs to reproduce,
+          from seconds to forty minutes on ten cores.
+
 reference:
 - title: The claims register
   contents: [read_claims, claims_summary, scoreboard, claims_list_md, scoreboard_md,
-             verdict_html, check_claims]
+             badges_md, verdict_html, check_claims]
 - title: Comparison statistics
   desc: >
     Every statistic quoted anywhere in this project. Defined once and
@@ -37,4 +69,4 @@ reference:
   desc: >
     The settings the comparison scripts share. Exported so the scripts run
     against an installed package and not only under pkgload::load_all().
-  contents: [scenario-constants]
+  contents: [scenario-constants, int_scenario]

@@ -1,6 +1,6 @@
 # Run every comparison scenario through BOTH models and save tidy CSVs.
 #
-#   Rscript validations/02-scenarios/run.R          # ~25 min on 10 workers (see cost note)
+#   Rscript validations/02-scenarios/run.R          # ~2 h on 10 workers (see cost note)
 #   Rscript validations/02-scenarios/render.R          # seconds: figures from the CSVs
 #   CMP_ONLY=nets,smc Rscript validations/02-scenarios/run.R   # re-run a subset, merge into the CSVs
 #

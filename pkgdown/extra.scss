@@ -131,7 +131,7 @@ main p, main li { text-wrap: pretty; }
 /* The evidence article is one h2 per claim, each headed by a claim id in code
    voice. Those are identifiers, so they keep the mono face rather than being
    set in the heading face at heading size. */
-main h2 code, main h3 code {
+main h1 code, main h2 code, main h3 code {
   font-size: .82em;
   background: transparent;
   padding: 0;
@@ -321,6 +321,23 @@ main pre {
   font-size: .855rem;
   line-height: 1.6;
 }
+
+/* ---- Callouts ---------------------------------------------------------- */
+/* Shared with fleet, which carries the same block against --fl- variables, so
+   the two sites indent and tint a quoted lead identically. Bootstrap's default
+   is a 4px rule at body colour; a hairline and an indent say the same thing
+   without making the quote the loudest element on a page of prose. */
+main blockquote,
+main .alert {
+  border: 0;
+  border-left: 2px solid var(--fc-border);
+  background: transparent;
+  border-radius: 0;
+  padding: .1rem 0 .1rem 1.1rem;
+  color: var(--fc-muted);
+}
+main blockquote > :last-child,
+main .alert > :last-child { margin-bottom: 0; }
 
 /* ---- Tables ------------------------------------------------------------ */
 main table.table thead th,

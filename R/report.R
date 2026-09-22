@@ -102,6 +102,55 @@ md_cell <- function(x) {
   gsub("[\r\n]+", " ", x)
 }
 
+#' The README badge row
+#'
+#' The one badge worth having here reports the register, so it is generated from
+#' the register rather than typed: a hand-written "all claims pass" that outlived
+#' the failure it was written for is the exact drift this project exists to stop.
+#'
+#' The static badges are emitted here too, rather than left in the markdown
+#' around a generated block, because a marker line splits a markdown paragraph.
+#' Badges written either side of one render as two rows with a gap between them.
+#'
+#' @param claims as returned by [read_claims()].
+#' @param repo `owner/name` on GitHub.
+#' @param site the published site, used as the claims badge's target.
+#' @return a character vector of markdown lines, one badge each.
+#' @export
+badges_md <- function(claims = read_claims(),
+                      repo = "pwinskill/fleetcheck",
+                      site = "https://pwinskill.github.io/fleetcheck/") {
+  s <- claims_summary(claims)
+  bad <- s$fail + s$undeclared + s$open
+  # Green only when there is nothing outstanding; red would overstate one
+  # failing band in one age group as a broken comparison.
+  colour <- if (s$fail > 0) "orange" else if (bad > 0) "yellow" else "brightgreen"
+  parts <- c(sprintf("%d pass", s$pass),
+             if (s$fail) sprintf("%d fail", s$fail),
+             if (s$open) sprintf("%d open", s$open),
+             if (s$undeclared) sprintf("%d untested", s$undeclared))
+  msg <- paste(parts, collapse = ", ")
+
+  # shields.io: a literal dash is doubled, everything else percent-encoded.
+  enc <- function(x) utils::URLencode(gsub("-", "--", x, fixed = TRUE), reserved = TRUE)
+  shield <- function(label, message, col)
+    sprintf("https://img.shields.io/badge/%s-%s-%s.svg",
+            enc(label), enc(message), col)
+  action <- function(wf)
+    sprintf("https://github.com/%s/actions/workflows/%s.yaml", repo, wf)
+
+  badge <- function(alt, img, href) sprintf("[![%s](%s)](%s)", alt, img, href)
+  c(badge("check", paste0(action("check"), "/badge.svg"), action("check")),
+    badge("pkgdown", paste0(action("pkgdown"), "/badge.svg"), action("pkgdown")),
+    badge(paste0("Claims: ", msg), shield("claims", msg, colour),
+          paste0(site, "articles/evidence.html")),
+    badge("Lifecycle: experimental",
+          shield("lifecycle", "experimental", "orange"),
+          "https://lifecycle.r-lib.org/articles/stages.html#experimental"),
+    badge("License: MIT", shield("license", "MIT", "blue"),
+          sprintf("https://github.com/%s/blob/main/LICENSE", repo)))
+}
+
 #' Replace a marked block in a file
 #'
 #' Rewrites whatever sits between `<!-- BEGIN name -->` and `<!-- END name -->`.

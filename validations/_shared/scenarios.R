@@ -40,39 +40,56 @@ base_params <- function(seasonal = FALSE, age_profile = FALSE) {
 Y_INT <- BURN_Y * 365                       # intervention start (day)
 scenarios <- list()
 
-## Age-profile bands are carried at LOW, REFERENCE and HIGH transmission, not
-## only at the reference. An age profile at one EIR cannot say whether the shape
-## tracks the IBM as transmission changes, which is most of what an age profile
-## is for -- the peak moves into older children as transmission falls. The bands
-## roughly double the IBM's rendering cost, so they are on three scenarios
-## rather than all six.
-AGE_PROFILE_EIR <- c(3, EIR_REF, 120)
+## Age-profile bands are carried at LOW, REFERENCE and HIGH transmission
+## (PROFILE_EIR), not only at the reference. An age profile at one EIR cannot say
+## whether the shape tracks the IBM as transmission changes, which is most of
+## what an age profile is for -- the peak moves into older children as
+## transmission falls. The bands roughly double the IBM's rendering cost, so they
+## are on three scenarios rather than all six.
 for (E in EIR_GRID) scenarios[[paste0("eir_", E)]] <- list(
-  p = set_equilibrium(base_params(age_profile = (E %in% AGE_PROFILE_EIR)), init_EIR = E),
+  p = set_equilibrium(base_params(age_profile = (E %in% PROFILE_EIR)), init_EIR = E),
   eir = E, years = BURN_Y + 3L)
 
 scenarios$seasonal <- list(
   p = set_equilibrium(base_params(seasonal = TRUE), init_EIR = EIR_REF),
   eir = EIR_REF, years = BURN_Y + 3L)
 
-scenarios$nets <- local({
+## ---- interventions, each across the transmission grid ------------------------
+## Every intervention is deployed at all three of PROFILE_EIR, the same levels
+## the age profiles are carried at, because impact is not a property of an
+## intervention on its own. Across EIR 3 to 120 fleet's predicted reduction in
+## all-age severe incidence falls from 81% to 17% for nets, RISES from 7% to 10%
+## for RTS,S, and changes sign for perennial chemoprevention. A comparison made
+## at a single EIR cannot see whether the IBM agrees about any of that, and a
+## claim resting on one cannot say what it covers.
+##
+## The run at EIR_REF keeps the bare scenario name -- int_scenario() holds the
+## convention -- so the rows already committed under `nets`, `irs` and the rest
+## stay valid and only the two new arms have to be run.
+int_builders <- list()
+
+int_builders$nets <- function(E) {
   p <- set_bednets(base_params(), timesteps = Y_INT, coverages = 0.8,
                    retention = 5 * 365, dn0 = matrix(0.387), rn = matrix(0.563),
                    rnm = matrix(0.24), gamman = 2.64 * 365)
-  list(p = set_equilibrium(p, init_EIR = EIR_REF), eir = EIR_REF, years = BURN_Y + 6L)
-})
+  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 6L)
+}
 
-scenarios$irs <- local({
+int_builders$irs <- function(E) {
   rounds <- Y_INT + c(0, 1, 2) * 365
   m <- function(v) matrix(v, nrow = length(rounds), ncol = 1)
   p <- set_spraying(base_params(), timesteps = rounds, coverages = rep(0.8, 3),
                     ls_theta = m(2.025), ls_gamma = m(-0.009),
                     ks_theta = m(-2.222), ks_gamma = m(0.008),
                     ms_theta = m(-1.232), ms_gamma = m(-0.009))
-  list(p = set_equilibrium(p, init_EIR = EIR_REF), eir = EIR_REF, years = BURN_Y + 6L)
-})
+  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 6L)
+}
 
-scenarios$smc <- local({
+## The one seasonal intervention, so the one scenario built on a seasonal
+## profile: four monthly rounds a year aligned to the peak, for three years.
+## It sat at EIR 15 for no reason the repository records, which left it the only
+## row of the impact figure that could not be read against the others.
+int_builders$smc <- function(E) {
   p <- base_params(seasonal = TRUE)
   p <- set_drugs(p, list(SP_AQ_params))
   p <- set_clinical_treatment(p, drug = 1, timesteps = 1, coverages = 0.45)
@@ -80,16 +97,16 @@ scenarios$smc <- local({
   p <- set_smc(p, drug = 1, timesteps = rounds, coverages = rep(0.9, length(rounds)),
                min_ages = rep(round(0.25 * 365), length(rounds)),
                max_ages = rep(round(5 * 365), length(rounds)))
-  list(p = set_equilibrium(p, init_EIR = 15), eir = 15, years = BURN_Y + 3L)
-})
+  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 3L)
+}
 
-scenarios$pev <- local({
+int_builders$pev <- function(E) {
   p <- set_pev_epi(base_params(), profile = rtss_profile, timesteps = Y_INT,
                    coverages = 0.9, min_wait = 0, age = 5 * 30,
                    booster_spacing = 12 * 30, booster_coverage = matrix(0.8),
                    booster_profile = list(rtss_booster_profile))
-  list(p = set_equilibrium(p, init_EIR = EIR_REF), eir = EIR_REF, years = BURN_Y + 6L)
-})
+  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 6L)
+}
 
 ## Perennial malaria chemoprevention: SP-AQ delivered alongside the EPI contacts
 ## at ~10 weeks, ~14 weeks and ~9 months. Here to test the one intervention whose
@@ -101,19 +118,27 @@ scenarios$pev <- local({
 ## Its effect is small on three of the four reported outcomes, which is the
 ## point: the interesting number is all-age severe incidence, where protecting
 ## infants delays immunity and fleet predicts an INCREASE. Whether the IBM agrees
-## on the sign and size of that rebound is not something any other scenario asks.
-scenarios$pmc <- local({
+## on the sign and size of that rebound is not something any other scenario asks,
+## and the sign itself turns on transmission, which is why it is now asked three
+## times.
+int_builders$pmc <- function(E) {
   p <- set_drugs(base_params(), list(SP_AQ_params))
   p <- set_pmc(p, drug = 1, timesteps = Y_INT, coverages = 0.8,
                ages = round(c(10 * 7, 14 * 7, 9 * 30.4)))
-  list(p = set_equilibrium(p, init_EIR = EIR_REF), eir = EIR_REF, years = BURN_Y + 6L)
-})
+  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 6L)
+}
 
-scenarios$treatment <- local({
+int_builders$treatment <- function(E) {
   p <- set_drugs(base_params(), list(AL_params))
   p <- set_clinical_treatment(p, drug = 1, timesteps = c(1, Y_INT), coverages = c(0.2, 0.6))
-  list(p = set_equilibrium(p, init_EIR = EIR_REF), eir = EIR_REF, years = BURN_Y + 6L)
-})
+  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 6L)
+}
+
+stopifnot(setequal(names(int_builders), names(INT_LABELS)))
+for (.nm in names(int_builders))
+  for (.E in PROFILE_EIR)
+    scenarios[[int_scenario(.nm, .E)]] <- int_builders[[.nm]](.E)
+rm(.nm, .E)
 
 ## custom demography: high infant and elderly mortality, so the equilibrium age
 ## structure departs strongly from the default exponential one

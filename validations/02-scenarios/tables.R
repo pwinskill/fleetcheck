@@ -228,39 +228,55 @@ if (file.exists(site_f)) {
 ## ---- 5. intervention impact ---------------------------------------------------
 say("## Intervention impact: reduction over post-deployment years 0-3 vs pre-deployment years -3-0\n")
 INT <- names(INT_LABELS)
+## Every intervention at all three of PROFILE_EIR. Reporting only the reference
+## arm here while the figure carried three would have left the claim's measured
+## value counting a third of the cells the criterion names.
+INT_SCEN <- unlist(lapply(PROFILE_EIR, function(E) int_scenario(INT, E)))
 MET <- c(pfpr_2_10 = "PfPR 2-10", clin_0_5 = "clinical, 0-5",
          clin_all = "clinical, all ages", sev_all = "severe, all ages")
-red <- monthly %>% filter(scenario %in% INT) %>%
+with_parts <- function(d) bind_cols(d, int_parts(d$scenario)) %>% select(-scenario)
+red <- monthly %>% filter(scenario %in% INT_SCEN) %>%
   mutate(phase = case_when(year >= BURN_Y - 3 & year < BURN_Y ~ "pre",
                            year >= BURN_Y & year < BURN_Y + 3 ~ "post", TRUE ~ NA_character_)) %>%
   filter(!is.na(phase)) %>% group_by(scenario, model, rep, phase) %>%
   summarise(across(all_of(names(MET)), mean), .groups = "drop") %>%
   pivot_longer(all_of(names(MET)), names_to = "metric", values_to = "v") %>%
   pivot_wider(names_from = phase, values_from = v) %>%
-  mutate(reduction = 1 - post / pre)
-ri <- red %>% filter(model == "IBM") %>% group_by(scenario, metric) %>%
+  mutate(reduction = 1 - post / pre) %>% with_parts()
+ri <- red %>% filter(model == "IBM") %>% group_by(intervention, eir, metric) %>%
   summarise(mid = median(reduction), lo = q(reduction, .1), hi = q(reduction, .9),
             .groups = "drop")
-ro <- red %>% filter(model == "fleet") %>% transmute(scenario, metric, fleet = reduction)
-rt <- left_join(ri, ro, by = c("scenario", "metric")) %>%
-  mutate(scenario = factor(scenario, levels = INT),
+ro <- red %>% filter(model == "fleet") %>%
+  transmute(intervention, eir, metric, fleet = reduction)
+rt <- left_join(ri, ro, by = c("intervention", "eir", "metric")) %>%
+  mutate(intervention = factor(intervention, levels = INT),
          metric = factor(metric, levels = names(MET), labels = MET)) %>%
-  arrange(scenario, metric)
-md_table(rt %>% transmute(Scenario = sub("\n.*", "", INT_LABELS[as.character(scenario)]),
+  arrange(intervention, eir, metric)
+md_table(rt %>% transmute(Scenario = sub("\n.*", "", INT_LABELS[as.character(intervention)]),
+                          EIR = eir,
                           Outcome = as.character(metric),
                           `IBM reduction (10-90%)` =
                             sprintf("%s (%s\u2013%s)", pct(mid), pct(lo), pct(hi)),
                           `fleet reduction` = pct(fleet)))
 wi <- which.max(abs(rt$fleet - rt$mid))
-say("largest |fleet - IBM median| gap: %.1f pp (%s, %s); fleet inside the IBM 10-90%% band in %d of %d scenario x outcome cells\n",
-    100 * abs(rt$fleet - rt$mid)[wi], rt$scenario[wi], rt$metric[wi],
+say("largest |fleet - IBM median| gap: %.1f pp (%s, EIR %g, %s); fleet inside the IBM 10-90%% band in %d of %d scenario x EIR x outcome cells\n",
+    100 * abs(rt$fleet - rt$mid)[wi], rt$intervention[wi], rt$eir[wi], rt$metric[wi],
     sum(rt$fleet >= rt$lo & rt$fleet <= rt$hi), nrow(rt))
+## The criterion is a tolerance on the band, not on the median, so report the
+## worst excursion PAST the band as well: a cell can sit outside a band that is
+## itself a tenth of a percentage point wide.
+exc <- pmax(rt$lo - rt$fleet, rt$fleet - rt$hi, 0)
+say("worst excursion past the band: %.2f pp (%s, EIR %g, %s)\n",
+    100 * max(exc), rt$intervention[which.max(exc)], rt$eir[which.max(exc)],
+    rt$metric[which.max(exc)])
 ## per-scenario post-deployment trajectory gap, years 0-6, as % of the IBM median (monthly, prevalence)
-gap <- monthly %>% filter(scenario %in% INT, year >= BURN_Y, year < BURN_Y + 6) %>%
+gap <- monthly %>% filter(scenario %in% INT_SCEN, year >= BURN_Y, year < BURN_Y + 6) %>%
   group_by(scenario, model, year) %>% summarise(p = median(pfpr_2_10), c = median(clin_0_5), .groups = "drop") %>%
-  pivot_wider(names_from = model, values_from = c(p, c)) %>% group_by(scenario) %>%
+  pivot_wider(names_from = model, values_from = c(p, c)) %>% with_parts() %>%
+  group_by(intervention, eir) %>%
   summarise(`mean prevalence gap (fleet - IBM, pp)` = sprintf("%+.1f", 100 * mean(p_fleet - p_IBM)),
-            `mean clinical gap (% of IBM)` = pct(mean(c_fleet - c_IBM) / mean(c_IBM), 1), .groups = "drop")
+            `mean clinical gap (% of IBM)` = pct(mean(c_fleet - c_IBM) / mean(c_IBM), 1), .groups = "drop") %>%
+  arrange(factor(intervention, levels = INT), eir)
 md_table(gap)
 
 ## ---- 5b. long-horizon programmes ----------------------------------------------

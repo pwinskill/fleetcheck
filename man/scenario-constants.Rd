@@ -11,6 +11,7 @@
 \alias{SEASON}
 \alias{EIR_GRID}
 \alias{EIR_REF}
+\alias{PROFILE_EIR}
 \alias{INT_LABELS}
 \alias{TS_LABELS}
 \alias{TS_YEARS}
@@ -30,6 +31,8 @@ An object of class \code{list} of length 3.
 An object of class \code{numeric} of length 6.
 
 An object of class \code{numeric} of length 1.
+
+An object of class \code{numeric} of length 3.
 
 An object of class \code{character} of length 6.
 
@@ -55,6 +58,8 @@ SEASON
 EIR_GRID
 
 EIR_REF
+
+PROFILE_EIR
 
 INT_LABELS
 
@@ -82,6 +87,8 @@ are skipped when it is absent.}
 \item{\code{SEASON}}{Fourier coefficients for the seasonal rainfall profile.}
 \item{\code{EIR_GRID}}{the transmission-intensity grid.}
 \item{\code{EIR_REF}}{reference EIR for age profiles and interventions.}
+\item{\code{PROFILE_EIR}}{the low / reference / high transmission levels that
+shape claims are carried at.}
 \item{\code{INT_LABELS}, \code{TS_LABELS}}{display labels, in display order.}
 \item{\code{TS_YEARS}, \code{TS_NET_EVERY}}{long-horizon programme timings.}
 }

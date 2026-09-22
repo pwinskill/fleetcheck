@@ -1,7 +1,17 @@
 # fleetcheck <img src="man/figures/logo.png" align="right" width="30%" alt="fleetcheck hex logo: a mosquito trailing light over a network of connected points, with a green tick" />
 
-How closely does [`fleet`](https://github.com/pwinskill/fleet) reproduce
-[`malariasimulation`](https://github.com/mrc-ide/malariasimulation)?
+<!-- BEGIN badges -->
+
+[![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
+[![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
+[![Claims: 9 pass, 2 fail](https://img.shields.io/badge/claims-9%20pass%2C%202%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.html)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
+
+<!-- END badges -->
+
+> How closely does [`fleet`](https://github.com/pwinskill/fleet) reproduce
+> [`malariasimulation`](https://github.com/mrc-ide/malariasimulation)?
 
 **This measures agreement between two models, not agreement with data.** It is a
 twin-fidelity check. `fleet` inherits its epidemiological standing from the IBM,
@@ -18,7 +28,7 @@ of plots.
 
 <!-- BEGIN scoreboard -->
 
-**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
+**11 claims — 2 failing, 0 untested, 0 open, 9 pass.**
 
 1. <span class="verdict pass">pass</span> [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
 2. <span class="verdict pass">pass</span> [`clinical-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
@@ -26,7 +36,7 @@ of plots.
 4. <span class="verdict pass">pass</span> [`severe-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#severe-allage-eir) &mdash; All-age severe incidence tracks the IBM across transmission intensity.
 5. <span class="verdict fail">FAIL</span> [`age-profile-clinical`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-clinical) &mdash; The age distribution of clinical incidence tracks the IBM.
 6. <span class="verdict pass">pass</span> [`age-profile-severe`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-severe) &mdash; The age distribution of severe incidence tracks the IBM.
-7. <span class="verdict pass">pass</span> [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact) &mdash; The modelled impact of each intervention matches the IBM.
+7. <span class="verdict fail">FAIL</span> [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact) &mdash; The modelled impact of each intervention matches the IBM.
 8. <span class="verdict pass">pass</span> [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
 9. <span class="verdict pass">pass</span> [`population-age-structure`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#population-age-structure) &mdash; The population age structure matches the IBM's.
 10. <span class="verdict pass">pass</span> [`speed`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#speed) &mdash; fleet is fast enough to be worth using in place of the IBM.
@@ -66,7 +76,7 @@ recorded against every claim rather than mentioned in prose.
 | --- | --- | --- |
 | 0 | seconds | anyone, from committed summaries |
 | 1 | ~2 min | anyone; re-runs `fleet` only |
-| 2 | ~25 min | anyone with about 10 cores |
+| 2 | ~2 h | anyone with about 10 cores |
 | 3 | ~40 min | ~10 cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and statistics are
@@ -133,7 +143,7 @@ Rscript -e 'pkgload::load_all(quiet = TRUE); check_claims()'
 
 **This is the one to run often.** It re-runs `fleet` alone against the committed
 IBM rows. The IBM does not depend on `fleet`, so its rows stay valid for any
-`fleet`-side change and there is no reason to spend 25 minutes re-running it.
+`fleet`-side change and there is no reason to spend two hours re-running it.
 
 ```bash
 Rscript validations/02-scenarios/assess.R
@@ -150,7 +160,7 @@ CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R   # a subset, ~20 
 CMP_STRICT=1 Rscript validations/02-scenarios/assess.R          # also fail if ANY number moved
 ```
 
-### 5. Re-run the whole comparison — tier 2, ~25 min on 10 cores
+### 5. Re-run the whole comparison — tier 2, ~2 h on 10 cores
 
 Try the smoke path first. It runs every scenario end to end at a 4-year horizon
 with one replicate, in about two minutes, and writes to
