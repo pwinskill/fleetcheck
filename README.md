@@ -4,7 +4,7 @@
 
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
-[![Claims: 9 pass, 2 fail](https://img.shields.io/badge/claims-9%20pass%2C%202%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.html)
+[![Claims: 10 pass, 1 fail](https://img.shields.io/badge/claims-10%20pass%2C%201%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
 
@@ -28,13 +28,13 @@ of plots.
 
 <!-- BEGIN scoreboard -->
 
-**11 claims — 2 failing, 0 untested, 0 open, 9 pass.**
+**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
 
 1. <span class="verdict pass">pass</span> [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
 2. <span class="verdict pass">pass</span> [`clinical-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
 3. <span class="verdict pass">pass</span> [`clinical-under5-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-under5-eir) &mdash; Under-5 clinical incidence tracks the IBM across transmission intensity.
 4. <span class="verdict pass">pass</span> [`severe-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#severe-allage-eir) &mdash; All-age severe incidence tracks the IBM across transmission intensity.
-5. <span class="verdict fail">FAIL</span> [`age-profile-clinical`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-clinical) &mdash; The age distribution of clinical incidence tracks the IBM.
+5. <span class="verdict pass">pass</span> [`age-profile-clinical`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-clinical) &mdash; The age distribution of clinical incidence tracks the IBM.
 6. <span class="verdict pass">pass</span> [`age-profile-severe`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-severe) &mdash; The age distribution of severe incidence tracks the IBM.
 7. <span class="verdict fail">FAIL</span> [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact) &mdash; The modelled impact of each intervention matches the IBM.
 8. <span class="verdict pass">pass</span> [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.

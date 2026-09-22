@@ -92,14 +92,18 @@ cap <- function(..., fig_width = 10, width = round(13.5 * fig_width))
   paste(strwrap(paste(...), width = width), collapse = "\n")
 
 ## ---- data helpers -----------------------------------------------------------
-## IBM replicate summary: median and 10-90% band per x, for a value column.
+## IBM replicate summary per x, for a value column. The band is the package's
+## replicate_band(), so the figures draw the interval the criteria are decided
+## on rather than a second one that resembles it.
 envelope <- function(d, by, value = "y") {
   stopifnot(all(c(by, "rep", value) %in% names(d)))
   d <- d[is.finite(d[[value]]), ]
   agg <- function(f) aggregate(d[[value]], d[by], f)
   out <- agg(stats::median); names(out)[ncol(out)] <- "mid"
-  out$lo <- agg(function(v) unname(stats::quantile(v, 0.10)))[[length(by) + 1]]
-  out$hi <- agg(function(v) unname(stats::quantile(v, 0.90)))[[length(by) + 1]]
+  col <- length(by) + 1L
+  out$mid <- agg(function(v) replicate_band(v)$centre)[[col]]
+  out$lo  <- agg(function(v) replicate_band(v)$lower)[[col]]
+  out$hi  <- agg(function(v) replicate_band(v)$upper)[[col]]
   out$model <- "IBM"
   out
 }

@@ -1,147 +1,147 @@
 "eir","metric","mid","lo","hi","model","scenario"
-"EIR 3","LM prevalence, ages 2–10",0.812112146,0.7990091631,0.8223613491,"IBM","Indoor residual spraying
+"EIR 3","LM prevalence, ages 2–10",0.812112146,0.7998339033,0.8243903888,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 3","clinical incidence, ages 0–5",0.9801264531,0.9775603861,0.983279668,"IBM","Indoor residual spraying
+"EIR 3","clinical incidence, ages 0–5",0.9801264531,0.9768198992,0.9834330069,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 3","clinical incidence, all ages",0.9799395174,0.978409312,0.9818188316,"IBM","Indoor residual spraying
+"EIR 3","clinical incidence, all ages",0.9799395174,0.9782460244,0.9816330104,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 3","severe incidence, all ages",0.9827347278,0.9703122305,0.9899910719,"IBM","Indoor residual spraying
+"EIR 3","severe incidence, all ages",0.9827347278,0.9716485433,0.9938209123,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 20","LM prevalence, ages 2–10",0.7875740142,0.780614638,0.7949026265,"IBM","Indoor residual spraying
+"EIR 20","LM prevalence, ages 2–10",0.7875740142,0.780502938,0.7946450903,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 20","clinical incidence, ages 0–5",0.9749798426,0.9728740119,0.9771447796,"IBM","Indoor residual spraying
+"EIR 20","clinical incidence, ages 0–5",0.9749798426,0.9728269043,0.9771327808,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 20","clinical incidence, all ages",0.9751049254,0.9732020741,0.9766830485,"IBM","Indoor residual spraying
+"EIR 20","clinical incidence, all ages",0.9751049254,0.9733188831,0.9768909676,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 20","severe incidence, all ages",0.9710150671,0.9649137905,0.9780670609,"IBM","Indoor residual spraying
+"EIR 20","severe incidence, all ages",0.9710150671,0.9632420987,0.9787880355,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 120","LM prevalence, ages 2–10",0.6850006421,0.6743579198,0.6924963298,"IBM","Indoor residual spraying
+"EIR 120","LM prevalence, ages 2–10",0.6850006421,0.6758426987,0.6941585856,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 120","clinical incidence, ages 0–5",0.9325453284,0.9279260776,0.9386103968,"IBM","Indoor residual spraying
+"EIR 120","clinical incidence, ages 0–5",0.9325453284,0.9273343904,0.9377562664,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 120","clinical incidence, all ages",0.938283077,0.9334962649,0.9419857344,"IBM","Indoor residual spraying
+"EIR 120","clinical incidence, all ages",0.938283077,0.9337996958,0.9427664581,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 120","severe incidence, all ages",0.8470094888,0.8260977599,0.8797537678,"IBM","Indoor residual spraying
+"EIR 120","severe incidence, all ages",0.8470094888,0.8221457169,0.8718732608,"IBM","Indoor residual spraying
 80% coverage, annual"
-"EIR 3","LM prevalence, ages 2–10",0.6870927048,0.6678851646,0.7016969902,"IBM","Bed-net campaign
+"EIR 3","LM prevalence, ages 2–10",0.6870927048,0.6646473202,0.7095380895,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 3","clinical incidence, ages 0–5",0.8601912297,0.852011433,0.8721572483,"IBM","Bed-net campaign
+"EIR 3","clinical incidence, ages 0–5",0.8601912297,0.846991717,0.8733907424,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 3","clinical incidence, all ages",0.8541056941,0.8387512821,0.868646812,"IBM","Bed-net campaign
+"EIR 3","clinical incidence, all ages",0.8541056941,0.8366830615,0.8715283267,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 3","severe incidence, all ages",0.8259193364,0.7902785104,0.861258704,"IBM","Bed-net campaign
+"EIR 3","severe incidence, all ages",0.8259193364,0.7857088448,0.8661298279,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 20","LM prevalence, ages 2–10",0.4806592121,0.468526985,0.4893551565,"IBM","Bed-net campaign
+"EIR 20","LM prevalence, ages 2–10",0.4806592121,0.4690444676,0.4922739567,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 20","clinical incidence, ages 0–5",0.6611811556,0.647515019,0.6743617671,"IBM","Bed-net campaign
+"EIR 20","clinical incidence, ages 0–5",0.6611811556,0.6469519611,0.6754103501,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 20","clinical incidence, all ages",0.6673447043,0.6522546629,0.6803784277,"IBM","Bed-net campaign
+"EIR 20","clinical incidence, all ages",0.6673447043,0.6540620009,0.6806274076,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 20","severe incidence, all ages",0.492214199,0.4371799218,0.5339206739,"IBM","Bed-net campaign
+"EIR 20","severe incidence, all ages",0.492214199,0.4395387615,0.5448896365,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 120","LM prevalence, ages 2–10",0.2748076103,0.2651125177,0.2814929215,"IBM","Bed-net campaign
+"EIR 120","LM prevalence, ages 2–10",0.2748076103,0.2656548928,0.2839603278,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 120","clinical incidence, ages 0–5",0.4218959915,0.4139195046,0.4358001736,"IBM","Bed-net campaign
+"EIR 120","clinical incidence, ages 0–5",0.4218959915,0.4065001137,0.4372918692,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 120","clinical incidence, all ages",0.4480117599,0.4362195847,0.4583322217,"IBM","Bed-net campaign
+"EIR 120","clinical incidence, all ages",0.4480117599,0.4368927331,0.4591307867,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 120","severe incidence, all ages",0.1523063346,0.0850611738,0.2490384155,"IBM","Bed-net campaign
+"EIR 120","severe incidence, all ages",0.1523063346,0.05674017508,0.2478724942,"IBM","Bed-net campaign
 80% coverage, one round"
-"EIR 3","LM prevalence, ages 2–10",0.009237406121,-0.01598675286,0.05682824574,"IBM","RTS,S via EPI
+"EIR 3","LM prevalence, ages 2–10",0.009237406121,-0.026736246,0.04521105824,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 3","clinical incidence, ages 0–5",0.1092353186,0.06045918554,0.1408276708,"IBM","RTS,S via EPI
+"EIR 3","clinical incidence, ages 0–5",0.1092353186,0.06333538921,0.1551352481,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 3","clinical incidence, all ages",0.02970608896,0.005523523449,0.05429188623,"IBM","RTS,S via EPI
+"EIR 3","clinical incidence, all ages",0.02970608896,0.006822200906,0.05258997701,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 3","severe incidence, all ages",0.119757378,0.02580033696,0.2366966884,"IBM","RTS,S via EPI
+"EIR 3","severe incidence, all ages",0.119757378,-0.002230909415,0.2417456654,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 20","LM prevalence, ages 2–10",0.007202900977,-0.006557563379,0.02288922639,"IBM","RTS,S via EPI
+"EIR 20","LM prevalence, ages 2–10",0.007202900977,-0.006697830269,0.02110363222,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 20","clinical incidence, ages 0–5",0.10515478,0.09059931144,0.1348533845,"IBM","RTS,S via EPI
+"EIR 20","clinical incidence, ages 0–5",0.10515478,0.08005435332,0.1302552067,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 20","clinical incidence, all ages",0.05613859865,0.04242392804,0.07365732283,"IBM","RTS,S via EPI
+"EIR 20","clinical incidence, all ages",0.05613859865,0.03453531119,0.07774188611,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 20","severe incidence, all ages",0.1014682736,0.04530922389,0.1985116071,"IBM","RTS,S via EPI
+"EIR 20","severe incidence, all ages",0.1014682736,0.007741909355,0.1951946379,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 120","LM prevalence, ages 2–10",0.00576063793,-0.0001190674081,0.01182331092,"IBM","RTS,S via EPI
+"EIR 120","LM prevalence, ages 2–10",0.00576063793,-0.0003009237834,0.01182219964,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 120","clinical incidence, ages 0–5",0.1146903616,0.1015457232,0.1331843219,"IBM","RTS,S via EPI
+"EIR 120","clinical incidence, ages 0–5",0.1146903616,0.09601045681,0.1333702663,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 120","clinical incidence, all ages",0.08725903754,0.06659971949,0.1020073547,"IBM","RTS,S via EPI
+"EIR 120","clinical incidence, all ages",0.08725903754,0.06766181374,0.1068562613,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 120","severe incidence, all ages",0.09115041344,-0.01588183516,0.191343077,"IBM","RTS,S via EPI
+"EIR 120","severe incidence, all ages",0.09115041344,-0.01880459304,0.2011054199,"IBM","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 3","LM prevalence, ages 2–10",-0.001423358955,-0.02699084989,0.05755104198,"IBM","Perennial chemoprevention
+"EIR 3","LM prevalence, ages 2–10",-0.001423358955,-0.04720499815,0.04435828024,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 3","clinical incidence, ages 0–5",0.04568893596,-0.005554924508,0.09475297112,"IBM","Perennial chemoprevention
+"EIR 3","clinical incidence, ages 0–5",0.04568893596,-0.01427864856,0.1056565205,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 3","clinical incidence, all ages",0.01736951293,0.002466267658,0.04155827445,"IBM","Perennial chemoprevention
+"EIR 3","clinical incidence, all ages",0.01736951293,-0.007403873023,0.04214289888,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 3","severe incidence, all ages",0.07087719388,-0.06784430016,0.2045437645,"IBM","Perennial chemoprevention
+"EIR 3","severe incidence, all ages",0.07087719388,-0.08034583972,0.2221002275,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 20","LM prevalence, ages 2–10",-0.001811888571,-0.007542432295,0.01436859717,"IBM","Perennial chemoprevention
+"EIR 20","LM prevalence, ages 2–10",-0.001811888571,-0.01506151065,0.01143773351,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 20","clinical incidence, ages 0–5",0.02539967045,-0.001637360931,0.05247126519,"IBM","Perennial chemoprevention
+"EIR 20","clinical incidence, ages 0–5",0.02539967045,-0.007163894107,0.05796323501,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 20","clinical incidence, all ages",0.01679449272,8.385158073e-05,0.03962362419,"IBM","Perennial chemoprevention
+"EIR 20","clinical incidence, all ages",0.01679449272,-0.00801141202,0.04160039746,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 20","severe incidence, all ages",0.01992384477,-0.09172752139,0.1287194405,"IBM","Perennial chemoprevention
+"EIR 20","severe incidence, all ages",0.01992384477,-0.09963087172,0.1394785613,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 120","LM prevalence, ages 2–10",0.004312797914,-0.00373017528,0.0107679994,"IBM","Perennial chemoprevention
+"EIR 120","LM prevalence, ages 2–10",0.004312797914,-0.00314024141,0.01176583724,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 120","clinical incidence, ages 0–5",0.001540199889,-0.01549121668,0.01607640702,"IBM","Perennial chemoprevention
+"EIR 120","clinical incidence, ages 0–5",0.001540199889,-0.01580968602,0.0188900858,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 120","clinical incidence, all ages",0.0009558488423,-0.01242841279,0.02254864895,"IBM","Perennial chemoprevention
+"EIR 120","clinical incidence, all ages",0.0009558488423,-0.02006947468,0.02198117237,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 120","severe incidence, all ages",-0.04110208476,-0.1720247768,0.07007720436,"IBM","Perennial chemoprevention
+"EIR 120","severe incidence, all ages",-0.04110208476,-0.1677014153,0.08549724581,"IBM","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 3","LM prevalence, ages 2–10",0.270319468,0.2395376193,0.3008114034,"IBM","Seasonal SMC
+"EIR 3","LM prevalence, ages 2–10",0.270319468,0.2383893949,0.3022495411,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 3","clinical incidence, ages 0–5",0.5680006277,0.547613031,0.5872007791,"IBM","Seasonal SMC
+"EIR 3","clinical incidence, ages 0–5",0.5680006277,0.5445738268,0.5914274287,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 3","clinical incidence, all ages",0.206709056,0.1864073624,0.2358065206,"IBM","Seasonal SMC
+"EIR 3","clinical incidence, all ages",0.206709056,0.1830523278,0.2303657842,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 3","severe incidence, all ages",0.3391150419,0.236626227,0.4184719559,"IBM","Seasonal SMC
+"EIR 3","severe incidence, all ages",0.3391150419,0.2519901845,0.4262398993,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 20","LM prevalence, ages 2–10",0.2157797093,0.2003035445,0.2350783128,"IBM","Seasonal SMC
+"EIR 20","LM prevalence, ages 2–10",0.2157797093,0.199427513,0.2321319056,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 20","clinical incidence, ages 0–5",0.5173528975,0.4989371039,0.5274702288,"IBM","Seasonal SMC
+"EIR 20","clinical incidence, ages 0–5",0.5173528975,0.5016165828,0.5330892123,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 20","clinical incidence, all ages",0.2642455007,0.241302343,0.2722770403,"IBM","Seasonal SMC
+"EIR 20","clinical incidence, all ages",0.2642455007,0.2463692369,0.2821217644,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 20","severe incidence, all ages",0.3635864333,0.2953739095,0.428842054,"IBM","Seasonal SMC
+"EIR 20","severe incidence, all ages",0.3635864333,0.290505961,0.4366669056,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 120","LM prevalence, ages 2–10",0.1566963108,0.1459829835,0.1684173393,"IBM","Seasonal SMC
+"EIR 120","LM prevalence, ages 2–10",0.1566963108,0.1450473797,0.1683452419,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 120","clinical incidence, ages 0–5",0.4321043518,0.4230858655,0.440070623,"IBM","Seasonal SMC
+"EIR 120","clinical incidence, ages 0–5",0.4321043518,0.4229529582,0.4412557454,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 120","clinical incidence, all ages",0.304000764,0.2946191563,0.3133843698,"IBM","Seasonal SMC
+"EIR 120","clinical incidence, all ages",0.304000764,0.2927362013,0.3152653267,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 120","severe incidence, all ages",0.2943259865,0.2289216153,0.348242877,"IBM","Seasonal SMC
+"EIR 120","severe incidence, all ages",0.2943259865,0.2312250343,0.3574269387,"IBM","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 3","LM prevalence, ages 2–10",0.316348073,0.2928220524,0.3453728615,"IBM","Treatment scale-up
+"EIR 3","LM prevalence, ages 2–10",0.316348073,0.2888697485,0.3438263975,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 3","clinical incidence, ages 0–5",0.1487577278,0.1119784122,0.1836518421,"IBM","Treatment scale-up
+"EIR 3","clinical incidence, ages 0–5",0.1487577278,0.1063138714,0.1912015843,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 3","clinical incidence, all ages",0.146954521,0.1258625023,0.1633898449,"IBM","Treatment scale-up
+"EIR 3","clinical incidence, all ages",0.146954521,0.1294080505,0.1645009915,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 3","severe incidence, all ages",0.1146887321,0.0523969137,0.2006048954,"IBM","Treatment scale-up
+"EIR 3","severe incidence, all ages",0.1146887321,0.02542121423,0.20395625,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 20","LM prevalence, ages 2–10",0.1899263853,0.1756668753,0.1966915847,"IBM","Treatment scale-up
+"EIR 20","LM prevalence, ages 2–10",0.1899263853,0.1770576127,0.2027951579,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 20","clinical incidence, ages 0–5",0.04726069931,0.01757408216,0.08779199498,"IBM","Treatment scale-up
+"EIR 20","clinical incidence, ages 0–5",0.04726069931,0.006322819964,0.08819857865,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 20","clinical incidence, all ages",0.04917513478,0.02628425728,0.07553578165,"IBM","Treatment scale-up
+"EIR 20","clinical incidence, all ages",0.04917513478,0.01919768895,0.0791525806,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 20","severe incidence, all ages",0.03020419627,-0.1121223207,0.101876886,"IBM","Treatment scale-up
+"EIR 20","severe incidence, all ages",0.03020419627,-0.08498648771,0.1453948803,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 120","LM prevalence, ages 2–10",0.08106115935,0.07714483873,0.0852938884,"IBM","Treatment scale-up
+"EIR 120","LM prevalence, ages 2–10",0.08106115935,0.07556250515,0.08655981356,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 120","clinical incidence, ages 0–5",0.0201820839,-0.0001350463945,0.04364529622,"IBM","Treatment scale-up
+"EIR 120","clinical incidence, ages 0–5",0.0201820839,-0.004415853769,0.04478002157,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 120","clinical incidence, all ages",0.01387531546,-0.01101779297,0.03794385349,"IBM","Treatment scale-up
+"EIR 120","clinical incidence, all ages",0.01387531546,-0.01374876836,0.04149939928,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 120","severe incidence, all ages",0.01016457403,-0.1057444403,0.1084681596,"IBM","Treatment scale-up
+"EIR 120","severe incidence, all ages",0.01016457403,-0.1095709753,0.1299001233,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
 "EIR 20","LM prevalence, ages 2–10",0.7893659726,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"

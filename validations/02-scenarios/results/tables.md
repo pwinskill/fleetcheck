@@ -2,29 +2,29 @@
 
 | init EIR | IBM realised EIR | fleet realised EIR | IBM PfPR (2-10) | fleet PfPR (2-10) | IBM clinical (0-5, per child-year) | fleet clinical |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 1.0 | 1.0 | 0.114 (0.108–0.118) | 0.114 | 0.16 (0.15–0.17) | 0.16 |
-| 3 | 3.0 | 3.0 | 0.239 (0.230–0.245) | 0.237 | 0.42 (0.40–0.44) | 0.42 |
-| 10 | 10.1 | 10.0 | 0.430 (0.420–0.435) | 0.428 | 1.03 (1.00–1.06) | 1.04 |
-| 20 | 20.1 | 20.0 | 0.548 (0.545–0.553) | 0.548 | 1.52 (1.48–1.56) | 1.54 |
-| 50 | 50.0 | 50.1 | 0.686 (0.678–0.693) | 0.686 | 2.27 (2.23–2.33) | 2.29 |
-| 120 | 120.5 | 120.3 | 0.787 (0.781–0.791) | 0.785 | 2.84 (2.79–2.87) | 2.83 |
+| 1 | 1.0 | 1.0 | 0.114 (0.108–0.119) | 0.114 | 0.16 (0.15–0.17) | 0.16 |
+| 3 | 3.0 | 3.0 | 0.239 (0.231–0.247) | 0.237 | 0.42 (0.39–0.44) | 0.42 |
+| 10 | 10.1 | 10.0 | 0.430 (0.422–0.438) | 0.428 | 1.03 (0.99–1.07) | 1.04 |
+| 20 | 20.1 | 20.0 | 0.548 (0.543–0.553) | 0.548 | 1.52 (1.48–1.56) | 1.54 |
+| 50 | 50.0 | 50.1 | 0.686 (0.678–0.694) | 0.686 | 2.27 (2.22–2.33) | 2.29 |
+| 120 | 120.5 | 120.3 | 0.787 (0.781–0.792) | 0.785 | 2.84 (2.80–2.88) | 2.83 |
 
 max |fleet - IBM median| PfPR(2-10): 0.002 (at EIR 3); clinical incidence relative difference range: -0.5% to 1.2%
 
-fleet inside the IBM 10-90% band: PfPR at 6 of 6 EIRs; clinical at 6 of 6
+fleet inside the IBM replicate band: PfPR at 6 of 6 EIRs; clinical at 6 of 6
 
 | init EIR | IBM clinical (all ages, per person-year) | fleet clinical | IBM severe (all ages, per 1,000 person-years) | fleet severe |
 | --- | --- | --- | --- | --- |
-| 1 | 0.208 (0.198–0.218) | 0.212 | 4.70 (4.21–5.05) | 4.72 |
-| 3 | 0.382 (0.368–0.395) | 0.386 | 6.70 (5.81–7.26) | 6.56 |
-| 10 | 0.588 (0.577–0.606) | 0.588 | 8.65 (8.03–8.96) | 8.40 |
-| 20 | 0.689 (0.671–0.699) | 0.686 | 9.29 (8.77–9.88) | 9.04 |
-| 50 | 0.780 (0.769–0.790) | 0.777 | 9.53 (9.01–10.38) | 9.14 |
-| 120 | 0.818 (0.801–0.840) | 0.813 | 8.70 (8.24–9.63) | 8.35 |
+| 1 | 0.208 (0.198–0.217) | 0.212 | 4.70 (4.21–5.18) | 4.72 |
+| 3 | 0.382 (0.369–0.396) | 0.386 | 6.70 (5.86–7.54) | 6.56 |
+| 10 | 0.588 (0.571–0.604) | 0.588 | 8.65 (7.94–9.35) | 8.40 |
+| 20 | 0.689 (0.671–0.707) | 0.686 | 9.29 (8.56–10.02) | 9.04 |
+| 50 | 0.780 (0.765–0.794) | 0.777 | 9.53 (8.84–10.22) | 9.14 |
+| 120 | 0.818 (0.794–0.842) | 0.813 | 8.70 (8.01–9.40) | 8.35 |
 
 all-ages relative difference: clinical -0.6% to 2.2%, severe -4.1% to 0.6%
 
-fleet inside the IBM 10-90% band: all-age clinical at 6 of 6 EIRs; all-age severe at 6 of 6
+fleet inside the IBM replicate band: all-age clinical at 6 of 6 EIRs; all-age severe at 6 of 6
 
 fold change across the grid (fleet): clinical 0-5 17.9x, clinical all ages 3.8x; severe all ages peaks at EIR 50
 
@@ -45,7 +45,23 @@ fold change across the grid (fleet): clinical 0-5 17.9x, clinical all ages 3.8x;
 | 40–60 | 0.197 | 0.198 | 0.12 | 0.13 | 0.0 | 0.2 |
 | 60–85 | 0.196 | 0.195 | 0.10 | 0.10 | 0.0 | 0.1 |
 
-max |fleet - IBM| prevalence across bands: 0.004; under-20 bands: clinical relative diff range -2.7% to 1.6%, severe relative diff range -20% to 6%; fleet severe inside IBM band in 11 of 12 bands
+max |fleet - IBM| prevalence across bands: 0.004; under-20 bands: clinical relative diff range -2.7% to 1.6%, severe relative diff range -20% to 6%; fleet severe inside IBM band in 12 of 12 bands
+
+## Age-profile claims, scored over EIR 3, 20, 120
+
+age-profile-clinical: 25 of 36 cells carry at least 5% of the outcome and are tested; they hold 94% of all episodes
+
+  inside the replicate band: 25 of 25; max |z| 1.17 (EIR 120, 2-3y)
+
+  not tested and outside the band: EIR 20 40-60y (|z| 1.50, 1.7% of episodes)
+
+
+age-profile-severe: 16 of 31 cells carry at least 5% of the outcome and are tested; they hold 94% of all episodes
+
+  inside the replicate band: 16 of 16; max |z| 0.94 (EIR 20, 3-5y)
+
+  not tested and outside the band: none
+
 
 ## Custom demography at EIR 20
 
@@ -71,7 +87,7 @@ under-5 share: IBM 8.7%, fleet 8.7%; max |share diff| 1.73 pp; max |prevalence d
 prevalence peak: IBM 0.671 (day 326), fleet 0.668 (day 326); trough: IBM 0.315 (day 151), fleet 0.315 (day 144)
 clinical peak (per child-year): IBM 4.36 (day 305), fleet 4.47 (day 298); annual mean clinical IBM 1.48 fleet 1.53
 
-seasonal realised EIR: IBM 18.7, fleet 18.7 (target 20); annual PfPR IBM 0.491 (0.485–0.498), fleet 0.490
+seasonal realised EIR: IBM 18.7, fleet 18.7 (target 20); annual PfPR IBM 0.491 (0.483–0.499), fleet 0.490
 
 ## Country site files (run: 2026-09-21, fleet 0.0.0.9002; summarised 2026-09-21)
 
@@ -82,56 +98,56 @@ NOT refreshed by this harness or by CI: re-take with CMP_REFRESH_SITES=1 when th
 
 ## Intervention impact: reduction over post-deployment years 0-3 vs pre-deployment years -3-0
 
-| Scenario | EIR | Outcome | IBM reduction (10-90%) | fleet reduction |
+| Scenario | EIR | Outcome | IBM reduction (replicate band) | fleet reduction |
 | --- | --- | --- | --- | --- |
-| Perennial chemoprevention | 3 | PfPR 2-10 | -0% (-3%–6%) | 0% |
-| Perennial chemoprevention | 3 | clinical, 0-5 | 5% (-1%–9%) | 3% |
-| Perennial chemoprevention | 3 | clinical, all ages | 2% (0%–4%) | 1% |
-| Perennial chemoprevention | 3 | severe, all ages | 7% (-7%–20%) | 2% |
-| Perennial chemoprevention | 20 | PfPR 2-10 | -0% (-1%–1%) | 0% |
-| Perennial chemoprevention | 20 | clinical, 0-5 | 3% (-0%–5%) | 2% |
-| Perennial chemoprevention | 20 | clinical, all ages | 2% (0%–4%) | 1% |
-| Perennial chemoprevention | 20 | severe, all ages | 2% (-9%–13%) | 1% |
+| Perennial chemoprevention | 3 | PfPR 2-10 | -0% (-5%–4%) | 0% |
+| Perennial chemoprevention | 3 | clinical, 0-5 | 5% (-1%–11%) | 3% |
+| Perennial chemoprevention | 3 | clinical, all ages | 2% (-1%–4%) | 1% |
+| Perennial chemoprevention | 3 | severe, all ages | 7% (-8%–22%) | 2% |
+| Perennial chemoprevention | 20 | PfPR 2-10 | -0% (-2%–1%) | 0% |
+| Perennial chemoprevention | 20 | clinical, 0-5 | 3% (-1%–6%) | 2% |
+| Perennial chemoprevention | 20 | clinical, all ages | 2% (-1%–4%) | 1% |
+| Perennial chemoprevention | 20 | severe, all ages | 2% (-10%–14%) | 1% |
 | Perennial chemoprevention | 120 | PfPR 2-10 | 0% (-0%–1%) | 0% |
 | Perennial chemoprevention | 120 | clinical, 0-5 | 0% (-2%–2%) | -0% |
-| Perennial chemoprevention | 120 | clinical, all ages | 0% (-1%–2%) | 0% |
-| Perennial chemoprevention | 120 | severe, all ages | -4% (-17%–7%) | -3% |
-| Treatment scale-up | 3 | PfPR 2-10 | 32% (29%–35%) | 32% |
-| Treatment scale-up | 3 | clinical, 0-5 | 15% (11%–18%) | 15% |
+| Perennial chemoprevention | 120 | clinical, all ages | 0% (-2%–2%) | 0% |
+| Perennial chemoprevention | 120 | severe, all ages | -4% (-17%–9%) | -3% |
+| Treatment scale-up | 3 | PfPR 2-10 | 32% (29%–34%) | 32% |
+| Treatment scale-up | 3 | clinical, 0-5 | 15% (11%–19%) | 15% |
 | Treatment scale-up | 3 | clinical, all ages | 15% (13%–16%) | 15% |
-| Treatment scale-up | 3 | severe, all ages | 11% (5%–20%) | 13% |
+| Treatment scale-up | 3 | severe, all ages | 11% (3%–20%) | 13% |
 | Treatment scale-up | 20 | PfPR 2-10 | 19% (18%–20%) | 19% |
-| Treatment scale-up | 20 | clinical, 0-5 | 5% (2%–9%) | 5% |
-| Treatment scale-up | 20 | clinical, all ages | 5% (3%–8%) | 5% |
-| Treatment scale-up | 20 | severe, all ages | 3% (-11%–10%) | 3% |
+| Treatment scale-up | 20 | clinical, 0-5 | 5% (1%–9%) | 5% |
+| Treatment scale-up | 20 | clinical, all ages | 5% (2%–8%) | 5% |
+| Treatment scale-up | 20 | severe, all ages | 3% (-8%–15%) | 3% |
 | Treatment scale-up | 120 | PfPR 2-10 | 8% (8%–9%) | 8% |
 | Treatment scale-up | 120 | clinical, 0-5 | 2% (-0%–4%) | 2% |
 | Treatment scale-up | 120 | clinical, all ages | 1% (-1%–4%) | 2% |
-| Treatment scale-up | 120 | severe, all ages | 1% (-11%–11%) | 1% |
-| RTS,S via EPI | 3 | PfPR 2-10 | 1% (-2%–6%) | 1% |
-| RTS,S via EPI | 3 | clinical, 0-5 | 11% (6%–14%) | 9% |
+| Treatment scale-up | 120 | severe, all ages | 1% (-11%–13%) | 1% |
+| RTS,S via EPI | 3 | PfPR 2-10 | 1% (-3%–5%) | 1% |
+| RTS,S via EPI | 3 | clinical, 0-5 | 11% (6%–16%) | 9% |
 | RTS,S via EPI | 3 | clinical, all ages | 3% (1%–5%) | 3% |
-| RTS,S via EPI | 3 | severe, all ages | 12% (3%–24%) | 7% |
+| RTS,S via EPI | 3 | severe, all ages | 12% (-0%–24%) | 7% |
 | RTS,S via EPI | 20 | PfPR 2-10 | 1% (-1%–2%) | 1% |
-| RTS,S via EPI | 20 | clinical, 0-5 | 11% (9%–13%) | 10% |
-| RTS,S via EPI | 20 | clinical, all ages | 6% (4%–7%) | 5% |
-| RTS,S via EPI | 20 | severe, all ages | 10% (5%–20%) | 10% |
+| RTS,S via EPI | 20 | clinical, 0-5 | 11% (8%–13%) | 10% |
+| RTS,S via EPI | 20 | clinical, all ages | 6% (3%–8%) | 5% |
+| RTS,S via EPI | 20 | severe, all ages | 10% (1%–20%) | 10% |
 | RTS,S via EPI | 120 | PfPR 2-10 | 1% (-0%–1%) | 0% |
 | RTS,S via EPI | 120 | clinical, 0-5 | 11% (10%–13%) | 11% |
-| RTS,S via EPI | 120 | clinical, all ages | 9% (7%–10%) | 8% |
-| RTS,S via EPI | 120 | severe, all ages | 9% (-2%–19%) | 10% |
+| RTS,S via EPI | 120 | clinical, all ages | 9% (7%–11%) | 8% |
+| RTS,S via EPI | 120 | severe, all ages | 9% (-2%–20%) | 10% |
 | Seasonal SMC | 3 | PfPR 2-10 | 27% (24%–30%) | 28% |
-| Seasonal SMC | 3 | clinical, 0-5 | 57% (55%–59%) | 57% |
-| Seasonal SMC | 3 | clinical, all ages | 21% (19%–24%) | 20% |
-| Seasonal SMC | 3 | severe, all ages | 34% (24%–42%) | 36% |
-| Seasonal SMC | 20 | PfPR 2-10 | 22% (20%–24%) | 23% |
+| Seasonal SMC | 3 | clinical, 0-5 | 57% (54%–59%) | 57% |
+| Seasonal SMC | 3 | clinical, all ages | 21% (18%–23%) | 20% |
+| Seasonal SMC | 3 | severe, all ages | 34% (25%–43%) | 36% |
+| Seasonal SMC | 20 | PfPR 2-10 | 22% (20%–23%) | 23% |
 | Seasonal SMC | 20 | clinical, 0-5 | 52% (50%–53%) | 53% |
-| Seasonal SMC | 20 | clinical, all ages | 26% (24%–27%) | 27% |
-| Seasonal SMC | 20 | severe, all ages | 36% (30%–43%) | 37% |
+| Seasonal SMC | 20 | clinical, all ages | 26% (25%–28%) | 27% |
+| Seasonal SMC | 20 | severe, all ages | 36% (29%–44%) | 37% |
 | Seasonal SMC | 120 | PfPR 2-10 | 16% (15%–17%) | 17% |
 | Seasonal SMC | 120 | clinical, 0-5 | 43% (42%–44%) | 44% |
-| Seasonal SMC | 120 | clinical, all ages | 30% (29%–31%) | 31% |
-| Seasonal SMC | 120 | severe, all ages | 29% (23%–35%) | 28% |
+| Seasonal SMC | 120 | clinical, all ages | 30% (29%–32%) | 31% |
+| Seasonal SMC | 120 | severe, all ages | 29% (23%–36%) | 28% |
 | Indoor residual spraying | 3 | PfPR 2-10 | 81% (80%–82%) | 81% |
 | Indoor residual spraying | 3 | clinical, 0-5 | 98% (98%–98%) | 98% |
 | Indoor residual spraying | 3 | clinical, all ages | 98% (98%–98%) | 98% |
@@ -140,26 +156,26 @@ NOT refreshed by this harness or by CI: re-take with CMP_REFRESH_SITES=1 when th
 | Indoor residual spraying | 20 | clinical, 0-5 | 97% (97%–98%) | 98% |
 | Indoor residual spraying | 20 | clinical, all ages | 98% (97%–98%) | 98% |
 | Indoor residual spraying | 20 | severe, all ages | 97% (96%–98%) | 97% |
-| Indoor residual spraying | 120 | PfPR 2-10 | 69% (67%–69%) | 69% |
+| Indoor residual spraying | 120 | PfPR 2-10 | 69% (68%–69%) | 69% |
 | Indoor residual spraying | 120 | clinical, 0-5 | 93% (93%–94%) | 94% |
 | Indoor residual spraying | 120 | clinical, all ages | 94% (93%–94%) | 94% |
-| Indoor residual spraying | 120 | severe, all ages | 85% (83%–88%) | 86% |
-| Bed-net campaign | 3 | PfPR 2-10 | 69% (67%–70%) | 69% |
+| Indoor residual spraying | 120 | severe, all ages | 85% (82%–87%) | 86% |
+| Bed-net campaign | 3 | PfPR 2-10 | 69% (66%–71%) | 69% |
 | Bed-net campaign | 3 | clinical, 0-5 | 86% (85%–87%) | 86% |
 | Bed-net campaign | 3 | clinical, all ages | 85% (84%–87%) | 85% |
-| Bed-net campaign | 3 | severe, all ages | 83% (79%–86%) | 81% |
+| Bed-net campaign | 3 | severe, all ages | 83% (79%–87%) | 81% |
 | Bed-net campaign | 20 | PfPR 2-10 | 48% (47%–49%) | 46% |
-| Bed-net campaign | 20 | clinical, 0-5 | 66% (65%–67%) | 66% |
+| Bed-net campaign | 20 | clinical, 0-5 | 66% (65%–68%) | 66% |
 | Bed-net campaign | 20 | clinical, all ages | 67% (65%–68%) | 66% |
-| Bed-net campaign | 20 | severe, all ages | 49% (44%–53%) | 49% |
+| Bed-net campaign | 20 | severe, all ages | 49% (44%–54%) | 49% |
 | Bed-net campaign | 120 | PfPR 2-10 | 27% (27%–28%) | 25% |
 | Bed-net campaign | 120 | clinical, 0-5 | 42% (41%–44%) | 42% |
 | Bed-net campaign | 120 | clinical, all ages | 45% (44%–46%) | 45% |
-| Bed-net campaign | 120 | severe, all ages | 15% (9%–25%) | 17% |
+| Bed-net campaign | 120 | severe, all ages | 15% (6%–25%) | 17% |
 
-largest |fleet - IBM median| gap: 4.9 pp (pmc, EIR 3, severe, all ages); fleet inside the IBM 10-90% band in 66 of 72 scenario x EIR x outcome cells
+largest |fleet - IBM median| gap: 4.9 pp (pmc, EIR 3, severe, all ages); fleet inside the IBM replicate band in 66 of 72 scenario x EIR x outcome cells
 
-worst excursion past the band: 1.11 pp (nets, EIR 120, PfPR 2-10)
+worst excursion past the band: 1.17 pp (nets, EIR 120, PfPR 2-10)
 
 | intervention | eir | mean prevalence gap (fleet - IBM, pp) | mean clinical gap (% of IBM) |
 | --- | --- | --- | --- |
@@ -184,12 +200,12 @@ worst excursion past the band: 1.11 pp (nets, EIR 120, PfPR 2-10)
 
 ## Long-horizon programmes (15 years past deployment)
 
-| outcome | scenario-months | fleet inside IBM 10-90% |
+| outcome | scenario-months | fleet inside the replicate band |
 | --- | --- | --- |
-| clin_0_5 | 915 | 92% |
-| clin_all | 915 | 89% |
-| pfpr_2_10 | 915 | 87% |
-| sev_all | 915 | 78% |
+| clin_0_5 | 915 | 95% |
+| clin_all | 915 | 91% |
+| pfpr_2_10 | 915 | 91% |
+| sev_all | 915 | 86% |
 
 (an 80% band contains a perfectly-tracking deterministic mean ~80% of the time, so ~80% is the target, not a ceiling)
 

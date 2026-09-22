@@ -47,8 +47,12 @@ md_table <- function(df) {
   for (i in seq_len(nrow(df))) say(paste0("| ", paste(df[i, ], collapse = " | "), " |"))
   say("")
 }
-q <- function(v, p) unname(quantile(v, p))
-med_rng <- function(v, fmt = "%.3f") sprintf(paste0(fmt, " (", fmt, "\u2013", fmt, ")"), median(v), q(v, .1), q(v, .9))
+## Band edges come from the package replicate_band(), so a table and a figure
+## cannot report different intervals for the same cell. The .1/.9 arguments are
+## kept because that is still the interval being named -- it is now read from
+## every replicate rather than from two order statistics.
+band_edge <- function(v, p) { b <- replicate_band(v); if (p < 0.5) b$lower else b$upper }
+med_rng <- function(v, fmt = "%.3f") sprintf(paste0(fmt, " (", fmt, "\u2013", fmt, ")"), median(v), band_edge(v, .1), band_edge(v, .9))
 pct <- function(x, d = 0) sprintf(paste0("%.", d, "f%%"), 100 * x)
 
 ## ---- 1. EIR grid --------------------------------------------------------------
@@ -70,9 +74,9 @@ say("max |fleet - IBM median| PfPR(2-10): %.3f (at EIR %s); clinical incidence r
     max(abs(et$pf_o - et$pf_i)), et$EIR[which.max(abs(et$pf_o - et$pf_i))],
     pct(min(et$cl_o / et$cl_i - 1), 1), pct(max(et$cl_o / et$cl_i - 1), 1))
 in_band <- e %>% filter(model == "IBM") %>% group_by(EIR) %>%
-  summarise(lo = q(pfpr_2_10, .1), hi = q(pfpr_2_10, .9), lo_c = q(clin_0_5, .1), hi_c = q(clin_0_5, .9), .groups = "drop") %>%
+  summarise(lo = band_edge(pfpr_2_10, .1), hi = band_edge(pfpr_2_10, .9), lo_c = band_edge(clin_0_5, .1), hi_c = band_edge(clin_0_5, .9), .groups = "drop") %>%
   left_join(eo, by = "EIR") %>% mutate(in_p = pf_o >= lo & pf_o <= hi, in_c = cl_o >= lo_c & cl_o <= hi_c)
-say("fleet inside the IBM 10-90%% band: PfPR at %d of %d EIRs; clinical at %d of %d\n",
+say("fleet inside the IBM replicate band: PfPR at %d of %d EIRs; clinical at %d of %d\n",
     sum(in_band$in_p), nrow(in_band), sum(in_band$in_c), nrow(in_band))
 
 ## the same grid over the all-ages outcomes. These carry the shape of the
@@ -81,8 +85,8 @@ say("fleet inside the IBM 10-90%% band: PfPR at %d of %d EIRs; clinical at %d of
 ai <- e %>% filter(model == "IBM") %>% group_by(EIR) %>%
   summarise(`IBM clinical (all ages, per person-year)` = med_rng(clin_all, "%.3f"),
             `IBM severe (all ages, per 1,000 person-years)` = med_rng(sev_all, "%.2f"),
-            lo_c = q(clin_all, .1), hi_c = q(clin_all, .9),
-            lo_s = q(sev_all, .1), hi_s = q(sev_all, .9),
+            lo_c = band_edge(clin_all, .1), hi_c = band_edge(clin_all, .9),
+            lo_s = band_edge(sev_all, .1), hi_s = band_edge(sev_all, .9),
             cl_i = median(clin_all), sv_i = median(sev_all), .groups = "drop")
 ao <- e %>% filter(model == "fleet") %>%
   transmute(EIR, `fleet clinical` = sprintf("%.3f", clin_all),
@@ -95,7 +99,7 @@ md_table(at %>% transmute(`init EIR` = EIR, `IBM clinical (all ages, per person-
 say("all-ages relative difference: clinical %s to %s, severe %s to %s\n",
     pct(min(at$cl_o / at$cl_i - 1), 1), pct(max(at$cl_o / at$cl_i - 1), 1),
     pct(min(at$sv_o / at$sv_i - 1), 1), pct(max(at$sv_o / at$sv_i - 1), 1))
-say("fleet inside the IBM 10-90%% band: all-age clinical at %d of %d EIRs; all-age severe at %d of %d\n",
+say("fleet inside the IBM replicate band: all-age clinical at %d of %d EIRs; all-age severe at %d of %d\n",
     sum(at$in_c), nrow(at), sum(at$in_s), nrow(at))
 say("fold change across the grid (fleet): clinical 0-5 %.1fx, clinical all ages %.1fx; severe all ages peaks at EIR %s\n",
     max(et$cl_o) / min(et$cl_o), max(at$cl_o) / min(at$cl_o), at$EIR[which.max(at$sv_o)])
@@ -105,7 +109,7 @@ say("## Age profile at EIR %s\n", EIR_REF)
 a <- age %>% filter(scenario == paste0("eir_", EIR_REF))
 ai <- a %>% filter(model == "IBM") %>% group_by(age_lo, age_hi, age_mid) %>%
   summarise(prev_i = median(prev), clin_i = median(clin), sev_i = median(sev),
-            prev_lo = q(prev, .1), prev_hi = q(prev, .9), sev_lo = q(sev, .1), sev_hi = q(sev, .9), .groups = "drop")
+            prev_lo = band_edge(prev, .1), prev_hi = band_edge(prev, .9), sev_lo = band_edge(sev, .1), sev_hi = band_edge(sev, .9), .groups = "drop")
 ao <- a %>% filter(model == "fleet") %>% select(age_mid, prev_o = prev, clin_o = clin, sev_o = sev)
 at <- left_join(ai, ao, by = "age_mid") %>% arrange(age_lo)
 md_table(at %>% transmute(`age band (y)` = sprintf("%g\u2013%g", age_lo, age_hi),
@@ -117,6 +121,51 @@ say("max |fleet - IBM| prevalence across bands: %.3f; under-20 bands: clinical r
     max(abs(at$prev_o - at$prev_i)), pct(min(at$clin_o[yk] / at$clin_i[yk] - 1), 1), pct(max(at$clin_o[yk] / at$clin_i[yk] - 1), 1),
     pct(min(at$sev_o[yk] / at$sev_i[yk] - 1), 0), pct(max(at$sev_o[yk] / at$sev_i[yk] - 1), 0),
     sum(at$sev_o >= at$sev_lo & at$sev_o <= at$sev_hi), nrow(at))
+
+## ---- 2a. the age-profile claims, scored ---------------------------------------
+## What age-profile-clinical and age-profile-severe are decided on, across all of
+## PROFILE_EIR rather than the reference alone. Until this existed the register
+## carried counts no script in the repository reproduced.
+##
+## Only cells carrying at least BURDEN_MIN of the outcome are tested: a claim
+## about how a burden is distributed says little about bands holding almost none
+## of it, and those bands carry the most replicate noise. The cost is stated
+## against the claim -- a defect confined to the oldest ages would not be caught
+## -- so the excluded cells are printed here rather than quietly dropped.
+say("## Age-profile claims, scored over EIR %s\n",
+    paste(PROFILE_EIR, collapse = ", "))
+ap <- age %>% filter(scenario %in% paste0("eir_", PROFILE_EIR))
+for (m in c("clin", "sev")) {
+  cl <- paste0("age-profile-", if (m == "clin") "clinical" else "severe")
+  cells <- ap %>% filter(model == "IBM") %>% group_by(scenario, age_lo, age_hi) %>%
+    summarise(centre = replicate_band(.data[[m]])$centre,
+              lo = replicate_band(.data[[m]])$lower,
+              hi = replicate_band(.data[[m]])$upper,
+              sd = stats::sd(.data[[m]]),
+              episodes = median(.data[[m]] * pop_frac), .groups = "drop") %>%
+    left_join(ap %>% filter(model == "fleet") %>%
+                transmute(scenario, age_lo, fleet = .data[[m]]),
+              by = c("scenario", "age_lo")) %>%
+    group_by(scenario) %>% mutate(share = episodes / sum(episodes)) %>% ungroup() %>%
+    ## severe incidence is zero in most replicates of the sparsest bands, where a
+    ## band has no width and a standardised departure has no meaning
+    filter(centre > 0, sd > 0) %>%
+    mutate(z = (fleet - centre) / sd, tested = share >= BURDEN_MIN)
+  tst <- cells %>% filter(tested)
+  say("%s: %d of %d cells carry at least %g%% of the outcome and are tested; they hold %.0f%% of all episodes\n",
+      cl, nrow(tst), nrow(cells), 100 * BURDEN_MIN,
+      100 * sum(tst$episodes) / sum(cells$episodes))
+  say("  inside the replicate band: %d of %d; max |z| %.2f (%s, %g-%gy)\n",
+      sum(tst$fleet >= tst$lo & tst$fleet <= tst$hi), nrow(tst), max(abs(tst$z)),
+      sub("eir_", "EIR ", tst$scenario[which.max(abs(tst$z))]),
+      tst$age_lo[which.max(abs(tst$z))], tst$age_hi[which.max(abs(tst$z))])
+  unt <- cells %>% filter(!tested, abs(z) >= BAND_K) %>% arrange(desc(abs(z)))
+  say("  not tested and outside the band: %s\n", if (!nrow(unt)) "none" else
+      paste(sprintf("%s %g-%gy (|z| %.2f, %.1f%% of episodes)",
+                    sub("eir_", "EIR ", unt$scenario), unt$age_lo, unt$age_hi,
+                    abs(unt$z), 100 * unt$share), collapse = "; "))
+  say("")
+}
 
 ## ---- 2b. custom demography ---------------------------------------------------
 if ("demography" %in% age$scenario) {
@@ -244,7 +293,7 @@ red <- monthly %>% filter(scenario %in% INT_SCEN) %>%
   pivot_wider(names_from = phase, values_from = v) %>%
   mutate(reduction = 1 - post / pre) %>% with_parts()
 ri <- red %>% filter(model == "IBM") %>% group_by(intervention, eir, metric) %>%
-  summarise(mid = median(reduction), lo = q(reduction, .1), hi = q(reduction, .9),
+  summarise(mid = median(reduction), lo = band_edge(reduction, .1), hi = band_edge(reduction, .9),
             .groups = "drop")
 ro <- red %>% filter(model == "fleet") %>%
   transmute(intervention, eir, metric, fleet = reduction)
@@ -255,11 +304,11 @@ rt <- left_join(ri, ro, by = c("intervention", "eir", "metric")) %>%
 md_table(rt %>% transmute(Scenario = sub("\n.*", "", INT_LABELS[as.character(intervention)]),
                           EIR = eir,
                           Outcome = as.character(metric),
-                          `IBM reduction (10-90%)` =
+                          `IBM reduction (replicate band)` =
                             sprintf("%s (%s\u2013%s)", pct(mid), pct(lo), pct(hi)),
                           `fleet reduction` = pct(fleet)))
 wi <- which.max(abs(rt$fleet - rt$mid))
-say("largest |fleet - IBM median| gap: %.1f pp (%s, EIR %g, %s); fleet inside the IBM 10-90%% band in %d of %d scenario x EIR x outcome cells\n",
+say("largest |fleet - IBM median| gap: %.1f pp (%s, EIR %g, %s); fleet inside the IBM replicate band in %d of %d scenario x EIR x outcome cells\n",
     100 * abs(rt$fleet - rt$mid)[wi], rt$intervention[wi], rt$eir[wi], rt$metric[wi],
     sum(rt$fleet >= rt$lo & rt$fleet <= rt$hi), nrow(rt))
 ## The criterion is a tolerance on the band, not on the median, so report the
@@ -292,13 +341,13 @@ if (all(names(TS_LABELS) %in% monthly$scenario)) {
     select(scenario, model, rep, year, pfpr_2_10, clin_0_5, clin_all, sev_all) %>%
     tidyr::pivot_longer(-c(scenario, model, rep, year), names_to = "metric", values_to = "y")
   ti <- td %>% filter(model == "IBM") %>% group_by(scenario, metric, year) %>%
-    summarise(ibm = median(y), lo = q(y, .1), hi = q(y, .9), .groups = "drop")
+    summarise(ibm = median(y), lo = band_edge(y, .1), hi = band_edge(y, .9), .groups = "drop")
   tj <- inner_join(ti, td %>% filter(model == "fleet") %>%
                      select(scenario, metric, year, fleet = y),
                    by = c("scenario", "metric", "year"))
   md_table(tj %>% group_by(metric) %>%
     summarise(`scenario-months` = n(),
-              `fleet inside IBM 10-90%` = pct(mean(fleet >= lo & fleet <= hi)),
+              `fleet inside the replicate band` = pct(mean(fleet >= lo & fleet <= hi)),
               .groups = "drop") %>% rename(outcome = metric))
   ## say() is literal when given no args, so this string takes single % signs
   say("(an 80% band contains a perfectly-tracking deterministic mean ~80% of the time, so ~80% is the target, not a ceiling)\n")

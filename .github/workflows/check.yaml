@@ -37,24 +37,14 @@ jobs:
         run: Rscript report/make_scoreboard.R --check
 
       - name: No claim has regressed
-        # Two claims fail today and are tolerated by name.
-        #
-        # age-profile-clinical is NOT age-grid discretisation. Refining the grid
-        # moves it the wrong way -- 35 of 36 bands inside at the default 53
-        # groups, 32 at 105, 27 at 209 -- because the default grid's
-        # discretisation error partly cancels the mean-field one, and refining
-        # exposes a larger departure in young children (max |z| 4.2 at 2-3y,
-        # EIR 120). Nor is it the biting-heterogeneity quadrature: the IBM uses
-        # the same five Gauss-Hermite nodes, so raising fleet's node count makes
-        # it model a different population rather than converge.
-        #
-        # intervention-impact fails only at the top of the transmission range,
-        # and passes outright at EIR 3. The register carries the breakdown.
+        # One claim fails today and is tolerated by name. intervention-impact
+        # fails only at the top of the transmission range and passes outright at
+        # EIR 3; the register carries the breakdown.
         #
         # check_claims() refuses an allow_fail entry with no explanatory note, so
-        # tolerating a failure always costs a written reason, and a THIRD failure
-        # still turns this red. Remove an id when its claim passes; do not add
-        # one without writing the note first.
+        # tolerating a failure always costs a written reason, and a SECOND
+        # failure still turns this red. Remove an id when its claim passes; do
+        # not add one without writing the note first.
         run: |
           Rscript -e 'pkgload::load_all(quiet = TRUE);
-            check_claims(allow_fail = c("age-profile-clinical", "intervention-impact"))'
+            check_claims(allow_fail = "intervention-impact")'

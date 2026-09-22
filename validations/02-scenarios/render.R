@@ -58,7 +58,7 @@ rd <- function(part) read.csv(file.path(DDIR, paste0("rep_", part, ".csv")), str
 eq <- rd("eq"); age <- rd("age"); monthly <- rd("monthly"); doy <- rd("doy"); timing <- rd("timing")
 n_rep <- max(eq$rep)
 ibm_note <- sprintf(paste(
-  "IBM: %d stochastic replicates of %s people, %d-year burn-in; line/point = median, band/bar = 10\u201390%% range across replicates.",
+  "IBM: %d stochastic replicates of %s people, %d-year burn-in; line/point = median, band/bar = median \u00b1 1.28 SD, which is the 10\u201390%% interval read from every replicate rather than from two of them.",
   "fleet: one deterministic run seeded at equilibrium."), n_rep, format(POP, big.mark = ","), BURN_Y)
 PREV_LAB <- "LM prevalence, ages 2\u201310"
 CLIN_LAB <- "clinical episodes per child-year, ages 0\u20135"
@@ -165,10 +165,20 @@ panel_outcome <- function(m) {
   lv <- sprintf("%g-%g", bl$age_lo, bl$age_hi)
   d$band <- factor(sprintf("%g-%g", d$age_lo, d$age_hi), levels = lv)
   gi <- d %>% filter(model == "IBM") %>% group_by(eir, band) %>%
-    summarise(mid = median(y), lo = quantile(y, .1), hi = quantile(y, .9),
-              .groups = "drop") %>% mutate(model = "IBM")
+    summarise(mid = replicate_band(y)$centre, lo = replicate_band(y)$lower,
+              hi = replicate_band(y)$upper, .groups = "drop") %>% mutate(model = "IBM")
   go <- d %>% filter(model == "fleet") %>% transmute(eir, band, mid = y, model = "fleet")
+  ## Bands carrying less than BURDEN_MIN of the outcome are drawn but not
+  ## scored. Shading them keeps the figure and the criterion saying the same
+  ## thing: a reader can see which bands the verdict rests on.
+  untested <- d %>% filter(model == "IBM") %>% group_by(eir, band) %>%
+    summarise(ep = stats::median(y * pop_frac), .groups = "drop") %>%
+    group_by(eir) %>% mutate(share = ep / sum(ep)) %>% ungroup() %>%
+    filter(share < BURDEN_MIN) %>% mutate(x = as.numeric(band))
   ggplot(mapping = aes(band, mid, colour = model)) +
+    geom_rect(data = untested, inherit.aes = FALSE,
+              aes(xmin = x - 0.5, xmax = x + 0.5, ymin = -Inf, ymax = Inf),
+              fill = MUTED, alpha = 0.10) +
     geom_linerange(data = gi, aes(ymin = lo, ymax = hi), linewidth = 2.4,
                    alpha = 0.30, show.legend = FALSE) +
     geom_line(data = go, aes(group = 1, linetype = model), linewidth = 0.7) +
@@ -190,7 +200,7 @@ panel_outcome <- function(m) {
 ## figure runs off both edges, which is what it did.
 n_ap <- length(age_eirs)
 fw <- 2.0 + 4.0 * n_ap
-band_note <- "Thick bars are the IBM's 10-90% range across replicates; fleet is one deterministic run. Bands are finer in childhood, so equal spacing here is not equal width in years."
+band_note <- "Thick bars are the IBM's replicate band, median ± 1.28 SD; fleet is one deterministic run. Shaded bands carry under 5% of the outcome and are not scored -- the claim rests on the unshaded ones. Bands are finer in childhood, so equal spacing here is not equal width in years."
 
 g <- panel_outcome("clin") + plot_annotation(
   title = "Clinical incidence by age band",
@@ -223,8 +233,8 @@ pa <- age %>% filter(scenario == "eir_20")
 pa <- pa %>% mutate(dens = 100 * pop_frac / (age_hi - age_lo),
                     band = factor(sprintf("%g-%g", age_lo, age_hi), levels = .labs))
 pa_i <- pa %>% filter(model == "IBM") %>% group_by(band) %>%
-  summarise(mid = median(dens), lo = quantile(dens, .1), hi = quantile(dens, .9),
-            .groups = "drop") %>% mutate(model = "IBM")
+  summarise(mid = replicate_band(dens)$centre, lo = replicate_band(dens)$lower,
+            hi = replicate_band(dens)$upper, .groups = "drop") %>% mutate(model = "IBM")
 pa_o <- pa %>% filter(model == "fleet") %>%
   transmute(band, mid = dens, lo = NA_real_, hi = NA_real_, model = "fleet")
 pa_b <- bind_rows(pa_i, pa_o) %>% mutate(model = factor(model, levels = c("IBM", "fleet")))
@@ -256,15 +266,15 @@ p_struct <- ggplot(pa_b, aes(band, mid, fill = model, colour = model)) +
         axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.85)))
 
 ## Panel 2 is the test itself: fleet against the IBM median, with the IBM's own
-## 10-90% replicate range as the tolerance. A bar inside the grey is a band the
+## replicate band as the tolerance. A bar inside the grey is a band the
 ## claim passes; outside it is a miss. Shares are renormalised to the 0-60
 ## population first, exactly as the criterion states, so the top band's
 ## convention does not move every other bar.
 rn <- function(d) d %>% filter(age_hi <= 60) %>% mutate(share = pop_frac / sum(pop_frac))
 pa_rn_i <- pa %>% filter(model == "IBM") %>% group_by(rep) %>% group_modify(~ rn(.x)) %>%
   ungroup() %>% group_by(band) %>%
-  summarise(mid = median(share), lo = quantile(share, .1), hi = quantile(share, .9),
-            .groups = "drop")
+  summarise(mid = replicate_band(share)$centre, lo = replicate_band(share)$lower,
+            hi = replicate_band(share)$upper, .groups = "drop")
 pa_rn_o <- pa %>% filter(model == "fleet") %>% rn() %>% select(band, share)
 dev <- pa_rn_o %>% inner_join(pa_rn_i, by = "band") %>%
   mutate(rel = 100 * (share / mid - 1),
@@ -279,7 +289,7 @@ p_dev <- ggplot(dev, aes(band, rel)) +
   scale_fill_manual(values = c(`FALSE` = COL[["fleet"]], `TRUE` = REF)) +
   labs(x = "age band (years)", y = "fleet vs the IBM median (%)",
        title = "Where it sits inside the IBM's own spread",
-       subtitle = cap(sprintf("grey = the IBM 10-90%% replicate range; %d of %d bands inside it",
+       subtitle = cap(sprintf("grey = the IBM replicate band; %d of %d bands inside it",
                               sum(!dev$miss), nrow(dev)), fig_width = 5)) +
   theme_cmp() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.85)))
@@ -505,7 +515,7 @@ if (all(TS %in% monthly$scenario)) {
   ## figure is 183 monthly points in a ~495 px panel -- 2.7 px per month, 32 px
   ## per seasonal cycle -- so the band only opens at the spike tips, and at 0.16
   ## it is invisible there. It has real width to show: over the months carrying
-  ## the top quartile of burden the IBM's 10-90 range is 26% of the panel peak
+  ## the top quartile of burden the IBM's replicate band is 26% of the panel peak
   ## for all-age severe, against 3-6% for prevalence and the two clinical
   ## measures. Kept local to this figure rather than raised in theme.R, so the
   ## four already-reviewed figures are not changed unseen.
@@ -543,7 +553,7 @@ if (all(TS %in% monthly$scenario)) {
       title = "Programmes over fifteen years, through both models",
       subtitle = cap(sprintf("Monthly series at EIR %s in a seasonal setting, from two years before deployment. Every row carries 20%% baseline case management; rows 2–4 add one intervention, row 5 adds all three. Grey rules mark the five net distributions.", EIR_REF), width = 128),
       caption = cap("x = years relative to deployment; the dashed rule is deployment. Nets: 80% coverage every 3 years, 5-year mean retention. SMC: 4 monthly rounds a year, ages 3 months to 5 years, 90% coverage. Case management: SP-AQ, coverage of clinical cases raised from 20% to 60%.",
-                    "The IBM band is hard to resolve here -- 15 years of monthly points is ~3 px per month -- so its width is given instead: over the months carrying the top quartile of burden the 10-90% replicate range is 26% of the panel peak for severe incidence, and 3-6% for the other three. Severe is the noisiest because a 30-day bin holds only ~20 severe episodes at the seasonal peak in a population of 10,000.",
+                    "The IBM band is hard to resolve here -- 15 years of monthly points is ~3 px per month -- so its width is given instead: over the months carrying the top quartile of burden the replicate band is 26% of the panel peak for severe incidence, and 3-6% for the other three. Severe is the noisiest because a 30-day bin holds only ~20 severe episodes at the seasonal peak in a population of 10,000.",
                     ibm_note),
       theme = theme_cmp()) &
     theme(legend.position = "top", legend.justification = "left")
@@ -588,8 +598,8 @@ red <- monthly %>% filter(scenario %in% INT_SCEN) %>%
 ## package, so the renderer cannot drift from the runner that named the rows.
 red <- bind_cols(red, int_parts(red$scenario)) %>% select(-scenario)
 ibm_r <- red %>% filter(model == "IBM") %>% group_by(intervention, eir, metric) %>%
-  summarise(mid = median(reduction), lo = unname(quantile(reduction, .1)),
-            hi = unname(quantile(reduction, .9)), .groups = "drop") %>% mutate(model = "IBM")
+  summarise(mid = replicate_band(reduction)$centre, lo = replicate_band(reduction)$lower,
+            hi = replicate_band(reduction)$upper, .groups = "drop") %>% mutate(model = "IBM")
 ode_r <- red %>% filter(model == "fleet") %>%
   transmute(intervention, eir, metric, mid = reduction, model = "fleet")
 both <- bind_rows(ibm_r, ode_r) %>%

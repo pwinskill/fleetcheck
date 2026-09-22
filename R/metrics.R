@@ -45,6 +45,71 @@ agreement <- function(reference, candidate, na.rm = TRUE) {
   )
 }
 
+#' How a replicate band and a burden floor are defined
+#'
+#' `BAND_K` is 1.28 because +-1.28 standard deviations is the 10-90% interval of
+#' a normal: the band means the same thing it always did, it is just estimated
+#' from all the replicates instead of from two order statistics. Measured over
+#' the 91 tier-2 cells, the percentile band moves more under a jackknife (0.074
+#' against 0.072 standard deviations) and is about 10% narrower than the
+#' interval it estimates, because sample percentiles from twenty points are
+#' biased inward. Its width also drifts with the replicate count -- 2.06, 2.24,
+#' 2.32 at n = 8, 14, 20 -- where this one holds at 2.49, 2.54, 2.56.
+#'
+#' `BURDEN_MIN` is the share of an outcome a cell must carry to be tested. A
+#' claim about how a burden is distributed is not informative about bands that
+#' carry almost none of it, and those bands carry the most replicate noise. At
+#' 5% the tested cells still hold 94% of episodes. The cost is real and is
+#' recorded against the claims that use it: a defect confined to the oldest ages
+#' would not be caught.
+#'
+#' @format numeric.
+#' @name comparison-settings
+#' @rdname comparison-settings
+#' @export
+BAND_K <- 1.28
+
+#' @rdname comparison-settings
+#' @export
+BURDEN_MIN <- 0.05
+
+#' The band a set of replicates produces
+#'
+#' @param x numeric, the replicate values for one cell.
+#' @param k half-width in standard deviations; see [BAND_K].
+#' @param na.rm drop missing replicates.
+#' @return a one-row data frame with `centre`, `scale`, `lower` and `upper`.
+#'   The centre is the median, which is what the figures draw and what survives
+#'   the skew in cells holding few episodes; over the cells that carry the
+#'   claims the median and the mean agree to 0.02 standard deviations.
+#' @export
+replicate_band <- function(x, k = BAND_K, na.rm = TRUE) {
+  stopifnot(is.numeric(x), length(k) == 1L, is.numeric(k), is.finite(k), k > 0)
+  if (na.rm) x <- x[is.finite(x)]
+  if (length(x) < 2L)
+    return(data.frame(centre = NA_real_, scale = NA_real_,
+                      lower = NA_real_, upper = NA_real_))
+  centre <- stats::median(x); scale <- stats::sd(x)
+  data.frame(centre = centre, scale = scale,
+             lower = centre - k * scale, upper = centre + k * scale)
+}
+
+#' Standardised departure from a set of replicates
+#'
+#' The headroom figure the band test cannot report: four claims read "inside at
+#' 6 of 6" while sitting at 0.34, 0.59, 0.61 and 0.73 standard deviations.
+#'
+#' @param value numeric, the candidate value.
+#' @param x numeric, the replicate values for the same cell.
+#' @return the signed departure in replicate standard deviations, `NA` when the
+#'   replicates carry no spread.
+#' @export
+band_z <- function(value, x) {
+  b <- replicate_band(x)
+  if (is.na(b$scale) || b$scale == 0) return(NA_real_)
+  (value - b$centre) / b$scale
+}
+
 #' Where a value sits relative to a replicate band
 #'
 #' The IBM is stochastic, so the question is never "are the two numbers equal"

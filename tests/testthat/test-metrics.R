@@ -74,3 +74,58 @@ test_that("band_summary reports the worst excursion, not the last", {
   expect_equal(clean$n_inside, 2L)
   expect_equal(clean$worst, 0)
 })
+
+test_that("replicate_band is the 10-90% interval, read from every replicate", {
+  set.seed(4)
+  x <- rnorm(20, mean = 10, sd = 2)
+  b <- replicate_band(x)
+  expect_equal(b$centre, median(x))
+  expect_equal(b$scale, sd(x))
+  expect_equal(b$upper - b$lower, 2 * BAND_K * sd(x))
+  # on a large normal sample the band and the percentiles agree; they are the
+  # same interval, and the percentile estimate of it is what is noisy at n = 20
+  y <- qnorm(seq(0.0005, 0.9995, length.out = 4000), 10, 2)
+  q <- unname(quantile(y, c(0.1, 0.9)))
+  expect_equal(replicate_band(y)$lower, q[1], tolerance = 0.02)
+  expect_equal(replicate_band(y)$upper, q[2], tolerance = 0.02)
+})
+
+test_that("replicate_band refuses to invent a band it cannot estimate", {
+  expect_true(is.na(replicate_band(numeric(0))$lower))
+  expect_true(is.na(replicate_band(1)$lower))          # one replicate has no sd
+  z <- replicate_band(rep(3, 20))                      # no spread at all
+  expect_equal(z$scale, 0)
+  expect_equal(z$lower, z$upper)
+  expect_true(is.na(replicate_band(c(1, 2, NA))$centre) ||
+              is.finite(replicate_band(c(1, 2, NA))$centre))
+  expect_equal(replicate_band(c(1, 2, NA, 3))$centre, 2)   # na.rm by default
+})
+
+test_that("band_z reports headroom the band test cannot", {
+  x <- c(rep(9, 10), rep(11, 10))                      # median 10, sd ~1.03
+  expect_equal(band_z(10, x), 0)
+  expect_gt(band_z(12, x), 0)
+  expect_lt(band_z(8, x), 0)
+  # a value exactly on the band edge is BAND_K standard deviations out
+  b <- replicate_band(x)
+  expect_equal(band_z(b$upper, x), BAND_K)
+  expect_equal(band_z(b$lower, x), -BAND_K)
+  expect_true(is.na(band_z(1, rep(3, 20))))            # no spread, no z
+})
+
+test_that("the band and the inside test agree on their own edges", {
+  # the two are used together everywhere: a value inside the band must have
+  # |z| <= BAND_K, and one outside must not
+  set.seed(9)
+  for (i in 1:20) {
+    x <- rnorm(20, 5, 1.5); v <- rnorm(1, 5, 3)
+    b <- replicate_band(x)
+    expect_equal(inside_band(v, b$lower, b$upper), abs(band_z(v, x)) <= BAND_K)
+  }
+})
+
+test_that("BURDEN_MIN is a share, not a percentage", {
+  # a 5 here instead of 0.05 would silently test nothing at all
+  expect_gt(BURDEN_MIN, 0)
+  expect_lt(BURDEN_MIN, 1)
+})
