@@ -614,9 +614,12 @@ g <- ggplot(both, aes(y = scenario)) +
   scale_y_discrete(limits = rev(unname(INT_LABELS)), expand = expansion(add = c(0.6, 1.3))) +
   coord_cartesian(clip = "off") +
   labs(title = "Intervention impact summarised: reduction over the first three years",
-       subtitle = "Relative to the three pre-deployment years of the same run. Circle = IBM median with 10\u201390% replicate range; triangle = fleet",
+       subtitle = paste("At EIR 20 without seasonality, except SMC at EIR 15 with it.",
+                        "Relative to the three pre-deployment years of the same run.",
+                        "Circle = IBM median with 10\u201390% replicate range; triangle = fleet"),
        x = "reduction relative to baseline", y = NULL,
-       caption = cap("Columns give the plotted medians.", ibm_note)) +
+       caption = cap(paste("Columns give the plotted medians. These are impacts at one",
+                           "transmission level, not general effect sizes."), ibm_note)) +
   theme_cmp() + theme(panel.grid.major.y = element_blank(), axis.line.x = element_blank(),
                       axis.text.y = element_text(size = rel(0.9), lineheight = 0.95, hjust = 1),
                       panel.spacing.x = unit(1.6, "lines"),
