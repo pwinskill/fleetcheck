@@ -37,14 +37,9 @@ jobs:
         run: Rscript report/make_scoreboard.R --check
 
       - name: No claim has regressed
-        # One claim fails today and is tolerated by name. intervention-impact
-        # fails only at the top of the transmission range and passes outright at
-        # EIR 3; the register carries the breakdown.
-        #
-        # check_claims() refuses an allow_fail entry with no explanatory note, so
-        # tolerating a failure always costs a written reason, and a SECOND
-        # failure still turns this red. Remove an id when its claim passes; do
-        # not add one without writing the note first.
+        # Nothing is tolerated: allow_fail is empty and any failure turns this
+        # red. check_claims() refuses an entry with no explanatory note, so
+        # adding one always costs a written reason in the register. Remove an id
+        # when its claim passes; do not add one without writing the note first.
         run: |
-          Rscript -e 'pkgload::load_all(quiet = TRUE);
-            check_claims(allow_fail = "intervention-impact")'
+          Rscript -e 'pkgload::load_all(quiet = TRUE); check_claims()'

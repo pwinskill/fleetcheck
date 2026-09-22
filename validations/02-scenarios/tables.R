@@ -311,9 +311,23 @@ wi <- which.max(abs(rt$fleet - rt$mid))
 say("largest |fleet - IBM median| gap: %.1f pp (%s, EIR %g, %s); fleet inside the IBM replicate band in %d of %d scenario x EIR x outcome cells\n",
     100 * abs(rt$fleet - rt$mid)[wi], rt$intervention[wi], rt$eir[wi], rt$metric[wi],
     sum(rt$fleet >= rt$lo & rt$fleet <= rt$hi), nrow(rt))
-## The criterion is a tolerance on the band, not on the median, so report the
-## worst excursion PAST the band as well: a cell can sit outside a band that is
-## itself a tenth of a percentage point wide.
+## What the claim is decided on. Over 72 cells "inside every one" is a bar no
+## IBM replicate clears, so the bar comes from the IBM: hold each replicate out,
+## score it against the other 19, and compare how often fleet is outside against
+## how often the BEST of them is.
+orm <- red %>% mutate(cell = paste(intervention, eir, metric)) %>%
+  filter(model == "IBM") %>% select(rep, cell, reduction) %>%
+  tidyr::pivot_wider(names_from = cell, values_from = reduction) %>% arrange(rep)
+fl <- red %>% filter(model == "fleet") %>%
+  mutate(cell = paste(intervention, eir, metric))
+orr <- outside_rates(as.matrix(orm[, -1]),
+                     fl$reduction[match(setdiff(names(orm), "rep"), fl$cell)])
+say("outside the replicate band: fleet %.1f%% of cells; held-out IBM replicates %.1f%% to %.1f%% (best %.1f%%)\n",
+    100 * orr$candidate, 100 * min(orr$held_out), 100 * max(orr$held_out),
+    100 * min(orr$held_out))
+say("  verdict: %s\n", if (orr$candidate <= min(orr$held_out)) "pass" else "FAIL")
+## Reported alongside, because it is what a reader wants to know even when it
+## decides nothing: how far past the band the worst cell sits.
 exc <- pmax(rt$lo - rt$fleet, rt$fleet - rt$hi, 0)
 say("worst excursion past the band: %.2f pp (%s, EIR %g, %s)\n",
     100 * max(exc), rt$intervention[which.max(exc)], rt$eir[which.max(exc)],

@@ -158,9 +158,13 @@ test_that("every documented topic is in the pkgdown reference index", {
   # hand-written list in _pkgdown.yml and nothing else makes adding to it
   # mandatory; this does, before the push rather than after it.
   skip_if_not_installed("yaml")
-  root <- fc_root()
+  # Same absence as the rest of this file: _pkgdown.yml is .Rbuildignore'd, so
+  # under R CMD check there is nothing to check and fc_root() cannot even find
+  # the checkout. CI runs devtools::test() on the source tree, where it does.
+  needs_source_tree()
+  root <- normalizePath(testthat::test_path("..", ".."), mustWork = FALSE)
   cfg <- file.path(root, "_pkgdown.yml")
-  skip_if_not(file.exists(cfg))
+  skip_if_not(file.exists(cfg), "_pkgdown.yml is not in the built package")
   listed <- unlist(lapply(yaml::read_yaml(cfg)$reference, `[[`, "contents"))
   listed <- trimws(unlist(strsplit(paste(listed, collapse = " "), "[ ,]+")))
 

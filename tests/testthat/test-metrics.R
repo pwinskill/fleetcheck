@@ -129,3 +129,35 @@ test_that("BURDEN_MIN is a share, not a percentage", {
   expect_gt(BURDEN_MIN, 0)
   expect_lt(BURDEN_MIN, 1)
 })
+
+test_that("outside_rates scores the candidate the way it scores a replicate", {
+  set.seed(11)
+  R <- matrix(rnorm(20 * 40), 20, 40)
+  o <- outside_rates(R, colMeans(R))
+  expect_length(o$held_out, 20L)
+  # a candidate sitting at the centre of every cell is never outside
+  expect_equal(o$candidate, 0)
+  # a replicate is a draw, so it is outside about 1 - coverage of the time
+  expect_gt(median(o$held_out), 0.10)
+  expect_lt(median(o$held_out), 0.35)
+})
+
+test_that("outside_rates catches a candidate that has drifted", {
+  set.seed(12)
+  R <- matrix(rnorm(20 * 40), 20, 40)
+  far <- colMeans(R) + 3                         # three sd off in every cell
+  o <- outside_rates(R, far)
+  expect_equal(o$candidate, 1)
+  expect_gt(o$candidate, min(o$held_out))        # would fail the criterion
+})
+
+test_that("outside_rates drops cells it cannot score and survives the edges", {
+  set.seed(13)
+  R <- matrix(rnorm(20 * 5), 20, 5)
+  R[, 3] <- 7                                    # no spread in this cell
+  o <- outside_rates(R, c(0, 0, 99, 0, 0))       # candidate wild in that cell
+  expect_equal(o$candidate, 0)                   # ...which is not scored
+  dead <- outside_rates(matrix(1, 20, 4), rep(1, 4))
+  expect_true(is.na(dead$candidate))
+  expect_error(outside_rates(matrix(rnorm(40), 20, 2), 1))   # length mismatch
+})

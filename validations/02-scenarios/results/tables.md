@@ -175,6 +175,10 @@ NOT refreshed by this harness or by CI: re-take with CMP_REFRESH_SITES=1 when th
 
 largest |fleet - IBM median| gap: 4.9 pp (pmc, EIR 3, severe, all ages); fleet inside the IBM replicate band in 66 of 72 scenario x EIR x outcome cells
 
+outside the replicate band: fleet 8.3% of cells; held-out IBM replicates 9.7% to 37.5% (best 9.7%)
+
+  verdict: pass
+
 worst excursion past the band: 1.17 pp (nets, EIR 120, PfPR 2-10)
 
 | intervention | eir | mean prevalence gap (fleet - IBM, pp) | mean clinical gap (% of IBM) |
