@@ -35,6 +35,9 @@ both times.
   : The band a set of replicates produces
 - [`band_z()`](https://pwinskill.github.io/fleetcheck/reference/band_z.md)
   : Standardised departure from a set of replicates
+- [`outside_rates()`](https://pwinskill.github.io/fleetcheck/reference/outside_rates.md)
+  : How often a candidate falls outside the replicate band, against the
+  IBM
 - [`band_position()`](https://pwinskill.github.io/fleetcheck/reference/band_position.md)
   [`inside_band()`](https://pwinskill.github.io/fleetcheck/reference/band_position.md)
   : Where a value sits relative to a replicate band

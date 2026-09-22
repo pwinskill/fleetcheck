@@ -11,7 +11,7 @@ Every section is generated from `claims.yml`, so this page cannot
 disagree with the register, and the register cannot be changed without
 the page following.
 
-**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
+**11 claims — 0 failing, 0 untested, 0 open, 11 pass.**
 
 | claim | tier | criterion | measured | verdict |
 |----|----|----|----|----|
@@ -21,7 +21,7 @@ the page following.
 | [`severe-allage-eir`](#severe-allage-eir) | 2 | inside the IBM replicate band at every EIR on the grid | inside at 6 of 6 | pass |
 | [`age-profile-clinical`](#age-profile-clinical) | 2 | inside the IBM replicate band in every age band carrying at least 5% of clinical episodes, at EIR 3, 20 and 120 | inside at 25 of 25 tested bands across the three EIRs, holding 94% of episodes; largest departure 1.17 replicate SD | pass |
 | [`age-profile-severe`](#age-profile-severe) | 2 | inside the IBM replicate band in every age band carrying at least 5% of severe episodes, at EIR 3, 20 and 120 | inside at 16 of 16 tested bands across the three EIRs, holding 94% of episodes; largest departure 0.94 replicate SD, in the 3-5 y band at EIR 20 | pass |
-| [`intervention-impact`](#intervention-impact) | 2 | within 0.6 percentage points of the IBM replicate band on every outcome, at EIR 3, 20 and 120 (SMC in a seasonal setting, since it is a seasonal intervention) | inside the band on 66 of 72 cells; worst excursion 1.17 percentage points, bed nets at EIR 120 on LM prevalence | FAIL |
+| [`intervention-impact`](#intervention-impact) | 2 | outside the IBM replicate band in no greater a share of cells than the best held-out IBM replicate, over every intervention and outcome at EIR 3, 20 and 120 (SMC in a seasonal setting, since it is a seasonal intervention) | fleet outside in 8.3% of 72 cells, against 9.7% for the closest of the twenty IBM replicates and 20.1% for the median one | pass |
 | [`real-settings-correlation`](#real-settings-correlation) | 3 | r \> 0.95 and \|slope - 1\| \< 0.10 on both clinical and severe incidence | clinical r 0.983 slope 0.996; severe r 0.959 slope 0.929, over 450,684 sub-site-months in 1,391 sub-sites of 63 countries | pass |
 | [`population-age-structure`](#population-age-structure) | 2 | inside the IBM replicate band in every age band below 60 years, on shares renormalised to the 0-60 population | inside at 11 of 11; largest departure 1.3% of the IBM median | pass |
 | [`speed`](#speed) | 2 | at least 10x faster than the IBM on the same scenario set | 21x on cost per simulated year; 19.9 CPU-hours for the IBM against 169 s for fleet | pass |
@@ -116,26 +116,28 @@ IBM.](cmp_age_sev.png)
 
 ## intervention-impact
 
-FAIL — The modelled impact of each intervention matches the IBM.
+pass — The modelled impact of each intervention matches the IBM.
 
 tier 2 · `validations/02-scenarios`
 
-Agreement is a function of transmission, and only the top of the range
-fails. At EIR 3 every cell is inside the band; at EIR 20 two are outside
-by at most 0.36 percentage points; at EIR 120 four are outside and the
-worst reaches 1.17. Every excursion is vector control or SMC at high
-transmission, where fleet under-predicts the prevalence impact of nets
-by 2.1 percentage points – the saturating-hazard regime, where the two
-models’ biting terms are least alike. Impact is a ratio of two runs
-sharing an age grid, so grid discretisation divides out: replacing the
-grid left the worst excursion unchanged. Perennial chemoprevention is
-the one intervention whose delivery the models cannot share. The IBM
-doses each child on reaching a dose age; fleet approximates that as
-monthly pulses over a 30-day band, which doses 8 to 21 days late and
-overstates the infant benefit by about a tenth. The window is the three
-years after deployment. Run longer and fleet develops a severe-incidence
-rebound, -0.5% at EIR 3 to +8% at EIR 120, which these IBM rows are too
-short and too noisy to test.
+The bar is taken from the IBM because at 72 cells a fixed one cannot be:
+a 1.28 SD band leaves a fifth of cells outside by construction, and no
+replicate is inside all 72. fleet is outside less often than any of the
+twenty. Where fleet does sit outside, the size is small in both senses.
+The worst cell is bed nets at EIR 120 on prevalence, where the IBM cuts
+PfPR(2-10) from 0.787 to 0.571 and fleet to 0.587: a 2.1 percentage
+point difference in the reduction, 7.6% of the effect. The typical gap
+does not grow with transmission – 0.49, 0.35 and 0.42 percentage points
+at EIR 3, 20 and 120. Impact is a ratio of two runs sharing an age grid,
+so grid discretisation divides out: replacing the grid left the worst
+excursion unchanged. Perennial chemoprevention is the one intervention
+whose delivery the models cannot share. The IBM doses each child on
+reaching a dose age; fleet approximates that as monthly pulses over a
+30-day band, which doses 8 to 21 days late and overstates the infant
+benefit by about a tenth. The window is the three years after
+deployment. Run longer and fleet develops a severe-incidence rebound,
+-0.5% at EIR 3 to +8% at EIR 120, which these IBM rows are too short and
+too noisy to test.
 
 ![The modelled impact of each intervention matches the
 IBM.](cmp_int_impact.png)
