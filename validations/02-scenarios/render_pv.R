@@ -84,6 +84,14 @@ g <- patchwork::wrap_plots(ps, ncol = 2) + plot_layout(guides = "collect") +
     theme = theme_cmp()) &
   theme(legend.position = "top", legend.justification = "left")
 save_fig(g, "pv_eir", width = 10, height = 9)
+## each panel alone too, because each is the evidence for a different claim
+for (i in seq_along(EIR_MET)) {
+  m <- EIR_MET[[i]]
+  one <- ps[[i]] + labs(x = "EIR passed to set_equilibrium()") +
+    plot_annotation(caption = cap(ibm_note, fig_width = 6.2), theme = theme_cmp()) &
+    theme(legend.position = "top", legend.justification = "left")
+  save_fig(one, paste0("pv_eir_", m$key), width = 6.2, height = 4.4)
+}
 
 ## ---- 2. age profiles -------------------------------------------------------------
 a_long <- age %>% filter(scenario %in% paste0("eir_", PROFILE_EIR_PV)) %>%
@@ -178,6 +186,49 @@ g <- ggplot(both, aes(y = scenario)) +
                       axis.text.y = element_text(size = rel(0.9), lineheight = 0.95, hjust = 1),
                       panel.spacing.x = unit(1.3, "lines"), panel.spacing.y = unit(1.3, "lines"))
 save_fig(g, "pv_int_impact", width = 13.5, height = 9)
+
+## ---- 4. real settings (a snapshot, as for falciparum) -----------------------------
+## Drawn from the vivax tier-3 sweep, whose inputs are the restricted site files,
+## so only on request, after running it:
+##   FLEET_VALIDATE=... CMP_PARASITE=pv Rscript validations/03-real-settings/run.R
+##   CMP_REFRESH_SITES=1 Rscript validations/02-scenarios/render_pv.R
+raw <- fc_results("03-real-settings", "pv", "raw")
+if (!nzchar(Sys.getenv("CMP_REFRESH_SITES"))) {
+  message("pv_sites: keeping the committed snapshot (CMP_REFRESH_SITES=1 to re-draw it from ",
+          raw, ")")
+  raw <- ""
+}
+fs <- list.files(raw, pattern = "_compare[.]rds$", full.names = TRUE)
+if (length(fs)) {
+  Sys.setenv(CMP_PARASITE = "pv")
+  source(file.path(ROOT, "validations", "03-real-settings", "sites_lib.R"))
+  v <- bind_rows(lapply(fs, read_compare))
+  st <- agreement(v$ms_clinical, v$fleet_clinical)
+  d <- data.frame(x = v$ms_clinical, y = v$fleet_clinical) %>% filter(is.finite(x), is.finite(y))
+  top <- unname(quantile(c(d$x, d$y), 0.999))
+  g <- ggplot(d, aes(x, y)) +
+    geom_hex(bins = 60) +
+    geom_abline(slope = 1, intercept = 0, colour = REF, linewidth = 0.8, linetype = "22") +
+    scale_fill_gradient(low = "#F4F6FE", high = "#171449", transform = "log10",
+                        name = "sub-site\nmonths", breaks = c(1, 10, 100, 1000, 10000),
+                        labels = scales::label_comma()) +
+    coord_equal(xlim = c(0, top), ylim = c(0, top), expand = FALSE) +
+    labs(title = sprintf("P. vivax site files: %s sub-site-months across %d countries",
+                         format(st$n, big.mark = ","), length(unique(v$iso3c))),
+         subtitle = sprintf("Monthly clinical incidence, all ages, %d–%d · r = %.2f · slope = %.2f · fleet − IBM on average %+.1f%% of the IBM mean",
+                            min(v$year), max(v$year), st$cor, st$slope, 100 * st$rel_bias),
+         x = "IBM (episodes per person-year)", y = "fleet (episodes per person-year)",
+         caption = cap(paste("Dashed line = perfect agreement. Up to ten vivax sub-sites per",
+                             "country, spread across its vivax EIR range, with their full",
+                             "intervention histories. IBM values are the site files' own",
+                             "calibration diagnostic runs (P. vivax rows); fleet was run here",
+                             "from the same site_parameters(parasite = \"vivax\") lists."),
+                       fig_width = 7.5)) +
+    theme_cmp() + theme(legend.position = "right", legend.justification = "center",
+                        legend.title = element_text(size = rel(0.8), colour = INK2),
+                        panel.grid.major = element_blank())
+  save_fig(g, "pv_sites", width = 7.5, height = 6.2)
+}
 
 cat("vivax figures written", if (SMOKE) "to validations/02-scenarios/results/plots/smoke" else
       "to man/figures and vignettes", "\n")

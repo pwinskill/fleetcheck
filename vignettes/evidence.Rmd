@@ -34,6 +34,13 @@ cat(fleetcheck::scoreboard_md(claims, link_prefix = ""), sep = "\n")
 ```{r sections, results = "asis"}
 for (i in seq_len(nrow(claims))) {   # register order, same as the table above
   cl <- claims[i, ]
+  # the vivax claims follow the falciparum ones, under their own heading
+  if (cl$parasite == "vivax" && (i == 1 || claims$parasite[i - 1] != "vivax"))
+    cat("\n# *P. vivax*\n\n",
+        "The same questions for a `get_parameters(parasite = \"vivax\")` list, on",
+        "vivax's own transmission grid, with radical cure in place of the",
+        "chemoprevention and vaccines `malariasimulation` cannot run under vivax.",
+        "Vivax has no severe disease.\n\n")
   cat(sprintf("\n## %s {#%s}\n\n", cl$id, cl$id))
   # verdict_html(), not a second copy of the map: this file used to hold one in
   # different case, so a claim read `pass` in the table and `PASS` here

@@ -119,7 +119,24 @@ Rscript validations/02-scenarios/run.R
 
 # a few-minute end-to-end check of the same path
 CMP_SMOKE=1 Rscript validations/02-scenarios/run.R
+
+# the P. vivax suite: the same scripts, results in results/pv/
+CMP_PARASITE=pv Rscript validations/02-scenarios/run.R
+CMP_PARASITE=pv Rscript validations/02-scenarios/assess.R
+Rscript validations/02-scenarios/tables_pv.R
+Rscript validations/02-scenarios/render_pv.R
+
+# tier 3, which needs the restricted site files
+FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
+FLEET_VALIDATE=/path/to/site-files CMP_PARASITE=pv Rscript validations/03-real-settings/run.R
 ```
+
+The vivax suite runs on its own transmission grid (EIR 0.3 to 30, where
+falciparum's is 1 to 120), without SMC, PMC or RTS,S -- `malariasimulation`
+cannot run chemoprevention under vivax, and its vaccines carry no vivax
+calibration -- and with radical cure in their place. A vivax run of `fleet`
+costs about forty times a falciparum one, so tier 3 represents each country by
+at most ten sub-sites, spread evenly across its vivax EIR range.
 
 The register itself is data, so it can be queried rather than read:
 

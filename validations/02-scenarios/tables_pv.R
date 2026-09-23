@@ -45,7 +45,10 @@ pct <- function(x, d = 0) sprintf(paste0("%.", d, "f%%"), 100 * x)
 MET <- c(pvpr_2_10 = "PvPR 2-10 (LM)", pcr_2_10 = "PCR prevalence 2-10",
          clin_0_5 = "clinical, 0-5", clin_all = "clinical, all ages",
          relapse_all = "relapses, all ages", hyp_all = "carrying hypnozoites")
-SCORED <- c("pvpr_2_10", "clin_0_5", "clin_all", "relapse_all")
+SCORED <- c("pvpr_2_10", "clin_0_5", "clin_all", "relapse_all", "hyp_all")
+## intervention impact is scored on the four burden outcomes; carriage is a
+## mechanism, not a burden a programme is judged on
+IMPACT <- c("pvpr_2_10", "clin_0_5", "clin_all", "relapse_all")
 
 ## ---- 1. the transmission grid -------------------------------------------------
 say("# P. vivax\n")
@@ -121,7 +124,7 @@ say("## Intervention impact (3 years after vs 3 years before), EIR %s\n",
     paste(PROFILE_EIR_PV, collapse = ", "))
 INT <- names(INT_LABELS_PV)
 INT_SCEN <- unlist(lapply(PROFILE_EIR_PV, function(E) int_scenario(INT, E, ref = EIR_REF_PV)))
-IMET <- MET[SCORED]
+IMET <- MET[IMPACT]
 with_parts <- function(d) bind_cols(d, int_parts(d$scenario, ref = EIR_REF_PV)) %>% select(-scenario)
 red <- monthly %>% filter(scenario %in% INT_SCEN) %>%
   mutate(phase = case_when(year >= BURN_Y - 3 & year < BURN_Y ~ "pre",
