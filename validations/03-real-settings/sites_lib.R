@@ -72,8 +72,9 @@ TIER3_TUNING <- list(atol = 1e-6, rtol = 1e-6, step_size_max = 10)
 ## per-capita larval states become tiny, atol = 1e-6 stops controlling them, and
 ## the run fails partway with "step size vanished" -- then repeats in full at the
 ## default tuning. Falciparum hits the same sites, but its fallback is cheap; a
-## vivax run costs ~40x as much, so the wasted first pass matters. At atol = 1e-8
-## that site runs through first time.
+## vivax run costs ~35x as much, so the wasted first pass matters. At atol = 1e-8
+## that site runs through first time, and elsewhere it costs little: ~5% more
+## steps than atol = 1e-6 at a strongly seasonal site, none at a flat one.
 if (SP == "pv") TIER3_TUNING$atol <- 1e-8
 
 load_fleet <- function() {
@@ -174,7 +175,7 @@ ibm_monthly <- function(iso) {
               .groups = "drop")
 }
 
-## Vivax sub-sites per country, at most. A vivax run costs ~40x a falciparum
+## Vivax sub-sites per country, at most. A vivax run costs ~35x a falciparum
 ## one (the hypnozoite ladder and the immunity spread), so all 576 vivax
 ## sub-sites would take most of a working day on ten cores, bounded by
 ## Afghanistan's 60 alone. Each country is instead represented by up to this

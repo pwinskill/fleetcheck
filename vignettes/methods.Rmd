@@ -135,7 +135,7 @@ The vivax suite runs on its own transmission grid (EIR 0.3 to 30, where
 falciparum's is 1 to 120), without SMC, PMC or RTS,S -- `malariasimulation`
 cannot run chemoprevention under vivax, and its vaccines carry no vivax
 calibration -- and with radical cure in their place. A vivax run of `fleet`
-costs about forty times a falciparum one, so tier 3 represents each country by
+costs about 35 times a falciparum one, so tier 3 represents each country by
 at most ten sub-sites, spread evenly across its vivax EIR range.
 
 The register itself is data, so it can be queried rather than read:
