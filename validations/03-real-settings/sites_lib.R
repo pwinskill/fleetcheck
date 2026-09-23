@@ -67,6 +67,14 @@ site_isos <- function() {
 ## assess.R can stamp the tuning the numbers were produced at -- the omission
 ## that made the previous tier-3 statistics unreproducible was of this kind.
 TIER3_TUNING <- list(atol = 1e-6, rtol = 1e-6, step_size_max = 10)
+## Vivax needs a tighter absolute tolerance. Where the dry season collapses the
+## larval carrying capacity a thousandfold (Eritrea's Gash Barka, rural), the
+## per-capita larval states become tiny, atol = 1e-6 stops controlling them, and
+## the run fails partway with "step size vanished" -- then repeats in full at the
+## default tuning. Falciparum hits the same sites, but its fallback is cheap; a
+## vivax run costs ~40x as much, so the wasted first pass matters. At atol = 1e-8
+## that site runs through first time.
+if (SP == "pv") TIER3_TUNING$atol <- 1e-8
 
 load_fleet <- function() {
   if (nzchar(src <- Sys.getenv("FLEET_SRC"))) {
