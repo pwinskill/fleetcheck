@@ -1,6 +1,6 @@
 # P. falciparum scenario definitions, sourced by scenarios.R when CMP_PARASITE
 # is pf (the default). Each returns list(p = parameters, eir = init_EIR,
-# years = horizon). Moved here unchanged when the vivax suite arrived, so the
+# years = horizon). Their own file since the vivax suite arrived; the
 # scenario digest the committed IBM reference was stamped with still matches.
 
 base_params <- function(seasonal = FALSE, age_profile = FALSE) {
@@ -133,11 +133,11 @@ scenarios$demography <- local({
 ## share a common no-intervention reference so the three tiers (nothing, one
 ## thing, everything) can be read against each other. All at EIR 20 seasonal, so
 ## every row of the figure is the same setting with more added to it.
-TS_Y <- 15L
+TS_Y <- TS_YEARS                      # the renderer and tables read the same constant
 ts_base <- function() set_bands(get_parameters(c(list(human_population = POP),
                                                  list(model_seasonality = TRUE), SEASON)))
 ## nets every 3 years: 5 campaigns over the 15-year window
-ts_net_rounds <- Y_INT + seq(0, by = 3 * 365, length.out = 5L)
+ts_net_rounds <- Y_INT + seq(0, by = TS_NET_EVERY * 365, length.out = 5L)
 ts_nets_on <- function(p) {
   n <- length(ts_net_rounds)
   set_bednets(p, timesteps = ts_net_rounds, coverages = rep(0.8, n),

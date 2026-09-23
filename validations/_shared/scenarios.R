@@ -1,12 +1,13 @@
 # Scenario definitions and the shared per-run summariser.
 #
-# Sourced by BOTH run_replicates.R (which runs them through both models and
-# writes the CSVs) and check_drift.R (which re-runs fleet only and compares
-# against the committed reference). They live here so a drift check cannot
-# silently test a different set of scenarios from the one the reference was
-# built on -- and so sourcing the scenarios does not start a 25-minute run.
+# Sourced by BOTH validations/02-scenarios/run.R (which runs them through both
+# models and writes the CSVs) and assess.R (which re-runs fleet only and
+# compares against the committed reference). They live here so a drift check
+# cannot silently test a different set of scenarios from the one the reference
+# was built on -- and so sourcing the scenarios does not start a two-hour run.
+# The scenarios themselves are in scenarios_pf.R and scenarios_pv.R.
 #
-# Expects ROOT and theme.R's constants to be in scope already.
+# Expects ROOT and the package's scenario constants to be in scope already.
 
 SMOKE <- nzchar(Sys.getenv("CMP_SMOKE"))
 
