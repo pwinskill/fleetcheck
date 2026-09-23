@@ -53,6 +53,7 @@ if (requireNamespace("pkgload", quietly = TRUE) &&
 source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
 
 DDIR <- file.path(ROOT, "validations", "02-scenarios", "results")
+if (SP == "pv") DDIR <- file.path(DDIR, "pv")       # CMP_PARASITE=pv: the vivax suite
 STRICT <- nzchar(Sys.getenv("CMP_STRICT"))
 
 ## ---- thresholds ---------------------------------------------------------------
@@ -76,6 +77,15 @@ LIMITS <- list(
   clin_0_5  = list(rel = 0.05, out = 1L, label = "clinical, 0-5"),
   clin_all  = list(rel = 0.05, out = 1L, label = "clinical, all ages"),
   sev_all   = list(rel = 0.10, out = 2L, label = "severe, all ages"))
+## The vivax suite's own outcomes, on its own five-point grid; no severe, and
+## relapse incidence in its place. Set at the first vivax run's values in the
+## same way: see LIMITS_PV's commit for the numbers they were set against.
+LIMITS_PV <- list(
+  pvpr_2_10   = list(rel = 0.05, out = 1L, label = "PvPR 2-10 (LM)"),
+  clin_0_5    = list(rel = 0.10, out = 1L, label = "clinical, 0-5"),
+  clin_all    = list(rel = 0.10, out = 1L, label = "clinical, all ages"),
+  relapse_all = list(rel = 0.05, out = 1L, label = "relapses, all ages"))
+if (SP == "pv") LIMITS <- LIMITS_PV
 ## anything moving by more than this against the committed fleet rows is reported;
 ## solver output is deterministic, so this is a floating-point floor, not a budget
 MOVE_TOL <- 1e-6
@@ -154,7 +164,7 @@ if (!file.exists(ref_f)) {
 
 ## ---- run fleet against the frozen reference -----------------------------------
 rule("Re-running fleet")
-new_eq <- do.call(rbind, lapply(run_fleet(), `[[`, "eq"))
+new_eq <- do.call(rbind, lapply(run_fleet(workers = if (SP == "pv") 10L else 1L), `[[`, "eq"))
 old <- read.csv(file.path(DDIR, "rep_eq.csv"), stringsAsFactors = FALSE)
 MET <- names(LIMITS)
 

@@ -5,14 +5,17 @@
 \alias{int_parts}
 \title{Intervention scenario names across the transmission grid}
 \usage{
-int_scenario(intervention, eir)
+int_scenario(intervention, eir, ref = EIR_REF)
 
-int_parts(scenario)
+int_parts(scenario, ref = EIR_REF)
 }
 \arguments{
 \item{intervention}{one of \code{names(INT_LABELS)}.}
 
 \item{eir}{transmission intensity.}
+
+\item{ref}{the reference EIR whose runs carry the bare name: \link{EIR_REF} for
+the falciparum suite, \link{EIR_REF_PV} for the vivax one.}
 
 \item{scenario}{scenario names, as they appear in the saved CSVs.}
 }

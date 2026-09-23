@@ -47,7 +47,10 @@ if (requireNamespace("pkgload", quietly = TRUE) &&
 ## the top level, so it needs that package attached and cannot load with
 ## fleetcheck. One copy, sourced by everything that needs it.
 source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
-DDIR <- file.path(ROOT, "validations", "02-scenarios", "results"); dir.create(DDIR, showWarnings = FALSE)
+## CMP_PARASITE=pv writes the vivax suite to results/pv/, beside falciparum's
+DDIR <- file.path(ROOT, "validations", "02-scenarios", "results")
+if (SP == "pv") DDIR <- file.path(DDIR, "pv")
+dir.create(DDIR, showWarnings = FALSE, recursive = TRUE)
 N_WORKERS <- 10L
 ## CMP_SMOKE=1 -> a few-minute end-to-end check: 4-year horizon, one replicate,
 ## interventions at year 1 so every builder actually fires, output to validations/02-scenarios/results/smoke/.
@@ -66,43 +69,62 @@ log_msg <- function(...) cat(sprintf("[%s] %s\n", format(Sys.time(), "%H:%M:%S")
 FLEET_ONLY <- nzchar(Sys.getenv("CMP_FLEET_ONLY"))
 
 
-## ---- run fleet (deterministic, seconds) --------------------------------------
-ode <- run_fleet()
+## ---- run fleet (deterministic) -------------------------------------------------
+## Seconds per scenario for falciparum, run here. A vivax run costs ~4 s per
+## simulated year -- minutes a scenario -- so under vivax fleet's runs join the
+## IBM's on the worker pool below instead of queueing one after another.
+FLEET_ON_POOL <- SP == "pv"
+ode <- if (FLEET_ON_POOL) list() else run_fleet()
 
-## ---- run the IBM replicates in parallel --------------------------------------
+## ---- run the IBM replicates (and vivax fleet) in parallel ----------------------
 ibm <- list()
-if (!FLEET_ONLY) {
-jobs <- expand.grid(scenario = names(scenarios), rep = seq_len(N_REP),
-                    stringsAsFactors = FALSE)
+if (!FLEET_ONLY || FLEET_ON_POOL) {
+reps <- if (FLEET_ONLY) integer(0) else seq_len(N_REP)
+jobs <- expand.grid(scenario = names(scenarios), rep = reps, stringsAsFactors = FALSE)
+jobs$model <- rep("IBM", nrow(jobs))
+if (FLEET_ON_POOL) jobs <- rbind(jobs, data.frame(scenario = names(scenarios), rep = 0L,
+                                                  model = "fleet", stringsAsFactors = FALSE))
 ## rough cost in default-band sim-years, so the load balancer starts the longest jobs first
 jobs$cost <- vapply(jobs$scenario, function(nm) scenarios[[nm]]$years *
   (if (length(scenarios[[nm]]$p$prevalence_rendering_min_ages) > 1) 2 else 1), numeric(1))
 jobs <- jobs[order(-jobs$cost, jobs$rep), ]; rownames(jobs) <- NULL
-log_msg("IBM: %d runs (%d scenarios x %d reps) on %d workers; ~%.0f min at 2.5 s per sim-year",
-        nrow(jobs), length(scenarios), N_REP, N_WORKERS, sum(jobs$cost) * 2.5 / N_WORKERS / 60)
+log_msg("%d runs (%d scenarios x %d IBM reps%s) on %d workers; ~%.0f min at 2.5 s per sim-year",
+        nrow(jobs), length(scenarios), length(reps), if (FLEET_ON_POOL) " + fleet" else "",
+        N_WORKERS, sum(jobs$cost) * 2.5 / N_WORKERS / 60)
 cl <- parallel::makeCluster(N_WORKERS)
 ## workers do not inherit .libPaths(), so hand them the parent's rather than
 ## hardcoding one: whatever library this session is using, they use too
 .libs <- .libPaths()
-parallel::clusterExport(cl, c("jobs", "scenarios", "summarise_run", "tag_parts", "band_lo",
-                              "band_hi", "AGE_TAGS", "POP", "BURN_Y", "PROG", ".libs"))
+parallel::clusterExport(cl, c("jobs", "scenarios", "summarise_run", "summarise_run_pv",
+                              "tag_parts", "band_lo", "band_hi", "AGE_TAGS", "POP",
+                              "BURN_Y", "PROG", ".libs", "SP"))
 invisible(parallel::clusterEvalQ(cl, {
   .libPaths(.libs)
   suppressMessages(library(malariasimulation))
 }))
 t0 <- Sys.time()
-ibm <- parallel::parLapplyLB(cl, seq_len(nrow(jobs)), function(j) {
+ran <- parallel::parLapplyLB(cl, seq_len(nrow(jobs)), function(j) {
   nm <- jobs$scenario[j]; k <- jobs$rep[j]; s <- scenarios[[nm]]
-  set.seed(1000L + 7L * k)
-  el <- system.time(out <- run_simulation(timesteps = s$years * 365, parameters = s$p))[["elapsed"]]
+  if (jobs$model[j] == "fleet") {
+    ## exactly as run_fleet() does it: same tuning, day-0 seed row dropped
+    el <- system.time(out <- fleet::run_simulation_ode(
+      timesteps = s$years * 365, parameters = s$p,
+      tuning = list(rtol = 1e-6, step_size_max = 10)))[["elapsed"]]
+    out <- out[-1, ]
+  } else {
+    set.seed(1000L + 7L * k)
+    el <- system.time(out <- run_simulation(timesteps = s$years * 365, parameters = s$p))[["elapsed"]]
+  }
   r <- summarise_run(out, s$years)
   r$timing <- data.frame(years = s$years, elapsed_s = el)
-  cat(sprintf("[%s] %-10s rep %d  %5.1f min\n", format(Sys.time(), "%H:%M:%S"), nm, k, el / 60),
-      file = PROG, append = TRUE)
-  tag_parts(r, nm, "IBM", k)
+  cat(sprintf("[%s] %-14s %-5s rep %2d  %5.1f min\n", format(Sys.time(), "%H:%M:%S"), nm,
+              jobs$model[j], k, el / 60), file = PROG, append = TRUE)
+  tag_parts(r, nm, jobs$model[j], k)
 }, chunk.size = 1L)
 parallel::stopCluster(cl)
-log_msg("IBM done in %.1f min", as.numeric(Sys.time() - t0, units = "mins"))
+is_fleet <- jobs$model == "fleet"
+ode <- c(ode, ran[is_fleet]); ibm <- ran[!is_fleet]
+log_msg("pool done in %.1f min", as.numeric(Sys.time() - t0, units = "mins"))
 }
 
 ## ---- combine and write -------------------------------------------------------

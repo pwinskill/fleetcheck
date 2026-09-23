@@ -1,10 +1,11 @@
 #!/usr/bin/env Rscript
-## Tier 3: fleet against malariasimulation across every pf sub-site in the
-## malariaverse site files.
+## Tier 3: fleet against malariasimulation across every sub-site in the
+## malariaverse site files, one parasite at a time.
 ##
 ##   FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
 ##   FLEET_VALIDATE=... CMP_ONLY=BFA,GHA Rscript .../run.R   # a few countries
 ##   FLEET_WORKERS=4 Rscript .../run.R                        # smaller pool
+##   FLEET_VALIDATE=... CMP_PARASITE=pv Rscript .../run.R     # the P. vivax arm
 ##
 ## THIS RUNS FLEET ONLY, and not as an option. The IBM side is the pre-run
 ## diagnostic shipped with each site file (calibration_epi_output/<ISO>_diagnostic_epi.rds),
@@ -33,9 +34,9 @@ if (!file.exists(file.path(ROOT, "DESCRIPTION")))
 suppressMessages(pkgload::load_all(ROOT, quiet = TRUE))
 source(file.path(ROOT, "validations", "03-real-settings", "sites_lib.R"))
 
-## fc_results() rather than a path built here, so the one definition of where a
-## tier's results live is the package's
-RAW <- fc_results("03-real-settings", "raw")
+## tier3_results() rather than a path built here, so the one definition of where
+## each parasite's results live is sites_lib.R's (results/ for pf, results/pv/)
+RAW <- tier3_results("raw")
 dir.create(RAW, showWarnings = FALSE, recursive = TRUE)
 log_msg <- function(...) cat(sprintf("[%s] %s\n", format(Sys.time(), "%H:%M:%S"),
                                      sprintf(...)))

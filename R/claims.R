@@ -36,10 +36,15 @@ read_claims <- function(path = find_claims()) {
     measured  = field(x, "measured"),
     status    = field(x, "status"),
     note      = field(x, "note", ""),
+    # which parasite the claim is about; absent means falciparum, which every
+    # claim was before the vivax suite existed
+    parasite  = field(x, "parasite", "falciparum"),
     stringsAsFactors = FALSE
   )))
   bad <- setdiff(out$status, c("pass", "fail", "open", "undeclared"))
   if (length(bad)) stop("unknown status: ", paste(unique(bad), collapse = ", "))
+  bad <- setdiff(out$parasite, c("falciparum", "vivax"))
+  if (length(bad)) stop("unknown parasite: ", paste(unique(bad), collapse = ", "))
   if (anyDuplicated(out$id)) stop("duplicate claim id: ", out$id[anyDuplicated(out$id)])
 
   if (any(is.na(out$tier) | out$tier < 0L | out$tier > 3L))

@@ -120,16 +120,24 @@ md_cell <- function(x) {
 badges_md <- function(claims = read_claims(),
                       repo = "pwinskill/fleetcheck",
                       site = "https://pwinskill.github.io/fleetcheck/") {
-  s <- claims_summary(claims)
-  bad <- s$fail + s$undeclared + s$open
-  # Green only when there is nothing outstanding; red would overstate one
-  # failing band in one age group as a broken comparison.
-  colour <- if (s$fail > 0) "orange" else if (bad > 0) "yellow" else "brightgreen"
-  parts <- c(sprintf("%d pass", s$pass),
-             if (s$fail) sprintf("%d fail", s$fail),
-             if (s$open) sprintf("%d open", s$open),
-             if (s$undeclared) sprintf("%d untested", s$undeclared))
-  msg <- paste(parts, collapse = ", ")
+  # One claims badge per parasite, so a vivax result can never recolour the
+  # falciparum badge, nor a falciparum one the vivax. The falciparum badge keeps
+  # its plain "claims" label; claims with no parasite field are falciparum.
+  par <- if (is.null(claims$parasite)) rep("falciparum", nrow(claims)) else claims$parasite
+  claim_msg <- function(cl) {
+    s <- claims_summary(cl)
+    bad <- s$fail + s$undeclared + s$open
+    # Green only when there is nothing outstanding; red would overstate one
+    # failing band in one age group as a broken comparison.
+    colour <- if (s$fail > 0) "orange" else if (bad > 0) "yellow" else "brightgreen"
+    parts <- c(sprintf("%d pass", s$pass),
+               if (s$fail) sprintf("%d fail", s$fail),
+               if (s$open) sprintf("%d open", s$open),
+               if (s$undeclared) sprintf("%d untested", s$undeclared))
+    list(msg = paste(parts, collapse = ", "), colour = colour)
+  }
+  pf <- claim_msg(claims[par == "falciparum", , drop = FALSE])
+  pv <- if (any(par == "vivax")) claim_msg(claims[par == "vivax", , drop = FALSE])
 
   # shields.io: a literal dash is doubled, everything else percent-encoded.
   enc <- function(x) utils::URLencode(gsub("-", "--", x, fixed = TRUE), reserved = TRUE)
@@ -142,8 +150,11 @@ badges_md <- function(claims = read_claims(),
   badge <- function(alt, img, href) sprintf("[![%s](%s)](%s)", alt, img, href)
   c(badge("check", paste0(action("check"), "/badge.svg"), action("check")),
     badge("pkgdown", paste0(action("pkgdown"), "/badge.svg"), action("pkgdown")),
-    badge(paste0("Claims: ", msg), shield("claims", msg, colour),
+    badge(paste0("Claims: ", pf$msg), shield("claims", pf$msg, pf$colour),
           paste0(site, "articles/evidence.html")),
+    if (!is.null(pv))
+      badge(paste0("Vivax claims: ", pv$msg), shield("vivax claims", pv$msg, pv$colour),
+            paste0(site, "articles/evidence.html")),
     badge("Lifecycle: experimental",
           shield("lifecycle", "experimental", "orange"),
           "https://lifecycle.r-lib.org/articles/stages.html#experimental"),

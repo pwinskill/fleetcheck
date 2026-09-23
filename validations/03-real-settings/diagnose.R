@@ -33,7 +33,7 @@ suppressMessages(pkgload::load_all(ROOT, quiet = TRUE))
 suppressMessages({library(dplyr); library(tidyr); library(ggplot2)})
 source(file.path(ROOT, "validations", "03-real-settings", "sites_lib.R"))
 
-DDIR <- fc_results("03-real-settings")
+DDIR <- tier3_results()
 OUT  <- file.path(DDIR, "diagnostic_timeseries.pdf")
 PER_PAGE <- 12L
 N_WORST  <- 48L
