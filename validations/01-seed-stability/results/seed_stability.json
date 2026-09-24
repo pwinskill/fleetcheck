@@ -1,0 +1,11 @@
+{
+  "generated": "2026-09-24T18:16:30+0100",
+  "fleet": "0.0.0.9003",
+  "malariasimulation": "3.0.0",
+  "init_EIR": 20,
+  "years": 15,
+  "seed_pfpr_2_10": 0.54889443,
+  "max_excursion": 0.00361505,
+  "final_departure": -0.00306229,
+  "last_five_year_range": 0.00006349
+}

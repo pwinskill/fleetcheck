@@ -6,7 +6,7 @@
 
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
-[![Claims: 11 pass](https://img.shields.io/badge/claims-11%20pass-brightgreen.svg)](articles/evidence.html)
+[![Claims: 6 pass, 5 fail](https://img.shields.io/badge/claims-6%20pass%2C%205%20fail-orange.svg)](articles/evidence.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
 
@@ -30,16 +30,16 @@ of plots.
 
 <!-- BEGIN scoreboard -->
 
-**11 claims — 0 failing, 0 untested, 0 open, 11 pass.**
+**11 claims — 5 failing, 0 untested, 0 open, 6 pass.**
 
 1. <span class="verdict pass">pass</span> [`prevalence-eir`](articles/evidence.html#prevalence-eir) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
-2. <span class="verdict pass">pass</span> [`clinical-allage-eir`](articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
-3. <span class="verdict pass">pass</span> [`clinical-under5-eir`](articles/evidence.html#clinical-under5-eir) &mdash; Under-5 clinical incidence tracks the IBM across transmission intensity.
-4. <span class="verdict pass">pass</span> [`severe-allage-eir`](articles/evidence.html#severe-allage-eir) &mdash; All-age severe incidence tracks the IBM across transmission intensity.
-5. <span class="verdict pass">pass</span> [`age-profile-clinical`](articles/evidence.html#age-profile-clinical) &mdash; The age distribution of clinical incidence tracks the IBM.
+2. <span class="verdict fail">FAIL</span> [`clinical-allage-eir`](articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
+3. <span class="verdict fail">FAIL</span> [`clinical-under5-eir`](articles/evidence.html#clinical-under5-eir) &mdash; Under-5 clinical incidence tracks the IBM across transmission intensity.
+4. <span class="verdict fail">FAIL</span> [`severe-allage-eir`](articles/evidence.html#severe-allage-eir) &mdash; All-age severe incidence tracks the IBM across transmission intensity.
+5. <span class="verdict fail">FAIL</span> [`age-profile-clinical`](articles/evidence.html#age-profile-clinical) &mdash; The age distribution of clinical incidence tracks the IBM.
 6. <span class="verdict pass">pass</span> [`age-profile-severe`](articles/evidence.html#age-profile-severe) &mdash; The age distribution of severe incidence tracks the IBM.
 7. <span class="verdict pass">pass</span> [`intervention-impact`](articles/evidence.html#intervention-impact) &mdash; The modelled impact of each intervention matches the IBM.
-8. <span class="verdict pass">pass</span> [`real-settings-correlation`](articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
+8. <span class="verdict fail">FAIL</span> [`real-settings-correlation`](articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
 9. <span class="verdict pass">pass</span> [`population-age-structure`](articles/evidence.html#population-age-structure) &mdash; The population age structure matches the IBM's.
 10. <span class="verdict pass">pass</span> [`speed`](articles/evidence.html#speed) &mdash; fleet is fast enough to be worth using in place of the IBM.
 11. <span class="verdict pass">pass</span> [`seed-stability`](articles/evidence.html#seed-stability) &mdash; An undisturbed run holds the equilibrium it was seeded at.
@@ -77,15 +77,15 @@ recorded against every claim rather than mentioned in prose.
 | tier | cost | who can reproduce it |
 | --- | --- | --- |
 | 0 | seconds | anyone, from committed summaries |
-| 1 | ~2 min | anyone; re-runs `fleet` only |
+| 1 | under a minute | anyone; re-runs `fleet` only |
 | 2 | ~2 h | anyone with about 10 cores |
-| 3 | ~40 min | ~10 cores, and inputs that are not redistributable |
+| 3 | ~20 min | 4 cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and statistics are
 public; the site files behind them are not.** The code that produces them is
 here and can be read, audited and run — the constraint is the inputs, not the
 compute. It re-runs `fleet` only, because the IBM arm is the pre-run diagnostic
-shipped with each site file, so forty minutes on ten cores refreshes it.
+shipped with each site file, so twenty minutes on four cores refreshes it.
 `validations/03-real-settings/example-one-site.R` demonstrates the same pipeline
 on a single sub-site for anyone who has one site file.
 
@@ -114,8 +114,8 @@ install.packages(c("yaml", "pkgload", "devtools"))
 ```
 
 **Tier 1 and 2** (re-run the models) additionally need `fleet`, the IBM, and the
-output post-processor. `fleet` pulls `odin2`, `dust2`, `monty` and
-`malariaEquilibrium` with it, and compiles C++, so allow some time:
+output post-processor. `fleet` pulls `dust2`, `monty` and `malariaEquilibrium`
+with it, and compiles C++, so allow some time:
 
 ```r
 install.packages("remotes")
@@ -141,7 +141,7 @@ Rscript report/make_scoreboard.R --check
 Rscript -e 'pkgload::load_all(quiet = TRUE); check_claims()'
 ```
 
-### 4. Check whether a change to `fleet` has moved anything — tier 1, ~2 min
+### 4. Check whether a change to `fleet` has moved anything — tier 1, under a minute
 
 **This is the one to run often.** It re-runs `fleet` alone against the committed
 IBM rows. The IBM does not depend on `fleet`, so its rows stay valid for any
@@ -153,12 +153,12 @@ Rscript validations/02-scenarios/assess.R
 
 It answers two questions separately, because they mean different things. *Did
 anything move?* — `fleet` now against `fleet`'s committed rows. *Is the match
-still good?* — `fleet` now against the IBM medians and 10–90% bands, at the
-thresholds the claims rest on. Only the second fails the run by default. It
+still good?* — `fleet` now against the IBM medians and replicate bands (median
+± 1.28 SD), at the thresholds the claims rest on. Only the second fails the run by default. It
 exits non-zero on drift, so it works in CI.
 
 ```bash
-CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R   # a subset, ~20 s
+CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R   # a subset, seconds
 CMP_STRICT=1 Rscript validations/02-scenarios/assess.R          # also fail if ANY number moved
 ```
 
@@ -184,7 +184,7 @@ Rscript validations/02-scenarios/run.R
 If you changed `fleet` and only need `fleet`'s rows refreshed, keep the IBM's:
 
 ```bash
-CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # ~1 min
+CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # ~20 s
 ```
 
 ### 6. Redraw the figures and tables — seconds
@@ -235,7 +235,7 @@ Rscript -e 'pkgdown::build_site()'
 only if you have the malariaverse site files, which are not redistributable.**
 The constraint is the inputs, not the compute: the sweep re-runs `fleet` alone,
 because the IBM arm is the pre-run diagnostic shipped with each site file, so it
-is about forty minutes on ten cores.
+is about twenty minutes on four cores.
 
 ```bash
 FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
@@ -263,10 +263,9 @@ details are load-bearing. Read the shape of the output rather than its third
 decimal: one sub-site against one IBM replicate is a check that the pipeline
 runs, not evidence about the model.
 
-Tier 2, in `validations/02-scenarios/`, is complete, and is what steps 4 to 6
-exercise. `validations/01-seed-stability/` is still a **stub** — a README and an
-empty `results/` — so `seed-stability` is the one claim in the register whose
-measured value no script here reproduces.
+Tier 2, in `validations/02-scenarios/`, is what steps 4 to 6 exercise.
+`Rscript validations/01-seed-stability/run.R` (seconds, `fleet` only)
+reproduces `seed-stability` and writes `results/seed_stability.json`.
 
 ## Layout
 
@@ -277,25 +276,20 @@ report/       the site: the register first, evidence behind it
 claims.yml    the register
 ```
 
-`R/metrics.R` holds every comparison statistic, defined once and unit-tested.
-That is not ceremony: `fleet`'s own documentation once carried two derivations
-of the same immunity figures, in two articles, and both were wrong. One
-definition, imported everywhere, tested.
+`R/metrics.R` holds every comparison statistic, defined once and unit-tested,
+so no two pieces of evidence can compute the same statistic two ways.
 
 `R/provenance.R` stamps every result with the `fleet` and `malariasimulation`
 versions, the commits they were installed from, the R version and the date, and
-holds the rounding rule the stored summaries are written under. It exists because the
-provenance used to be inverted: the 25-minute comparison recorded the IBM
-version, the replicate count and a digest of the scenarios, while the site-file
-sweep — which needs inputs nobody outside the project has — recorded only a
-date. The tier that is hardest to re-run is the one that most needs to say what
-made it, and its stamp now carries the `fleet` version and the age grid too.
+holds the rounding rule the stored summaries are written under. The tier that
+is hardest to re-run, the site-file sweep, most needs to say what made it, so its
+stamp carries the `fleet` version, the age grid and the mosquito sub-step count
+as well.
 
 ## Status
 
-The register, the tested metrics layer and **tier 2** are in place: the scenario
-comparison in `validations/02-scenarios/` runs end to end, has a two-minute
+The register, the tested metrics layer and every tier are in place. **Tier 1**,
+`validations/01-seed-stability/`, runs in seconds. **Tier 2**, the scenario
+comparison in `validations/02-scenarios/`, runs end to end, has a few-minute
 smoke path, and is what CI checks. **Tier 3** runs from here too — `run.R`,
-`assess.R` and `diagnose.R` — given the site files it cannot ship. Tier 1 is
-still a stub, so `seed-stability` is the one claim in the register whose
-measured value no script here reproduces; porting it is the outstanding work.
+`assess.R` and `diagnose.R` — given the site files it cannot ship.

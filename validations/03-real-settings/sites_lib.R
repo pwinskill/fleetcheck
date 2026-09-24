@@ -40,11 +40,6 @@ site_isos <- function() {
   sort(intersect(s, i))
 }
 
-## The solver controls the sweep runs under. Named rather than inline so that
-## assess.R can stamp the tuning the numbers were produced at -- the omission
-## that made the previous tier-3 statistics unreproducible was of this kind.
-TIER3_TUNING <- list(atol = 1e-6, rtol = 1e-6, step_size_max = 10)
-
 load_fleet <- function() {
   if (nzchar(src <- Sys.getenv("FLEET_SRC"))) {
     suppressMessages(pkgload::load_all(src, quiet = TRUE))
@@ -87,35 +82,21 @@ fleet_monthly_subsite <- function(s1) {
   E <- s1$eir$eir[s1$eir$sp == "pf"]
   if (length(E) != 1 || is.na(E) || E <= 0) return(NULL)
   p <- suppressWarnings(build_params(s1))
-  ## fleet reads the target EIR off the parameter list, so seed once here rather
-  ## than per attempt: set_equilibrium() is not free.
   p <- suppressWarnings(malariasimulation::set_equilibrium(p, init_EIR = E))
-  ## Fast controls first; on a numerical failure -- the ultra-low-EIR fringe
-  ## sites are where this happens -- retry once with the conservative default,
-  ## then give up on that sub-site rather than failing the country.
-  ##
-  ## A dropped sub-site is SELECTION, not a nuisance: the fringe is exactly
-  ## where fleet departs most from the IBM, so dropping silently biases every
-  ## statistic toward agreement. Which arm each sub-site used, and whether it
-  ## was dropped at all, is recorded on the returned frame so assess.R can
-  ## report the counts rather than leaving them invisible.
+  ## At fleet's default settings. A sub-site that errors is given up on rather
+  ## than failing the country -- and a dropped sub-site is SELECTION, not a
+  ## nuisance: the low-EIR fringe is where fleet departs most from the IBM, so
+  ## dropping silently would bias every statistic toward agreement. run_country()
+  ## counts the attempts and the returns so assess.R reports the difference.
   o <- suppressWarnings(tryCatch(
-    fleet::run_simulation_ode(timesteps = p$timesteps, parameters = p,
-                              tuning = TIER3_TUNING),
+    fleet::run_simulation_ode(timesteps = p$timesteps, parameters = p),
     error = function(e) NULL))
-  arm <- "primary"
-  if (is.null(o)) {
-    arm <- "retry"
-    o <- suppressWarnings(tryCatch(
-      fleet::run_simulation_ode(timesteps = p$timesteps, parameters = p),
-      error = function(e2) NULL))
-  }
   if (is.null(o)) return(NULL)
   suppressWarnings(postie::get_rates(o)) |>
     group_by(year, month) |>
     summarise(fleet_clinical = weighted.mean(clinical, person_days) * 365,
               fleet_severe   = weighted.mean(severe,   person_days) * 365, .groups = "drop") |>
-    mutate(arm = arm, iso3c = s1$sites$iso3c, name_1 = s1$sites$name_1,
+    mutate(iso3c = s1$sites$iso3c, name_1 = s1$sites$name_1,
            urban_rural = s1$sites$urban_rural)
 }
 
@@ -137,7 +118,10 @@ ibm_monthly <- function(iso) {
               .groups = "drop")
 }
 
-## One country -> the joined monthly comparison over its pf sub-sites.
+## One country -> the joined monthly comparison over its pf sub-sites. NULL if
+## every sub-site fleet was asked for failed; NA if the country has no
+## P. falciparum sub-site at all, which is outside the comparison rather than a
+## failure (the site files include purely P. vivax countries).
 run_country <- function(iso) {
   load_fleet()
   sf <- readRDS(file.path(site_dir(), "sites", paste0(iso, ".RDS")))
@@ -147,10 +131,15 @@ run_country <- function(iso) {
       site::subset_site(sf, sf$sites[i, c("country", "iso3c", "name_1", "urban_rural")]),
       error = function(e) NULL)
     if (is.null(s1)) next
+    ## a sub-site with no P. falciparum transmission is outside the comparison,
+    ## not a sub-site fleet failed on, so it is not counted as an attempt
+    E <- s1$eir$eir[s1$eir$sp == "pf"]
+    if (length(E) != 1 || is.na(E) || E <= 0) next
     attempted <- attempted + 1L
     r <- tryCatch(fleet_monthly_subsite(s1), error = function(e) NULL)
     if (!is.null(r)) mo[[length(mo) + 1]] <- r
   }
+  if (!attempted) return(NA)
   if (!length(mo)) return(NULL)
   ## na_matches = "never": dplyr joins NA to NA by default, so an unnamed
   ## admin-1 on both arms would match and fan out if more than one exists.
@@ -162,6 +151,19 @@ run_country <- function(iso) {
   attr(out, "attempted") <- attempted
   attr(out, "solved") <- length(mo)
   out
+}
+
+## Every sub-site with P. falciparum transmission in the site files: what a
+## complete sweep must have run. Counted from the site files rather than from the
+## workers' own tallies, so a country whose worker died, or whose every sub-site
+## failed, shows up as attempted and missing instead of silently absent.
+expected_pf_subsites <- function() {
+  do.call(rbind, lapply(site_isos(), function(iso) {
+    e <- as.data.frame(readRDS(file.path(site_dir(), "sites", paste0(iso, ".RDS")))$eir)
+    e <- e[e$sp == "pf" & is.finite(e$eir) & e$eir > 0, , drop = FALSE]
+    if (!nrow(e)) return(NULL)
+    data.frame(iso3c = e$iso3c, site = paste(e$iso3c, e$name_1, e$urban_rural, sep = "_"))
+  }))
 }
 
 ## ---- reading results back -----------------------------------------------------

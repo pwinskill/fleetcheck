@@ -50,7 +50,7 @@ home:
         text: >
           A **twin-fidelity check**, not a validation against data. Every claim
           carries the criterion that decides it and what it costs to reproduce,
-          from seconds to forty minutes on ten cores.
+          from seconds to about two hours on ten cores.
 
 reference:
 - title: The claims register
@@ -59,9 +59,8 @@ reference:
 - title: Comparison statistics
   desc: >
     Every statistic quoted anywhere in this project. Defined once and
-    unit-tested, because the alternative is what happened to fleet's own
-    documentation: the same quantity derived twice, in two articles, wrong both
-    times.
+    unit-tested, so no two pieces of evidence can compute the same quantity two
+    ways.
   contents: [agreement, comparison-settings, replicate_band, band_z, outside_rates,
              band_position, band_summary]
 - title: Provenance and paths

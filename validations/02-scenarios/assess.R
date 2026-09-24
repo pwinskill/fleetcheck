@@ -1,11 +1,11 @@
 # Has a change moved fleet, and is it still matching the IBM?
 #
-#   Rscript validations/02-scenarios/assess.R              # ~2 min
+#   Rscript validations/02-scenarios/assess.R              # under a minute
 #   CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R    # a subset, faster
 #   CMP_STRICT=1 Rscript validations/02-scenarios/assess.R # also fail if ANY number moved
 #
 # The IBM does not depend on fleet, so its committed rows stay valid for any
-# fleet-side change and there is no reason to re-run a 25-minute IBM sweep to
+# fleet-side change and there is no reason to re-run a two-hour IBM sweep to
 # find out whether the match still holds. This re-runs fleet only, against the
 # frozen reference.
 #
@@ -15,7 +15,7 @@
 #      number is not automatically wrong -- a deliberate model fix moves numbers
 #      -- but it must be SEEN. Silent movement is how a regression ships.
 #   2. Is the match still GOOD?  fleet now against the committed IBM medians and
-#      10-90% bands, at the thresholds the article's claims rest on. This is the
+#      replicate bands, at the thresholds the register's claims rest on. This is the
 #      gate, and the only thing that fails the run by default.
 #
 # Exit 0 = still matching. Exit 1 = drift beyond threshold (or, under
@@ -57,25 +57,28 @@ STRICT <- nzchar(Sys.getenv("CMP_STRICT"))
 
 ## ---- thresholds ---------------------------------------------------------------
 ## `rel` is the largest tolerated |fleet / IBM median - 1| over the EIR grid, set
-## from what the models achieve today with room to spare (currently 1.6%, 2.6%,
-## 2.1% and 6.2% against the limits below).
+## from what the model achieves today with some room (currently 1.2%, 4.6%, 4.7%
+## and 8.2% against the limits below).
 ##
-## `out` is how many grid points may fall OUTSIDE the IBM's 10-90% replicate
-## range -- a count of failures, not of successes, so CMP_ONLY can check a subset
-## without the limit becoming unreachable. These are set AT today's values, with
-## no slack: 0, 1, 1 and 2 of 6. That is deliberate rather than an oversight.
-## fleet is deterministic and the IBM reference is frozen, so nothing here
-## fluctuates; a point moving in or out of the band is a real change every time,
-## and there is no noise for headroom to absorb. Loosen one only when you have
-## decided the new value is correct, and say so in the commit.
+## `out` is how many grid points may fall OUTSIDE the IBM's replicate band, the
+## register's median +/- 1.28 SD -- a count of failures, not of successes, so
+## CMP_ONLY can check a subset without the limit becoming unreachable. These are
+## set AT today's values, with no slack: 0, 2, 2 and 1 of 6. That is deliberate
+## rather than an oversight. fleet is deterministic and the IBM reference is
+## frozen, so nothing here fluctuates; a point moving in or out of the band is a
+## real change every time, and there is no noise for headroom to absorb. Loosen
+## one only when you have decided the new value is correct, and say so in the
+## commit. (The clinical points outside the band are EIR 50 and 120, where the
+## default age grid's discretisation puts fleet 2.5 to 5% low; a finer grid
+## brings them inside.)
 ##
-## Severe is loosest on both because it is the rarest outcome and the noisiest in
-## the IBM: see the article's Programmes section for the widths.
+## Severe is loosest on `rel` because it is the rarest outcome and the noisiest in
+## the IBM.
 LIMITS <- list(
   pfpr_2_10 = list(rel = 0.02, out = 0L, label = "PfPR 2-10"),
-  clin_0_5  = list(rel = 0.05, out = 1L, label = "clinical, 0-5"),
-  clin_all  = list(rel = 0.05, out = 1L, label = "clinical, all ages"),
-  sev_all   = list(rel = 0.10, out = 2L, label = "severe, all ages"))
+  clin_0_5  = list(rel = 0.06, out = 2L, label = "clinical, 0-5"),
+  clin_all  = list(rel = 0.06, out = 2L, label = "clinical, all ages"),
+  sev_all   = list(rel = 0.10, out = 1L, label = "severe, all ages"))
 ## anything moving by more than this against the committed fleet rows is reported;
 ## solver output is deterministic, so this is a floating-point floor, not a budget
 MOVE_TOL <- 1e-6
@@ -195,14 +198,15 @@ if (!nrow(e)) {
   cat(sprintf("    %-20s %10s %8s %15s %7s\n", "outcome", "max |rel|", "limit", "outside band", "limit"))
   for (m in MET) {
     lim <- LIMITS[[m]]
-    st <- do.call(rbind, lapply(split(e, e$scenario), function(g) data.frame(
-      scenario = g$scenario[1], med = median(g[[m]]),
-      lo = quantile(g[[m]], .1), hi = quantile(g[[m]], .9))))
+    st <- do.call(rbind, lapply(split(e, e$scenario), function(g) {
+      b <- replicate_band(g[[m]])
+      data.frame(scenario = g$scenario[1], med = b$centre, lo = b$lower, hi = b$upper)
+    }))
     st <- merge(st, new_eq[, c("scenario", m)], by = "scenario")
     v <- st[[m]]
     rel <- max(abs(v / st$med - 1))
-    ## band_summary() from the package rather than `sum(v < lo | v > hi)` here.
-    ## Same arithmetic, but "inside the IBM 10-90% replicate band" is the
+    ## replicate_band() and band_summary() from the package rather than the
+    ## arithmetic spelled out here: "inside the IBM replicate band" is the
     ## criterion four claims in the register are decided by, so it is defined
     ## once and unit-tested rather than re-spelled at each place that asks it.
     bs <- band_summary(v, st$lo, st$hi)

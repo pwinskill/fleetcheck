@@ -8,7 +8,7 @@
 ##
 ## THIS RUNS FLEET ONLY, and not as an option. The IBM side is the pre-run
 ## diagnostic shipped with each site file (calibration_epi_output/<ISO>_diagnostic_epi.rds),
-## which is what makes a refresh affordable: re-running the IBM for 1,391
+## which is what makes a refresh affordable: re-running the IBM for 1,392
 ## sub-sites is the part that would need a cluster, and nothing here does it. So
 ## a fleet-side change is re-measured by re-running this, and the IBM arm cannot
 ## drift while that happens.
@@ -65,7 +65,7 @@ if (is.na(W) || W < 1L) {
 log_msg("pool of %d workers; fleet only, the IBM arm is the shipped diagnostic", W)
 
 t0 <- Sys.time()
-queue <- todo; running <- list(); failed <- character()
+queue <- todo; running <- list(); failed <- character(); no_pf <- character()
 finished <- 0L
 logfile <- function(nm) file.path(RAW, paste0(nm, ".log"))
 repeat {
@@ -75,10 +75,12 @@ repeat {
       function(root, iso, out) {
         source(file.path(root, "validations", "03-real-settings", "sites_lib.R"))
         r <- run_country(iso)
+        if (identical(r, NA)) return("no pf")
+        if (is.null(r)) return("FAIL")
         ## write to a temporary name and rename, so a worker killed mid-write
         ## cannot leave a truncated file that the resume glob counts as done
-        if (!is.null(r)) { saveRDS(r, paste0(out, ".part")); file.rename(paste0(out, ".part"), out) }
-        !is.null(r)
+        saveRDS(r, paste0(out, ".part")); file.rename(paste0(out, ".part"), out)
+        "ok"
       },
       args = list(root = ROOT, iso = nm, out = file.path(RAW, paste0(nm, "_compare.rds"))),
       ## A FILE, not a pipe. With stdout = "|" nothing drains the pipe, so once
@@ -95,10 +97,13 @@ repeat {
   for (nm in names(running)) {
     p <- running[[nm]]
     if (p$is_alive()) next
-    ok <- tryCatch(isTRUE(p$get_result()), error = function(e) FALSE)
+    status <- tryCatch(p$get_result(), error = function(e) "FAIL")
+    if (!(is.character(status) && length(status) == 1L)) status <- "FAIL"
+    ok <- status != "FAIL"
     finished <- finished + 1L
     if (!ok) failed <- c(failed, nm)
-    log_msg("%-4s %-4s  (%d/%d)", nm, if (ok) "ok" else "FAIL", finished, length(todo))
+    if (status == "no pf") no_pf <- c(no_pf, nm)
+    log_msg("%-4s %-5s  (%d/%d)", nm, status, finished, length(todo))
     ## a failure is only useful with its reason attached
     if (!ok && file.exists(logfile(nm))) {
       tail_lines <- utils::tail(readLines(logfile(nm), warn = FALSE), 6L)
@@ -109,4 +114,7 @@ repeat {
 }
 log_msg("done in %.1f min; %d failed%s", as.numeric(Sys.time() - t0, units = "mins"),
         length(failed), if (length(failed)) paste0(": ", paste(failed, collapse = ", ")) else "")
+if (length(no_pf))
+  log_msg("%d with no P. falciparum sub-site, so nothing to compare: %s", length(no_pf),
+          paste(no_pf, collapse = ", "))
 log_msg("now run validations/03-real-settings/assess.R")

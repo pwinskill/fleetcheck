@@ -14,11 +14,11 @@ This is the tier that is complete. Everything in the repository README's
 
 | File | What it does |
 | --- | --- |
-| `assess.R` | **The one to run often.** Re-runs `fleet` only (~2 min) against the committed IBM rows. Reports movement and agreement separately; exits non-zero on lost agreement. |
+| `assess.R` | **The one to run often.** Re-runs `fleet` only (under a minute) against the committed IBM rows. Reports movement and agreement separately; exits non-zero on lost agreement. |
 | `run.R` | Runs `fleet` and the IBM replicates on a PSOCK cluster; writes `results/rep_{eq,age,monthly,doy,timing}.csv` and `results/ibm_reference.json`. `N_WORKERS` is set at the top of the file. |
 | `render.R` | Draws every `cmp_*.png` from the saved CSVs (no model runs) into `man/figures/` and `vignettes/`. |
 | `tables.R` | The numbers quoted in the articles, as markdown in `results/tables.md`. |
-| `benchmark.R` | Indicative `fleet` run times; writes `results/timing.csv`. ~6 min. |
+| `benchmark.R` | Indicative `fleet` run times; writes `results/timing.csv`. ~1 min. |
 | `results/` | The committed summaries and their provenance stamps. |
 
 Shared code lives outside this directory. The scenario definitions, `run_fleet()`
@@ -36,8 +36,8 @@ The IBM does not depend on `fleet`, so its committed rows stay valid for any
 `fleet`-side change. Re-run `fleet` alone and compare:
 
 ```bash
-Rscript validations/02-scenarios/assess.R                      # ~2 min, exits 1 on lost agreement
-CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R  # a subset, ~20 s
+Rscript validations/02-scenarios/assess.R                      # under a minute, exits 1 on lost agreement
+CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R  # a subset, seconds
 CMP_STRICT=1 Rscript validations/02-scenarios/assess.R         # also fail if ANY value moved
 ```
 
@@ -53,7 +53,7 @@ If the movement was intended, refresh the committed `fleet` rows without touchin
 the IBM:
 
 ```bash
-CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # ~1 min
+CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # under a minute
 ```
 
 ## When the IBM *does* need re-running
@@ -78,7 +78,7 @@ CMP_SMOKE=1 Rscript validations/02-scenarios/run.R
 Then:
 
 ```bash
-Rscript validations/02-scenarios/run.R      # ~25 min on 10 workers; re-stamps ibm_reference.json
+Rscript validations/02-scenarios/run.R      # ~2 h on 10 workers; re-stamps ibm_reference.json
 Rscript validations/02-scenarios/render.R   # seconds
 Rscript validations/02-scenarios/tables.R   # seconds
 Rscript report/make_scoreboard.R            # if any measured value in claims.yml changed

@@ -5,8 +5,8 @@
 ##   Rscript validations/03-real-settings/example-one-site.R BFA "Sahel" rural
 ##   FLEET_VALIDATE=/path/to/site/files Rscript ... example-one-site.R BFA
 ##
-## The full tier-3 run is 63 countries, 1,391 sub-sites and about seven hours on
-## a cluster, and it needs the malariaverse site files, which are not
+## The full tier-3 run is 63 countries and 1,392 sub-sites, and it needs the
+## malariaverse site files, which are not
 ## redistributable. This is the same pipeline applied to a single sub-site, so it
 ## finishes in a couple of minutes on a laptop and can be read in one sitting.
 ## If you have one site file, you can run it.
@@ -14,7 +14,7 @@
 ## It differs from the production harness in one deliberate way. The real run
 ## compares `fleet` against PRE-RUN malariasimulation diagnostics shipped
 ## alongside the site files (`calibration_epi_output/<ISO>_diagnostic_epi.rds`),
-## because re-running the IBM for 1,391 sub-sites is the seven hours. Here the
+## because re-running the IBM for 1,392 sub-sites would need a cluster. Here the
 ## IBM is run live on the same parameter list, so the example needs nothing but
 ## the one site file and shows both halves of the comparison being produced. The
 ## numbers are therefore a single stochastic realisation, not the median of
@@ -164,7 +164,7 @@ write.csv(cmp, out, row.names = FALSE)
 say("")
 say("wrote %s", out)
 say("")
-say("What this is NOT: the register's tier-3 claims come from 1,391 sub-sites")
+say("What this is NOT: the register's tier-3 claims come from 1,392 sub-sites")
 say("compared against the site files' own calibration diagnostics, not from one")
 say("sub-site against one IBM replicate. A single replicate at %s people carries", format(POP, big.mark = ","))
 say("real stochastic noise, so read the shape here, not the third decimal.")

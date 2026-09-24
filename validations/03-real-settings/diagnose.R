@@ -3,13 +3,13 @@
 ##
 ##   Rscript validations/03-real-settings/diagnose.R
 ##
-## `assess.R` gives the two numbers the register quotes. This gives the 1,391
+## `assess.R` gives the two numbers the register quotes. This gives the 1,392
 ## sub-sites behind them: every one's monthly clinical series, IBM against fleet,
 ## as a multi-page PDF, plus an index saying which page each is on.
 ##
-## It exists for the one thing the register leaves open -- fleet runs about 8%
-## above the IBM across the site files and that is not explained. A correlation
-## cannot say which sub-sites carry the excess; this can.
+## It exists for the one thing the register leaves open -- fleet runs above the
+## IBM across the site files, far above it at low transmission, and that is not
+## explained. A correlation cannot say which sub-sites carry the excess; this can.
 ##
 ## Triage is BURDEN-AWARE, which is the whole design. At the elimination fringe,
 ## where incidence is ~1e-3, the fleet/IBM ratio explodes on a trivial absolute

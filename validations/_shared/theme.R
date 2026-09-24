@@ -1,6 +1,6 @@
 # House style for the fleet-vs-malariasimulation comparison figures.
 #
-# Sourced by run_replicates.R (live) and render_figures.R (re-render from saved
+# Sourced by run.R (live) and render.R (re-render from saved
 # CSVs), so the two never drift. Everything visual lives here: palette, theme,
 # series scales, and the small helpers every figure shares.
 #

@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 ## How much of the age-profile departure is the grid, and how much is the model?
 ##
-##   Rscript validations/age-grid/run.R            # ~4 min, fleet only
+##   Rscript validations/age-grid/run.R            # under a minute, fleet only
 ##
 ## Two questions, and they are different:
 ##
@@ -47,9 +47,8 @@ flat_grid <- function(n) c(seq(0, 80, length.out = n))
 profile_on <- function(grid) {
   s <- scenarios[[SC]]
   o <- fleet::run_simulation_ode(timesteps = s$years * 365, parameters = s$p,
-                                 tuning = list(rtol = 1e-6, step_size_max = 10,
-                                               age_lower = grid))
-  summarise_run(o[-1, ], s$years)$age
+                                 tuning = list(age_lower = grid))
+  summarise_run(o, s$years)$age
 }
 
 cat(sprintf("age-grid convergence, %s, fleet only\n\n", SC))

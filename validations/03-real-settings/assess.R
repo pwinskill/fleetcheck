@@ -31,15 +31,24 @@ d <- d[is.finite(d$ms_clinical) & is.finite(d$fleet_clinical) &
 cat(sprintf("%d countries, %d sub-sites, %s sub-site-months\n",
             length(unique(d$iso3c)), length(unique(d$site)),
             format(nrow(d), big.mark = ",")))
+## What a complete sweep should hold, from the site files themselves when they are
+## to hand: then a country that produced no result file at all is counted too.
+if (nzchar(Sys.getenv("FLEET_VALIDATE"))) {
+  expected <- expected_pf_subsites()
+  attempted <- nrow(expected)
+  solved <- sum(expected$site %in% d$site)
+  gone <- expected[!expected$site %in% d$site, ]
+  if (nrow(gone))
+    cat(sprintf("missing: %s\n", paste(sprintf("%s (%d)", names(table(gone$iso3c)),
+                                                as.integer(table(gone$iso3c))),
+                                        collapse = ", ")))
+}
 ## Sub-sites fleet could not solve are SELECTION, not noise: the ultra-low-EIR
 ## fringe is where fleet departs most from the IBM, so dropping them silently
 ## biases every statistic below toward agreement. Say how many.
 if (!is.na(attempted) && attempted > 0L)
-  cat(sprintf("fleet solved %d of %d sub-sites attempted (%d dropped)%s\n",
-              solved, attempted, attempted - solved,
-              if ("arm" %in% names(d))
-                sprintf("; %d sub-site-months came from the retry arm",
-                        sum(d$arm == "retry", na.rm = TRUE)) else ""))
+  cat(sprintf("fleet solved %d of %d sub-sites attempted (%d dropped)\n",
+              solved, attempted, attempted - solved))
 
 ## ---- the statistics the register quotes ---------------------------------------
 stats <- rbind(
@@ -67,8 +76,8 @@ stamp <- list(
   site = as.character(utils::packageVersion("site")),
   R = paste0(R.version$major, ".", R.version$minor),
   n_age_groups = length(fleet::default_age_lower()),
-  ## the solver controls too: a statistic is not reproducible without them
-  tuning = TIER3_TUNING,
+  ## the discretisation too: a statistic is not reproducible without it
+  n_sub = fleet::ode_tuning()$n_sub,
   sub_sites_attempted = attempted, sub_sites_solved = solved,
   countries = length(unique(d$iso3c)), sub_sites = length(unique(d$site)),
   sub_site_months = nrow(d))

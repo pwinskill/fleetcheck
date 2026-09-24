@@ -59,17 +59,9 @@ alone hides which you have. `band_summary()` answers "inside the IBM replicate
 band", which is the criterion `r eng(n_band)` claims in the register are
 decided by.
 
-This is not ceremony. `fleet`'s own documentation once carried two independent
-derivations of the same immunity figures, in two different articles, and both
-were wrong by 20 to 35%.
-
-It was not true when it was first written here, either. The scripts each
-carried their own copy: the site-file correlation was computed once in
-`render.R` for the figure and again in `tables.R` for the table, and the two had
-already drifted in naming — one called the mean relative difference `bias` and
-the other `rel_bias` — while `agreement()` sat in the package unused. They call
-it now, and the numbers it returns are identical to six significant figures,
-which is how the change was checked.
+So the figure and the table built from the same results cannot disagree: the
+site-file correlation in `render.R`'s figure and in `tables.R`'s table both come
+from `agreement()`.
 
 ## Provenance
 
@@ -79,15 +71,13 @@ the date, and whatever the run wants to add. A package installed from a local
 source tree has no commit to record and the field is `null`; `Built` is recorded
 beside it so that case still says when and on what.
 
-It exists because the provenance used to be inverted. The 25-minute comparison
-recorded the IBM version, the replicate count and a digest of the scenario
-definitions; the seven-hour site-file run, which nobody can repeat, recorded a
-date and a version of `fleet`. The tier that cannot be re-run is the tier that
-most needs to say what made it.
+The tier that is hardest to re-run is the one that most needs to say what made
+it, so the site-file statistics also record the age grid and the mosquito
+sub-step count they were measured at.
 
-The site-file snapshot carries two of these and they are not interchangeable.
-`run` is the seven-hour comparison — the `fleet` version its per-country results
-were produced at — and is only changed when that run is actually repeated.
+The site-file snapshot carries two stamps and they are not interchangeable.
+`run` is the site-file sweep — the `fleet` version its per-country results were
+produced at — and is only changed when that sweep is actually repeated.
 `summarised` is the seconds-long pass that turns those results into the four
 numbers on this site, and can happen at any later version. A single stamp would
 report today's `fleet` over numbers from months ago.
@@ -95,23 +85,20 @@ report today's `fleet` over numbers from months ago.
 ## Stored precision
 
 Simulation output is quoted to three or four significant figures wherever it is
-reported, and was stored at fifteen. `run.R` rounds to six as it writes, which
-takes `rep_monthly.csv` from 19.0 MB to 10.8 MB with nothing lost that anyone
-reads.
+reported. `run.R` rounds the stored summaries to six as it writes, with nothing
+lost that anyone reads. One file keeps full precision: `rep_eq.csv`, which the
+drift check asserts against at 1e-6.
 
-One file keeps full precision: `rep_eq.csv`, which the drift check asserts
-against at 1e-6, and which is 46 KB.
-
-The rounding is applied at the point of writing rather than afterwards because
-it was applied afterwards once. The next run of `run.R` wrote full precision
-again, `rep_monthly.csv` went back to 19 MB, and the commit went in without
-anything noticing. A rule about stored precision has to live in the code that
-stores it, which is what `round_sig()` is for.
+The rounding lives in the code that writes the files, `round_sig()`, so a
+re-run cannot quietly store full precision again.
 
 ## Reproducing a claim
 
 ```r
-# tier 0 and 1, seconds to minutes, no special hardware
+# tier 1, seconds
+Rscript validations/01-seed-stability/run.R
+
+# fleet against the committed IBM rows, under a minute
 Rscript validations/02-scenarios/assess.R
 
 # tier 2, about two hours on ten cores

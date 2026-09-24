@@ -1,10 +1,10 @@
 # Scenario definitions and the shared per-run summariser.
 #
-# Sourced by BOTH run_replicates.R (which runs them through both models and
-# writes the CSVs) and check_drift.R (which re-runs fleet only and compares
+# Sourced by BOTH run.R (which runs them through both models and
+# writes the CSVs) and assess.R (which re-runs fleet only and compares
 # against the committed reference). They live here so a drift check cannot
 # silently test a different set of scenarios from the one the reference was
-# built on -- and so sourcing the scenarios does not start a 25-minute run.
+# built on -- and so sourcing the scenarios does not start a two-hour run.
 #
 # Expects ROOT and theme.R's constants to be in scope already.
 
@@ -206,10 +206,11 @@ if (length(ONLY)) { stopifnot(all(ONLY %in% names(scenarios))); scenarios <- sce
 if (SMOKE) scenarios <- lapply(scenarios, function(s) { s$years <- 4L; s })
 
 ## ---- one summariser for BOTH models ------------------------------------------
-## Takes a wide daily output table and returns compact tidy pieces. The ODE table
-## carries a day-0 seed row the IBM lacks; callers drop it first so both bin on
-## days 1..N and monthly bins align. The age profile is only returned when the
-## table carries the age-profile bands (the reference scenario).
+## Takes a wide daily output table and returns compact tidy pieces. Both models
+## return one row per day, 1..N, row t being the state at the start of day t and
+## the incidence during it, so both bin on the same days and monthly bins align.
+## The age profile is only returned when the table carries the age-profile bands
+## (the reference scenario).
 summarise_run <- function(df, years, tags = AGE_TAGS) {
   n <- nrow(df); day <- seq_len(n)
   pooled <- function(num, den, rows) sum(num[rows]) / sum(den[rows])
@@ -345,8 +346,8 @@ ibm_reference <- function() list(
 
 ## ---- running fleet -------------------------------------------------------------
 ## Shared so a drift check cannot accidentally run fleet differently from the way
-## the committed reference was produced: same tuning, same horizons, same
-## summariser, same day-0 row dropped.
+## the committed reference was produced: default tuning, same horizons, same
+## summariser.
 run_fleet <- function(scen = scenarios) {
   suppressMessages(library(fleet))
   log_msg("fleet: %d scenarios", length(scen))
@@ -355,10 +356,9 @@ run_fleet <- function(scen = scenarios) {
     el <- system.time(
       ## s$p already carries init_EIR: every scenario is built through
       ## set_equilibrium(), which is where fleet reads the target EIR from now.
-      o <- fleet::run_simulation_ode(timesteps = s$years * 365, parameters = s$p,
-                                     tuning = list(rtol = 1e-6, step_size_max = 10))
+      o <- fleet::run_simulation_ode(timesteps = s$years * 365, parameters = s$p)
     )[["elapsed"]]
-    r <- summarise_run(o[-1, ], s$years)          # drop the day-0 seed row
+    r <- summarise_run(o, s$years)
     r$timing <- data.frame(years = s$years, elapsed_s = el)
     tag_parts(r, nm, "fleet", 0L)
   })

@@ -1,20 +1,18 @@
-# Indicative run times for fleet, for the table in README.md (issue #1).
+# Indicative run times for fleet, for the cost model in fleet's vignette("using").
 #
-#   Rscript validations/02-scenarios/benchmark.R          # ~6 min; writes validations/02-scenarios/results/timing.csv
+#   Rscript validations/02-scenarios/benchmark.R          # ~1 min; writes validations/02-scenarios/results/timing.csv
 #                                           # and prints the markdown tables
 #
 # Three questions a user actually has:
 #   1. How long does a run take, by scenario and horizon?
-#   2. Does population size matter?  (it must not -- the ODE is per-capita)
-#   3. What do the solver settings cost?
+#   2. Does population size matter?  (it must not -- the model is per-capita)
+#   3. What does the one discretisation setting, the mosquito sub-step count, cost?
 #
 # Every figure is the MINIMUM of N_REP repeats of a complete
 # run_simulation_ode() call, including building the inputs and seeding the
 # equilibrium, because that is what a user pays. The minimum, not the mean or
 # median: contention from anything else on the machine can only ADD time, so the
-# fastest repeat is the least contaminated estimate of the cost of the work. (An
-# earlier median-of-3 pass, run while an install was going on, reported the same
-# 30-year seasonal configuration as 15.7 s in one table and 5.8 s in another.)
+# fastest repeat is the least contaminated estimate of the cost of the work.
 # Run this on an otherwise idle machine. Timings are wall-clock on one core;
 # nothing here is parallel.
 
@@ -45,8 +43,8 @@ DDIR <- file.path(ROOT, "validations", "02-scenarios", "results")
 N_REP <- 5L
 POP   <- 1e5                       # output scaling only; see the population table
 SEASON <- list(g0 = 0.285, g = c(-0.33, -0.13, 0.052), h = c(-0.35, 0.020, 0.10))
-## the fast preset documented in ?ode_tuning (atol stays at its default)
-FAST <- list(rtol = 1e-6, step_size_max = 10)
+## fleet's default settings: ode_tuning() untouched
+DEFAULT <- list()
 
 log_msg <- function(...) cat(sprintf("[%s] %s\n", format(Sys.time(), "%H:%M:%S"),
                                      sprintf(...)))
@@ -106,7 +104,7 @@ YEARS <- c(5L, 10L, 30L)
 ## the whole user-visible call: build inputs, seed, integrate, render outputs
 ## p already carries init_EIR (every caller builds it through set_equilibrium),
 ## which is where run_simulation_ode reads the target EIR from.
-time_run <- function(p, years, ctrl = FAST, reps = N_REP) {
+time_run <- function(p, years, ctrl = DEFAULT, reps = N_REP) {
   el <- numeric(reps); gc(verbose = FALSE)
   for (k in seq_len(reps)) {
     el[k] <- system.time(invisible(run_simulation_ode(
@@ -126,7 +124,7 @@ for (nm in names(SCEN)) {
     s <- SCEN[[nm]](y)
     sec <- time_run(set_equilibrium(s$p, init_EIR = s$eir), y)
     add_row(table = "scenario", scenario = nm, years = y, pop = POP,
-            settings = "fast", seconds = sec)
+            settings = "default", seconds = sec)
     log_msg("  %-30s %2d y : %6.2f s", nm, y, sec)
   }
 }
@@ -137,23 +135,24 @@ for (pop in c(1e3, 1e4, 1e5, 1e6, 1e7)) {
   p <- set_equilibrium(base_p(TRUE, pop = pop), init_EIR = 20)
   sec <- time_run(p, 30L)
   add_row(table = "population", scenario = "Seasonal", years = 30L, pop = pop,
-          settings = "fast", seconds = sec)
+          settings = "default", seconds = sec)
   log_msg("  pop %-9s : %6.2f s", format(pop, scientific = TRUE), sec)
 }
 
-## ---- table 3: solver settings ------------------------------------------------
-log_msg("solver settings, 30-year seasonal run")
-PRESETS <- list(
-  `default (atol = rtol = 1e-8, step <= 1 d)`  = list(atol = 1e-8, rtol = 1e-8, step_size_max = 1),
-  `fast (atol = 1e-8, rtol = 1e-6, step <= 10 d)` = FAST,
-  `loose (atol = rtol = 1e-6, step <= 10 d)`   = list(atol = 1e-6, rtol = 1e-6, step_size_max = 10)
-)
+## ---- table 3: mosquito sub-steps ---------------------------------------------
+## The mosquito model is stepped across each day in n_sub sub-steps; the rest of
+## the model takes one update a day whatever this is.
+log_msg("mosquito sub-steps, 30-year seasonal run")
+NSUB <- c(8L, 16L, 32L, 64L)
+PRESETS <- setNames(lapply(NSUB, function(n) list(n_sub = n)),
+                    paste0("n_sub = ", NSUB,
+                           ifelse(NSUB == fleet::ode_tuning()$n_sub, " (default)", "")))
 for (nm in names(PRESETS)) {
   p <- set_equilibrium(base_p(TRUE), init_EIR = 20)
   sec <- time_run(p, 30L, ctrl = PRESETS[[nm]])
   add_row(table = "settings", scenario = nm, years = 30L, pop = POP,
           settings = nm, seconds = sec)
-  log_msg("  %-46s : %6.2f s", nm, sec)
+  log_msg("  %-20s : %6.2f s", nm, sec)
 }
 
 ## ---- write + print -----------------------------------------------------------
@@ -182,7 +181,7 @@ pp <- timing[timing$table == "population", c("pop", "seconds")]
 md(data.frame(Population = format(pp$pop, big.mark = ",", scientific = FALSE, trim = TRUE),
               Seconds = pp$seconds))
 
-cat("## Solver settings, 30-year seasonal run\n\n")
+cat("## Mosquito sub-steps, 30-year seasonal run\n\n")
 st <- timing[timing$table == "settings", c("settings", "seconds")]
 md(data.frame(Settings = st$settings, Seconds = st$seconds))
 

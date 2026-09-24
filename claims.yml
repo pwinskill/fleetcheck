@@ -28,9 +28,9 @@
 #
 # tier: what it costs to reproduce.
 #   0  seconds, from committed summaries          anyone
-#   1  ~2 min, re-runs fleet only                 anyone
+#   1  under a minute, re-runs fleet only         anyone
 #   2  ~2 h, re-runs both models                  anyone with ~10 cores
-#   3  ~40 min, 63-country site files              ~10 cores, restricted inputs
+#   3  ~20 min, 63-country site files              4 cores, restricted inputs
 #
 # status: pass | fail | open | undeclared
 #   open        criterion met but something material is unresolved
@@ -42,7 +42,7 @@
   criterion: inside the IBM replicate band at every EIR on the grid
   tier: 2
   evidence: validations/02-scenarios
-  measured: inside at 6 of 6; largest departure 0.94% of the IBM median
+  measured: inside at 6 of 6; largest departure 1.2% of the IBM median
   status: pass
 
 - id: clinical-allage-eir
@@ -51,8 +51,15 @@
   criterion: inside the IBM replicate band at every EIR on the grid
   tier: 2
   evidence: validations/02-scenarios
-  measured: inside at 6 of 6
-  status: pass
+  measured: inside at 4 of 6; outside at EIR 50 (3.4% below the IBM median) and
+    120 (4.7% below)
+  status: fail
+  note: >
+    The departure is the default age grid's first-order discretisation error,
+    and it grows with transmission: within 2.4% of the IBM at EIR 20 and below,
+    3.4% and 4.7% low at EIR 50 and 120. Refined to 417 age groups fleet is
+    within 0.1% of the IBM at EIR 20, 50 and 120 alike, so the model reaches the
+    IBM and the default grid does not.
 
 - id: clinical-under5-eir
   figure: cmp_eir_clin_0_5.png
@@ -60,10 +67,14 @@
   criterion: inside the IBM replicate band at every EIR on the grid
   tier: 2
   evidence: validations/02-scenarios
-  measured: inside at 6 of 6
-  status: pass
+  measured: inside at 4 of 6; outside at EIR 50 (2.5% below the IBM median) and
+    120 (4.6% below)
+  status: fail
   note: >
-    fleet sits within 1.3% of the IBM median at every EIR on the grid.
+    fleet sits within 1.1% of the IBM median at EIR 20 and below. Above that
+    the default age grid's discretisation puts it low; refined to 209 age groups
+    it is within 1.1% at every EIR tested (EIR 20, 50 and 120), and at 417 within
+    1.5%. See clinical-allage-eir.
 
 - id: severe-allage-eir
   figure: cmp_eir_sev_all.png
@@ -71,15 +82,17 @@
   criterion: inside the IBM replicate band at every EIR on the grid
   tier: 2
   evidence: validations/02-scenarios
-  measured: inside at 6 of 6
-  status: pass
+  measured: inside at 5 of 6; outside at EIR 120 (8.2% below the IBM median)
+  status: fail
   note: >
-    fleet sits 2 to 4% below the IBM at every EIR above 1. About -6% of that is
-    age-grid discretisation, which refining removes; the remainder is not
-    resolved. Not a bias to correct for.
-    A band test cannot see an offset repeated at every point. Severe has the
-    widest replicate spread here, 15.4% of the median, which is what sets the
-    twenty-replicate count.
+    fleet sits below the IBM at every EIR above 1, from 2.7% at EIR 3 to 8.2% at
+    EIR 120, and the offset is the default age grid's discretisation: at EIR 20
+    all-age severe incidence is 4.7% below the IBM median on the default 53
+    groups, 1.8% below on 105, and on the IBM median to 0.04% on 209. At EIR 120
+    it is 8.2% low on 53 groups and 1.0% on 209. Severe has the widest replicate
+    spread here, which is what sets the twenty-replicate count; a band test
+    cannot see an offset repeated at every point, which is why the offsets are
+    given.
 
 - id: age-profile-clinical
   figure: cmp_age_clin.png
@@ -89,20 +102,17 @@
     clinical episodes, at EIR 3, 20 and 120
   tier: 2
   evidence: validations/02-scenarios
-  measured: inside at 25 of 25 tested bands across the three EIRs, holding 94%
-    of episodes; largest departure 1.17 replicate SD
-  status: pass
+  measured: inside at 19 of 25 tested bands across the three EIRs, holding 94%
+    of episodes; largest departure 3.37 replicate SD, in the 3-5 y band at EIR
+    120
+  status: fail
   note: >
-    One untested band is outside: 40-60 y at EIR 20, by 1.50 SD, holding 1.7% of
-    clinical episodes. tables.R prints it rather than dropping it silently.
-    That band is what the claim used to fail on, and the failure did not survive
-    examination. Refining the age grid does not close it and makes agreement
-    worse -- 35 of 36 bands inside at the default 53 groups, 32 at 105, 27 at
-    209 -- and the biting-heterogeneity quadrature is not a candidate, since the
-    IBM discretises it the same way. Re-binned to five years the departure is
-    smooth from age 20 to 85, sits in the rates rather than the population
-    weights, and falls inside the spread of a held-out IBM replicate: 3 of 20
-    replicates score at least as far from the other 19.
+    The bands outside are young children at high transmission, fleet low, and
+    the cause is the default age grid's first-order discretisation error: over
+    all 36 cells, 30 are inside at the default 53 groups, 35 at 105 and all 36
+    at 209 (see clinical-allage-eir).
+    40-60 y at EIR 20 is inside, at 1.27 SD; 4 of 20 held-out IBM replicates
+    score at least as far from the other 19.
     What the burden floor costs: a defect confined to the oldest ages would not
     be caught here.
     Grid convergence is measured in validations/age-grid/; the held-out check
@@ -117,15 +127,16 @@
   tier: 2
   evidence: validations/02-scenarios
   measured: inside at 16 of 16 tested bands across the three EIRs, holding 94%
-    of episodes; largest departure 0.94 replicate SD, in the 3-5 y band at
+    of episodes; largest departure 1.10 replicate SD, in the 3-5 y band at
     EIR 20
   status: pass
   note: >
     The burden floor is doing little here: no untested band is outside the
-    band either, and the worst departure is in the 3-5 y band, which carries
-    16.6% of severe episodes on its own. Most of what the floor excludes is
-    above age 30, where the IBM's replicate spread reaches 246% of its median
-    and agreement is not evidence of much.
+    band either. Most of what the floor excludes is above age 30, where the
+    IBM's replicate spread is several times its median and agreement is not
+    evidence of much. The severe age bands' replicate spread is wide enough to
+    absorb the default grid's offset (see severe-allage-eir), so this claim
+    holds where the all-age level does not.
 
 - id: intervention-impact
   figure: cmp_int_impact.png
@@ -136,7 +147,7 @@
     120 (SMC in a seasonal setting, since it is a seasonal intervention)
   tier: 2
   evidence: validations/02-scenarios
-  measured: fleet outside in 8.3% of 72 cells, against 9.7% for the closest of
+  measured: fleet outside in 2.8% of 72 cells, against 9.7% for the closest of
     the twenty IBM replicates and 20.1% for the median one
   status: pass
   note: >
@@ -144,20 +155,29 @@
     a 1.28 SD band leaves a fifth of cells outside by construction, and no
     replicate is inside all 72. fleet is outside less often than any of the
     twenty.
-    Where fleet does sit outside, the size is small in both senses. The worst
-    cell is bed nets at EIR 120 on prevalence, where the IBM cuts PfPR(2-10)
-    from 0.787 to 0.571 and fleet to 0.587: a 2.1 percentage point difference in
-    the reduction, 7.6% of the effect. The typical gap does not grow with
-    transmission -- 0.49, 0.35 and 0.42 percentage points at EIR 3, 20 and 120.
+    Where fleet does sit outside, the size is small in both senses. It is
+    outside in two cells, bed nets on prevalence at EIR 20 and 120. The worse is
+    EIR 120, where the IBM's bed nets cut PfPR(2-10) by 27.5% and fleet's by
+    25.5%: 2.0 percentage points of the reduction, 7.4% of the effect, the mark
+    of population-averaged nets, which lose the correlation of each person's
+    protection across bites. The typical gap does not grow with transmission --
+    a median of 0.36, 0.32 and 0.54 percentage points at EIR 3, 20 and 120.
     Impact is a ratio of two runs sharing an age grid, so grid discretisation
-    divides out: replacing the grid left the worst excursion unchanged.
+    divides out: on a grid twice as fine the worst excursion moves by less than
+    0.1 point.
+    SMC sends the clinical and detectable cases it treats through the treated
+    state first, as the IBM does, so prevalence in the dosed band falls over
+    the Tr stay rather than overnight; its protection is complete while it
+    lasts, where the IBM's is partial and fades.
     Perennial chemoprevention is the one intervention whose delivery the models
     cannot share. The IBM doses each child on reaching a dose age; fleet
     approximates that as monthly pulses over a 30-day band, which doses 8 to 21
     days late and overstates the infant benefit by about a tenth.
-    The window is the three years after deployment. Run longer and fleet
-    develops a severe-incidence rebound, -0.5% at EIR 3 to +8% at EIR 120, which
-    these IBM rows are too short and too noisy to test.
+    The window is the three years after deployment. Over the arms' last three
+    years PMC raises severe incidence, fleet by -1.2% at EIR 3 to +7.0% at EIR
+    120: the rebound of delayed immunity, pushing severe disease from infancy
+    into the second and third years of life. The IBM shows the same sign at EIR
+    120.
 
 - id: real-settings-correlation
   figure: cmp_core_sites.png
@@ -165,22 +185,29 @@
   criterion: r > 0.95 and |slope - 1| < 0.10 on both clinical and severe incidence
   tier: 3
   evidence: validations/03-real-settings
-  measured: clinical r 0.983 slope 0.996; severe r 0.959 slope 0.929, over
-    450,684 sub-site-months in 1,391 sub-sites of 63 countries
-  status: pass
+  measured: clinical r 0.983 slope 0.966; severe r 0.957 slope 0.890, over
+    451,008 sub-site-months in 1,392 sub-sites of 63 countries
+  status: fail
   note: >
     r and slope test whether fleet tracks the IBM, not whether it sits on top
-    of it.
-    No single excess figure describes the level: it runs from +190% below pf
-    EIR 0.1 to +2.3% above 120, and severe crosses zero at high transmission.
-    18% of sub-sites sit below EIR 1, outside any tier-2 claim, and that is
-    where the departure lives.
-    Guinea-Bissau is a separate failure: 18 sub-sites at +108% and r 0.635,
-    against 553 peers of the same burden at +11.8% and r 0.991. diagnose.R
-    ranks every sub-site.
-    Monthly, and P. falciparum only on both arms. Annual means once hid a real
-    seasonal mismatch; the shipped diagnostics carry vivax rows that inflate
-    the baseline where pf transmission is low.
+    of it. Pooled over every sub-site-month fleet runs 5.5% above the IBM on
+    clinical incidence and 3.3% on severe.
+    No single excess figure describes the level: clinical runs from +195% below
+    pf EIR 0.1 to -3.9% at 120 and above, and severe from +154% to -9.0%. The
+    severe slope falls outside the criterion because those two ends pull it the
+    same way. At the low end, 18% of sub-sites sit below EIR 1, outside any
+    tier-2 claim, and the excess there is not explained. At the high end, severe
+    incidence 9% low is the default age grid's discretisation, which tier 2
+    measures directly (severe-allage-eir: 8.2% low at EIR 120 on the default
+    grid, 1.0% on a grid four times as fine).
+    Guinea-Bissau is a separate failure: 18 sub-sites at +105% and r 0.642,
+    against the 554 sub-sites elsewhere whose mean IBM incidence lies in the
+    same range, at +10.6% and r 0.976. diagnose.R ranks every sub-site.
+    fleet ran every one of the 1,392 sub-sites with P. falciparum transmission;
+    none is dropped.
+    Monthly, and P. falciparum only on both arms: annual means can hide a
+    seasonal mismatch, and the shipped diagnostics carry vivax rows that
+    inflate the baseline where pf transmission is low.
 
 - id: population-age-structure
   figure: cmp_core_pop_age.png
@@ -194,15 +221,12 @@
   status: pass
   note: >
     The 0-60 restriction is a rendering convention, not a model difference:
-    fleet's oldest group is absorbing and open-ended above 80, and the renderer
-    assigns it wholly to the band containing its lower edge, so fleet's 60-85
-    share is 41% higher by construction.
+    fleet's oldest group is absorbing and open-ended above 80, and a rendering
+    band that reaches into it is given all of it, so fleet's 60-85 share is 41%
+    higher by construction.
     Agreement at this level depends on the ageing rate being exponentially
     fitted, r = mu/expm1(mu*width), exact at the seed and an approximation
     under time-varying demography.
-    Separately: maternal immunity is drawn from the group containing age 20,
-    which is 20-22.5 here against the IBM's 20-21, so infants start with about
-    6.7% too much. Known, not yet fixed.
 
 - id: speed
   figure: ~
@@ -210,8 +234,13 @@
   criterion: at least 10x faster than the IBM on the same scenario set
   tier: 2
   evidence: validations/02-scenarios
-  measured: 21x on cost per simulated year; 19.9 CPU-hours for the IBM against 169 s for fleet
+  measured: 140x on cost per simulated year; 19.9 CPU-hours for the IBM against 26 s for fleet
   status: pass
+  note: >
+    Each fleet figure is one complete run_simulation_ode() call -- inputs,
+    seed, the run and its outputs -- on one core; the IBM's are its runs on a
+    worker pool. One fleet run stands in for the IBM's twenty replicates of
+    10,000 people, and its cost does not grow with the population.
 
 - id: seed-stability
   figure: ~
@@ -220,10 +249,13 @@
   tier: 1
   evidence: validations/01-seed-stability
   note: >
-    The one claim here whose measured value no script in this repository
-    reproduces: validations/01-seed-stability/ is a stub. The figure comes from
-    a run made outside it, which is the arrangement the rest of the register
-    exists to avoid.
-  measured: 0.28% maximum excursion; flat to 0.02% over the last five years
+    The seed is malariaEquilibrium's continuous-time solution, not fleet's own
+    fixed point on the daily clock, so the run moves off it and settles 0.31%
+    below it. The claim is about prevalence: incidence relaxes further, under-5
+    clinical incidence by -0.3% at EIR 1, +1.5% at EIR 20 and +6% at EIR 120,
+    mostly within five years, so a comparison of incidence levels wants a
+    burn-in (every tier-2 scenario has thirty years), as the IBM's does.
+    validations/01-seed-stability/run.R reproduces the prevalence figures.
+  measured: 0.36% maximum excursion; flat to 0.006% over the last five years
   status: pass
 

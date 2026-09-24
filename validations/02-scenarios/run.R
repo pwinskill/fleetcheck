@@ -126,7 +126,7 @@ for (part in c("eq", "age", "monthly", "doy", "timing")) {
     ## list (which rbind appended as a row of NAs, under a scenario named NA,
     ## poisoning every subset of the file because `x[x$scenario == "eir_3", ]`
     ## matches NA and carries it along); on a zero-row frame it errors outright
-    ## with "replacement has 1 row, data has 0" -- AFTER the 25-minute sweep.
+    ## with "replacement has 1 row, data has 0" -- AFTER the two-hour sweep.
     if (is.null(d) || !nrow(d)) {
       d <- old
     } else if (!nrow(old)) {

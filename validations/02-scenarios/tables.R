@@ -1,4 +1,4 @@
-# The numbers quoted in vignettes/comparison.Rmd, computed from the saved CSVs.
+# The numbers the claims register quotes, computed from the saved CSVs.
 #
 #   Rscript validations/02-scenarios/tables.R          # writes validations/02-scenarios/results/tables.md
 #   CMP_SMOKE=1 Rscript validations/02-scenarios/tables.R
@@ -249,7 +249,7 @@ if (nzchar(Sys.getenv("CMP_REFRESH_SITES"))) {
                note = paste(
                  "The 63-country site-file comparison. It re-runs fleet only --",
                  "the IBM arm is the pre-run diagnostic shipped with each site",
-                 "file -- so it is about forty minutes on ten cores, but it needs",
+                 "file -- so it is about twenty minutes on four cores, but it needs",
                  "the malariaverse site files, which are not redistributable.",
                  "Re-take it with validations/03-real-settings/run.R followed by",
                  "CMP_REFRESH_SITES=1 on render.R and tables.R."),
