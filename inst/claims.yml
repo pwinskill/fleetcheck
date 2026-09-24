@@ -227,3 +227,169 @@
   measured: 0.28% maximum excursion; flat to 0.02% over the last five years
   status: pass
 
+# ---- P. vivax ------------------------------------------------------------------
+# The same questions for a get_parameters(parasite = "vivax") list, from the
+# vivax suite in validations/02-scenarios (CMP_PARASITE=pv): EIR 0.3 to 30, no
+# severe disease, radical cure in place of chemoprevention and vaccines. No
+# site-file comparison yet.
+
+- id: prevalence-eir-pv
+  parasite: vivax
+  figure: cmp_pv_eir_pvpr_2_10.png
+  claim: LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
+  criterion: inside the IBM replicate band at every EIR on the grid
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: inside at 5 of 5; largest departure 1.2% of the IBM median
+  status: pass
+
+- id: clinical-allage-eir-pv
+  parasite: vivax
+  figure: cmp_pv_eir_clin_all.png
+  claim: All-age clinical incidence tracks the IBM across transmission intensity.
+  criterion: inside the IBM replicate band at every EIR on the grid
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: inside at 4 of 5; at EIR 30 fleet is 2.9% above the IBM median,
+    past the band's upper edge at 2.8%
+  status: fail
+  note: >
+    fleet sits 2.0 to 2.9% above the IBM at every EIR from 1 up: a consistent
+    offset, which crosses the band only at EIR 30, where it is largest.
+    Under-5 incidence is inside at every EIR. The offset is not yet explained.
+
+- id: clinical-under5-eir-pv
+  parasite: vivax
+  figure: cmp_pv_eir_clin_0_5.png
+  claim: Under-5 clinical incidence tracks the IBM across transmission intensity.
+  criterion: inside the IBM replicate band at every EIR on the grid
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: inside at 5 of 5; largest departure 1.9% of the IBM median
+  status: pass
+
+- id: relapse-allage-eir-pv
+  parasite: vivax
+  figure: cmp_pv_eir_relapse_all.png
+  claim: All-age relapse incidence tracks the IBM across transmission intensity.
+  criterion: inside the IBM replicate band at every EIR on the grid
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: inside at 5 of 5; largest departure 3.5% of the IBM median, at
+    EIR 0.3, and within 1.0% from EIR 1 up
+  status: pass
+
+- id: hypnozoite-carriage-eir-pv
+  parasite: vivax
+  figure: cmp_pv_eir_hyp_all.png
+  claim: The share of people carrying hypnozoites tracks the IBM across transmission intensity.
+  criterion: inside the IBM replicate band at every EIR on the grid
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: inside at 5 of 5; largest departure 3.3% of the IBM median, at
+    EIR 0.3, and under 1% from EIR 1 up
+  status: pass
+
+- id: age-profile-clinical-pv
+  parasite: vivax
+  figure: cmp_pv_age_clin.png
+  claim: The age distribution of clinical incidence tracks the IBM.
+  criterion: >
+    inside the IBM replicate band in every age band carrying at least 5% of
+    clinical episodes, at EIR 1, 3 and 10
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: inside at 21 of 23 tested bands across the three EIRs, holding 90%
+    of episodes; outside in 3-5 y at EIR 10 by 1.89 replicate SD and in
+    20-30 y at EIR 3 by 1.43
+  status: fail
+  note: >
+    Both misses are fleet above the IBM, by 6.2% and 8.3% of the median, and
+    fleet is above the IBM median in 18 of the 23 tested bands: the all-age
+    offset of clinical-allage-eir-pv, spread over ages rather than confined to
+    one. No untested band is outside.
+
+- id: intervention-impact-pv
+  parasite: vivax
+  figure: cmp_pv_int_impact.png
+  claim: The modelled impact of each intervention, radical cure included, matches the IBM.
+  criterion: >
+    outside the IBM replicate band in no greater a share of cells than the best
+    held-out IBM replicate, over every intervention and outcome at EIR 1, 3 and 10
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: fleet outside in 55.0% of 60 cells, against 8.3% for the closest of
+    the twenty IBM replicates and 24.2% for the median one
+  status: fail
+  note: >
+    Most of the distance is indoor residual spraying, under which the IBM
+    eliminates vivax: every replicate at EIR 1 and 3 and 13 of 20 at EIR 10
+    reach a 30-day stretch with no clinical case, no relapse and no
+    LM-positive child within the three years. A population of 10,000 can fade
+    out and a mean-field model cannot,
+    so fleet declines with the IBM until the IBM reaches zero, then levels off
+    and rebounds as the spraying wanes.
+    Without the spraying cells fleet still fails, outside in 43.8% of 48
+    against 4.2% for the closest replicate. Radical cure cuts all-age clinical
+    incidence 2 to 4 points less in fleet than in the IBM and relapses 2 to 4
+    points more; bed nets at EIR 1, where prevalence falls to about 0.5%, cut
+    burden 5 to 9 points less. Treatment scale-up, and bed nets at EIR 3 and
+    10, agree within the band. The radical-cure gaps are small against the
+    effects -- 64% against 68% at the largest -- but consistent across drugs
+    and transmission levels.
+
+- id: population-age-structure-pv
+  parasite: vivax
+  figure: cmp_pv_pop_age.png
+  claim: The population age structure matches the IBM's.
+  criterion: >
+    inside the IBM replicate band in every age band below 60 years, on shares
+    renormalised to the 0-60 population
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: inside at 11 of 11 at EIR 3; largest departure 2.1% of the IBM median
+  status: pass
+  note: >
+    The vivax population ages and dies through compartments of its own, so its
+    denominator is checked apart from falciparum's, under the same 0-60
+    convention.
+
+- id: speed-pv
+  parasite: vivax
+  figure: ~
+  claim: fleet is fast enough to be worth using in place of the IBM.
+  criterion: at least 10x faster than the IBM on the same scenario set
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: 0.39x on cost per simulated year; 9.5 CPU-hours for the IBM's 440
+    runs against 73 minutes for fleet's 22
+  status: fail
+  note: >
+    Per run, vivax fleet is the slower model: 4.9 s per simulated year against
+    2.1 s for a 10,000-person IBM run. The hypnozoite dimension and the
+    within-cell immunity spread make it about 35 times a falciparum fleet run,
+    while the IBM costs about the same for either parasite. One fleet run still
+    stands in for the twenty IBM replicates the comparison needs, and fleet's
+    cost does not grow with population, so the IBM arm here cost 7.8 times
+    fleet's; but the criterion is per run, and per run fleet does not meet it.
+
+- id: seed-stability-pv
+  parasite: vivax
+  figure: ~
+  claim: An undisturbed run holds the equilibrium it was seeded at.
+  criterion: >
+    NONE DECLARED. Both models start from malariaEquilibriumVivax's solution,
+    which is neither one's own fixed point, so both are expected to move from
+    it; the other vivax claims compare them after a 30-year burn-in instead.
+  tier: 2
+  evidence: validations/02-scenarios
+  measured: at EIR 3, PvPR(2-10) moves up to 6.8% from its first month in the
+    first 15 years under fleet and 7.2% under the IBM, ending 4.7% and 1.8%
+    above it
+  status: undeclared
+  note: >
+    Reported rather than tested. The IBM's steady state differs from the
+    analytic equilibrium because it is stochastic, and fleet's because it
+    resolves infection and progression in one draw a day as the IBM does,
+    which the analytic equilibrium does not.
+

@@ -1,0 +1,241 @@
+"eir","metric","mid","lo","hi","model","scenario"
+"EIR 1","LM prevalence, ages 2–10",0.9532439886,0.9447328507,0.9617551265,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 1","clinical incidence, ages 0–5",0.9735135473,0.9655915029,0.9814355918,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 1","clinical incidence, all ages",0.9715250564,0.9651601834,0.9778899293,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 1","relapse incidence, all ages",0.9703280572,0.9634695949,0.9771865195,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 3","LM prevalence, ages 2–10",0.8437188495,0.8283122013,0.8591254976,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 3","clinical incidence, ages 0–5",0.8940402895,0.8808916319,0.9071889471,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 3","clinical incidence, all ages",0.885151332,0.8721531838,0.8981494802,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 3","relapse incidence, all ages",0.858725382,0.8411038355,0.8763469285,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 10","LM prevalence, ages 2–10",0.7401937175,0.7297700654,0.7506173696,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 10","clinical incidence, ages 0–5",0.8229043927,0.8114443528,0.8343644326,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 10","clinical incidence, all ages",0.8143047497,0.8057248854,0.822884614,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 10","relapse incidence, all ages",0.7265592275,0.7134574791,0.739660976,"IBM","Indoor residual spraying
+80% coverage, annual"
+"EIR 1","LM prevalence, ages 2–10",0.7179028658,0.6803046414,0.7555010901,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 1","clinical incidence, ages 0–5",0.7864619266,0.7556991398,0.8172247135,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 1","clinical incidence, all ages",0.7559751095,0.7295568597,0.7823933593,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 1","relapse incidence, all ages",0.6987539961,0.6631613734,0.7343466189,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 3","LM prevalence, ages 2–10",0.6215181728,0.6018584874,0.6411778581,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 3","clinical incidence, ages 0–5",0.6969353961,0.6755614188,0.7183093733,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 3","clinical incidence, all ages",0.6838705717,0.6674360516,0.7003050918,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 3","relapse incidence, all ages",0.5905292145,0.572957047,0.6081013819,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 10","LM prevalence, ages 2–10",0.5604139176,0.5438999405,0.5769278948,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 10","clinical incidence, ages 0–5",0.6274737759,0.607160878,0.6477866738,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 10","clinical incidence, all ages",0.6229592405,0.605003864,0.6409146171,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 10","relapse incidence, all ages",0.5476717233,0.5360980733,0.5592453733,"IBM","Bed-net campaign
+80% coverage, one round"
+"EIR 1","LM prevalence, ages 2–10",0.8082941515,0.7932850028,0.8233033002,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 1","clinical incidence, ages 0–5",0.776444778,0.7534966527,0.7993929032,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 1","clinical incidence, all ages",0.7612030551,0.7466363544,0.7757697559,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 1","relapse incidence, all ages",0.5335780241,0.5057897524,0.5613662957,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 3","LM prevalence, ages 2–10",0.7051662507,0.6908785781,0.7194539232,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 3","clinical incidence, ages 0–5",0.704223706,0.6852229415,0.7232244705,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 3","clinical incidence, all ages",0.6810861475,0.6678364501,0.694335845,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 3","relapse incidence, all ages",0.3680502126,0.3450290245,0.3910714006,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 10","LM prevalence, ages 2–10",0.5593725975,0.5435473552,0.5751978399,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 10","clinical incidence, ages 0–5",0.5934147703,0.5753503901,0.6114791504,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 10","clinical incidence, all ages",0.5743636545,0.5639580744,0.5847692346,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 10","relapse incidence, all ages",0.2240241475,0.2118860696,0.2361622253,"IBM","Radical cure
+CQ + primaquine at 60%"
+"EIR 1","LM prevalence, ages 2–10",0.8186317355,0.8024171863,0.8348462848,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 1","clinical incidence, ages 0–5",0.7780239143,0.7584290247,0.7976188039,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 1","clinical incidence, all ages",0.7622386369,0.7460070608,0.7784702131,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 1","relapse incidence, all ages",0.5341532418,0.5049849933,0.5633214902,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 3","LM prevalence, ages 2–10",0.706917745,0.691550205,0.722285285,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 3","clinical incidence, ages 0–5",0.7071965764,0.6877588339,0.726634319,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 3","clinical incidence, all ages",0.6808655149,0.6656955298,0.6960355,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 3","relapse incidence, all ages",0.3695500376,0.3463587254,0.3927413499,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 10","LM prevalence, ages 2–10",0.5694361223,0.5539945227,0.5848777219,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 10","clinical incidence, ages 0–5",0.6014502866,0.5847836404,0.6181169328,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 10","clinical incidence, all ages",0.5823184832,0.5672958607,0.5973411058,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 10","relapse incidence, all ages",0.2303490281,0.2189914962,0.2417065599,"IBM","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 1","LM prevalence, ages 2–10",0.4703539649,0.4236642066,0.5170437233,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 1","clinical incidence, ages 0–5",0.2794464741,0.2072936578,0.3515992904,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 1","clinical incidence, all ages",0.2703536247,0.2188550848,0.3218521646,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 1","relapse incidence, all ages",0.2304953021,0.1741248021,0.2868658022,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 3","LM prevalence, ages 2–10",0.3773544814,0.3471858441,0.4075231187,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 3","clinical incidence, ages 0–5",0.1823032298,0.1353170958,0.2292893637,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 3","clinical incidence, all ages",0.1861837267,0.1450453663,0.227322087,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 3","relapse incidence, all ages",0.1497814092,0.1266461163,0.1729167021,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 10","LM prevalence, ages 2–10",0.2737926994,0.2546658717,0.2929195272,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 10","clinical incidence, ages 0–5",0.1330329689,0.09235253371,0.1737134041,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 10","clinical incidence, all ages",0.1242881779,0.09228822974,0.156288126,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 10","relapse incidence, all ages",0.08380609953,0.06545453994,0.1021576591,"IBM","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 3","LM prevalence, ages 2–10",0.7135007065,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 3","clinical incidence, ages 0–5",0.797656621,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 3","clinical incidence, all ages",0.7810150959,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 3","relapse incidence, all ages",0.659649345,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 1","LM prevalence, ages 2–10",0.723243889,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 1","clinical incidence, ages 0–5",0.7960009203,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 1","clinical incidence, all ages",0.776218834,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 1","relapse incidence, all ages",0.6644897879,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 10","LM prevalence, ages 2–10",0.6955979317,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 10","clinical incidence, ages 0–5",0.7958013817,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 10","clinical incidence, all ages",0.7844457591,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 10","relapse incidence, all ages",0.6509053038,NA,NA,"fleet","Indoor residual spraying
+80% coverage, annual"
+"EIR 3","LM prevalence, ages 2–10",0.6234738576,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 3","clinical incidence, ages 0–5",0.6979175931,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 3","clinical incidence, all ages",0.6827673334,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 3","relapse incidence, all ages",0.5892850762,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 1","LM prevalence, ages 2–10",0.6586693732,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 1","clinical incidence, ages 0–5",0.725823917,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 1","clinical incidence, all ages",0.7061762713,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 1","relapse incidence, all ages",0.6119257319,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 10","LM prevalence, ages 2–10",0.5569951698,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 10","clinical incidence, ages 0–5",0.626169151,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 10","clinical incidence, all ages",0.6228140446,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 10","relapse incidence, all ages",0.545019045,NA,NA,"fleet","Bed-net campaign
+80% coverage, one round"
+"EIR 3","LM prevalence, ages 2–10",0.721965218,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 3","clinical incidence, ages 0–5",0.6974502659,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 3","clinical incidence, all ages",0.6427165045,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 3","relapse incidence, all ages",0.392410372,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 1","LM prevalence, ages 2–10",0.8247471508,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 1","clinical incidence, ages 0–5",0.7758398709,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 1","clinical incidence, all ages",0.738254272,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 1","relapse incidence, all ages",0.5687323843,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 10","LM prevalence, ages 2–10",0.5882439505,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 10","clinical incidence, ages 0–5",0.5879410801,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 10","clinical incidence, all ages",0.5413798595,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 10","relapse incidence, all ages",0.244029495,NA,NA,"fleet","Radical cure
+CQ + primaquine at 60%"
+"EIR 3","LM prevalence, ages 2–10",0.7346910946,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 3","clinical incidence, ages 0–5",0.7028786112,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 3","clinical incidence, all ages",0.6480453642,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 3","relapse incidence, all ages",0.3985441436,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 1","LM prevalence, ages 2–10",0.8347246027,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 1","clinical incidence, ages 0–5",0.7799894089,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 1","clinical incidence, all ages",0.7425072093,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 1","relapse incidence, all ages",0.5738429805,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 10","LM prevalence, ages 2–10",0.6026076569,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 10","clinical incidence, ages 0–5",0.5955557028,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 10","clinical incidence, all ages",0.5481232398,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 10","relapse incidence, all ages",0.2502569681,NA,NA,"fleet","Radical cure
+CQ + tafenoquine at 60%"
+"EIR 3","LM prevalence, ages 2–10",0.3772551707,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 3","clinical incidence, ages 0–5",0.2014266467,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 3","clinical incidence, all ages",0.1776094929,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 3","relapse incidence, all ages",0.1451725262,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 1","LM prevalence, ages 2–10",0.4768800916,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 1","clinical incidence, ages 0–5",0.2820838449,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 1","clinical incidence, all ages",0.2564456669,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 1","relapse incidence, all ages",0.2267015748,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 10","LM prevalence, ages 2–10",0.2809029573,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 10","clinical incidence, ages 0–5",0.131986534,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 10","clinical incidence, all ages",0.1181306451,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"
+"EIR 10","relapse incidence, all ages",0.08894356352,NA,NA,"fleet","Treatment scale-up
+chloroquine, 20% → 60% of cases"

@@ -40,7 +40,8 @@ for (i in seq_len(nrow(claims))) {   # register order, same as the table above
         "The same questions for a `get_parameters(parasite = \"vivax\")` list, on",
         "vivax's own transmission grid, with radical cure in place of the",
         "chemoprevention and vaccines `malariasimulation` cannot run under vivax.",
-        "Vivax has no severe disease.\n\n")
+        "Vivax has no severe disease, and the site-file comparison of tier 3 is",
+        "not yet part of the vivax evidence.\n\n")
   cat(sprintf("\n## %s {#%s}\n\n", cl$id, cl$id))
   # verdict_html(), not a second copy of the map: this file used to hold one in
   # different case, so a claim read `pass` in the table and `PASS` here
