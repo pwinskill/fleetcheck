@@ -322,21 +322,25 @@
     the twenty IBM replicates and 24.2% for the median one
   status: fail
   note: >
-    Most of the distance is indoor residual spraying, under which the IBM
-    eliminates vivax: every replicate at EIR 1 and 3 and 13 of 20 at EIR 10
-    reach a 30-day stretch with no clinical case, no relapse and no
-    LM-positive child within the three years. A population of 10,000 can fade
-    out and a mean-field model cannot,
-    so fleet declines with the IBM until the IBM reaches zero, then levels off
-    and rebounds as the spraying wanes.
-    Without the spraying cells fleet still fails, outside in 43.8% of 48
-    against 4.2% for the closest replicate. Radical cure cuts all-age clinical
-    incidence 2 to 4 points less in fleet than in the IBM and relapses 2 to 4
-    points more; bed nets at EIR 1, where prevalence falls to about 0.5%, cut
-    burden 5 to 9 points less. Treatment scale-up, and bed nets at EIR 3 and
-    10, agree within the band. The radical-cure gaps are small against the
-    effects -- 64% against 68% at the largest -- but consistent across drugs
-    and transmission levels.
+    Most of the distance is a defect in malariasimulation 3.0.0, not in fleet.
+    The IBM evaluates vivax infections, relapses included, only on days when
+    at least one person receives an infectious bite: simulate_infection()
+    returns early on an empty bitten set, which is right for falciparum and
+    wrong for a relapse, which needs no bite. On any day whose infectious bites
+    across the whole population come to zero, every relapse is lost -- in the
+    IBM's own output, zero relapses on 2,696 such replicate-days while about
+    1,250 people carried hypnozoites. Under indoor residual spraying most days
+    carry no bite, so the IBM's relapses collapse and it eliminates vivax:
+    every replicate at EIR 1 and 3, 13 of 20 at EIR 10. With relapses
+    evaluated every day, the IBM's three-year reductions under spraying at EIR
+    3 and 10 and under bed nets at EIR 1 come within 2.5 points of fleet's,
+    from up to 20 points away. That check ran a patched copy of
+    malariasimulation and is not yet reproduced by a script in this
+    repository.
+    Radical cure is not the defect: it cuts all-age clinical incidence 2 to 4
+    points less in fleet than in the IBM and relapses 2 to 4 points more,
+    consistently across both drugs and all three transmission levels.
+    Treatment scale-up, and bed nets at EIR 3 and 10, agree within the band.
 
 - id: population-age-structure-pv
   parasite: vivax
