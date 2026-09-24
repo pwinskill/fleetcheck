@@ -26,7 +26,11 @@ navbar:
       href: index.html
     evidence:
       text: Evidence
-      href: articles/evidence.html
+      menu:
+      - text: P. falciparum
+        href: articles/evidence.html
+      - text: P. vivax
+        href: articles/evidence-vivax.html
     methods:
       text: How it is produced
       href: articles/methods.html
@@ -55,7 +59,7 @@ home:
 reference:
 - title: The claims register
   contents: [read_claims, claims_summary, scoreboard, claims_list_md, scoreboard_md,
-             badges_md, verdict_html, check_claims]
+             badges_md, verdict_html, evidence_page, claim_sections_md, check_claims]
 - title: Comparison statistics
   desc: >
     Every statistic quoted anywhere in this project. Defined once and

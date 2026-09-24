@@ -1,0 +1,52 @@
+---
+title: "Validation evidence: P. vivax"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Validation evidence: P. vivax}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", echo = FALSE)
+claims <- fleetcheck::read_claims(
+  system.file("claims.yml", package = "fleetcheck"))
+if (!nrow(claims)) claims <- fleetcheck::read_claims("../claims.yml")
+claims <- claims[claims$parasite == "vivax", ]
+```
+
+How closely does `fleet` reproduce `malariasimulation` for *P. vivax*? The same
+questions as [for *P. falciparum*](evidence.html), for a
+`get_parameters(parasite = "vivax")` list: on vivax's own transmission grid, EIR
+0.3 to 30, and with radical cure, by primaquine and by tafenoquine, in place of
+the chemoprevention and vaccines `malariasimulation` cannot run under vivax.
+Vivax has no severe disease, so there are no severe claims, and the site-file
+comparison of tier 3 is not yet part of the vivax evidence.
+
+One thing bears on several verdicts below. `malariasimulation` 3.0.0 evaluates
+vivax relapses only on days when at least one person is bitten, so wherever
+days without a bite are common -- under strong vector control, at low
+transmission -- the IBM loses relapses that `fleet` keeps. `intervention-impact-pv`
+sets out what that does to the comparison.
+
+Every section is generated from `claims.yml`, so this page cannot disagree with
+the register, and the register cannot be changed without the page following.
+
+```{r scoreboard, results = "asis"}
+# link_prefix = "" links each id to its own section on this page
+cat(fleetcheck::scoreboard_md(claims, link_prefix = ""), sep = "\n")
+```
+
+```{r sections, results = "asis"}
+cat(fleetcheck::claim_sections_md(claims), sep = "\n")
+```
+
+## What "tier" means
+
+The same as [for *P. falciparum*](evidence.html#what-tier-means): what a result
+costs to reproduce, recorded against each claim. Every vivax claim here is tier
+2, re-running both models over the vivax scenario suite: about an hour on ten
+cores.

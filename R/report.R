@@ -46,6 +46,67 @@ claim_link <- function(claims, link_prefix)
   if (is.null(link_prefix)) sprintf("`%s`", claims$id) else
     sprintf("[`%s`](%s#%s)", claims$id, link_prefix, claims$id)
 
+#' The evidence article a claim is presented on
+#'
+#' Each parasite has an evidence page of its own, so a reader after the vivax
+#' results does not scroll past eleven falciparum claims to reach them, and the
+#' two sets of verdicts are never read as one.
+#'
+#' @param parasite character vector of `"falciparum"` or `"vivax"`, as
+#'   [read_claims()] returns it.
+#' @return the article's file name for each element.
+#' @export
+evidence_page <- function(parasite)
+  ifelse(parasite == "vivax", "evidence-vivax.html", "evidence.html")
+
+#' The evidence article's section for each claim
+#'
+#' A heading, the verdict and the claim, what the result cost to produce and
+#' where its code is, the note, and the one figure that is evidence for the
+#' claim. Both evidence articles render their sections with this, so the two
+#' cannot drift apart in how a claim is presented.
+#'
+#' The figure is written as an `<img>` rather than `![alt](src)`: pandoc turns a
+#' markdown image into a `<figure>` and prints the alt text as a caption, which
+#' put the claim on screen a second time directly under the heading that had
+#' just said it. The alt text is the claim, because an empty alt tells a screen
+#' reader the image is decorative, on a page whose entire content is evidence.
+#' Width and height are given so the browser reserves the space before the image
+#' arrives; without them a deep link to a claim, which is how the README and the
+#' front page arrive, jumps to a position that then moves as the images load.
+#'
+#' @param claims as returned by [read_claims()], filtered to the page's claims.
+#' @param fig_dir where the figures are, relative to the article.
+#' @return a character vector of markdown lines.
+#' @export
+claim_sections_md <- function(claims, fig_dir = ".") {
+  out <- character()
+  for (i in seq_len(nrow(claims))) {
+    cl <- claims[i, ]
+    out <- c(out, sprintf("## %s {#%s}", cl$id, cl$id), "",
+             sprintf("%s &mdash; %s", verdict_html(cl$status), cl$claim), "",
+             # the criterion and the measurement are in the table above; what a
+             # reader needs beside the figure is what it cost and where it came from
+             sprintf('<p class="claim-meta">tier %d &middot; <code>%s</code></p>',
+                     cl$tier, cl$evidence), "")
+    if (nzchar(cl$note)) out <- c(out, cl$note, "")
+    fig <- cl$figure
+    src <- if (identical(fig_dir, ".")) fig else file.path(fig_dir, fig)
+    if (nzchar(fig) && !fig %in% c("NA", "~") && file.exists(src)) {
+      d <- if (requireNamespace("png", quietly = TRUE))
+        tryCatch(dim(png::readPNG(src)), error = function(e) NULL)
+      out <- c(out, sprintf('<img src="%s"%s alt="%s">', src,
+                            if (length(d) >= 2) sprintf(' width="%d" height="%d"', d[2], d[1]) else "",
+                            gsub('"', "&quot;", cl$claim, fixed = TRUE)), "")
+    } else {
+      out <- c(out, paste("*No figure: this claim is a single number rather than a",
+                          "relationship across a range, and a chart of one number",
+                          "carries less than the number.*"), "")
+    }
+  }
+  out
+}
+
 #' The register as a numbered list
 #'
 #' What README and the site's front page carry. A reader arriving there wants to
@@ -154,7 +215,7 @@ badges_md <- function(claims = read_claims(),
           paste0(site, "articles/evidence.html")),
     if (!is.null(pv))
       badge(paste0("Vivax claims: ", pv$msg), shield("vivax claims", pv$msg, pv$colour),
-            paste0(site, "articles/evidence.html")),
+            paste0(site, "articles/", evidence_page("vivax"))),
     badge("Lifecycle: experimental",
           shield("lifecycle", "experimental", "orange"),
           "https://lifecycle.r-lib.org/articles/stages.html#experimental"),

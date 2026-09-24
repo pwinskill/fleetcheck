@@ -102,6 +102,32 @@ test_that("link_prefix distinguishes no link, a same-page anchor and a site URL"
                "[`only`](evidence.html#only)", fixed = TRUE)
 })
 
+test_that("each parasite's claims link to its own evidence page", {
+  expect_equal(evidence_page(c("falciparum", "vivax")),
+               c("evidence.html", "evidence-vivax.html"))
+  cl <- read_claims(write_register(list(id = "pf"), list(id = "pv", parasite = "vivax")))
+  md <- claims_list_md(cl, link_prefix = paste0("site/", evidence_page(cl$parasite)))
+  expect_true(any(grepl("(site/evidence.html#pf)", md, fixed = TRUE)))
+  expect_true(any(grepl("(site/evidence-vivax.html#pv)", md, fixed = TRUE)))
+  # the vivax badge goes to the vivax page, the falciparum badge to its own
+  b <- badges_md(cl, site = "site/")
+  expect_match(grep("Vivax claims", b, value = TRUE), "site/articles/evidence-vivax.html", fixed = TRUE)
+  expect_match(grep("^\\[!\\[Claims", b, value = TRUE), "site/articles/evidence.html)", fixed = TRUE)
+})
+
+test_that("a claim's section shows its figure when there is one, and says so when not", {
+  d <- withr::local_tempdir()
+  writeLines("not a png", file.path(d, "fig.png"))
+  cl <- read_claims(write_register(list(id = "with", figure = "fig.png"),
+                                   list(id = "without", claim = 'a "quoted" claim.')))
+  md <- claim_sections_md(cl, fig_dir = d)
+  expect_true(any(grepl("## with {#with}", md, fixed = TRUE)))
+  # an unreadable image still gets its tag, just without a size
+  expect_true(any(grepl(sprintf('<img src="%s" alt="a claim.">', file.path(d, "fig.png")),
+                        md, fixed = TRUE)))
+  expect_true(any(grepl("*No figure:", md, fixed = TRUE)))
+})
+
 test_that("replace_block is idempotent and insists on its markers", {
   p <- withr::local_tempfile(fileext = ".md")
   writeLines(c("top", "<!-- BEGIN x -->", "stale", "<!-- END x -->", "bottom"), p)

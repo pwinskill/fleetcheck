@@ -7,7 +7,7 @@
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
 [![Claims: 11 pass](https://img.shields.io/badge/claims-11%20pass-brightgreen.svg)](articles/evidence.html)
-[![Vivax claims: 5 pass, 4 fail, 1 untested](https://img.shields.io/badge/vivax%20claims-5%20pass%2C%204%20fail%2C%201%20untested-orange.svg)](articles/evidence.html)
+[![Vivax claims: 5 pass, 4 fail, 1 untested](https://img.shields.io/badge/vivax%20claims-5%20pass%2C%204%20fail%2C%201%20untested-orange.svg)](articles/evidence-vivax.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
 
@@ -44,23 +44,25 @@ of plots.
 9. <span class="verdict pass">pass</span> [`population-age-structure`](articles/evidence.html#population-age-structure) &mdash; The population age structure matches the IBM's.
 10. <span class="verdict pass">pass</span> [`speed`](articles/evidence.html#speed) &mdash; fleet is fast enough to be worth using in place of the IBM.
 11. <span class="verdict pass">pass</span> [`seed-stability`](articles/evidence.html#seed-stability) &mdash; An undisturbed run holds the equilibrium it was seeded at.
-12. <span class="verdict pass">pass</span> [`prevalence-eir-pv`](articles/evidence.html#prevalence-eir-pv) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
-13. <span class="verdict fail">FAIL</span> [`clinical-allage-eir-pv`](articles/evidence.html#clinical-allage-eir-pv) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
-14. <span class="verdict pass">pass</span> [`clinical-under5-eir-pv`](articles/evidence.html#clinical-under5-eir-pv) &mdash; Under-5 clinical incidence tracks the IBM across transmission intensity.
-15. <span class="verdict pass">pass</span> [`relapse-allage-eir-pv`](articles/evidence.html#relapse-allage-eir-pv) &mdash; All-age relapse incidence tracks the IBM across transmission intensity.
-16. <span class="verdict pass">pass</span> [`hypnozoite-carriage-eir-pv`](articles/evidence.html#hypnozoite-carriage-eir-pv) &mdash; The share of people carrying hypnozoites tracks the IBM across transmission intensity.
-17. <span class="verdict fail">FAIL</span> [`age-profile-clinical-pv`](articles/evidence.html#age-profile-clinical-pv) &mdash; The age distribution of clinical incidence tracks the IBM.
-18. <span class="verdict fail">FAIL</span> [`intervention-impact-pv`](articles/evidence.html#intervention-impact-pv) &mdash; The modelled impact of each intervention, radical cure included, matches the IBM.
-19. <span class="verdict pass">pass</span> [`population-age-structure-pv`](articles/evidence.html#population-age-structure-pv) &mdash; The population age structure matches the IBM's.
-20. <span class="verdict fail">FAIL</span> [`speed-pv`](articles/evidence.html#speed-pv) &mdash; fleet is fast enough to be worth using in place of the IBM.
-21. <span class="verdict untested">UNTESTED</span> [`seed-stability-pv`](articles/evidence.html#seed-stability-pv) &mdash; An undisturbed run holds the equilibrium it was seeded at.
+12. <span class="verdict pass">pass</span> [`prevalence-eir-pv`](articles/evidence-vivax.html#prevalence-eir-pv) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
+13. <span class="verdict fail">FAIL</span> [`clinical-allage-eir-pv`](articles/evidence-vivax.html#clinical-allage-eir-pv) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
+14. <span class="verdict pass">pass</span> [`clinical-under5-eir-pv`](articles/evidence-vivax.html#clinical-under5-eir-pv) &mdash; Under-5 clinical incidence tracks the IBM across transmission intensity.
+15. <span class="verdict pass">pass</span> [`relapse-allage-eir-pv`](articles/evidence-vivax.html#relapse-allage-eir-pv) &mdash; All-age relapse incidence tracks the IBM across transmission intensity.
+16. <span class="verdict pass">pass</span> [`hypnozoite-carriage-eir-pv`](articles/evidence-vivax.html#hypnozoite-carriage-eir-pv) &mdash; The share of people carrying hypnozoites tracks the IBM across transmission intensity.
+17. <span class="verdict fail">FAIL</span> [`age-profile-clinical-pv`](articles/evidence-vivax.html#age-profile-clinical-pv) &mdash; The age distribution of clinical incidence tracks the IBM.
+18. <span class="verdict fail">FAIL</span> [`intervention-impact-pv`](articles/evidence-vivax.html#intervention-impact-pv) &mdash; The modelled impact of each intervention, radical cure included, matches the IBM.
+19. <span class="verdict pass">pass</span> [`population-age-structure-pv`](articles/evidence-vivax.html#population-age-structure-pv) &mdash; The population age structure matches the IBM's.
+20. <span class="verdict fail">FAIL</span> [`speed-pv`](articles/evidence-vivax.html#speed-pv) &mdash; fleet is fast enough to be worth using in place of the IBM.
+21. <span class="verdict untested">UNTESTED</span> [`seed-stability-pv`](articles/evidence-vivax.html#seed-stability-pv) &mdash; An undisturbed run holds the equilibrium it was seeded at.
 
 <!-- END scoreboard -->
 
 The criterion each claim was judged against, the number measured against it, and
-the figure it rests on are on the
-[evidence page](articles/evidence.html),
-one section per claim.
+the figure it rests on are on the evidence pages, one for
+[*P. falciparum*](articles/evidence.html)
+and one for
+[*P. vivax*](articles/evidence-vivax.html),
+with one section per claim.
 
 Regenerated from [`claims.yml`](https://github.com/pwinskill/fleetcheck/blob/main/claims.yml) by `report/make_scoreboard.R`; CI fails if it is
 stale. From R, `fleetcheck::scoreboard()` and `fleetcheck::read_claims()` give

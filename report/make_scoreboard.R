@@ -51,7 +51,8 @@ if (!file.exists(readme))
 ## The list, not the table: the table is the evidence page's, and carrying both
 ## put every criterion and every measurement on the site twice.
 if (replace_block(readme, "scoreboard",
-                  claims_list_md(claims, link_prefix = paste0(SITE, "articles/evidence.html")),
+                  claims_list_md(claims, link_prefix = paste0(SITE, "articles/",
+                                                              evidence_page(claims$parasite))),
                   write = !check_only))
   note("README.md")
 

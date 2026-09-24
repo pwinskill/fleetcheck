@@ -1,11 +1,11 @@
 ---
-title: "Validation evidence"
+title: "Validation evidence: P. falciparum"
 output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Validation evidence}
+  %\VignetteIndexEntry{Validation evidence: P. falciparum}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,13 +15,16 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>", echo = FALSE)
 claims <- fleetcheck::read_claims(
   system.file("claims.yml", package = "fleetcheck"))
 if (!nrow(claims)) claims <- fleetcheck::read_claims("../claims.yml")
+claims <- claims[claims$parasite == "falciparum", ]
 ```
 
-How closely does `fleet` reproduce `malariasimulation`? Each claim below states
-the criterion that decides it, the value measured against that criterion, and a
-verdict. The order runs from transmission through clinical and severe burden to
-their age distributions, then interventions and real settings, with the
-demographic, performance and numerical checks that underwrite them at the end.
+How closely does `fleet` reproduce `malariasimulation` for *P. falciparum*? Each
+claim below states the criterion that decides it, the value measured against
+that criterion, and a verdict. The order runs from transmission through clinical
+and severe burden to their age distributions, then interventions and real
+settings, with the demographic, performance and numerical checks that underwrite
+them at the end. The *P. vivax* claims are on [a page of their
+own](evidence-vivax.html).
 
 Every section is generated from `claims.yml`, so this page cannot disagree with
 the register, and the register cannot be changed without the page following.
@@ -32,55 +35,7 @@ cat(fleetcheck::scoreboard_md(claims, link_prefix = ""), sep = "\n")
 ```
 
 ```{r sections, results = "asis"}
-for (i in seq_len(nrow(claims))) {   # register order, same as the table above
-  cl <- claims[i, ]
-  # the vivax claims follow the falciparum ones, under their own heading
-  if (cl$parasite == "vivax" && (i == 1 || claims$parasite[i - 1] != "vivax"))
-    cat("\n# *P. vivax*\n\n",
-        "The same questions for a `get_parameters(parasite = \"vivax\")` list, on",
-        "vivax's own transmission grid, with radical cure in place of the",
-        "chemoprevention and vaccines `malariasimulation` cannot run under vivax.",
-        "Vivax has no severe disease, and the site-file comparison of tier 3 is",
-        "not yet part of the vivax evidence.\n\n")
-  cat(sprintf("\n## %s {#%s}\n\n", cl$id, cl$id))
-  # verdict_html(), not a second copy of the map: this file used to hold one in
-  # different case, so a claim read `pass` in the table and `PASS` here
-  cat(sprintf("%s &mdash; %s\n\n", fleetcheck::verdict_html(cl$status), cl$claim))
-  # The criterion and the measurement are in the table above and are not
-  # repeated here. What this line carries is what a reader needs while looking
-  # at the figure: what the result cost to produce, and where the code that
-  # made it is.
-  cat(sprintf('<p class="claim-meta">tier %d &middot; <code>%s</code></p>\n\n',
-              cl$tier, cl$evidence))
-  if (nzchar(cl$note)) cat(cl$note, "\n\n")
-
-  # Each claim shows the figure that is evidence for THAT claim, and nothing
-  # else: a figure showing four things is not evidence for any one of them.
-  fig <- cl$figure
-  if (nzchar(fig) && !fig %in% c("NA", "~") && file.exists(fig)) {
-    # Alt text is the claim the figure is evidence for. An empty alt would tell
-    # a screen reader the image is decorative, on a page whose entire content is
-    # evidence.
-    # Written as an <img> rather than as `![alt](src)`, because pandoc turns a
-    # markdown image into a <figure> and prints the alt text as a caption --
-    # which put the claim on screen a second time, directly under the heading
-    # that had just said it. Every plot carries its own title and footnote.
-    # Width and height are emitted so the browser can reserve the space before
-    # the image arrives. Without them the figures are 29% of the page height
-    # with nothing holding it open, so a deep link to a claim anchor -- which is
-    # how every link from the README and the front page arrives -- jumps to a
-    # position that then moves hundreds of pixels as the images load.
-    # max-width: 100% in the stylesheet still scales them down.
-    d <- tryCatch(dim(png::readPNG(fig)), error = function(e) NULL)
-    cat(sprintf('<img src="%s"%s alt="%s">\n\n', fig,
-                if (length(d) >= 2) sprintf(' width="%d" height="%d"', d[2], d[1]) else "",
-                gsub('"', "&quot;", cl$claim, fixed = TRUE)))
-  } else {
-    cat("*No figure: this claim is a single number rather than a relationship",
-        "across a range, and a chart of one number carries less than the",
-        "number.*\n\n")
-  }
-}
+cat(fleetcheck::claim_sections_md(claims), sep = "\n")
 ```
 
 ## What "tier" means
