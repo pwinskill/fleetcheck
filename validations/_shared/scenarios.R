@@ -47,6 +47,10 @@ set_bands <- function(p, age_profile = FALSE) {
 ## ---- scenarios, one file per parasite -------------------------------------------
 ## Each defines base_params() and fills `scenarios`, a list of
 ## list(p = parameters, eir = init_EIR, years = horizon).
+## A smoke run's burn-in is shortened HERE, before the scenarios are built: each
+## intervention deploys at day BURN_Y * 365, which at the full burn-in would fall
+## after the 4-year smoke horizon, so no intervention would fire.
+if (SMOKE) BURN_Y <- 1L
 ## Two literal source() calls rather than one built from SP, so that the static
 ## check in tests/testthat/test-validations.R can see which files this includes.
 scenarios <- list()

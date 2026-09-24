@@ -15,7 +15,7 @@ This is the tier that is complete. Everything in the repository README's
 | File | What it does |
 | --- | --- |
 | `assess.R` | **The one to run often.** Re-runs `fleet` only (~2 min) against the committed IBM rows. Reports movement and agreement separately; exits non-zero on lost agreement. |
-| `run.R` | Runs `fleet` and the IBM replicates on a PSOCK cluster; writes `results/rep_{eq,age,monthly,doy,timing}.csv` and `results/ibm_reference.json`. `N_WORKERS` is set at the top of the file. |
+| `run.R` | Runs `fleet` and the IBM replicates on a PSOCK cluster; writes `results/rep_{eq,age,monthly,doy,timing}.csv` and `results/ibm_reference.json`. Ten workers by default; `CMP_WORKERS=4` sets fewer. |
 | `render.R` | Draws every `cmp_*.png` from the saved CSVs (no model runs) into `man/figures/` and `vignettes/`. |
 | `tables.R` | The numbers quoted in the articles, as markdown in `results/tables.md`. |
 | `benchmark.R` | Indicative `fleet` run times; writes `results/timing.csv`. ~6 min. |

@@ -4,7 +4,10 @@
 #
 # The vivax counterpart of render.R, in the same house style (theme.R):
 #   pv_eir         four equilibrium relationships vs EIR (2x2)
+#   pv_eir_*       each of those alone, and hypnozoite carriage, one per claim
 #   pv_age         age profiles of LM prevalence and clinical incidence at EIR 1, 3, 10
+#   pv_age_clin    the clinical age profile alone
+#   pv_pop_age     population age structure at EIR_REF_PV
 #   pv_int_impact  % reduction per intervention, IBM (replicate band) vs fleet
 
 if (nzchar(.l <- Sys.getenv("FLEET_LIB"))) .libPaths(c(.l, .libPaths()))
@@ -45,9 +48,12 @@ EIR_MET <- list(
   list(key = "clin_0_5", lab = "clinical episodes per child-year, ages 0–5"),
   list(key = "clin_all", lab = "clinical episodes per person-year, all ages"),
   list(key = "relapse_all", lab = "relapses per person-year, all ages"))
+## Hypnozoite carriage is a claim of its own, so it gets a figure of its own, but
+## stays out of the 2x2, which shows the burden a programme is judged on.
+EIR_ONE <- list(list(key = "hyp_all", lab = "share carrying hypnozoites, all ages", pct = TRUE))
 e_long <- eq %>% filter(grepl("^eir_", scenario)) %>%
   mutate(init_EIR = as.numeric(sub("eir_", "", scenario))) %>%
-  select(init_EIR, model, rep, all_of(vapply(EIR_MET, `[[`, "", "key"))) %>%
+  select(init_EIR, model, rep, all_of(vapply(c(EIR_MET, EIR_ONE), `[[`, "", "key"))) %>%
   pivot_longer(-c(init_EIR, model, rep), names_to = "metric", values_to = "y")
 ibm_e <- e_long %>% filter(model == "IBM") %>% group_by(metric) %>%
   group_modify(~ envelope(.x, by = "init_EIR")) %>% ungroup()
@@ -68,12 +74,14 @@ panel_eir <- function(metric_id, ylab) {
     labs(x = "EIR (infectious bites per adult per year)", y = ylab) +
     theme_cmp()
 }
-ps <- lapply(seq_along(EIR_MET), function(i) {
-  m <- EIR_MET[[i]]
-  p <- panel_eir(m$key, m$lab) +
+panel_one <- function(m) {
+  panel_eir(m$key, m$lab) +
     if (isTRUE(m$pct)) scale_y_continuous(limits = c(0, NA), labels = scales::percent,
                                           expand = expansion(mult = c(0, 0.06)))
     else scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.06)))
+}
+ps <- lapply(seq_along(EIR_MET), function(i) {
+  p <- panel_one(EIR_MET[[i]])
   if (i <= 2) p + labs(x = NULL) else p
 })
 g <- patchwork::wrap_plots(ps, ncol = 2) + plot_layout(guides = "collect") +
@@ -85,9 +93,8 @@ g <- patchwork::wrap_plots(ps, ncol = 2) + plot_layout(guides = "collect") +
   theme(legend.position = "top", legend.justification = "left")
 save_fig(g, "pv_eir", width = 10, height = 9)
 ## each panel alone too, because each is the evidence for a different claim
-for (i in seq_along(EIR_MET)) {
-  m <- EIR_MET[[i]]
-  one <- ps[[i]] + labs(x = "EIR passed to set_equilibrium()") +
+for (m in c(EIR_MET, EIR_ONE)) {
+  one <- panel_one(m) + labs(x = "EIR passed to set_equilibrium()") +
     plot_annotation(caption = cap(ibm_note, fig_width = 6.2), theme = theme_cmp()) &
     theme(legend.position = "top", legend.justification = "left")
   save_fig(one, paste0("pv_eir_", m$key), width = 6.2, height = 4.4)
@@ -126,6 +133,77 @@ g <- (panel_age("prev", "LM prevalence", pct = TRUE) + labs(x = NULL)) /
     caption = cap(ibm_note), theme = theme_cmp()) &
   theme(legend.position = "top", legend.justification = "left")
 save_fig(g, "pv_age", width = 11, height = 8)
+## clinical alone: the evidence for age-profile-clinical, which says nothing
+## about prevalence
+g <- panel_age("clin", "clinical episodes per person-year") +
+  plot_annotation(
+    title = "P. vivax: the age distribution of clinical incidence",
+    subtitle = "Clinical episodes per person-year by age band, final three years of each run, at three transmission levels",
+    caption = cap(ibm_note), theme = theme_cmp()) &
+  theme(legend.position = "top", legend.justification = "left")
+save_fig(g, "pv_age_clin", width = 11, height = 4.6)
+
+## ---- 2b. population age structure ---------------------------------------------
+## Evidence for population-age-structure under vivax: the vivax block ages and
+## dies through compartments of its own, so its denominator is checked on its
+## own terms, as render.R does for falciparum. Shares per year of age; the top
+## band is fleet's absorbing open-ended group and not comparable; the test
+## renormalises to the 0-60 population.
+pa <- age %>% filter(scenario == paste0("eir_", EIR_REF_PV))
+.labs <- pa %>% distinct(age_lo, age_hi) %>% arrange(age_lo) %>%
+  transmute(l = sprintf("%g-%g", age_lo, age_hi)) %>% pull(l)
+pa <- pa %>% mutate(dens = 100 * pop_frac / (age_hi - age_lo),
+                    band = factor(sprintf("%g-%g", age_lo, age_hi), levels = .labs))
+pa_b <- bind_rows(
+  pa %>% filter(model == "IBM") %>% group_by(band) %>%
+    summarise(mid = replicate_band(dens)$centre, lo = replicate_band(dens)$lower,
+              hi = replicate_band(dens)$upper, .groups = "drop") %>% mutate(model = "IBM"),
+  pa %>% filter(model == "fleet") %>%
+    transmute(band, mid = dens, lo = NA_real_, hi = NA_real_, model = "fleet")) %>%
+  mutate(model = factor(model, levels = c("IBM", "fleet")))
+p_struct <- ggplot(pa_b, aes(band, mid, fill = model, colour = model)) +
+  annotate("rect", xmin = nlevels(pa_b$band) - 0.5, xmax = nlevels(pa_b$band) + 0.5,
+           ymin = -Inf, ymax = Inf, fill = MUTED, alpha = 0.10) +
+  geom_col(position = position_dodge(width = 0.72), width = 0.66, linewidth = 0.4) +
+  geom_linerange(aes(ymin = lo, ymax = hi), position = position_dodge(width = 0.72),
+                 colour = INK, linewidth = 0.5, na.rm = TRUE) +
+  scale_fill_manual(values = c(IBM = "#F3B3A9", fleet = "#B3ADEA"), name = NULL) +
+  scale_colour_manual(values = COL, name = NULL) +
+  scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.14))) +
+  annotate("text", x = nlevels(pa_b$band) + 0.45, y = Inf, vjust = 1.3, hjust = 1,
+           size = 2.6, lineheight = 0.95, colour = INK2, label = "not\ncomparable") +
+  labs(x = "age band (years)", y = "% of the population per year of age",
+       title = "The age pyramid, band by band") +
+  theme_cmp() +
+  theme(legend.position = "top", legend.justification = "left",
+        axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.85)))
+rn <- function(d) d %>% filter(age_hi <= 60) %>% mutate(share = pop_frac / sum(pop_frac))
+dev <- pa %>% filter(model == "fleet") %>% rn() %>% select(band, share) %>%
+  inner_join(pa %>% filter(model == "IBM") %>% group_by(rep) %>% group_modify(~ rn(.x)) %>%
+               ungroup() %>% group_by(band) %>%
+               summarise(mid = replicate_band(share)$centre, lo = replicate_band(share)$lower,
+                         hi = replicate_band(share)$upper, .groups = "drop"), by = "band") %>%
+  mutate(rel = 100 * (share / mid - 1), tol_lo = 100 * (lo / mid - 1),
+         tol_hi = 100 * (hi / mid - 1), miss = share < lo | share > hi)
+p_dev <- ggplot(dev, aes(band, rel)) +
+  geom_rect(aes(xmin = as.numeric(band) - 0.45, xmax = as.numeric(band) + 0.45,
+                ymin = tol_lo, ymax = tol_hi), fill = MUTED, alpha = 0.22) +
+  geom_hline(yintercept = 0, colour = AXIS, linewidth = 0.5) +
+  geom_col(aes(fill = miss), width = 0.5, show.legend = FALSE) +
+  scale_fill_manual(values = c(`FALSE` = COL[["fleet"]], `TRUE` = REF)) +
+  labs(x = "age band (years)", y = "fleet vs the IBM median (%)",
+       title = "Where it sits inside the IBM's own spread",
+       subtitle = cap(sprintf("grey = the IBM replicate band; %d of %d bands inside it",
+                              sum(!dev$miss), nrow(dev)), fig_width = 5)) +
+  theme_cmp() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.85)))
+g <- (p_struct | p_dev) +
+  plot_annotation(
+    title = sprintf("P. vivax: population age structure at EIR %s", EIR_REF_PV),
+    subtitle = cap("The denominator every per-capita rate is divided by, compared on its own terms. Default demography: a constant death rate, so the pyramid is close to exponential.", width = 125),
+    caption = cap("Shares are divided by band width, so bands of unequal width are comparable. The right panel renormalises to the 0-60 population, as the claim's criterion does.", ibm_note),
+    theme = theme_cmp())
+save_fig(g, "pv_pop_age", width = 11, height = 5.2)
 
 ## ---- 3. intervention impact -----------------------------------------------------
 INT <- names(INT_LABELS_PV)

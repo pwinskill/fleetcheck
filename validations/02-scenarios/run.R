@@ -51,7 +51,9 @@ source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
 DDIR <- file.path(ROOT, "validations", "02-scenarios", "results")
 if (SP == "pv") DDIR <- file.path(DDIR, "pv")
 dir.create(DDIR, showWarnings = FALSE, recursive = TRUE)
-N_WORKERS <- 10L
+## CMP_WORKERS=4 for a machine that cannot hold ten cores at full load -- a
+## laptop whose charger falls behind throttles every worker and drains anyway.
+N_WORKERS <- as.integer(Sys.getenv("CMP_WORKERS", "10"))
 ## CMP_SMOKE=1 -> a few-minute end-to-end check: 4-year horizon, one replicate,
 ## interventions at year 1 so every builder actually fires, output to validations/02-scenarios/results/smoke/.
 SMOKE <- nzchar(Sys.getenv("CMP_SMOKE"))
