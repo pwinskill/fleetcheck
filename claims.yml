@@ -305,7 +305,7 @@
   status: fail
   note: >
     Both misses are fleet above the IBM, by 6.2% and 8.3% of the median, and
-    fleet is above the IBM median in 18 of the 23 tested bands: the all-age
+    fleet is above the IBM median in 19 of the 23 tested bands: the all-age
     offset of clinical-allage-eir-pv, spread over ages rather than confined to
     one. No untested band is outside.
 
