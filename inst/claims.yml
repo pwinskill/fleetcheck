@@ -233,7 +233,7 @@
     seed, the run and its outputs -- on one core; the IBM's are its runs on a
     worker pool. One fleet run stands in for the IBM's twenty replicates of
     10,000 people, and its cost does not grow with the population. On one laptop
-    core a run takes about a second per 10 simulated years, 3 s for 30. The age
+    core a run takes just over a second per 10 simulated years, 3 to 4 s for 30. The age
     grid sets fleet's cost, in proportion to its groups: on the 53 of
     default_age_lower(n_group = 53) fleet is 140x the IBM's speed.
 
@@ -417,8 +417,9 @@
     the twenty IBM replicates the comparison needs, and fleet's cost does not
     grow with population, so the IBM arm here cost 8.3 times fleet's; but the
     criterion is per run, and per run fleet does not meet it. On one laptop core
-    a vivax run takes about 20 s per 10 simulated years, more with radical cure;
-    a 53-group grid runs about four times as fast.
+    a vivax run takes about 20 s per 10 simulated years, 50 s with primaquine
+    radical cure and 85 s with tafenoquine; a 53-group grid runs about four times
+    as fast.
 
 - id: seed-stability-pv
   parasite: vivax
