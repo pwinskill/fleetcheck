@@ -184,6 +184,26 @@ if ("demography" %in% age$scenario) {
       max(abs(dt$pr_o - dt$pr_i)))
 }
 
+## ---- 2c. population age structure, scored ------------------------------------
+## population-age-structure: shares renormalised to the 0-60 population, since
+## fleet's oldest group is absorbing and open-ended and the renderer puts it
+## wholly in the band holding its lower edge. render.R draws the same test.
+say("## Population age structure at EIR %s (shares of the 0-60 population)\n", EIR_REF)
+pa <- age %>% filter(scenario == paste0("eir_", EIR_REF), age_hi <= 60) %>%
+  group_by(model, rep) %>% mutate(share = pop_frac / sum(pop_frac)) %>% ungroup()
+pst <- pa %>% filter(model == "IBM") %>% group_by(age_lo, age_hi) %>%
+  summarise(centre = replicate_band(share)$centre, lo = replicate_band(share)$lower,
+            hi = replicate_band(share)$upper, .groups = "drop") %>%
+  left_join(pa %>% filter(model == "fleet") %>% select(age_lo, fleet = share), by = "age_lo") %>%
+  mutate(inside = fleet >= lo & fleet <= hi, rel = fleet / centre - 1) %>% arrange(age_lo)
+md_table(pst %>% transmute(`age band (y)` = sprintf("%g-%g", age_lo, age_hi),
+                           `IBM share (replicate band)` = sprintf("%s (%s-%s)", pct(centre, 2), pct(lo, 2), pct(hi, 2)),
+                           `fleet share` = pct(fleet, 2), `fleet / IBM` = sprintf("%+.1f%%", 100 * rel),
+                           inside = ifelse(inside, "yes", "no")))
+say("population-age-structure: inside at %d of %d bands below 60 y; largest departure %.1f%% of the IBM median (%g-%gy)\n",
+    sum(pst$inside), nrow(pst), 100 * max(abs(pst$rel)),
+    pst$age_lo[which.max(abs(pst$rel))], pst$age_hi[which.max(abs(pst$rel))])
+
 ## ---- 3. seasonal cycle --------------------------------------------------------
 say("## Seasonal cycle (final year, weekly bins)\n")
 s <- doy %>% filter(scenario == "seasonal")

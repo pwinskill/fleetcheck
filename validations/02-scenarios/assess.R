@@ -1,6 +1,6 @@
 # Has a change moved fleet, and is it still matching the IBM?
 #
-#   Rscript validations/02-scenarios/assess.R              # under a minute
+#   Rscript validations/02-scenarios/assess.R              # minutes
 #   CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R    # a subset, faster
 #   CMP_STRICT=1 Rscript validations/02-scenarios/assess.R # also fail if ANY number moved
 #
@@ -53,6 +53,7 @@ if (requireNamespace("pkgload", quietly = TRUE) &&
 source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
 
 DDIR <- file.path(ROOT, "validations", "02-scenarios", "results")
+if (SP == "pv") DDIR <- file.path(DDIR, "pv")       # CMP_PARASITE=pv: the vivax suite
 STRICT <- nzchar(Sys.getenv("CMP_STRICT"))
 
 ## ---- thresholds ---------------------------------------------------------------
@@ -79,6 +80,14 @@ LIMITS <- list(
   clin_0_5  = list(rel = 0.06, out = 2L, label = "clinical, 0-5"),
   clin_all  = list(rel = 0.06, out = 2L, label = "clinical, all ages"),
   sev_all   = list(rel = 0.10, out = 1L, label = "severe, all ages"))
+## The vivax suite's own outcomes, on its own five-point grid; no severe, and
+## relapse incidence in its place. Set in the same way, at today's values.
+LIMITS_PV <- list(
+  pvpr_2_10   = list(rel = 0.05, out = 1L, label = "PvPR 2-10 (LM)"),
+  clin_0_5    = list(rel = 0.10, out = 1L, label = "clinical, 0-5"),
+  clin_all    = list(rel = 0.10, out = 1L, label = "clinical, all ages"),
+  relapse_all = list(rel = 0.05, out = 1L, label = "relapses, all ages"))
+if (SP == "pv") LIMITS <- LIMITS_PV
 ## anything moving by more than this against the committed fleet rows is reported;
 ## solver output is deterministic, so this is a floating-point floor, not a budget
 MOVE_TOL <- 1e-6
@@ -157,7 +166,10 @@ if (!file.exists(ref_f)) {
 
 ## ---- run fleet against the frozen reference -----------------------------------
 rule("Re-running fleet")
-new_eq <- do.call(rbind, lapply(run_fleet(), `[[`, "eq"))
+## vivax on a pool of CMP_WORKERS (4 by default): its scenarios take the best
+## part of a minute each
+new_eq <- do.call(rbind, lapply(run_fleet(workers = if (SP == "pv")
+  as.integer(Sys.getenv("CMP_WORKERS", "4")) else 1L), `[[`, "eq"))
 old <- read.csv(file.path(DDIR, "rep_eq.csv"), stringsAsFactors = FALSE)
 MET <- names(LIMITS)
 

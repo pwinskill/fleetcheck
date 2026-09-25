@@ -6,7 +6,8 @@
 
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
-[![Claims: 6 pass, 5 fail](https://img.shields.io/badge/claims-6%20pass%2C%205%20fail-orange.svg)](articles/evidence.html)
+[![Falciparum claims: 10 pass, 1 fail](https://img.shields.io/badge/falciparum%20claims-10%20pass%2C%201%20fail-orange.svg)](articles/evidence.html)
+[![Vivax claims: 8 pass, 2 fail](https://img.shields.io/badge/vivax%20claims-8%20pass%2C%202%20fail-orange.svg)](articles/evidence-vivax.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
 
@@ -30,13 +31,15 @@ of plots.
 
 <!-- BEGIN scoreboard -->
 
-**11 claims — 5 failing, 0 untested, 0 open, 6 pass.**
+### *P. falciparum*
+
+**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
 
 1. <span class="verdict pass">pass</span> [`prevalence-eir`](articles/evidence.html#prevalence-eir) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
-2. <span class="verdict fail">FAIL</span> [`clinical-allage-eir`](articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
-3. <span class="verdict fail">FAIL</span> [`clinical-under5-eir`](articles/evidence.html#clinical-under5-eir) &mdash; Under-5 clinical incidence tracks the IBM across transmission intensity.
-4. <span class="verdict fail">FAIL</span> [`severe-allage-eir`](articles/evidence.html#severe-allage-eir) &mdash; All-age severe incidence tracks the IBM across transmission intensity.
-5. <span class="verdict fail">FAIL</span> [`age-profile-clinical`](articles/evidence.html#age-profile-clinical) &mdash; The age distribution of clinical incidence tracks the IBM.
+2. <span class="verdict pass">pass</span> [`clinical-allage-eir`](articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
+3. <span class="verdict pass">pass</span> [`clinical-under5-eir`](articles/evidence.html#clinical-under5-eir) &mdash; Under-5 clinical incidence tracks the IBM across transmission intensity.
+4. <span class="verdict pass">pass</span> [`severe-allage-eir`](articles/evidence.html#severe-allage-eir) &mdash; All-age severe incidence tracks the IBM across transmission intensity.
+5. <span class="verdict pass">pass</span> [`age-profile-clinical`](articles/evidence.html#age-profile-clinical) &mdash; The age distribution of clinical incidence tracks the IBM.
 6. <span class="verdict pass">pass</span> [`age-profile-severe`](articles/evidence.html#age-profile-severe) &mdash; The age distribution of severe incidence tracks the IBM.
 7. <span class="verdict pass">pass</span> [`intervention-impact`](articles/evidence.html#intervention-impact) &mdash; The modelled impact of each intervention matches the IBM.
 8. <span class="verdict fail">FAIL</span> [`real-settings-correlation`](articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
@@ -44,12 +47,29 @@ of plots.
 10. <span class="verdict pass">pass</span> [`speed`](articles/evidence.html#speed) &mdash; fleet is fast enough to be worth using in place of the IBM.
 11. <span class="verdict pass">pass</span> [`seed-stability`](articles/evidence.html#seed-stability) &mdash; An undisturbed run holds the equilibrium it was seeded at.
 
+### *P. vivax*
+
+**10 claims — 2 failing, 0 untested, 0 open, 8 pass.**
+
+1. <span class="verdict pass">pass</span> [`prevalence-eir-pv`](articles/evidence-vivax.html#prevalence-eir-pv) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
+2. <span class="verdict pass">pass</span> [`clinical-allage-eir-pv`](articles/evidence-vivax.html#clinical-allage-eir-pv) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
+3. <span class="verdict pass">pass</span> [`clinical-under5-eir-pv`](articles/evidence-vivax.html#clinical-under5-eir-pv) &mdash; Under-5 clinical incidence tracks the IBM across transmission intensity.
+4. <span class="verdict pass">pass</span> [`relapse-allage-eir-pv`](articles/evidence-vivax.html#relapse-allage-eir-pv) &mdash; All-age relapse incidence tracks the IBM across transmission intensity.
+5. <span class="verdict pass">pass</span> [`hypnozoite-carriage-eir-pv`](articles/evidence-vivax.html#hypnozoite-carriage-eir-pv) &mdash; The share of people carrying hypnozoites tracks the IBM across transmission intensity.
+6. <span class="verdict pass">pass</span> [`age-profile-clinical-pv`](articles/evidence-vivax.html#age-profile-clinical-pv) &mdash; The age distribution of clinical incidence tracks the IBM.
+7. <span class="verdict fail">FAIL</span> [`intervention-impact-pv`](articles/evidence-vivax.html#intervention-impact-pv) &mdash; The modelled impact of each intervention, radical cure included, matches the IBM.
+8. <span class="verdict pass">pass</span> [`population-age-structure-pv`](articles/evidence-vivax.html#population-age-structure-pv) &mdash; The population age structure matches the IBM's.
+9. <span class="verdict fail">FAIL</span> [`speed-pv`](articles/evidence-vivax.html#speed-pv) &mdash; fleet is fast enough to be worth using in place of the IBM.
+10. <span class="verdict pass">pass</span> [`seed-stability-pv`](articles/evidence-vivax.html#seed-stability-pv) &mdash; An undisturbed run settles, a few per cent from the equilibrium it was seeded at.
+
 <!-- END scoreboard -->
 
 The criterion each claim was judged against, the number measured against it, and
-the figure it rests on are on the
-[evidence page](articles/evidence.html),
-one section per claim.
+the figure it rests on are on the evidence pages, one for
+[*P. falciparum*](articles/evidence.html)
+and one for
+[*P. vivax*](articles/evidence-vivax.html),
+with one section per claim.
 
 Regenerated from [`claims.yml`](https://github.com/pwinskill/fleetcheck/blob/main/claims.yml) by `report/make_scoreboard.R`; CI fails if it is
 stale. From R, `fleetcheck::scoreboard()` and `fleetcheck::read_claims()` give
@@ -77,7 +97,7 @@ recorded against every claim rather than mentioned in prose.
 | tier | cost | who can reproduce it |
 | --- | --- | --- |
 | 0 | seconds | anyone, from committed summaries |
-| 1 | under a minute | anyone; re-runs `fleet` only |
+| 1 | minutes | anyone; re-runs `fleet` only |
 | 2 | ~2 h | anyone with about 10 cores |
 | 3 | ~20 min | 4 cores, and inputs that are not redistributable |
 
@@ -141,7 +161,7 @@ Rscript report/make_scoreboard.R --check
 Rscript -e 'pkgload::load_all(quiet = TRUE); check_claims()'
 ```
 
-### 4. Check whether a change to `fleet` has moved anything — tier 1, under a minute
+### 4. Check whether a change to `fleet` has moved anything — tier 1, minutes
 
 **This is the one to run often.** It re-runs `fleet` alone against the committed
 IBM rows. The IBM does not depend on `fleet`, so its rows stay valid for any
@@ -174,7 +194,7 @@ CMP_SMOKE=1 Rscript validations/02-scenarios/run.R
 ```
 
 Then the real thing. It runs the IBM `N_REP` times per scenario on a PSOCK
-cluster (`N_WORKERS`, set at the top of `run.R`) and re-stamps
+cluster (ten workers, or fewer with `CMP_WORKERS`) and re-stamps
 `ibm_reference.json`:
 
 ```bash
@@ -184,19 +204,30 @@ Rscript validations/02-scenarios/run.R
 If you changed `fleet` and only need `fleet`'s rows refreshed, keep the IBM's:
 
 ```bash
-CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # ~20 s
+CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # minutes
+```
+
+The *P. vivax* suite is the same scripts under `CMP_PARASITE=pv`, with its
+results in `validations/02-scenarios/results/pv/`:
+
+```bash
+CMP_PARASITE=pv Rscript validations/02-scenarios/run.R
+CMP_PARASITE=pv CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R
+CMP_PARASITE=pv Rscript validations/02-scenarios/assess.R
 ```
 
 ### 6. Redraw the figures and tables — seconds
 
 ```bash
-Rscript validations/02-scenarios/render.R   # cmp_*.png -> man/figures/ and vignettes/
-Rscript validations/02-scenarios/tables.R   # -> validations/02-scenarios/results/tables.md
+Rscript validations/02-scenarios/render.R      # cmp_*.png -> man/figures/ and vignettes/
+Rscript validations/02-scenarios/tables.R      # -> validations/02-scenarios/results/tables.md
+Rscript validations/02-scenarios/render_pv.R   # the vivax figures, cmp_pv_*.png
+Rscript validations/02-scenarios/tables_pv.R   # -> validations/02-scenarios/results/pv/tables.md
 ```
 
-`render.R` does not redraw the 63-country site-file panel: that is a snapshot
-from a run this repository cannot repeat (see tier 3 below). `CMP_REFRESH_SITES=1`
-re-takes it, and needs the validation results present.
+Neither pair redraws its site-file panel: those are snapshots from runs this
+repository cannot repeat (see tier 3 below). `CMP_REFRESH_SITES=1` re-takes
+them, and needs the validation results present.
 
 ### 7. Update the register, then regenerate every rendered copy of it
 
@@ -220,6 +251,7 @@ Rscript -e 'pkgdown::build_site()'
 
 | variable | what it does |
 | --- | --- |
+| `CMP_PARASITE=pv` | the *P. vivax* suite, or the vivax arm of tier 3, in place of falciparum |
 | `CMP_SMOKE=1` | 4-year, 1-replicate end-to-end check into `results/smoke/` |
 | `CMP_ONLY=a,b` | run or check only these scenarios, merging into the existing CSVs |
 | `CMP_FLEET_ONLY=1` | re-run `fleet`'s rows only, keeping the committed IBM rows |
@@ -241,6 +273,10 @@ is about twenty minutes on four cores.
 FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
 Rscript validations/03-real-settings/assess.R
 ```
+
+The *P. vivax* arm is the same pair under `CMP_PARASITE=pv`: the vivax
+sub-sites of the countries with vivax transmission, up to ten per country, with
+results in `validations/03-real-settings/results/pv/`.
 
 Its figures and statistics are public and committed here; the runs behind them
 are not. `claims.yml` marks those claims `tier: 3` so the cost is attached to the
@@ -264,8 +300,9 @@ decimal: one sub-site against one IBM replicate is a check that the pipeline
 runs, not evidence about the model.
 
 Tier 2, in `validations/02-scenarios/`, is what steps 4 to 6 exercise.
-`Rscript validations/01-seed-stability/run.R` (seconds, `fleet` only)
-reproduces `seed-stability` and writes `results/seed_stability.json`.
+`Rscript validations/01-seed-stability/run.R` (a few minutes, `fleet` only)
+reproduces `seed-stability` and `seed-stability-pv`, and writes
+`results/seed_stability.json` and `results/seed_stability_pv.json`.
 
 ## Layout
 

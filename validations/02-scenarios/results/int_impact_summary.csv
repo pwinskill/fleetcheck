@@ -143,147 +143,147 @@ SP-AQ at 10 wk, 14 wk, 9 mo"
 20% → 60% of clinical cases"
 "EIR 120","severe incidence, all ages",0.01016457403,-0.1095709753,0.1299001233,"IBM","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 20","LM prevalence, ages 2–10",0.787984581,NA,NA,"fleet","Indoor residual spraying
+"EIR 20","LM prevalence, ages 2–10",0.7875661357,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 20","clinical incidence, ages 0–5",0.9749845606,NA,NA,"fleet","Indoor residual spraying
+"EIR 20","clinical incidence, ages 0–5",0.9749153126,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 20","clinical incidence, all ages",0.9755282846,NA,NA,"fleet","Indoor residual spraying
+"EIR 20","clinical incidence, all ages",0.9754604309,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 20","severe incidence, all ages",0.9688534037,NA,NA,"fleet","Indoor residual spraying
+"EIR 20","severe incidence, all ages",0.9681514002,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 120","LM prevalence, ages 2–10",0.6879169263,NA,NA,"fleet","Indoor residual spraying
+"EIR 120","LM prevalence, ages 2–10",0.6867553132,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 120","clinical incidence, ages 0–5",0.9358469539,NA,NA,"fleet","Indoor residual spraying
+"EIR 120","clinical incidence, ages 0–5",0.9347942558,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 120","clinical incidence, all ages",0.9403561708,NA,NA,"fleet","Indoor residual spraying
+"EIR 120","clinical incidence, all ages",0.9393406274,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 120","severe incidence, all ages",0.857538289,NA,NA,"fleet","Indoor residual spraying
+"EIR 120","severe incidence, all ages",0.8435647491,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 3","LM prevalence, ages 2–10",0.8082505856,NA,NA,"fleet","Indoor residual spraying
+"EIR 3","LM prevalence, ages 2–10",0.8080449483,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 3","clinical incidence, ages 0–5",0.9801069771,NA,NA,"fleet","Indoor residual spraying
+"EIR 3","clinical incidence, ages 0–5",0.9800999837,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 3","clinical incidence, all ages",0.9800509241,NA,NA,"fleet","Indoor residual spraying
+"EIR 3","clinical incidence, all ages",0.9800411748,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 3","severe incidence, all ages",0.9789854445,NA,NA,"fleet","Indoor residual spraying
+"EIR 3","severe incidence, all ages",0.9789313134,NA,NA,"fleet","Indoor residual spraying
 80% coverage, annual"
-"EIR 20","LM prevalence, ages 2–10",0.4652399241,NA,NA,"fleet","Bed-net campaign
+"EIR 20","LM prevalence, ages 2–10",0.4641821556,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 20","clinical incidence, ages 0–5",0.6532678654,NA,NA,"fleet","Bed-net campaign
+"EIR 20","clinical incidence, ages 0–5",0.6517471675,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 20","clinical incidence, all ages",0.6591805789,NA,NA,"fleet","Bed-net campaign
+"EIR 20","clinical incidence, all ages",0.6574206371,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 20","severe incidence, all ages",0.4903570659,NA,NA,"fleet","Bed-net campaign
+"EIR 20","severe incidence, all ages",0.4798196789,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 120","LM prevalence, ages 2–10",0.2545742689,NA,NA,"fleet","Bed-net campaign
+"EIR 120","LM prevalence, ages 2–10",0.2534289956,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 120","clinical incidence, ages 0–5",0.4166135687,NA,NA,"fleet","Bed-net campaign
+"EIR 120","clinical incidence, ages 0–5",0.4117483085,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 120","clinical incidence, all ages",0.4414331451,NA,NA,"fleet","Bed-net campaign
+"EIR 120","clinical incidence, all ages",0.4360529116,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 120","severe incidence, all ages",0.1579002483,NA,NA,"fleet","Bed-net campaign
+"EIR 120","severe incidence, all ages",0.1386074349,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 3","LM prevalence, ages 2–10",0.6856522685,NA,NA,"fleet","Bed-net campaign
+"EIR 3","LM prevalence, ages 2–10",0.6850920231,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 3","clinical incidence, ages 0–5",0.8582793618,NA,NA,"fleet","Bed-net campaign
+"EIR 3","clinical incidence, ages 0–5",0.8579527203,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 3","clinical incidence, all ages",0.8533744866,NA,NA,"fleet","Bed-net campaign
+"EIR 3","clinical incidence, all ages",0.85292078,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 3","severe incidence, all ages",0.8132578688,NA,NA,"fleet","Bed-net campaign
+"EIR 3","severe incidence, all ages",0.8108935215,NA,NA,"fleet","Bed-net campaign
 80% coverage, one round"
-"EIR 20","LM prevalence, ages 2–10",0.008461891698,NA,NA,"fleet","RTS,S via EPI
+"EIR 20","LM prevalence, ages 2–10",0.008164959654,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 20","clinical incidence, ages 0–5",0.1066738773,NA,NA,"fleet","RTS,S via EPI
+"EIR 20","clinical incidence, ages 0–5",0.1045978186,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 20","clinical incidence, all ages",0.05229299561,NA,NA,"fleet","RTS,S via EPI
+"EIR 20","clinical incidence, all ages",0.05129288707,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 20","severe incidence, all ages",0.1050559785,NA,NA,"fleet","RTS,S via EPI
+"EIR 20","severe incidence, all ages",0.1020298323,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 120","LM prevalence, ages 2–10",0.003976232076,NA,NA,"fleet","RTS,S via EPI
+"EIR 120","LM prevalence, ages 2–10",0.003802679622,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 120","clinical incidence, ages 0–5",0.1172767779,NA,NA,"fleet","RTS,S via EPI
+"EIR 120","clinical incidence, ages 0–5",0.1146792609,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 120","clinical incidence, all ages",0.08660541478,NA,NA,"fleet","RTS,S via EPI
+"EIR 120","clinical incidence, all ages",0.0849680868,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 120","severe incidence, all ages",0.1016793566,NA,NA,"fleet","RTS,S via EPI
+"EIR 120","severe incidence, all ages",0.1000524329,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 3","LM prevalence, ages 2–10",0.01276875168,NA,NA,"fleet","RTS,S via EPI
+"EIR 3","LM prevalence, ages 2–10",0.01239120573,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 3","clinical incidence, ages 0–5",0.09529807723,NA,NA,"fleet","RTS,S via EPI
+"EIR 3","clinical incidence, ages 0–5",0.0937057957,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 3","clinical incidence, all ages",0.02678316439,NA,NA,"fleet","RTS,S via EPI
+"EIR 3","clinical incidence, all ages",0.02627331656,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 3","severe incidence, all ages",0.07766639452,NA,NA,"fleet","RTS,S via EPI
+"EIR 3","severe incidence, all ages",0.07558912342,NA,NA,"fleet","RTS,S via EPI
 90% at 5 months, booster"
-"EIR 20","LM prevalence, ages 2–10",0.002541497368,NA,NA,"fleet","Perennial chemoprevention
+"EIR 20","LM prevalence, ages 2–10",0.002496432205,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 20","clinical incidence, ages 0–5",0.02405808434,NA,NA,"fleet","Perennial chemoprevention
+"EIR 20","clinical incidence, ages 0–5",0.02396915526,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 20","clinical incidence, all ages",0.01422897647,NA,NA,"fleet","Perennial chemoprevention
+"EIR 20","clinical incidence, all ages",0.01430188675,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 20","severe incidence, all ages",0.0128789134,NA,NA,"fleet","Perennial chemoprevention
+"EIR 20","severe incidence, all ages",0.009936865467,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 120","LM prevalence, ages 2–10",0.0008624795382,NA,NA,"fleet","Perennial chemoprevention
+"EIR 120","LM prevalence, ages 2–10",0.0008263108875,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 120","clinical incidence, ages 0–5",0.003237187942,NA,NA,"fleet","Perennial chemoprevention
+"EIR 120","clinical incidence, ages 0–5",0.0001342227685,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 120","clinical incidence, all ages",0.003377017288,NA,NA,"fleet","Perennial chemoprevention
+"EIR 120","clinical incidence, all ages",0.001091471377,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 120","severe incidence, all ages",-0.02550227352,NA,NA,"fleet","Perennial chemoprevention
+"EIR 120","severe incidence, all ages",-0.03431488492,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 3","LM prevalence, ages 2–10",0.004601204528,NA,NA,"fleet","Perennial chemoprevention
+"EIR 3","LM prevalence, ages 2–10",0.004655600512,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 3","clinical incidence, ages 0–5",0.02893784102,NA,NA,"fleet","Perennial chemoprevention
+"EIR 3","clinical incidence, ages 0–5",0.0296147503,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 3","clinical incidence, all ages",0.01175740899,NA,NA,"fleet","Perennial chemoprevention
+"EIR 3","clinical incidence, all ages",0.01222105662,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 3","severe incidence, all ages",0.02226139788,NA,NA,"fleet","Perennial chemoprevention
+"EIR 3","severe incidence, all ages",0.02227181827,NA,NA,"fleet","Perennial chemoprevention
 SP-AQ at 10 wk, 14 wk, 9 mo"
-"EIR 20","LM prevalence, ages 2–10",0.2206120306,NA,NA,"fleet","Seasonal SMC
+"EIR 20","LM prevalence, ages 2–10",0.2204935543,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 20","clinical incidence, ages 0–5",0.5233089388,NA,NA,"fleet","Seasonal SMC
+"EIR 20","clinical incidence, ages 0–5",0.5230427789,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 20","clinical incidence, all ages",0.2670130151,NA,NA,"fleet","Seasonal SMC
+"EIR 20","clinical incidence, all ages",0.2658163773,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 20","severe incidence, all ages",0.3706721768,NA,NA,"fleet","Seasonal SMC
+"EIR 20","severe incidence, all ages",0.367484144,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 120","LM prevalence, ages 2–10",0.1652085916,NA,NA,"fleet","Seasonal SMC
+"EIR 120","LM prevalence, ages 2–10",0.1647506837,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 120","clinical incidence, ages 0–5",0.4398478298,NA,NA,"fleet","Seasonal SMC
+"EIR 120","clinical incidence, ages 0–5",0.4393492167,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 120","clinical incidence, all ages",0.3126677772,NA,NA,"fleet","Seasonal SMC
+"EIR 120","clinical incidence, all ages",0.3098690302,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 120","severe incidence, all ages",0.2756121286,NA,NA,"fleet","Seasonal SMC
+"EIR 120","severe incidence, all ages",0.2742104686,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 3","LM prevalence, ages 2–10",0.2706655563,NA,NA,"fleet","Seasonal SMC
+"EIR 3","LM prevalence, ages 2–10",0.27062285,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 3","clinical incidence, ages 0–5",0.569009756,NA,NA,"fleet","Seasonal SMC
+"EIR 3","clinical incidence, ages 0–5",0.5688729213,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 3","clinical incidence, all ages",0.203867977,NA,NA,"fleet","Seasonal SMC
+"EIR 3","clinical incidence, all ages",0.2041619831,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 3","severe incidence, all ages",0.3562664078,NA,NA,"fleet","Seasonal SMC
+"EIR 3","severe incidence, all ages",0.3548070163,NA,NA,"fleet","Seasonal SMC
 4 rounds/yr, ages 0.25–5"
-"EIR 20","LM prevalence, ages 2–10",0.1902802851,NA,NA,"fleet","Treatment scale-up
+"EIR 20","LM prevalence, ages 2–10",0.1934796194,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 20","clinical incidence, ages 0–5",0.05228779563,NA,NA,"fleet","Treatment scale-up
+"EIR 20","clinical incidence, ages 0–5",0.05349124893,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 20","clinical incidence, all ages",0.05007659271,NA,NA,"fleet","Treatment scale-up
+"EIR 20","clinical incidence, all ages",0.05122349198,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 20","severe incidence, all ages",0.0382283825,NA,NA,"fleet","Treatment scale-up
+"EIR 20","severe incidence, all ages",0.03869217656,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 120","LM prevalence, ages 2–10",0.07842014132,NA,NA,"fleet","Treatment scale-up
+"EIR 120","LM prevalence, ages 2–10",0.08081827974,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 120","clinical incidence, ages 0–5",0.02325544703,NA,NA,"fleet","Treatment scale-up
+"EIR 120","clinical incidence, ages 0–5",0.02420837493,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 120","clinical incidence, all ages",0.02126220414,NA,NA,"fleet","Treatment scale-up
+"EIR 120","clinical incidence, all ages",0.02212927449,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 120","severe incidence, all ages",0.02398496663,NA,NA,"fleet","Treatment scale-up
+"EIR 120","severe incidence, all ages",0.02486242947,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 3","LM prevalence, ages 2–10",0.320587937,NA,NA,"fleet","Treatment scale-up
+"EIR 3","LM prevalence, ages 2–10",0.3228236804,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 3","clinical incidence, ages 0–5",0.1519129726,NA,NA,"fleet","Treatment scale-up
+"EIR 3","clinical incidence, ages 0–5",0.1537159897,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 3","clinical incidence, all ages",0.1477867443,NA,NA,"fleet","Treatment scale-up
+"EIR 3","clinical incidence, all ages",0.1494546204,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"
-"EIR 3","severe incidence, all ages",0.1266305425,NA,NA,"fleet","Treatment scale-up
+"EIR 3","severe incidence, all ages",0.1274619418,NA,NA,"fleet","Treatment scale-up
 20% → 60% of clinical cases"

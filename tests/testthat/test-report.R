@@ -102,6 +102,72 @@ test_that("link_prefix distinguishes no link, a same-page anchor and a site URL"
                "[`only`](evidence.html#only)", fixed = TRUE)
 })
 
+test_that("each parasite's claims link to its own evidence page", {
+  expect_equal(evidence_page(c("falciparum", "vivax")),
+               c("evidence.html", "evidence-vivax.html"))
+  cl <- read_claims(write_register(list(id = "pf"), list(id = "pv", parasite = "vivax")))
+  md <- claims_list_md(cl, link_prefix = paste0("site/", evidence_page(cl$parasite)))
+  expect_true(any(grepl("(site/evidence.html#pf)", md, fixed = TRUE)))
+  expect_true(any(grepl("(site/evidence-vivax.html#pv)", md, fixed = TRUE)))
+  # the vivax badge goes to the vivax page, the falciparum badge to its own
+  b <- badges_md(cl, site = "site/")
+  expect_match(grep("Vivax claims", b, value = TRUE), "site/articles/evidence-vivax.html", fixed = TRUE)
+  expect_match(grep("^\\[!\\[Falciparum claims", b, value = TRUE), "site/articles/evidence.html)", fixed = TRUE)
+  # and the list gives each parasite its own headline and numbering
+  expect_equal(sum(grepl("^\\*\\*1 claims", md)), 2L)
+  expect_true(all(c("### *P. falciparum*", "### *P. vivax*") %in% md))
+})
+
+test_that("a claim's section shows its figure when there is one, and says so when not", {
+  d <- withr::local_tempdir()
+  writeLines("not a png", file.path(d, "fig.png"))
+  cl <- read_claims(write_register(list(id = "with", figure = "fig.png"),
+                                   list(id = "without", claim = 'a "quoted" claim.')))
+  md <- claim_sections_md(cl, fig_dir = d)
+  expect_true(any(grepl("## with {#with}", md, fixed = TRUE)))
+  # an unreadable image still gets its tag, just without a size, and its alt
+  # text says how the claim came out
+  expect_true(any(grepl(sprintf('<img src="%s" alt="a claim. Verdict: pass.">',
+                                file.path(d, "fig.png")), md, fixed = TRUE)))
+  expect_true(any(grepl("*No figure:", md, fixed = TRUE)))
+  # the criterion and the measurement are on the section itself
+  expect_true(any(grepl("**Criterion:** a criterion", md, fixed = TRUE)))
+  # and a declared figure the build lacks is shown as missing, not as no figure
+  miss <- read_claims(write_register(list(id = "lost", figure = "gone.png")))
+  expect_warning(md2 <- claim_sections_md(miss, fig_dir = d), "declared but missing")
+  expect_true(any(grepl("figure-missing", md2, fixed = TRUE)))
+  expect_false(any(grepl("*No figure:", md2, fixed = TRUE)))
+})
+
+test_that("every figure the register declares is in the articles' directory", {
+  cl <- read_claims(find_claims())
+  figs <- cl$figure[nzchar(cl$figure) & !cl$figure %in% c("NA", "~")]
+  vdir <- file.path(dirname(find_claims()), "vignettes")
+  skip_if_not(dir.exists(vdir), "no vignettes directory beside the register")
+  expect_true(all(file.exists(file.path(vdir, figs))),
+              info = paste("missing:", paste(figs[!file.exists(file.path(vdir, figs))],
+                                             collapse = ", ")))
+})
+
+test_that("the articles cite only claims in the register, and carry no placeholder", {
+  root <- dirname(find_claims())
+  skip_if_not(dir.exists(file.path(root, "vignettes")), "no vignettes beside the register")
+  ids <- read_claims(find_claims())$id
+  for (f in file.path(root, c("vignettes/evidence.Rmd", "vignettes/evidence-vivax.Rmd",
+                              "vignettes/methods.Rmd", "README.md"))) {
+    txt <- paste(readLines(f, warn = FALSE), collapse = "\n")
+    cited <- regmatches(txt, gregexpr("`[a-z0-9]+(-[a-z0-9]+)+`", txt))[[1]]
+    cited <- unique(gsub("`", "", cited))
+    looks_like <- grepl("-(eir|pv)$|^(age-profile|intervention|real-settings|population|seed)-", cited)
+    expect_true(all(cited[looks_like] %in% ids),
+                info = paste(basename(f), "cites", paste(setdiff(cited[looks_like], ids), collapse = ", ")))
+    # an unfilled placeholder: an upper-case token with an underscore, outside code
+    prose <- gsub("`[^`]*`", "", gsub("```[\\s\\S]*?```", "", txt, perl = TRUE))
+    expect_false(grepl("\\b[A-Z][A-Z0-9]*_[A-Z0-9_]+\\b", prose, perl = TRUE),
+                 info = paste(basename(f), "has an unfilled placeholder"))
+  }
+})
+
 test_that("replace_block is idempotent and insists on its markers", {
   p <- withr::local_tempfile(fileext = ".md")
   writeLines(c("top", "<!-- BEGIN x -->", "stale", "<!-- END x -->", "bottom"), p)

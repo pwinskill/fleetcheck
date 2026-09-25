@@ -6,7 +6,9 @@ sub-sites, 451,008 sub-site-months, 2000–2026**, monthly and *P. falciparum*
 only on both sides.
 
 One claim in the register rests on it, `real-settings-correlation`, marked
-`tier: 3` because reproducing it needs inputs that cannot be redistributed.
+`tier: 3` because reproducing it needs inputs that cannot be redistributed. A
+*P. vivax* arm runs beside it ([below](#the-p-vivax-arm)); its results are not in
+the register yet.
 
 ## What you can and cannot run
 
@@ -73,11 +75,12 @@ Three details in there are load-bearing.
 **Monthly, not annual.** Intra-annual variation is large, and averaging it away
 can make a real seasonal-amplitude mismatch look like agreement.
 
-**P. falciparum only on both sides.** The pre-run IBM outputs carry both *P.
+**One parasite on both sides.** The pre-run IBM outputs carry both *P.
 falciparum* and *P. vivax* rows. Summing over both inflates the baseline with
 vivax, which is negligible where pf transmission is high and dominates at low pf
-EIR, where it looks like a `fleet` seasonality mismatch. `fleet` is
-falciparum-only, so the comparison must be.
+EIR, where it looks like a `fleet` seasonality mismatch. So each arm compares one
+parasite: the falciparum arm the pf rows against a falciparum `fleet` run, and
+the vivax arm the pv rows against a vivax one.
 
 **`postie::get_rates()` is not raw output.** It converts counts to
 per-person-year rates by age band *and* downscales severe disease by treatment
@@ -129,3 +132,32 @@ sub-site at all are reported as such by `run.R` and are outside the comparison.
 
 Statistics come from `fleetcheck::agreement()`, the same definition every other
 claim in the register uses.
+
+## The *P. vivax* arm
+
+```bash
+FLEET_VALIDATE=/path/to/site-files CMP_PARASITE=pv Rscript validations/03-real-settings/run.R
+CMP_PARASITE=pv Rscript validations/03-real-settings/assess.R
+```
+
+The same pipeline, for the countries whose site files carry vivax transmission:
+each sub-site's `site_parameters(parasite = "vivax")` list, seeded at its vivax
+EIR, against the pv rows of the shipped diagnostic. Results land in
+`results/pv/`, beside falciparum's and never mixed with them. Three things
+differ.
+
+- **Up to ten sub-sites per country**, spread evenly across the country's vivax
+  EIR range, rather than every one: a vivax run of `fleet` costs about twenty
+  times a falciparum run. `assess.R` counts against the sub-sites a sweep should
+  hold under that rule, so a country that produced nothing still shows as
+  missing.
+- **Clinical incidence only.** `malariasimulation` has no vivax severe disease,
+  so severe is identically zero on both arms and carries no information.
+  `postie::get_rates()` requires severe columns all the same, so the vivax
+  outputs are given zero ones before it is called; its severe scaling then has
+  nothing to act on.
+- **The IBM's relapse gating.** `malariasimulation` 3.0.0 evaluates vivax
+  relapses only on days when at least one person is bitten. A day that bites
+  nobody is rare in a site run until vector control drives transmission down;
+  where such days come, the IBM loses relapses that `fleet` keeps. The
+  diagnostics carry that defect; `fleet` does not copy it.

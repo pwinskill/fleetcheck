@@ -367,11 +367,13 @@ main table {
 }
 main table > thead > tr > th,
 main table > tbody > tr > td { vertical-align: top; }
+/* pandoc writes a <col width> for every column, which overrides sizing to content */
+main table col { width: auto !important; }
 
-main table > thead > tr > th:first-child,
-main table > tbody > tr > td:first-child,
-main table > thead > tr > th:last-child,
-main table > tbody > tr > td:last-child { white-space: nowrap; }
+main table:has(thead th:nth-child(5)) > thead > tr > th:first-child,
+main table:has(thead th:nth-child(5)) > tbody > tr > td:first-child,
+main table:has(thead th:nth-child(5)) > thead > tr > th:last-child,
+main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child { white-space: nowrap; }
 
 /* Without a floor the table shrinks to whatever is available instead of
    scrolling, and "available" on a phone is 358px for five columns: the

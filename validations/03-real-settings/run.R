@@ -1,10 +1,11 @@
 #!/usr/bin/env Rscript
-## Tier 3: fleet against malariasimulation across every pf sub-site in the
-## malariaverse site files.
+## Tier 3: fleet against malariasimulation across every sub-site in the
+## malariaverse site files, one parasite at a time.
 ##
 ##   FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
 ##   FLEET_VALIDATE=... CMP_ONLY=BFA,GHA Rscript .../run.R   # a few countries
 ##   FLEET_WORKERS=4 Rscript .../run.R                        # smaller pool
+##   FLEET_VALIDATE=... CMP_PARASITE=pv Rscript .../run.R     # the P. vivax arm
 ##
 ## THIS RUNS FLEET ONLY, and not as an option. The IBM side is the pre-run
 ## diagnostic shipped with each site file (calibration_epi_output/<ISO>_diagnostic_epi.rds),
@@ -33,9 +34,9 @@ if (!file.exists(file.path(ROOT, "DESCRIPTION")))
 suppressMessages(pkgload::load_all(ROOT, quiet = TRUE))
 source(file.path(ROOT, "validations", "03-real-settings", "sites_lib.R"))
 
-## fc_results() rather than a path built here, so the one definition of where a
-## tier's results live is the package's
-RAW <- fc_results("03-real-settings", "raw")
+## tier3_results() rather than a path built here, so the one definition of where
+## each parasite's results live is sites_lib.R's (results/ for pf, results/pv/)
+RAW <- tier3_results("raw")
 dir.create(RAW, showWarnings = FALSE, recursive = TRUE)
 log_msg <- function(...) cat(sprintf("[%s] %s\n", format(Sys.time(), "%H:%M:%S"),
                                      sprintf(...)))
@@ -65,7 +66,7 @@ if (is.na(W) || W < 1L) {
 log_msg("pool of %d workers; fleet only, the IBM arm is the shipped diagnostic", W)
 
 t0 <- Sys.time()
-queue <- todo; running <- list(); failed <- character(); no_pf <- character()
+queue <- todo; running <- list(); failed <- character(); none <- character()
 finished <- 0L
 logfile <- function(nm) file.path(RAW, paste0(nm, ".log"))
 repeat {
@@ -75,7 +76,7 @@ repeat {
       function(root, iso, out) {
         source(file.path(root, "validations", "03-real-settings", "sites_lib.R"))
         r <- run_country(iso)
-        if (identical(r, NA)) return("no pf")
+        if (identical(r, NA)) return("none")
         if (is.null(r)) return("FAIL")
         ## write to a temporary name and rename, so a worker killed mid-write
         ## cannot leave a truncated file that the resume glob counts as done
@@ -102,7 +103,7 @@ repeat {
     ok <- status != "FAIL"
     finished <- finished + 1L
     if (!ok) failed <- c(failed, nm)
-    if (status == "no pf") no_pf <- c(no_pf, nm)
+    if (status == "none") none <- c(none, nm)
     log_msg("%-4s %-5s  (%d/%d)", nm, status, finished, length(todo))
     ## a failure is only useful with its reason attached
     if (!ok && file.exists(logfile(nm))) {
@@ -114,7 +115,7 @@ repeat {
 }
 log_msg("done in %.1f min; %d failed%s", as.numeric(Sys.time() - t0, units = "mins"),
         length(failed), if (length(failed)) paste0(": ", paste(failed, collapse = ", ")) else "")
-if (length(no_pf))
-  log_msg("%d with no P. falciparum sub-site, so nothing to compare: %s", length(no_pf),
-          paste(no_pf, collapse = ", "))
-log_msg("now run validations/03-real-settings/assess.R")
+if (length(none))
+  log_msg("%d with no P. %s sub-site, so nothing to compare: %s", length(none), PARASITE,
+          paste(none, collapse = ", "))
+log_msg("now run %svalidations/03-real-settings/assess.R", if (SP == "pv") "CMP_PARASITE=pv " else "")

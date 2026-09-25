@@ -18,7 +18,7 @@ while (!file.exists(file.path(ROOT, "DESCRIPTION")) && dirname(ROOT) != ROOT)
 suppressMessages(pkgload::load_all(ROOT, quiet = TRUE))
 source(file.path(ROOT, "validations", "03-real-settings", "sites_lib.R"))
 
-DDIR <- fc_results("03-real-settings")
+DDIR <- tier3_results()
 d <- read_all_compare(file.path(DDIR, "raw"))
 attempted <- attr(d, "attempted"); solved <- attr(d, "solved")
 d$site <- paste(d$iso3c, d$name_1, d$urban_rural, sep = "_")
@@ -34,7 +34,7 @@ cat(sprintf("%d countries, %d sub-sites, %s sub-site-months\n",
 ## What a complete sweep should hold, from the site files themselves when they are
 ## to hand: then a country that produced no result file at all is counted too.
 if (nzchar(Sys.getenv("FLEET_VALIDATE"))) {
-  expected <- expected_pf_subsites()
+  expected <- expected_subsites()
   attempted <- nrow(expected)
   solved <- sum(expected$site %in% d$site)
   gone <- expected[!expected$site %in% d$site, ]
@@ -51,9 +51,11 @@ if (!is.na(attempted) && attempted > 0L)
               solved, attempted, attempted - solved))
 
 ## ---- the statistics the register quotes ---------------------------------------
-stats <- rbind(
-  cbind(metric = "clinical", agreement(d$ms_clinical, d$fleet_clinical)),
-  cbind(metric = "severe",   agreement(d$ms_severe,   d$fleet_severe)))
+## P. vivax has no severe pathway in malariasimulation, so severe is identically
+## 0 on both arms and carries no information: the vivax arm is clinical only.
+metrics <- if (SP == "pv") "clinical" else c("clinical", "severe")
+stats <- do.call(rbind, lapply(metrics, function(m)
+  cbind(metric = m, agreement(d[[paste0("ms_", m)]], d[[paste0("fleet_", m)]]))))
 write.csv(round_sig(stats, 10), file.path(DDIR, "stats_monthly.csv"), row.names = FALSE)
 
 per_site <- d |>
@@ -76,6 +78,7 @@ stamp <- list(
   site = as.character(utils::packageVersion("site")),
   R = paste0(R.version$major, ".", R.version$minor),
   n_age_groups = length(fleet::default_age_lower()),
+  parasite = PARASITE,
   ## the discretisation too: a statistic is not reproducible without it
   n_sub = fleet::ode_tuning()$n_sub,
   sub_sites_attempted = attempted, sub_sites_solved = solved,
@@ -85,9 +88,10 @@ jsonlite::write_json(stamp, file.path(DDIR, "sites_reference.json"),
                      auto_unbox = TRUE, pretty = TRUE)
 
 ## ---- the verdict --------------------------------------------------------------
-## real-settings-correlation: r > 0.95 and |slope - 1| < 0.10 on both outcomes.
+## real-settings-correlation: r > 0.95 and |slope - 1| < 0.10 on every outcome
+## (clinical and severe for falciparum; clinical for vivax).
 R_MIN <- 0.95; SLOPE_TOL <- 0.10
-cat("\nmonthly agreement, P. falciparum only on both sides\n")
+cat(sprintf("\nmonthly agreement, P. %s only on both sides\n", PARASITE))
 cat(sprintf("  %-9s %8s %8s %9s %9s\n", "", "r", "slope", "rel bias", "verdict"))
 ok <- TRUE
 for (i in seq_len(nrow(stats))) {
@@ -98,9 +102,10 @@ for (i in seq_len(nrow(stats))) {
   cat(sprintf("  %-9s %8.3f %8.3f %8.1f%% %9s\n", s$metric, s$cor, s$slope,
               100 * s$rel_bias, if (good) "ok" else "OUTSIDE"))
 }
-cat(sprintf("\ncriterion: r > %.2f and |slope - 1| < %.2f on both\n", R_MIN, SLOPE_TOL))
-cat(sprintf("measured:  clinical r %.3f slope %.3f; severe r %.3f slope %.3f\n",
-            stats$cor[1], stats$slope[1], stats$cor[2], stats$slope[2]))
+cat(sprintf("\ncriterion: r > %.2f and |slope - 1| < %.2f on %s\n", R_MIN, SLOPE_TOL,
+            paste(stats$metric, collapse = " and ")))
+cat(sprintf("measured:  %s\n", paste(sprintf("%s r %.3f slope %.3f", stats$metric,
+                                              stats$cor, stats$slope), collapse = "; ")))
 cat(sprintf("age grid:  %d groups\n", stamp$n_age_groups))
 if (ok) {
   cat("\nVerdict\n-------\n  Criterion met.\n")

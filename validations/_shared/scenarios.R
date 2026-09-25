@@ -1,14 +1,25 @@
 # Scenario definitions and the shared per-run summariser.
 #
-# Sourced by BOTH run.R (which runs them through both models and
-# writes the CSVs) and assess.R (which re-runs fleet only and compares
-# against the committed reference). They live here so a drift check cannot
-# silently test a different set of scenarios from the one the reference was
-# built on -- and so sourcing the scenarios does not start a two-hour run.
+# Sourced by BOTH run.R (which runs them through both models and writes the
+# CSVs) and assess.R (which re-runs fleet only and compares against the
+# committed reference). They live here so a drift check cannot silently test a
+# different set of scenarios from the one the reference was built on -- and so
+# sourcing the scenarios does not start a two-hour run. The scenarios
+# themselves are in scenarios_pf.R and scenarios_pv.R.
 #
-# Expects ROOT and theme.R's constants to be in scope already.
+# Expects ROOT and the package's scenario constants to be in scope already.
 
 SMOKE <- nzchar(Sys.getenv("CMP_SMOKE"))
+
+## ---- which parasite ------------------------------------------------------------
+## CMP_PARASITE=pv selects the P. vivax suite: its own scenario file, its own
+## summary columns, results in results/pv/. Everything else -- replicates,
+## bands, digests, the summariser's pooling -- is shared, so the two suites
+## cannot drift apart in how they are measured.
+SP <- Sys.getenv("CMP_PARASITE", "pf")
+if (!SP %in% c("pf", "pv"))
+  stop("CMP_PARASITE must be 'pf' or 'pv', not '", SP, "'.", call. = FALSE)
+PARASITE <- c(pf = "falciparum", pv = "vivax")[[SP]]
 
 ## ---- shared parameter scaffolding -------------------------------------------
 band_lo <- head(AGE_EDGES, -1) * 365; band_hi <- tail(AGE_EDGES, -1) * 365
@@ -17,7 +28,8 @@ AGE_TAGS <- tag_of(band_lo, band_hi)
 
 ## rendering ranges: every scenario gets the three defaults (LM prevalence 2-10y,
 ## clinical and severe incidence 0-5y); the reference scenario adds the
-## age-profile bands to all three families.
+## age-profile bands to all three families. Vivax has no severe disease, and
+## malariasimulation renders none for it, so a vivax list gets no severe bands.
 set_bands <- function(p, age_profile = FALSE) {
   add <- function(lo, hi) if (age_profile) list(c(band_lo, lo), c(band_hi, hi)) else list(lo, hi)
   r <- add(730, 3650)
@@ -26,174 +38,27 @@ set_bands <- function(p, age_profile = FALSE) {
   ## the burden a programme actually carries as well as the young-child burden
   r <- add(c(0, 0), c(1825, 36500))
   p$clinical_incidence_rendering_min_ages <- r[[1]]; p$clinical_incidence_rendering_max_ages <- r[[2]]
-  p$severe_incidence_rendering_min_ages   <- r[[1]]; p$severe_incidence_rendering_max_ages   <- r[[2]]
+  if (p$parasite != "vivax") {
+    p$severe_incidence_rendering_min_ages <- r[[1]]; p$severe_incidence_rendering_max_ages <- r[[2]]
+  }
   p
 }
-base_params <- function(seasonal = FALSE, age_profile = FALSE) {
-  ov <- list(human_population = POP)
-  if (seasonal) ov <- c(ov, list(model_seasonality = TRUE), SEASON)
-  set_bands(get_parameters(ov), age_profile)
-}
 
-## ---- scenarios ---------------------------------------------------------------
-## Each returns list(p = parameters, eir = init_EIR, years = horizon).
-Y_INT <- BURN_Y * 365                       # intervention start (day)
+## ---- scenarios, one file per parasite -------------------------------------------
+## Each defines base_params() and fills `scenarios`, a list of
+## list(p = parameters, eir = init_EIR, years = horizon).
+## A smoke run's burn-in is shortened HERE, before the scenarios are built: each
+## intervention deploys at day BURN_Y * 365, which at the full burn-in would fall
+## after the 4-year smoke horizon, so no intervention would fire.
+if (SMOKE) BURN_Y <- 1L
+## Two literal source() calls rather than one built from SP, so that the static
+## check in tests/testthat/test-validations.R can see which files this includes.
 scenarios <- list()
-
-## Age-profile bands are carried at LOW, REFERENCE and HIGH transmission
-## (PROFILE_EIR), not only at the reference. An age profile at one EIR cannot say
-## whether the shape tracks the IBM as transmission changes, which is most of
-## what an age profile is for -- the peak moves into older children as
-## transmission falls. The bands roughly double the IBM's rendering cost, so they
-## are on three scenarios rather than all six.
-for (E in EIR_GRID) scenarios[[paste0("eir_", E)]] <- list(
-  p = set_equilibrium(base_params(age_profile = (E %in% PROFILE_EIR)), init_EIR = E),
-  eir = E, years = BURN_Y + 3L)
-
-scenarios$seasonal <- list(
-  p = set_equilibrium(base_params(seasonal = TRUE), init_EIR = EIR_REF),
-  eir = EIR_REF, years = BURN_Y + 3L)
-
-## ---- interventions, each across the transmission grid ------------------------
-## Every intervention is deployed at all three of PROFILE_EIR, the same levels
-## the age profiles are carried at, because impact is not a property of an
-## intervention on its own. Across EIR 3 to 120 fleet's predicted reduction in
-## all-age severe incidence falls from 81% to 17% for nets, RISES from 7% to 10%
-## for RTS,S, and changes sign for perennial chemoprevention. A comparison made
-## at a single EIR cannot see whether the IBM agrees about any of that, and a
-## claim resting on one cannot say what it covers.
-##
-## The run at EIR_REF keeps the bare scenario name -- int_scenario() holds the
-## convention -- so the rows already committed under `nets`, `irs` and the rest
-## stay valid and only the two new arms have to be run.
-int_builders <- list()
-
-int_builders$nets <- function(E) {
-  p <- set_bednets(base_params(), timesteps = Y_INT, coverages = 0.8,
-                   retention = 5 * 365, dn0 = matrix(0.387), rn = matrix(0.563),
-                   rnm = matrix(0.24), gamman = 2.64 * 365)
-  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 6L)
+if (SP == "pf") {
+  source(file.path(ROOT, "validations", "_shared", "scenarios_pf.R"), local = TRUE)
+} else {
+  source(file.path(ROOT, "validations", "_shared", "scenarios_pv.R"), local = TRUE)
 }
-
-int_builders$irs <- function(E) {
-  rounds <- Y_INT + c(0, 1, 2) * 365
-  m <- function(v) matrix(v, nrow = length(rounds), ncol = 1)
-  p <- set_spraying(base_params(), timesteps = rounds, coverages = rep(0.8, 3),
-                    ls_theta = m(2.025), ls_gamma = m(-0.009),
-                    ks_theta = m(-2.222), ks_gamma = m(0.008),
-                    ms_theta = m(-1.232), ms_gamma = m(-0.009))
-  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 6L)
-}
-
-## The one seasonal intervention, so the one scenario built on a seasonal
-## profile: four monthly rounds a year aligned to the peak, for three years.
-## It sat at EIR 15 for no reason the repository records, which left it the only
-## row of the impact figure that could not be read against the others.
-int_builders$smc <- function(E) {
-  p <- base_params(seasonal = TRUE)
-  p <- set_drugs(p, list(SP_AQ_params))
-  p <- set_clinical_treatment(p, drug = 1, timesteps = 1, coverages = 0.45)
-  rounds <- as.vector(sapply(0:2, function(y) Y_INT + y * 365 + c(0, 30, 60, 90) + 200))
-  p <- set_smc(p, drug = 1, timesteps = rounds, coverages = rep(0.9, length(rounds)),
-               min_ages = rep(round(0.25 * 365), length(rounds)),
-               max_ages = rep(round(5 * 365), length(rounds)))
-  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 3L)
-}
-
-int_builders$pev <- function(E) {
-  p <- set_pev_epi(base_params(), profile = rtss_profile, timesteps = Y_INT,
-                   coverages = 0.9, min_wait = 0, age = 5 * 30,
-                   booster_spacing = 12 * 30, booster_coverage = matrix(0.8),
-                   booster_profile = list(rtss_booster_profile))
-  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 6L)
-}
-
-## Perennial malaria chemoprevention: SP-AQ delivered alongside the EPI contacts
-## at ~10 weeks, ~14 weeks and ~9 months. Here to test the one intervention whose
-## DELIVERY the two models disagree about by construction -- the IBM doses each
-## child on reaching a dose age, and fleet, having no individuals to trigger on,
-## approximates that as monthly pulses over a 30-day band at each dose age. Every
-## other builder is a schedule both models can follow literally.
-##
-## Its effect is small on three of the four reported outcomes, which is the
-## point: the interesting number is all-age severe incidence, where protecting
-## infants delays immunity and fleet predicts an INCREASE. Whether the IBM agrees
-## on the sign and size of that rebound is not something any other scenario asks,
-## and the sign itself turns on transmission, which is why it is now asked three
-## times.
-int_builders$pmc <- function(E) {
-  p <- set_drugs(base_params(), list(SP_AQ_params))
-  p <- set_pmc(p, drug = 1, timesteps = Y_INT, coverages = 0.8,
-               ages = round(c(10 * 7, 14 * 7, 9 * 30.4)))
-  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 6L)
-}
-
-int_builders$treatment <- function(E) {
-  p <- set_drugs(base_params(), list(AL_params))
-  p <- set_clinical_treatment(p, drug = 1, timesteps = c(1, Y_INT), coverages = c(0.2, 0.6))
-  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 6L)
-}
-
-stopifnot(setequal(names(int_builders), names(INT_LABELS)))
-for (.nm in names(int_builders))
-  for (.E in PROFILE_EIR)
-    scenarios[[int_scenario(.nm, .E)]] <- int_builders[[.nm]](.E)
-rm(.nm, .E)
-
-## custom demography: high infant and elderly mortality, so the equilibrium age
-## structure departs strongly from the default exponential one
-scenarios$demography <- local({
-  dr <- c(0.048, 0.007, 0.003, 0.004, 0.008, 0.020, 0.050, 0.120) / 365
-  ag <- round(c(1, 5, 10, 20, 40, 60, 80, 100) * 365)
-  p <- set_demography(base_params(age_profile = TRUE), agegroups = ag, timesteps = 0,
-                      deathrates = matrix(dr, nrow = 1))
-  list(p = set_equilibrium(p, init_EIR = EIR_REF), eir = EIR_REF, years = BURN_Y + 3L)
-})
-
-## ---- ts_*: long-horizon programme scenarios ---------------------------------
-## The scenarios above each isolate ONE builder over 6 years, which is the right
-## shape for attributing a difference but not for showing what a programme looks
-## like. These five run 15 years past deployment in a seasonal setting so the
-## repeated-campaign dynamics are visible -- five net distributions decaying and
-## being replaced, SMC pulsing four times a year for fifteen years -- and they
-## share a common no-intervention reference so the three tiers (nothing, one
-## thing, everything) can be read against each other. All at EIR 20 seasonal, so
-## every row of the figure is the same setting with more added to it.
-TS_Y <- 15L
-ts_base <- function() set_bands(get_parameters(c(list(human_population = POP),
-                                                 list(model_seasonality = TRUE), SEASON)))
-## nets every 3 years: 5 campaigns over the 15-year window
-ts_net_rounds <- Y_INT + seq(0, by = 3 * 365, length.out = 5L)
-ts_nets_on <- function(p) {
-  n <- length(ts_net_rounds)
-  set_bednets(p, timesteps = ts_net_rounds, coverages = rep(0.8, n),
-              retention = 5 * 365, dn0 = matrix(rep(0.387, n)), rn = matrix(rep(0.563, n)),
-              rnm = matrix(rep(0.24, n)), gamman = rep(2.64 * 365, n))
-}
-## SMC: 4 monthly rounds a year, every year of the window, peak-season aligned
-ts_smc_rounds <- as.vector(sapply(seq_len(TS_Y) - 1L,
-                                  function(y) Y_INT + y * 365 + c(0, 30, 60, 90) + 200))
-ts_smc_on <- function(p) {
-  n <- length(ts_smc_rounds)
-  set_smc(p, drug = 1, timesteps = ts_smc_rounds, coverages = rep(0.9, n),
-          min_ages = rep(round(0.25 * 365), n), max_ages = rep(round(5 * 365), n))
-}
-## case management: SP-AQ throughout (SMC needs a drug), scaled up at deployment
-ts_treat_on <- function(p, hi = 0.6) set_clinical_treatment(
-  set_drugs(p, list(SP_AQ_params)), drug = 1, timesteps = c(1, Y_INT), coverages = c(0.2, hi))
-ts_drug_only <- function(p) set_clinical_treatment(
-  set_drugs(p, list(SP_AQ_params)), drug = 1, timesteps = 1, coverages = 0.2)
-
-ts_scen <- list(
-  ts_none  = function() ts_drug_only(ts_base()),
-  ts_nets  = function() ts_nets_on(ts_drug_only(ts_base())),
-  ts_smc   = function() ts_smc_on(ts_drug_only(ts_base())),
-  ts_treat = function() ts_treat_on(ts_base()),
-  ts_all   = function() ts_smc_on(ts_nets_on(ts_treat_on(ts_base()))))
-for (nm in names(ts_scen)) scenarios[[nm]] <- local({
-  f <- ts_scen[[nm]]
-  list(p = set_equilibrium(f(), init_EIR = EIR_REF), eir = EIR_REF, years = BURN_Y + TS_Y)
-})
 
 ## CMP_ONLY=a,b -> run just those scenarios and merge their rows into the existing CSVs
 ONLY <- Filter(nzchar, strsplit(Sys.getenv("CMP_ONLY"), ",")[[1]])
@@ -212,6 +77,7 @@ if (SMOKE) scenarios <- lapply(scenarios, function(s) { s$years <- 4L; s })
 ## The age profile is only returned when the table carries the age-profile bands
 ## (the reference scenario).
 summarise_run <- function(df, years, tags = AGE_TAGS) {
+  if (SP == "pv") return(summarise_run_pv(df, years, tags))
   n <- nrow(df); day <- seq_len(n)
   pooled <- function(num, den, rows) sum(num[rows]) / sum(den[rows])
   rate   <- function(kind, tag, rows, per = 365)
@@ -258,6 +124,60 @@ summarise_run <- function(df, years, tags = AGE_TAGS) {
   eq$eir_realised <- eir
   list(eq = eq, age = age, monthly = monthly, doy = doy)
 }
+## The vivax summary: the same pooling, windows and bins, over vivax's outputs.
+## pvpr_2_10 is LM prevalence (vivax A is LM-detectable by definition, so this is
+## D + Tr + A), pcr_2_10 adds U -- the sub-patent reservoir relapse keeps full --
+## and the two vivax-only rates are all-age relapse incidence and the share
+## carrying hypnozoites. No severe: malariasimulation has no vivax severe disease.
+summarise_run_pv <- function(df, years, tags = AGE_TAGS) {
+  n <- nrow(df); day <- seq_len(n)
+  pooled <- function(num, den, rows) sum(num[rows]) / sum(den[rows])
+  rate   <- function(tag, rows, per = 365)
+    pooled(df[[paste0("n_inc_clinical_", tag)]], df[[paste0("n_age_", tag)]], rows) * per
+  prev   <- function(tag, rows, kind = "lm")
+    pooled(df[[paste0("n_detect_", kind, "_", tag)]], df[[paste0("n_age_", tag)]], rows)
+  ## n_relapses and n_with_hypnozoites count everyone, and are divided by the
+  ## 0-100 band's population. The IBM's band leaves out its ~0.7% over 100,
+  ## fleet's holds everyone in its open top group, so these two rates read about
+  ## 0.7% low in fleet against the IBM by construction. Dividing both by the
+  ## whole population (S_count + ... + Tr_count) removes that, and wants the IBM
+  ## rows re-summarised with it: until the vivax IBM suite is next re-run, the
+  ## committed rows carry this denominator and so must fleet's.
+  allage <- function(col, rows, per = 1) pooled(df[[col]], df$n_age_0_36500, rows) * per
+  obs <- (n - 3 * 365 + 1):n                    # final three years
+  eq <- data.frame(
+    pvpr_2_10 = prev("730_3650", obs), pcr_2_10 = prev("730_3650", obs, "pcr"),
+    clin_0_5 = rate("0_1825", obs), clin_all = rate("0_36500", obs),
+    relapse_all = allage("n_relapses", obs, 365), hyp_all = allage("n_with_hypnozoites", obs))
+  age <- if (all(paste0("n_detect_lm_", tags) %in% names(df))) {
+    n_band <- vapply(tags, function(tg) sum(df[[paste0("n_age_", tg)]][obs]), numeric(1))
+    data.frame(
+      age_lo = band_lo / 365, age_hi = band_hi / 365, age_mid = (band_lo + band_hi) / 2 / 365,
+      pop_frac = n_band / sum(n_band),
+      prev = vapply(tags, prev, numeric(1), rows = obs),
+      clin = vapply(tags, rate, numeric(1), rows = obs))
+  }
+  mon <- (day - 1) %/% 30
+  mo <- function(f) as.numeric(tapply(day, mon, f))
+  monthly <- data.frame(
+    year = as.numeric(names(tapply(day, mon, length))) * 30 / 365,
+    pvpr_2_10   = mo(function(ix) prev("730_3650", ix)),
+    clin_0_5    = mo(function(ix) rate("0_1825", ix)),
+    clin_all    = mo(function(ix) rate("0_36500", ix)),
+    relapse_all = mo(function(ix) allage("n_relapses", ix, 365)))
+  fy <- (n - 365 + 1):n; wk <- (seq_along(fy) - 1) %/% 7
+  doy <- data.frame(
+    doy = as.numeric(tapply(seq_along(fy), wk, function(ix) mean(ix))),
+    pvpr_2_10 = as.numeric(tapply(seq_along(fy), wk, function(ix) prev("730_3650", fy[ix]))),
+    clin_0_5  = as.numeric(tapply(seq_along(fy), wk, function(ix) rate("0_1825", fy[ix]))))
+  eir <- if (any(grepl("^EIR_", names(df)))) {
+    ec <- grep("^EIR_", names(df), value = TRUE)
+    sum(rowSums(df[obs, ec, drop = FALSE])) / length(obs) / POP * 365
+  } else mean(df$EIR[obs])
+  eq$eir_realised <- eir
+  list(eq = eq, age = age, monthly = monthly, doy = doy)
+}
+
 tag_parts <- function(r, nm, model, rep)
   lapply(r, function(x) if (is.null(x)) NULL else cbind(scenario = nm, model = model, rep = rep, x))
 
@@ -313,7 +233,7 @@ tag_parts <- function(r, nm, model, rep)
                                           algo = "xxhash64", serialize = FALSE)
 
 scenario_digest <- function(scen = SCENARIOS_ALL) {
-  base <- get_parameters()
+  base <- get_parameters(parasite = PARASITE)
   nm <- sort(names(scen))
   .txt_digest(unlist(lapply(nm, function(n) c(paste0("[", n, "]"),
                                               .scen_lines(scen[[n]], base)))))
@@ -324,13 +244,13 @@ scenario_digest <- function(scen = SCENARIOS_ALL) {
 ## something moved. That matters because the aggregate is the thing CI compares,
 ## and an aggregate mismatch with no breakdown is not actionable.
 scenario_digests_each <- function(scen = SCENARIOS_ALL) {
-  base <- get_parameters()
+  base <- get_parameters(parasite = PARASITE)
   nm <- sort(names(scen))
   stats::setNames(vapply(nm, function(n) .txt_digest(.scen_lines(scen[[n]], base)),
                          character(1)), nm)
 }
 
-scenario_key_digests <- function(s, base = get_parameters()) {
+scenario_key_digests <- function(s, base = get_parameters(parasite = PARASITE)) {
   ln <- .scen_lines(s, base)
   stats::setNames(vapply(ln, .txt_digest, character(1)), sub("=.*$", "", ln))
 }
@@ -347,11 +267,14 @@ ibm_reference <- function() list(
 ## ---- running fleet -------------------------------------------------------------
 ## Shared so a drift check cannot accidentally run fleet differently from the way
 ## the committed reference was produced: default tuning, same horizons, same
-## summariser.
-run_fleet <- function(scen = scenarios) {
+## summariser. `workers` > 1 runs the scenarios on a PSOCK pool: a vivax
+## scenario costs the best part of a minute, and the vivax set one at a time
+## would take a quarter of an hour.
+run_fleet <- function(scen = scenarios, workers = 1L) {
   suppressMessages(library(fleet))
-  log_msg("fleet: %d scenarios", length(scen))
-  out <- lapply(names(scen), function(nm) {
+  log_msg("fleet: %d scenarios%s", length(scen),
+          if (workers > 1L) sprintf(" on %d workers", workers) else "")
+  one <- function(nm) {
     s <- scen[[nm]]
     el <- system.time(
       ## s$p already carries init_EIR: every scenario is built through
@@ -361,7 +284,23 @@ run_fleet <- function(scen = scenarios) {
     r <- summarise_run(o, s$years)
     r$timing <- data.frame(years = s$years, elapsed_s = el)
     tag_parts(r, nm, "fleet", 0L)
-  })
+  }
+  if (workers > 1L) {
+    cl <- parallel::makeCluster(workers)
+    on.exit(parallel::stopCluster(cl), add = TRUE)
+    .libs <- .libPaths()
+    parallel::clusterExport(cl, c("scen", "summarise_run", "summarise_run_pv", "tag_parts",
+                                  "band_lo", "band_hi", "AGE_TAGS", "POP", "SP", ".libs"),
+                            envir = environment())
+    invisible(parallel::clusterEvalQ(cl, .libPaths(.libs)))
+    ## longest first, so the pool is not left waiting on one long run at the end
+    ord <- names(scen)[order(-vapply(scen, `[[`, numeric(1), "years"))]
+    out <- parallel::parLapplyLB(cl, ord, one, chunk.size = 1L)
+    names(out) <- ord
+    out <- out[names(scen)]
+  } else {
+    out <- lapply(names(scen), one)
+  }
   names(out) <- names(scen)
   log_msg("fleet done: %.1f s total", sum(vapply(out, function(o) o$timing$elapsed_s, numeric(1))))
   out

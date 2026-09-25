@@ -1,10 +1,10 @@
 # Indicative run times for fleet, for the cost model in fleet's vignette("using").
 #
-#   Rscript validations/02-scenarios/benchmark.R          # ~1 min; writes validations/02-scenarios/results/timing.csv
+#   Rscript validations/02-scenarios/benchmark.R          # ~25 min; writes validations/02-scenarios/results/timing.csv
 #                                           # and prints the markdown tables
 #
 # Three questions a user actually has:
-#   1. How long does a run take, by scenario and horizon?
+#   1. How long does a run take, by scenario and horizon, for each parasite?
 #   2. Does population size matter?  (it must not -- the model is per-capita)
 #   3. What does the one discretisation setting, the mosquito sub-step count, cost?
 #
@@ -129,6 +129,38 @@ for (nm in names(SCEN)) {
   }
 }
 
+## ---- table 1b: P. vivax, scenario x horizon ------------------------------------
+## A vivax run costs about twenty times a falciparum one -- the hypnozoite-batch
+## dimension and the immunity spread -- so two repeats rather than five; the
+## minimum of two on an idle machine is already within a per cent or two.
+## Radical cure adds the liver-stage levels: four for primaquine, eleven for
+## tafenoquine.
+N_REP_PV <- 2L
+pv_p <- function(drugs = NULL, drug = 1L) {
+  p <- get_parameters(list(human_population = POP), parasite = "vivax")
+  if (!is.null(drugs)) {
+    p <- set_drugs(p, drugs)
+    p <- set_clinical_treatment(p, drug = drug, timesteps = 1, coverages = 0.4)
+  }
+  p
+}
+SCEN_PV <- list(
+  `No interventions`              = function(y) pv_p(),
+  `Treatment (chloroquine)`       = function(y) pv_p(list(CQ_params_vivax)),
+  `Radical cure (CQ + primaquine)` = function(y) pv_p(list(CQ_PQ_params_vivax)),
+  `Radical cure (CQ + tafenoquine)` = function(y) pv_p(list(CQ_TQ_params_vivax))
+)
+log_msg("P. vivax scenario x horizon: %d scenarios x %d horizons x %d reps",
+        length(SCEN_PV), length(YEARS), N_REP_PV)
+for (nm in names(SCEN_PV)) {
+  for (y in YEARS) {
+    sec <- time_run(set_equilibrium(SCEN_PV[[nm]](y), init_EIR = 3), y, reps = N_REP_PV)
+    add_row(table = "scenario_pv", scenario = nm, years = y, pop = POP,
+            settings = "default", seconds = sec)
+    log_msg("  vivax %-32s %2d y : %6.2f s", nm, y, sec)
+  }
+}
+
 ## ---- table 2: population size (must be flat) ---------------------------------
 log_msg("population independence, 30-year seasonal run")
 for (pop in c(1e3, 1e4, 1e5, 1e6, 1e7)) {
@@ -174,6 +206,14 @@ wide <- reshape(sc[, c("scenario", "years", "seconds")], idvar = "scenario",
                 timevar = "years", direction = "wide")
 names(wide) <- c("Scenario", paste0(YEARS, " years"))
 wide$Scenario <- factor(wide$Scenario, levels = names(SCEN))
+md(wide[order(wide$Scenario), ])
+
+cat("## P. vivax, scenario x horizon (seconds), EIR 3\n\n")
+sv <- timing[timing$table == "scenario_pv", ]
+wide <- reshape(sv[, c("scenario", "years", "seconds")], idvar = "scenario",
+                timevar = "years", direction = "wide")
+names(wide) <- c("Scenario", paste0(YEARS, " years"))
+wide$Scenario <- factor(wide$Scenario, levels = names(SCEN_PV))
 md(wide[order(wide$Scenario), ])
 
 cat("## Population size, 30-year seasonal run\n\n")

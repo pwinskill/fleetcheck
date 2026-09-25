@@ -26,7 +26,11 @@ navbar:
       href: index.html
     evidence:
       text: Evidence
-      href: articles/evidence.html
+      menu:
+      - text: P. falciparum
+        href: articles/evidence.html
+      - text: P. vivax
+        href: articles/evidence-vivax.html
     methods:
       text: How it is produced
       href: articles/methods.html
@@ -40,8 +44,8 @@ home:
   description: >
     A register of claims about how closely the fleet mean-field model
     reproduces the malariasimulation individual-based model of Plasmodium
-    falciparum malaria, each with the criterion that decides it, the number
-    measured against it, and a verdict.
+    falciparum and P. vivax malaria, each with the criterion that decides it,
+    the number measured against it, and a verdict.
   sidebar:
     structure: [glance, links, citation, license, authors, dev]
     components:
@@ -55,7 +59,7 @@ home:
 reference:
 - title: The claims register
   contents: [read_claims, claims_summary, scoreboard, claims_list_md, scoreboard_md,
-             badges_md, verdict_html, check_claims]
+             badges_md, verdict_html, evidence_page, claim_sections_md, check_claims]
 - title: Comparison statistics
   desc: >
     Every statistic quoted anywhere in this project. Defined once and

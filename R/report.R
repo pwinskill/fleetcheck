@@ -46,6 +46,79 @@ claim_link <- function(claims, link_prefix)
   if (is.null(link_prefix)) sprintf("`%s`", claims$id) else
     sprintf("[`%s`](%s#%s)", claims$id, link_prefix, claims$id)
 
+#' The evidence article a claim is presented on
+#'
+#' Each parasite has an evidence page of its own, so a reader after the vivax
+#' results does not scroll past eleven falciparum claims to reach them, and the
+#' two sets of verdicts are never read as one.
+#'
+#' @param parasite character vector of `"falciparum"` or `"vivax"`, as
+#'   [read_claims()] returns it.
+#' @return the article's file name for each element.
+#' @export
+evidence_page <- function(parasite)
+  ifelse(parasite == "vivax", "evidence-vivax.html", "evidence.html")
+
+#' The evidence article's section for each claim
+#'
+#' A heading, the verdict and the claim, the criterion that decides it and what
+#' was measured against it, what the result cost to produce and where its code
+#' is, the one figure that is evidence for the claim, and the note. Both
+#' evidence articles render their sections with this, so the two cannot drift
+#' apart in how a claim is presented. The criterion and the measurement are
+#' repeated from the table because a README link lands on the section, and a
+#' note written against them reads as nonsense without them.
+#'
+#' A figure the register declares but the build does not have is shown as
+#' missing, loudly, rather than passed off as a claim with no figure.
+#'
+#' The figure is written as an `<img>` rather than `![alt](src)`: pandoc turns a
+#' markdown image into a `<figure>` and prints the alt text as a caption, which
+#' put the claim on screen a second time directly under the heading that had
+#' just said it. The alt text is the claim and its verdict, because an empty alt
+#' tells a screen reader the image is decorative, on a page whose entire content
+#' is evidence, and the claim alone would state as true what may have failed.
+#' Width and height are given so the browser reserves the space before the image
+#' arrives; without them a deep link to a claim, which is how the README and the
+#' front page arrive, jumps to a position that then moves as the images load.
+#'
+#' @param claims as returned by [read_claims()], filtered to the page's claims.
+#' @param fig_dir where the figures are, relative to the article.
+#' @return a character vector of markdown lines.
+#' @export
+claim_sections_md <- function(claims, fig_dir = ".") {
+  out <- character()
+  for (i in seq_len(nrow(claims))) {
+    cl <- claims[i, ]
+    out <- c(out, sprintf("## %s {#%s}", cl$id, cl$id), "",
+             sprintf("%s &mdash; %s", verdict_html(cl$status), cl$claim), "",
+             sprintf("**Criterion:** %s  \n**Measured:** %s", cl$criterion, cl$measured), "",
+             sprintf('<p class="claim-meta">tier %d &middot; <code>%s</code></p>',
+                     cl$tier, cl$evidence), "")
+    fig <- cl$figure
+    has_fig <- nzchar(fig) && !fig %in% c("NA", "~")
+    src <- if (identical(fig_dir, ".")) fig else file.path(fig_dir, fig)
+    word <- c(pass = "pass", open = "open", fail = "fail", undeclared = "untested")[[cl$status]]
+    if (has_fig && file.exists(src)) {
+      d <- if (requireNamespace("png", quietly = TRUE))
+        tryCatch(dim(png::readPNG(src)), error = function(e) NULL)
+      alt <- gsub('"', "&quot;", sprintf("%s Verdict: %s.", cl$claim, word), fixed = TRUE)
+      out <- c(out, sprintf('<a href="%s"><img src="%s"%s alt="%s"></a>', src, src,
+                            if (length(d) >= 2) sprintf(' width="%d" height="%d"', d[2], d[1]) else "",
+                            alt), "")
+    } else if (has_fig) {
+      warning("claim ", cl$id, ": figure ", fig, " is declared but missing", call. = FALSE)
+      out <- c(out, sprintf(paste('<p class="figure-missing"><strong>Figure missing:</strong>',
+                                  '<code>%s</code> is declared for this claim but is not in',
+                                  'this build.</p>'), fig), "")
+    } else {
+      out <- c(out, "*No figure: the numbers above decide this claim.*", "")
+    }
+    if (nzchar(cl$note)) out <- c(out, cl$note, "")
+  }
+  out
+}
+
 #' The register as a numbered list
 #'
 #' What README and the site's front page carry. A reader arriving there wants to
@@ -58,10 +131,23 @@ claim_link <- function(claims, link_prefix)
 #' @return a character vector of markdown lines.
 #' @export
 claims_list_md <- function(claims = read_claims(), link_prefix = NULL) {
-  c(headline_md(claims), "",
-    sprintf("%d. %s %s &mdash; %s",
-            seq_len(nrow(claims)), VERDICT[claims$status],
-            claim_link(claims, link_prefix), claims$claim))
+  # One list per parasite, each with its own headline: the two registers ask the
+  # same questions in the same words, and one list over both would read as
+  # contradicting itself wherever the verdicts differ.
+  par <- if (is.null(claims$parasite)) rep("falciparum", nrow(claims)) else claims$parasite
+  sps <- intersect(c("falciparum", "vivax"), par)
+  out <- character()
+  for (sp in sps) {
+    keep <- par == sp
+    cl <- claims[keep, , drop = FALSE]
+    lp <- if (length(link_prefix) > 1) link_prefix[keep] else link_prefix
+    out <- c(out, if (length(sps) > 1) c(sprintf("### *P. %s*", sp), ""),
+             headline_md(cl), "",
+             sprintf("%d. %s %s &mdash; %s", seq_len(nrow(cl)), VERDICT[cl$status],
+                     claim_link(cl, lp), cl$claim),
+             if (sp != utils::tail(sps, 1)) "")
+  }
+  out
 }
 
 #' The register as a markdown table
@@ -120,16 +206,24 @@ md_cell <- function(x) {
 badges_md <- function(claims = read_claims(),
                       repo = "pwinskill/fleetcheck",
                       site = "https://pwinskill.github.io/fleetcheck/") {
-  s <- claims_summary(claims)
-  bad <- s$fail + s$undeclared + s$open
-  # Green only when there is nothing outstanding; red would overstate one
-  # failing band in one age group as a broken comparison.
-  colour <- if (s$fail > 0) "orange" else if (bad > 0) "yellow" else "brightgreen"
-  parts <- c(sprintf("%d pass", s$pass),
-             if (s$fail) sprintf("%d fail", s$fail),
-             if (s$open) sprintf("%d open", s$open),
-             if (s$undeclared) sprintf("%d untested", s$undeclared))
-  msg <- paste(parts, collapse = ", ")
+  # One claims badge per parasite, so a vivax result can never recolour the
+  # falciparum badge, nor a falciparum one the vivax. With both on the register
+  # each badge names its parasite; claims with no parasite field are falciparum.
+  par <- if (is.null(claims$parasite)) rep("falciparum", nrow(claims)) else claims$parasite
+  claim_msg <- function(cl) {
+    s <- claims_summary(cl)
+    bad <- s$fail + s$undeclared + s$open
+    # Green only when there is nothing outstanding; red would overstate one
+    # failing band in one age group as a broken comparison.
+    colour <- if (s$fail > 0) "orange" else if (bad > 0) "yellow" else "brightgreen"
+    parts <- c(sprintf("%d pass", s$pass),
+               if (s$fail) sprintf("%d fail", s$fail),
+               if (s$open) sprintf("%d open", s$open),
+               if (s$undeclared) sprintf("%d untested", s$undeclared))
+    list(msg = paste(parts, collapse = ", "), colour = colour)
+  }
+  pf <- claim_msg(claims[par == "falciparum", , drop = FALSE])
+  pv <- if (any(par == "vivax")) claim_msg(claims[par == "vivax", , drop = FALSE])
 
   # shields.io: a literal dash is doubled, everything else percent-encoded.
   enc <- function(x) utils::URLencode(gsub("-", "--", x, fixed = TRUE), reserved = TRUE)
@@ -142,8 +236,12 @@ badges_md <- function(claims = read_claims(),
   badge <- function(alt, img, href) sprintf("[![%s](%s)](%s)", alt, img, href)
   c(badge("check", paste0(action("check"), "/badge.svg"), action("check")),
     badge("pkgdown", paste0(action("pkgdown"), "/badge.svg"), action("pkgdown")),
-    badge(paste0("Claims: ", msg), shield("claims", msg, colour),
+    badge(paste0(if (is.null(pv)) "Claims: " else "Falciparum claims: ", pf$msg),
+          shield(if (is.null(pv)) "claims" else "falciparum claims", pf$msg, pf$colour),
           paste0(site, "articles/evidence.html")),
+    if (!is.null(pv))
+      badge(paste0("Vivax claims: ", pv$msg), shield("vivax claims", pv$msg, pv$colour),
+            paste0(site, "articles/", evidence_page("vivax"))),
     badge("Lifecycle: experimental",
           shield("lifecycle", "experimental", "orange"),
           "https://lifecycle.r-lib.org/articles/stages.html#experimental"),

@@ -14,12 +14,13 @@ This is the tier that is complete. Everything in the repository README's
 
 | File | What it does |
 | --- | --- |
-| `assess.R` | **The one to run often.** Re-runs `fleet` only (under a minute) against the committed IBM rows. Reports movement and agreement separately; exits non-zero on lost agreement. |
-| `run.R` | Runs `fleet` and the IBM replicates on a PSOCK cluster; writes `results/rep_{eq,age,monthly,doy,timing}.csv` and `results/ibm_reference.json`. `N_WORKERS` is set at the top of the file. |
+| `assess.R` | **The one to run often.** Re-runs `fleet` only (a few minutes for P. falciparum, about twenty on four workers for P. vivax) against the committed IBM rows. Reports movement and agreement separately; exits non-zero on lost agreement. |
+| `run.R` | Runs `fleet` and the IBM replicates on a PSOCK cluster; writes `results/rep_{eq,age,monthly,doy,timing}.csv` and `results/ibm_reference.json`. Ten workers by default; `CMP_WORKERS` sets the number. |
 | `render.R` | Draws every `cmp_*.png` from the saved CSVs (no model runs) into `man/figures/` and `vignettes/`. |
 | `tables.R` | The numbers quoted in the articles, as markdown in `results/tables.md`. |
-| `benchmark.R` | Indicative `fleet` run times; writes `results/timing.csv`. ~1 min. |
-| `results/` | The committed summaries and their provenance stamps. |
+| `render_pv.R`, `tables_pv.R` | The same for the *P. vivax* suite: `cmp_pv_*.png`, and `results/pv/tables.md`. |
+| `benchmark.R` | Indicative `fleet` run times for both parasites; writes `results/timing.csv`. ~25 min on an idle machine. |
+| `results/` | The committed summaries and their provenance stamps; the vivax suite's in `results/pv/`, written by the scripts above under `CMP_PARASITE=pv`. |
 
 Shared code lives outside this directory. The scenario definitions, `run_fleet()`
 and the shared summariser are in `validations/_shared/scenarios.R`; the plot
@@ -36,7 +37,7 @@ The IBM does not depend on `fleet`, so its committed rows stay valid for any
 `fleet`-side change. Re-run `fleet` alone and compare:
 
 ```bash
-Rscript validations/02-scenarios/assess.R                      # under a minute, exits 1 on lost agreement
+Rscript validations/02-scenarios/assess.R                      # minutes, exits 1 on lost agreement
 CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R  # a subset, seconds
 CMP_STRICT=1 Rscript validations/02-scenarios/assess.R         # also fail if ANY value moved
 ```
@@ -45,15 +46,15 @@ It answers two questions separately, because they mean different things.
 **Did anything move?** `fleet` now against `fleet`'s committed rows: a moved
 number is not automatically wrong — a deliberate model fix moves numbers — but it
 must be seen, and silent movement is how a regression ships. **Is the match still
-good?** `fleet` now against the committed IBM medians and 10–90% bands, at the
-thresholds the register's claims rest on. Only the second one fails the run by
+good?** `fleet` now against the committed IBM medians and replicate bands
+(median ± 1.28 SD), at the thresholds the register's claims rest on. Only the second one fails the run by
 default.
 
 If the movement was intended, refresh the committed `fleet` rows without touching
 the IBM:
 
 ```bash
-CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # under a minute
+CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # minutes
 ```
 
 ## When the IBM *does* need re-running
@@ -91,7 +92,8 @@ The repository README lists every environment variable.
 ## Design notes
 
 - **Replicates, not a realisation.** The IBM is always drawn as the median of its
-  replicates with a 10–90% band; a single noisy run would misstate both the
+  replicates with its replicate band, the median ± 1.28 SD
+  (`fleetcheck::replicate_band()`); a single noisy run would misstate both the
   agreement and the disagreement.
 - **Pooled rates.** Prevalence and incidence are pooled as `sum(cases) /
   sum(person-time)` over each window, never as a mean of per-day ratios.

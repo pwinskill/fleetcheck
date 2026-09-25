@@ -12,6 +12,10 @@
 \alias{EIR_GRID}
 \alias{EIR_REF}
 \alias{PROFILE_EIR}
+\alias{EIR_GRID_PV}
+\alias{EIR_REF_PV}
+\alias{PROFILE_EIR_PV}
+\alias{INT_LABELS_PV}
 \alias{INT_LABELS}
 \alias{TS_LABELS}
 \alias{TS_YEARS}
@@ -33,6 +37,14 @@ An object of class \code{numeric} of length 6.
 An object of class \code{numeric} of length 1.
 
 An object of class \code{numeric} of length 3.
+
+An object of class \code{numeric} of length 5.
+
+An object of class \code{numeric} of length 1.
+
+An object of class \code{numeric} of length 3.
+
+An object of class \code{character} of length 5.
 
 An object of class \code{character} of length 6.
 
@@ -60,6 +72,14 @@ EIR_GRID
 EIR_REF
 
 PROFILE_EIR
+
+EIR_GRID_PV
+
+EIR_REF_PV
+
+PROFILE_EIR_PV
+
+INT_LABELS_PV
 
 INT_LABELS
 
@@ -90,6 +110,9 @@ are skipped when it is absent.}
 \item{\code{PROFILE_EIR}}{the low / reference / high transmission levels that
 shape claims are carried at.}
 \item{\code{INT_LABELS}, \code{TS_LABELS}}{display labels, in display order.}
+\item{\code{EIR_GRID_PV}, \code{EIR_REF_PV}, \code{PROFILE_EIR_PV}, \code{INT_LABELS_PV}}{the
+same for the P. vivax suite, which runs on its own lower grid and without
+chemoprevention or vaccines.}
 \item{\code{TS_YEARS}, \code{TS_NET_EVERY}}{long-horizon programme timings.}
 }
 }

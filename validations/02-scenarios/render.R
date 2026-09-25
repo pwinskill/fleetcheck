@@ -58,8 +58,9 @@ rd <- function(part) read.csv(file.path(DDIR, paste0("rep_", part, ".csv")), str
 eq <- rd("eq"); age <- rd("age"); monthly <- rd("monthly"); doy <- rd("doy"); timing <- rd("timing")
 n_rep <- max(eq$rep)
 ibm_note <- sprintf(paste(
-  "IBM: %d stochastic replicates of %s people, %d-year burn-in; line/point = median, band/bar = median \u00b1 1.28 SD, which is the 10\u201390%% interval read from every replicate rather than from two of them.",
-  "fleet: one deterministic run seeded at equilibrium."), n_rep, format(POP, big.mark = ","), BURN_Y)
+  "Both models start from set_equilibrium()'s seed and run the same %d-year burn-in.",
+  "IBM: %d stochastic replicates of %s people; line or point = median, shaded band or bar = its replicate band, median \u00b1 1.28 SD, the 10\u201390%% interval read from every replicate.",
+  "fleet: one deterministic run."), BURN_Y, n_rep, format(POP, big.mark = ","))
 PREV_LAB <- "LM prevalence, ages 2\u201310"
 CLIN_LAB <- "clinical episodes per child-year, ages 0\u20135"
 
@@ -125,10 +126,12 @@ save_fig(g, "core_eir", width = 10, height = 9)
 ## would not be evidence for any one of them.
 for (i in seq_along(EIR_MET)) {
   m <- EIR_MET[[i]]
-  one <- ps[[i]] + labs(x = "EIR passed to set_equilibrium()") +
-    plot_annotation(caption = cap(ibm_note, fig_width = 6.2), theme = theme_cmp()) &
+  dev <- panel_deviation(filter(ibm_e, metric == m$key), filter(ode_e, metric == m$key), EIR_GRID)
+  one <- (ps[[i]] + labs(x = "EIR passed to set_equilibrium() (bites per adult per year, log scale)")) |
+    dev
+  one <- one + plot_annotation(caption = cap(ibm_note, DEV_NOTE, fig_width = 11), theme = theme_cmp()) &
     theme(legend.position = "top", legend.justification = "left")
-  save_fig(one, paste0("eir_", m$key), width = 6.2, height = 4.4)
+  save_fig(one, paste0("eir_", m$key), width = 11, height = 4.6)
 }
 
 ## ============================================================================
@@ -151,48 +154,7 @@ ap <- age %>% filter(scenario %in% paste0("eir_", age_eirs)) %>%
 lab_a <- c(clin = "clinical episodes per person-year",
            sev = "severe episodes per 1,000 person-years")
 
-## x is the age BAND, not a continuous age. Three reasons, and the last is the
-## important one.
-##  * The bands are unequal -- one year wide in infancy, twenty-five at the top
-##    -- so a continuous axis gives a quarter of its width to the last band.
-##  * On a linear age axis both outcomes are flat and near zero above age 20, so
-##    most of the panel carried no information.
-##  * The criterion is band by band. Drawing bands as bands means the reader
-##    sees exactly what is being tested: is fleet inside the IBM's range HERE.
-panel_outcome <- function(m) {
-  d <- ap %>% rename(y = !!m)
-  bl <- d %>% distinct(age_lo, age_hi) %>% arrange(age_lo)
-  lv <- sprintf("%g-%g", bl$age_lo, bl$age_hi)
-  d$band <- factor(sprintf("%g-%g", d$age_lo, d$age_hi), levels = lv)
-  gi <- d %>% filter(model == "IBM") %>% group_by(eir, band) %>%
-    summarise(mid = replicate_band(y)$centre, lo = replicate_band(y)$lower,
-              hi = replicate_band(y)$upper, .groups = "drop") %>% mutate(model = "IBM")
-  go <- d %>% filter(model == "fleet") %>% transmute(eir, band, mid = y, model = "fleet")
-  ## Bands carrying less than BURDEN_MIN of the outcome are drawn but not
-  ## scored. Shading them keeps the figure and the criterion saying the same
-  ## thing: a reader can see which bands the verdict rests on.
-  untested <- d %>% filter(model == "IBM") %>% group_by(eir, band) %>%
-    summarise(ep = stats::median(y * pop_frac), .groups = "drop") %>%
-    group_by(eir) %>% mutate(share = ep / sum(ep)) %>% ungroup() %>%
-    filter(share < BURDEN_MIN) %>% mutate(x = as.numeric(band))
-  ggplot(mapping = aes(band, mid, colour = model)) +
-    geom_rect(data = untested, inherit.aes = FALSE,
-              aes(xmin = x - 0.5, xmax = x + 0.5, ymin = -Inf, ymax = Inf),
-              fill = MUTED, alpha = 0.10) +
-    geom_linerange(data = gi, aes(ymin = lo, ymax = hi), linewidth = 2.4,
-                   alpha = 0.30, show.legend = FALSE) +
-    geom_line(data = go, aes(group = 1, linetype = model), linewidth = 0.7) +
-    geom_line(data = gi, aes(group = 1, linetype = model), linewidth = 0.7) +
-    geom_point(data = gi, aes(shape = model, fill = model), size = 2, stroke = 0.4) +
-    geom_point(data = go, aes(shape = model, fill = model), size = 2, stroke = 0.4) +
-    facet_wrap(~ eir, nrow = 1, scales = "free_y") +
-    scale_models() + guide_models() +
-    scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.06))) +
-    labs(x = "age band (years)", y = lab_a[[m]]) +
-    theme_cmp() +
-    theme(legend.position = "top", legend.justification = "left",
-          axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.8)))
-}
+## the panel is shared with render_pv.R: panel_outcome() in validations/_shared/theme.R
 
 ## Width follows the number of panels: only some EIR scenarios carry the 12-band
 ## age profile, because it roughly doubles the IBM's rendering cost. Captions are
@@ -200,16 +162,16 @@ panel_outcome <- function(m) {
 ## figure runs off both edges, which is what it did.
 n_ap <- length(age_eirs)
 fw <- 2.0 + 4.0 * n_ap
-band_note <- "Thick bars are the IBM's replicate band, median ± 1.28 SD; fleet is one deterministic run. Shaded bands carry under 5% of the outcome and are not scored -- the claim rests on the unshaded ones. Bands are finer in childhood, so equal spacing here is not equal width in years."
+band_note <- BAND_NOTE
 
-g <- panel_outcome("clin") + plot_annotation(
-  title = "Clinical incidence by age band",
+g <- panel_outcome(ap, "clin", lab_a[["clin"]]) + plot_annotation(
+  title = "P. falciparum: clinical incidence by age band",
   caption = cap(band_note, fig_width = fw),
   theme = theme_cmp())
 save_fig(g, "age_clin", width = fw, height = 4.6)
 
-g <- panel_outcome("sev") + plot_annotation(
-  title = "Severe incidence by age band",
+g <- panel_outcome(ap, "sev", lab_a[["sev"]]) + plot_annotation(
+  title = "P. falciparum: severe incidence by age band",
   subtitle = cap("Severe disease in a narrow age band is the rarest thing either model counts, so the IBM's range is very wide above age 5.", fig_width = fw),
   caption = cap(band_note, fig_width = fw),
   theme = theme_cmp())
@@ -252,7 +214,7 @@ p_struct <- ggplot(pa_b, aes(band, mid, fill = model, colour = model)) +
   geom_col(position = position_dodge(width = 0.72), width = 0.66, linewidth = 0.4) +
   geom_linerange(aes(ymin = lo, ymax = hi), position = position_dodge(width = 0.72),
                  colour = INK, linewidth = 0.5, na.rm = TRUE) +
-  scale_fill_manual(values = c(IBM = "#F3B3A9", fleet = "#B3ADEA"), name = NULL) +
+  scale_fill_manual(values = TINT, name = NULL) +
   scale_colour_manual(values = COL, name = NULL) +
   scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.14))) +
   ## right-aligned and inside the panel: centred on the band it labels, the
@@ -289,7 +251,7 @@ p_dev <- ggplot(dev, aes(band, rel)) +
   scale_fill_manual(values = c(`FALSE` = COL[["fleet"]], `TRUE` = REF)) +
   labs(x = "age band (years)", y = "fleet vs the IBM median (%)",
        title = "Where it sits inside the IBM's own spread",
-       subtitle = cap(sprintf("grey = the IBM replicate band; %d of %d bands inside it",
+       subtitle = cap(sprintf("grey = the IBM replicate band; %d of %d bands inside it, an orange bar outside it",
                               sum(!dev$miss), nrow(dev)), fig_width = 5)) +
   theme_cmp() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.85)))
@@ -419,26 +381,27 @@ if (length(fs)) {
       ## ridge it is meant to show. Keeping log10 keeps the sparse cells visible
       ## (they are real, and the scatter is the point); making them faint stops
       ## them out-shouting the ridge.
-      scale_fill_gradient(low = "#F4F6FE", high = "#171449", transform = "log10",
+      scale_fill_gradient(low = HEX_LOW, high = HEX_HIGH, transform = "log10",
                           name = "sub-site\nmonths",
                           breaks = c(1, 10, 100, 1000, 10000),
                           labels = scales::label_comma()) +
       coord_equal(xlim = c(0, top), ylim = c(0, top), expand = FALSE) +
       labs(title = title,
-           subtitle = sprintf("r = %.2f \u00b7 slope = %.2f\nfleet \u2212 IBM on average: %+.1f%% of the IBM mean", st$cor, st$slope, 100 * st$rel_bias),
+           subtitle = sprintf("r = %.3f \u00b7 slope = %.3f\nfleet \u2212 IBM on average: %+.1f%% of the IBM mean", st$cor, st$slope, 100 * st$rel_bias),
            x = sprintf("IBM (%s)", unit), y = sprintf("fleet (%s)", unit)) +
       theme_cmp() + theme(legend.position = "right", legend.justification = "center",
                           legend.title = element_text(size = rel(0.8), colour = INK2),
                           panel.grid.major = element_blank())
   }
   g <- (hexp(v$ms_clinical, v$fleet_clinical, st_c, "episodes per person-year", "Monthly clinical incidence") |
-        hexp(v$ms_severe, v$fleet_severe, st_s, "episodes per person-year", "Monthly severe incidence")) +
+        hexp(1000 * v$ms_severe, 1000 * v$fleet_severe, st_s, "episodes per 1,000 person-years",
+             "Monthly severe incidence")) +
     plot_annotation(
       title = sprintf("Country site files: %s sub-site-months across %d countries",
                       format(st_c$n, big.mark = ","), length(unique(v$iso3c))),
       subtitle = sprintf("Every P. falciparum admin-1 \u00d7 urban/rural sub-site in the malariaverse site files, %d\u2013%d, with its full intervention history",
                          min(v$year), max(v$year)),
-      caption = cap("Dashed line = perfect agreement. All ages, P. falciparum only on both sides. Cell colour = number of sub-site-months (log scale). IBM values are the site files' own calibration diagnostic runs; fleet was run here from the same site_parameters() lists."),
+      caption = cap("Dashed line = perfect agreement. All ages, P. falciparum only on both sides. Cell colour = number of sub-site-months (log scale); the axes stop at the 99.9th percentile of the values, and r and slope are over all of them. IBM values are the site files' own calibration diagnostic runs; fleet was run here from the same site_parameters() lists."),
       theme = theme_cmp())
   save_fig(g, "core_sites", width = 10, height = 5.4)
 }
@@ -630,6 +593,10 @@ g <- ggplot(both, aes(y = scenario)) +
   geom_linerange(data = filter(both, model == "IBM"), aes(xmin = lo, xmax = hi, colour = model),
                  linewidth = 0.9, alpha = 0.55) +
   geom_point(aes(x = mid, colour = model, shape = model, fill = model), size = 2.8, stroke = 0.6) +
+  ## fleet's triangle filled solid wherever it falls outside the IBM's band --
+  ## the cells the criterion counts
+  geom_point(data = outside_cells(both), aes(x = mid), shape = 17, colour = COL[["fleet"]],
+             size = 2.8) +
   facet_grid(eir ~ metric) +
   scale_models(lines = FALSE) + guide_models() +
   scale_x_continuous(labels = scales::percent, breaks = seq(0, 1, 0.5),
@@ -637,11 +604,12 @@ g <- ggplot(both, aes(y = scenario)) +
                      expand = expansion(mult = 0.02)) +
   scale_y_discrete(limits = rev(unname(INT_LABELS)), expand = expansion(add = 0.7)) +
   coord_cartesian(clip = "off") +
-  labs(title = "Intervention impact: reduction over the first three years, at three transmission levels",
+  labs(title = "P. falciparum: intervention impact over the first three years, at three transmission levels",
        subtitle = cap(paste("Each intervention deployed unchanged at EIR 3, 20 and 120,",
                             "relative to the three pre-deployment years of the same run.",
                             "SMC is run in a seasonal setting, the other five without seasonality.",
-                            "Circle = IBM median with 10\u201390% replicate range; triangle = fleet."),
+                            "Circle = IBM median with its replicate band (median \u00b1 1.28 SD); triangle = fleet,",
+                            "filled solid where it falls outside the band."),
                       width = 128),
        x = "reduction relative to baseline", y = NULL,
        caption = cap(paste("Plotted medians are in int_impact_summary.csv.",

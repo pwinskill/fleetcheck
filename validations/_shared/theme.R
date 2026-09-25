@@ -9,8 +9,9 @@
 #     shape -- so every panel reads in greyscale and under colour-vision
 #     deficiency. Palette validated: indigo/coral pass CVD dE 27 (protan) and
 #     normal-vision dE 38; both >= 3:1 on white.
-#   * The IBM is stochastic. It is drawn as the median of N replicates with a
-#     10-90% envelope at ~15% opacity, never as one noisy realisation.
+#   * The IBM is stochastic. It is drawn as the median of N replicates with its
+#     replicate band (median +/- 1.28 SD) at ~15% opacity, never as one noisy
+#     realisation.
 #   * LAYER ORDER: where the two series overlap -- which, when the models agree,
 #     is everywhere -- the mark that hides less goes on top. So the IBM's dashed
 #     median draws OVER fleet's solid line (the solid shows through the gaps, so
@@ -37,6 +38,10 @@ INK   <- "#111827"; INK2 <- "#52514E"; MUTED <- "#898781"
 ## pale fills, and against the deep indigo core the opposed hue does the work.
 REF   <- "#D94801"
 GRID  <- "#E5E7EB"; AXIS <- "#C9CCD1"; SURFACE <- "#FFFFFF"
+## light tints of the two series, for bars, and the site-file hexbins' ramp:
+## near-white at the sparse end so the 1:1 ridge carries the ink
+TINT <- c(IBM = "#F3B3A9", fleet = "#B3ADEA")
+HEX_LOW <- "#F4F6FE"; HEX_HIGH <- "#171449"
 ENV_ALPHA <- 0.16                                 # IBM envelope wash
 
 FONT <- if ("Segoe UI" %in% systemfonts::system_fonts()$family) "Segoe UI" else "sans"
@@ -71,10 +76,14 @@ theme_cmp <- function(base_size = 13) {
 }
 
 ## series scales -- every panel that draws both models uses exactly these
+## fleet's point is hollow -- filled with the surface -- so where it sits on the
+## IBM's filled one both read, as the layer-order rule above intends; the fill
+## joins the legend so its keys show the markers the panels draw
 scale_models <- function(shapes = TRUE, lines = TRUE) {
   s <- list(scale_colour_manual(values = COL, breaks = c("IBM", "fleet")),
-            scale_fill_manual(values = COL, breaks = c("IBM", "fleet"), guide = "none"),
-            labs(colour = NULL, linetype = NULL, shape = NULL))
+            scale_fill_manual(values = c(IBM = COL[["IBM"]], fleet = SURFACE),
+                              breaks = c("IBM", "fleet")),
+            labs(colour = NULL, linetype = NULL, shape = NULL, fill = NULL))
   if (lines)  s <- c(s, list(scale_linetype_manual(values = LTY, breaks = c("IBM", "fleet"))))
   if (shapes) s <- c(s, list(scale_shape_manual(values = SHP, breaks = c("IBM", "fleet"))))
   s
@@ -107,6 +116,91 @@ envelope <- function(d, by, value = "y") {
   out$model <- "IBM"
   out
 }
+
+## ---- shared claim panels ------------------------------------------------------
+## The age-profile panel both parasites' age-profile claims rest on. x is the age
+## BAND, not a continuous age, for three reasons, and the last is the important
+## one. The bands are unequal -- one year wide in infancy, twenty-five at the top
+## -- so a continuous axis gives a quarter of its width to the last band. On a
+## linear age axis both outcomes are flat and near zero above age 20, so most of
+## the panel carried no information. And the criterion is band by band: drawing
+## bands as bands means the reader sees exactly what is being tested, whether
+## fleet is inside the IBM's range HERE. Bands carrying less than BURDEN_MIN of
+## the outcome are drawn but not scored, and shaded, so the figure and the
+## criterion say the same thing.
+## `ap` has one row per model, replicate, transmission level (`eir`, a factor)
+## and age band (`age_lo`, `age_hi`, `pop_frac`), and the outcome column `m`.
+panel_outcome <- function(ap, m, ylab) {
+  d <- dplyr::rename(ap, y = !!m)
+  bl <- dplyr::arrange(dplyr::distinct(d, age_lo, age_hi), age_lo)
+  lv <- sprintf("%g-%g", bl$age_lo, bl$age_hi)
+  d$band <- factor(sprintf("%g-%g", d$age_lo, d$age_hi), levels = lv)
+  gi <- d[d$model == "IBM", ] |> dplyr::group_by(eir, band) |>
+    dplyr::summarise(mid = replicate_band(y)$centre, lo = replicate_band(y)$lower,
+                     hi = replicate_band(y)$upper, .groups = "drop") |>
+    dplyr::mutate(model = "IBM")
+  go <- d[d$model == "fleet", ] |> dplyr::transmute(eir, band, mid = y, model = "fleet")
+  untested <- d[d$model == "IBM", ] |> dplyr::group_by(eir, band) |>
+    dplyr::summarise(ep = stats::median(y * pop_frac), .groups = "drop") |>
+    dplyr::group_by(eir) |> dplyr::mutate(share = ep / sum(ep)) |> dplyr::ungroup() |>
+    dplyr::filter(share < BURDEN_MIN) |> dplyr::mutate(x = as.numeric(band))
+  ggplot(mapping = aes(band, mid, colour = model)) +
+    geom_rect(data = untested, inherit.aes = FALSE,
+              aes(xmin = x - 0.5, xmax = x + 0.5, ymin = -Inf, ymax = Inf),
+              fill = MUTED, alpha = 0.10) +
+    geom_linerange(data = gi, aes(ymin = lo, ymax = hi), linewidth = 2.4,
+                   alpha = 0.30, show.legend = FALSE) +
+    geom_line(data = go, aes(group = 1, linetype = model), linewidth = 0.7) +
+    geom_line(data = gi, aes(group = 1, linetype = model), linewidth = 0.7) +
+    geom_point(data = gi, aes(shape = model, fill = model), size = 2, stroke = 0.4) +
+    geom_point(data = go, aes(shape = model, fill = model), size = 2, stroke = 0.4) +
+    facet_wrap(~ eir, nrow = 1, scales = "free_y") +
+    scale_models() + guide_models() +
+    scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.06))) +
+    labs(x = "age band (years)", y = ylab) +
+    theme_cmp() +
+    theme(legend.position = "top", legend.justification = "left",
+          axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.8)))
+}
+BAND_NOTE <- paste("Thick bars are the IBM's replicate band, median \u00b1 1.28 SD; fleet is one",
+                   "deterministic run. Shaded bands carry under 5% of the outcome and are not",
+                   "scored -- the claim rests on the unshaded ones. Bands are finer in",
+                   "childhood, so equal spacing here is not equal width in years.")
+
+## The test itself, beside a curve that cannot show it: fleet against the IBM
+## median at each EIR, with the IBM's own replicate band as the tolerance. A
+## hollow triangle inside the grey passes; a solid one outside misses.
+panel_deviation <- function(gi, go, breaks) {
+  d <- merge(gi[, c("init_EIR", "mid", "lo", "hi")],
+             setNames(go[, c("init_EIR", "mid")], c("init_EIR", "fleet")), by = "init_EIR")
+  d$rel <- 100 * (d$fleet / d$mid - 1)
+  d$lo_r <- 100 * (d$lo / d$mid - 1); d$hi_r <- 100 * (d$hi / d$mid - 1)
+  d$where <- factor(ifelse(d$fleet < d$lo | d$fleet > d$hi, "outside", "inside"),
+                    levels = c("inside", "outside"))
+  ggplot(d, aes(init_EIR)) +
+    geom_linerange(aes(ymin = lo_r, ymax = hi_r), colour = MUTED, alpha = 0.35,
+                   linewidth = 7) +
+    geom_hline(yintercept = 0, colour = AXIS, linewidth = 0.5) +
+    geom_point(aes(y = rel, shape = where), colour = COL[["fleet"]], fill = SURFACE,
+               size = 2.6, stroke = 0.6, show.legend = TRUE) +
+    scale_shape_manual(values = c(inside = 24, outside = 17), drop = FALSE,
+                       labels = c(inside = "fleet inside the band", outside = "fleet outside it"),
+                       name = NULL) +
+    scale_x_log10(breaks = breaks, labels = scales::label_number(drop0trailing = TRUE),
+                  minor_breaks = NULL) +
+    labs(x = "EIR passed to set_equilibrium() (bites per adult per year, log scale)",
+         y = "fleet vs the IBM median (%)") +
+    theme_cmp()
+}
+## the impact figures' fleet rows that fall outside the IBM's band in their cell
+outside_cells <- function(both) {
+  ibm <- both[both$model == "IBM", c("scenario", "eir", "metric", "lo", "hi")]
+  fl <- merge(both[both$model == "fleet", c("scenario", "eir", "metric", "mid")], ibm,
+              by = c("scenario", "eir", "metric"))
+  fl[fl$mid < fl$lo | fl$mid > fl$hi, ]
+}
+DEV_NOTE <- paste("Right: fleet as a percentage of the IBM median; grey = the IBM's replicate band",
+                  "at each EIR, the tolerance the claim is decided on.")
 
 ## save to BOTH homes: man/figures (README, GitHub) and vignettes (pkgdown article)
 save_fig <- function(g, name, width, height, dpi = 200) {

@@ -1,0 +1,119 @@
+{
+  "generated": "2026-09-25T11:35:47+0100",
+  "fleet": "0.0.0.9003",
+  "malariasimulation": "3.0.0",
+  "years": 30,
+  "runs": [
+    {
+      "init_EIR": 0.3,
+      "immunity_spread": true,
+      "pvpr_2_10": {
+        "seed": 0.01434552,
+        "max_excursion": 0.20670637,
+        "final_departure": 0.14155489,
+        "last_five_year_range": 0.00268599
+      },
+      "clinical_all": {
+        "seed": 0.00061979,
+        "max_excursion": 0.22685433,
+        "final_departure": 0.15476954,
+        "last_five_year_range": 0.00262419
+      },
+      "realised_EIR": {
+        "seed": 0.30067583,
+        "max_excursion": 0.24410553,
+        "final_departure": 0.17012197,
+        "last_five_year_range": 0.00191909
+      }
+    },
+    {
+      "init_EIR": 1,
+      "immunity_spread": true,
+      "pvpr_2_10": {
+        "seed": 0.04048483,
+        "max_excursion": 0.13070346,
+        "final_departure": 0.09016245,
+        "last_five_year_range": 0.00083011
+      },
+      "clinical_all": {
+        "seed": 0.00111538,
+        "max_excursion": 0.21524842,
+        "final_departure": 0.17023038,
+        "last_five_year_range": 0.00116285
+      },
+      "realised_EIR": {
+        "seed": 1.00186314,
+        "max_excursion": 0.17697993,
+        "final_departure": 0.12996183,
+        "last_five_year_range": 0.00099569
+      }
+    },
+    {
+      "init_EIR": 3,
+      "immunity_spread": true,
+      "pvpr_2_10": {
+        "seed": 0.08880436,
+        "max_excursion": 0.06636068,
+        "final_departure": 0.05106474,
+        "last_five_year_range": 0.0000743
+      },
+      "clinical_all": {
+        "seed": 0.0015304,
+        "max_excursion": 0.21353177,
+        "final_departure": 0.21350768,
+        "last_five_year_range": 0.00031032
+      },
+      "realised_EIR": {
+        "seed": 3.00478856,
+        "max_excursion": 0.10084756,
+        "final_departure": 0.08753803,
+        "last_five_year_range": 0.00011917
+      }
+    },
+    {
+      "init_EIR": 10,
+      "immunity_spread": true,
+      "pvpr_2_10": {
+        "seed": 0.17019534,
+        "max_excursion": 0.02748646,
+        "final_departure": 0.02244707,
+        "last_five_year_range": 0.0000134
+      },
+      "clinical_all": {
+        "seed": 0.00195991,
+        "max_excursion": 0.20723348,
+        "final_departure": 0.20720581,
+        "last_five_year_range": 0.00030278
+      },
+      "realised_EIR": {
+        "seed": 10.01300251,
+        "max_excursion": 0.0458846,
+        "final_departure": 0.04420526,
+        "last_five_year_range": 0.00004711
+      }
+    }
+  ],
+  "no_spread_control": {
+    "init_EIR": 3,
+    "immunity_spread": false,
+    "pvpr_2_10": {
+      "seed": 0.08890834,
+      "max_excursion": 0.01297972,
+      "final_departure": -0.00656976,
+      "last_five_year_range": 0.0000206
+    },
+    "clinical_all": {
+      "seed": 0.00155936,
+      "max_excursion": 0.01521073,
+      "final_departure": 0.00272343,
+      "last_five_year_range": 0.00006847
+    },
+    "realised_EIR": {
+      "seed": 3.00594599,
+      "max_excursion": 0.01864467,
+      "final_departure": 0.00223082,
+      "last_five_year_range": 0.00003504
+    }
+  },
+  "worst_last_five_year_range": 0.00268599
+}

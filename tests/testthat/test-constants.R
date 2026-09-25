@@ -64,6 +64,39 @@ test_that("badges_md reports the register it was given", {
   expect_true(any(grepl("o/r/actions/workflows/check.yaml", b, fixed = TRUE)))
 })
 
+test_that("badges_md gives vivax its own badge, and keeps it off falciparum's", {
+  cl <- read_claims(write_register(
+    list(id = "a"), list(id = "b"),
+    list(id = "v1", parasite = "vivax", status = "fail")))
+  b <- badges_md(cl, repo = "o/r", site = "https://example.org/")
+  expect_length(b, 6L)
+  pf <- b[grepl("^\\[!\\[Falciparum claims:", b)]
+  pv <- b[grepl("^\\[!\\[Vivax claims:", b)]
+  expect_length(pf, 1L); expect_length(pv, 1L)
+  # the vivax failure turns the vivax badge amber and leaves falciparum green
+  expect_true(grepl("2%20pass-brightgreen.svg", pf, fixed = TRUE))
+  expect_true(grepl("0%20pass%2C%201%20fail-orange.svg", pv, fixed = TRUE))
+  # a register with no vivax claims has no vivax badge
+  expect_false(any(grepl("Vivax", badges_md(read_claims(write_register(list(id = "a"))),
+                                            repo = "o/r", site = "https://example.org/"))))
+})
+
+test_that("read_claims knows only the two parasites", {
+  expect_equal(read_claims(write_register(list(id = "a")))$parasite, "falciparum")
+  expect_error(read_claims(write_register(list(id = "a", parasite = "ovale"))),
+               "unknown parasite")
+})
+
+test_that("the vivax grid is its own, and names its interventions the same way", {
+  expect_true(EIR_REF_PV %in% PROFILE_EIR_PV)
+  expect_true(all(PROFILE_EIR_PV %in% EIR_GRID_PV))
+  expect_equal(int_scenario("nets", PROFILE_EIR_PV, ref = EIR_REF_PV),
+               c("nets_e1", "nets", "nets_e10"))
+  expect_equal(int_parts(c("nets_e1", "nets"), ref = EIR_REF_PV)$eir, c(1, EIR_REF_PV))
+  # no chemoprevention or vaccine: malariasimulation cannot run them under vivax
+  expect_false(any(c("smc", "pmc", "pev") %in% names(INT_LABELS_PV)))
+})
+
 test_that("badges_md goes green only when nothing is outstanding", {
   green <- badges_md(read_claims(write_register(list(id = "a"), list(id = "b"))),
                      repo = "o/r", site = "https://example.org/")

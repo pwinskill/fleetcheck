@@ -14,13 +14,15 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
 # counts quoted in the prose below are read from the register, never typed:
 # this article once said two claims were failing after one had been fixed
-claims <- fleetcheck::read_claims(
+# the source register when the article is built from the source tree, so a
+# register edited without regenerating inst/claims.yml cannot publish stale
+# verdicts; the installed copy otherwise
+claims <- fleetcheck::read_claims(if (file.exists("../claims.yml")) "../claims.yml" else
   system.file("claims.yml", package = "fleetcheck"))
-if (!nrow(claims)) claims <- fleetcheck::read_claims("../claims.yml")
 n_fail <- sum(claims$status == "fail")
 n_band <- sum(grepl("replicate band", claims$criterion, fixed = TRUE))
-eng <- function(n) c("no", "one", "two", "three", "four", "five", "six",
-                     "seven", "eight", "nine", "ten")[n + 1L]
+eng <- function(n) if (n <= 10) c("no", "one", "two", "three", "four", "five", "six",
+                                  "seven", "eight", "nine", "ten")[n + 1L] else format(n)
 ```
 
 ## What this measures, and what it does not
@@ -95,10 +97,10 @@ re-run cannot quietly store full precision again.
 ## Reproducing a claim
 
 ```r
-# tier 1, seconds
+# tier 1, a few minutes (both parasites)
 Rscript validations/01-seed-stability/run.R
 
-# fleet against the committed IBM rows, under a minute
+# fleet against the committed IBM rows, minutes
 Rscript validations/02-scenarios/assess.R
 
 # tier 2, about two hours on ten cores
@@ -106,7 +108,24 @@ Rscript validations/02-scenarios/run.R
 
 # a few-minute end-to-end check of the same path
 CMP_SMOKE=1 Rscript validations/02-scenarios/run.R
+
+# the P. vivax suite: the same scripts, results in results/pv/
+CMP_PARASITE=pv Rscript validations/02-scenarios/run.R
+CMP_PARASITE=pv Rscript validations/02-scenarios/assess.R
+Rscript validations/02-scenarios/tables_pv.R
+Rscript validations/02-scenarios/render_pv.R
+
+# tier 3, which needs the restricted site files
+FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
+FLEET_VALIDATE=/path/to/site-files CMP_PARASITE=pv Rscript validations/03-real-settings/run.R
 ```
+
+The vivax suite runs on its own transmission grid (EIR 0.3 to 30, where
+falciparum's is 1 to 120), without SMC, PMC or RTS,S -- `malariasimulation`
+cannot run chemoprevention under vivax, and its vaccines carry no vivax
+calibration -- and with radical cure in their place. A vivax run of `fleet`
+costs about twenty times a falciparum one, so tier 3 represents each country by
+at most ten sub-sites, spread evenly across its vivax EIR range.
 
 The register itself is data, so it can be queried rather than read:
 

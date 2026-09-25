@@ -104,8 +104,13 @@ test_that("the shared files get their own project symbols from the package", {
   for (nm in names(shared)) {
     s <- shared[[nm]]
     from <- sourced_shared(shared_files[basename(shared_files) == nm])
+    ## A shared file sourced BY another shared file runs inside it and sees what
+    ## that file defined: scenarios_pf.R and scenarios_pv.R are included by
+    ## scenarios.R and build on its set_bands(). Their parents count as sources.
+    parents <- names(shared)[vapply(shared_files, function(f)
+      nm %in% sourced_shared(f), logical(1))]
     available <- unique(c(pkg, s$defines,
-                          unlist(lapply(shared[from], `[[`, "defines"))))
+                          unlist(lapply(shared[c(from, parents)], `[[`, "defines"))))
     expect_equal(setdiff(intersect(s$uses, universe), available), character(0),
                  info = nm)
   }

@@ -34,6 +34,9 @@
 #'   \item{`PROFILE_EIR`}{the low / reference / high transmission levels that
 #'     shape claims are carried at.}
 #'   \item{`INT_LABELS`, `TS_LABELS`}{display labels, in display order.}
+#'   \item{`EIR_GRID_PV`, `EIR_REF_PV`, `PROFILE_EIR_PV`, `INT_LABELS_PV`}{the
+#'     same for the P. vivax suite, which runs on its own lower grid and without
+#'     chemoprevention or vaccines.}
 #'   \item{`TS_YEARS`, `TS_NET_EVERY`}{long-horizon programme timings.}
 #' }
 #'
@@ -101,7 +104,7 @@ PROFILE_EIR <- c(3, EIR_REF, 120)
 #' int_scenario("nets", PROFILE_EIR)
 #' int_parts(c("nets", "nets_e3", "nets_e120"))
 #' @export
-int_scenario <- function(intervention, eir) {
+int_scenario <- function(intervention, eir, ref = EIR_REF) {
   ## Recycle explicitly. ifelse() returns the shape of its TEST, so with a
   ## vector of interventions and one EIR it silently returns a single name --
   ## and the renderer then drew one intervention where it meant six, without
@@ -110,18 +113,44 @@ int_scenario <- function(intervention, eir) {
   n <- max(length(intervention), length(eir))
   intervention <- rep_len(intervention, n)
   eir <- rep_len(eir, n)
-  ifelse(eir == EIR_REF, intervention, paste0(intervention, "_e", eir))
+  ifelse(eir == ref, intervention, paste0(intervention, "_e", eir))
 }
 
 #' @rdname int_scenario
+#' @param ref the reference EIR whose runs carry the bare name: [EIR_REF] for
+#'   the falciparum suite, [EIR_REF_PV] for the vivax one.
 #' @export
-int_parts <- function(scenario) {
+int_parts <- function(scenario, ref = EIR_REF) {
   has <- grepl("_e[0-9.]+$", scenario)
   data.frame(intervention = sub("_e[0-9.]+$", "", scenario),
              eir = ifelse(has, suppressWarnings(as.numeric(sub("^.*_e", "", scenario))),
-                          EIR_REF),
+                          ref),
              stringsAsFactors = FALSE)
 }
+
+## ---- the P. vivax suite (CMP_PARASITE=pv) -------------------------------------
+## Its own grid, because vivax transmission lives lower: at EIR 0.3, 1, 3, 10 and
+## 30 fleet's LM prevalence in 2-10 year olds is about 1%, 4%, 9%, 17% and 26%,
+## which spans the site files' calibrated vivax EIRs (0.1-4.5) and goes on to the
+## high end. No SMC, PMC or vaccine: malariasimulation cannot run chemoprevention
+## under vivax, and its vaccines carry no vivax calibration.
+#' @rdname scenario-constants
+#' @export
+EIR_GRID_PV <- c(0.3, 1, 3, 10, 30)
+#' @rdname scenario-constants
+#' @export
+EIR_REF_PV <- 3
+#' @rdname scenario-constants
+#' @export
+PROFILE_EIR_PV <- c(1, EIR_REF_PV, 10)
+#' @rdname scenario-constants
+#' @export
+INT_LABELS_PV <- c(
+  treatment   = "Treatment scale-up\nchloroquine, 20% → 60% of cases",
+  primaquine  = "Radical cure\nCQ + primaquine at 60%",
+  tafenoquine = "Radical cure\nCQ + tafenoquine at 60%",
+  irs         = "Indoor residual spraying\n80% coverage, annual",
+  nets        = "Bed-net campaign\n80% coverage, one round")
 
 ## intervention scenario labels, in display order (highest expected impact last)
 #' @rdname scenario-constants

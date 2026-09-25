@@ -19,3 +19,4 @@ Suggests: knitr, rmarkdown, testthat (>= 3.0.0), withr, pkgload, codetools,
     jsonlite, fleet, malariasimulation, postie, ggplot2, png
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Config/Needs/website: png
