@@ -35,7 +35,13 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../index.html">Overview</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/evidence.html">Evidence</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-evidence" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Evidence</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-evidence">
+<li><a class="dropdown-item" href="../articles/evidence.html">P. falciparum</a></li>
+    <li><a class="dropdown-item" href="../articles/evidence-vivax.html">P. vivax</a></li>
+  </ul>
+</li>
 <li class="active nav-item"><a class="nav-link" href="../articles/methods.html">How it is produced</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul>
@@ -83,7 +89,7 @@ reproduces its biases too.</p>
 </h2>
 <p>The unit is a claim, not a scenario. Each one carries the criterion
 that decides it and a verdict, so a reader meets a decision rather than
-a number to interpret. A claim can fail, and no currently do.</p>
+a number to interpret. A claim can fail, and two currently do.</p>
 <p>A criterion drawn from the mechanism is worth more than one drawn
 from the result. <em>Inside the IBM replicate band</em>, because that
 band is the noise floor a deterministic model ought to land inside; not
@@ -103,20 +109,12 @@ anywhere in the project, unit-tested. <code><a href="../reference/agreement.html
 of 1 with a positive bias is a constant offset while a slope above 1
 with no bias is a fan, and quoting one of them alone hides which you
 have. <code><a href="../reference/band_summary.html">band_summary()</a></code> answers “inside the IBM replicate
-band”, which is the criterion eight claims in the register are decided
+band”, which is the criterion 16 claims in the register are decided
 by.</p>
-<p>This is not ceremony. <code>fleet</code>’s own documentation once
-carried two independent derivations of the same immunity figures, in two
-different articles, and both were wrong by 20 to 35%.</p>
-<p>It was not true when it was first written here, either. The scripts
-each carried their own copy: the site-file correlation was computed once
-in <code>render.R</code> for the figure and again in
-<code>tables.R</code> for the table, and the two had already drifted in
-naming — one called the mean relative difference <code>bias</code> and
-the other <code>rel_bias</code> — while <code><a href="../reference/agreement.html">agreement()</a></code> sat in
-the package unused. They call it now, and the numbers it returns are
-identical to six significant figures, which is how the change was
-checked.</p>
+<p>So the figure and the table built from the same results cannot
+disagree: the site-file correlation in <code>render.R</code>’s figure
+and in <code>tables.R</code>’s table both come from
+<code><a href="../reference/agreement.html">agreement()</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="provenance">Provenance<a class="anchor" aria-label="anchor" href="#provenance"></a>
@@ -127,16 +125,13 @@ installed from, the R version, the platform, the date, and whatever the
 run wants to add. A package installed from a local source tree has no
 commit to record and the field is <code>null</code>; <code>Built</code>
 is recorded beside it so that case still says when and on what.</p>
-<p>It exists because the provenance used to be inverted. The 25-minute
-comparison recorded the IBM version, the replicate count and a digest of
-the scenario definitions; the seven-hour site-file run, which nobody can
-repeat, recorded a date and a version of <code>fleet</code>. The tier
-that cannot be re-run is the tier that most needs to say what made
-it.</p>
-<p>The site-file snapshot carries two of these and they are not
-interchangeable. <code>run</code> is the seven-hour comparison — the
+<p>The tier that is hardest to re-run is the one that most needs to say
+what made it, so the site-file statistics also record the age grid and
+the mosquito sub-step count they were measured at.</p>
+<p>The site-file snapshot carries two stamps and they are not
+interchangeable. <code>run</code> is the site-file sweep — the
 <code>fleet</code> version its per-country results were produced at —
-and is only changed when that run is actually repeated.
+and is only changed when that sweep is actually repeated.
 <code>summarised</code> is the seconds-long pass that turns those
 results into the four numbers on this site, and can happen at any later
 version. A single stamp would report today’s <code>fleet</code> over
@@ -146,30 +141,45 @@ numbers from months ago.</p>
 <h2 id="stored-precision">Stored precision<a class="anchor" aria-label="anchor" href="#stored-precision"></a>
 </h2>
 <p>Simulation output is quoted to three or four significant figures
-wherever it is reported, and was stored at fifteen. <code>run.R</code>
-rounds to six as it writes, which takes <code>rep_monthly.csv</code>
-from 19.0 MB to 10.8 MB with nothing lost that anyone reads.</p>
-<p>One file keeps full precision: <code>rep_eq.csv</code>, which the
-drift check asserts against at 1e-6, and which is 46 KB.</p>
-<p>The rounding is applied at the point of writing rather than
-afterwards because it was applied afterwards once. The next run of
-<code>run.R</code> wrote full precision again,
-<code>rep_monthly.csv</code> went back to 19 MB, and the commit went in
-without anything noticing. A rule about stored precision has to live in
-the code that stores it, which is what <code><a href="../reference/round_sig.html">round_sig()</a></code> is
-for.</p>
+wherever it is reported. <code>run.R</code> rounds the stored summaries
+to six as it writes, with nothing lost that anyone reads. One file keeps
+full precision: <code>rep_eq.csv</code>, which the drift check asserts
+against at 1e-6.</p>
+<p>The rounding lives in the code that writes the files,
+<code><a href="../reference/round_sig.html">round_sig()</a></code>, so a re-run cannot quietly store full
+precision again.</p>
 </div>
 <div class="section level2">
 <h2 id="reproducing-a-claim">Reproducing a claim<a class="anchor" aria-label="anchor" href="#reproducing-a-claim"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># tier 0 and 1, seconds to minutes, no special hardware</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>assess.R</span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># tier 1, a few minutes (both parasites)</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">01</span><span class="sc">-</span>seed<span class="sc">-</span>stability<span class="sc">/</span>run.R</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># tier 2, about two hours on ten cores</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># fleet against the committed IBM rows, minutes</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>assess.R</span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># a few-minute end-to-end check of the same path</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>CMP_SMOKE<span class="ot">=</span><span class="dv">1</span> Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span></code></pre></div>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># tier 2, about two hours on ten cores</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co"># a few-minute end-to-end check of the same path</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>CMP_SMOKE<span class="ot">=</span><span class="dv">1</span> Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co"># the P. vivax suite: the same scripts, results in results/pv/</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>assess.R</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>tables_pv.R</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>render_pv.R</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co"># tier 3, which needs the restricted site files</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>FLEET_VALIDATE<span class="ot">=</span><span class="er">/</span>path<span class="sc">/</span>to<span class="sc">/</span>site<span class="sc">-</span>files Rscript validations<span class="sc">/</span><span class="dv">03</span><span class="sc">-</span>real<span class="sc">-</span>settings<span class="sc">/</span>run.R</span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>FLEET_VALIDATE<span class="ot">=</span><span class="er">/</span>path<span class="sc">/</span>to<span class="sc">/</span>site<span class="sc">-</span>files CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">03</span><span class="sc">-</span>real<span class="sc">-</span>settings<span class="sc">/</span>run.R</span></code></pre></div>
+<p>The vivax suite runs on its own transmission grid (EIR 0.3 to 30,
+where falciparum’s is 1 to 120), without SMC, PMC or RTS,S –
+<code>malariasimulation</code> cannot run chemoprevention under vivax,
+and its vaccines carry no vivax calibration – and with radical cure in
+their place. A vivax run of <code>fleet</code> costs about twenty times
+a falciparum one, so tier 3 represents each country by at most ten
+sub-sites, spread evenly across its vivax EIR range.</p>
 <p>The register itself is data, so it can be queried rather than
 read:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">

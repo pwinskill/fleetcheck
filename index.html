@@ -16,9 +16,9 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><script src="extra.js"></script><meta property="og:title" content="fleetcheck • does fleet reproduce malariasimulation?">
-<meta name="description" content="A register of claims about how closely the fleet mean-field model reproduces the malariasimulation individual-based model of Plasmodium falciparum malaria, each with the criterion that decides it, the number measured against it, and a verdict.
+<meta name="description" content="A register of claims about how closely the fleet mean-field model reproduces the malariasimulation individual-based model of Plasmodium falciparum and P. vivax malaria, each with the criterion that decides it, the number measured against it, and a verdict.
 ">
-<meta property="og:description" content="A register of claims about how closely the fleet mean-field model reproduces the malariasimulation individual-based model of Plasmodium falciparum malaria, each with the criterion that decides it, the number measured against it, and a verdict.
+<meta property="og:description" content="A register of claims about how closely the fleet mean-field model reproduces the malariasimulation individual-based model of Plasmodium falciparum and P. vivax malaria, each with the criterion that decides it, the number measured against it, and a verdict.
 ">
 <meta property="og:image" content="https://pwinskill.github.io/fleetcheck/logo.png">
 </head>
@@ -40,7 +40,13 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="index.html">Overview</a></li>
-<li class="nav-item"><a class="nav-link" href="articles/evidence.html">Evidence</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-evidence" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Evidence</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-evidence">
+<li><a class="dropdown-item" href="articles/evidence.html">P. falciparum</a></li>
+    <li><a class="dropdown-item" href="articles/evidence-vivax.html">P. vivax</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="articles/methods.html">How it is produced</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
       </ul>
@@ -62,7 +68,7 @@
 </h1>
 </div>
 <!-- BEGIN badges -->
-<p><a href="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg" alt="check"></a> <a href="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a> <a href="articles/evidence.html"><img src="https://img.shields.io/badge/claims-11%20pass-brightgreen.svg" alt="Claims: 11 pass"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://github.com/pwinskill/fleetcheck/blob/main/LICENSE" class="external-link"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a></p>
+<p><a href="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg" alt="check"></a> <a href="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a> <a href="articles/evidence.html"><img src="https://img.shields.io/badge/falciparum%20claims-11%20pass-brightgreen.svg" alt="Falciparum claims: 11 pass"></a> <a href="articles/evidence-vivax.html"><img src="https://img.shields.io/badge/vivax%20claims-8%20pass%2C%202%20fail-orange.svg" alt="Vivax claims: 8 pass, 2 fail"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://github.com/pwinskill/fleetcheck/blob/main/LICENSE" class="external-link"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a></p>
 <!-- END badges -->
 <blockquote>
 <p>How closely does <a href="https://github.com/pwinskill/fleet" class="external-link"><code>fleet</code></a> reproduce <a href="https://github.com/mrc-ide/malariasimulation" class="external-link"><code>malariasimulation</code></a>?</p>
@@ -73,6 +79,10 @@
 </h2>
 <p>Every claim <code>fleet</code> makes about agreeing with the IBM lives in <a href="https://github.com/pwinskill/fleetcheck/blob/main/claims.yml" class="external-link"><code>claims.yml</code></a>, with the criterion that decides it, the measured value, and a verdict. The register is the point of the repository: a reader should meet the verdict before the figures, not be left to infer it from a wall of plots.</p>
 <!-- BEGIN scoreboard -->
+<div class="section level3">
+<h3 id="p-falciparum">
+<em>P. falciparum</em><a class="anchor" aria-label="anchor" href="#p-falciparum"></a>
+</h3>
 <p><strong>11 claims — 0 failing, 0 untested, 0 open, 11 pass.</strong></p>
 <ol style="list-style-type: decimal">
 <li>
@@ -98,11 +108,40 @@
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence.html#seed-stability"><code>seed-stability</code></a> — An undisturbed run holds the equilibrium it was seeded at.</li>
 </ol>
-<!-- END scoreboard --><p>The criterion each claim was judged against, the number measured against it, and the figure it rests on are on the <a href="articles/evidence.html">evidence page</a>, one section per claim.</p>
+</div>
+<div class="section level3">
+<h3 id="p-vivax">
+<em>P. vivax</em><a class="anchor" aria-label="anchor" href="#p-vivax"></a>
+</h3>
+<p><strong>10 claims — 2 failing, 0 untested, 0 open, 8 pass.</strong></p>
+<ol style="list-style-type: decimal">
+<li>
+<span class="verdict pass">pass</span> <a href="articles/evidence-vivax.html#prevalence-eir-pv"><code>prevalence-eir-pv</code></a> — LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.</li>
+<li>
+<span class="verdict pass">pass</span> <a href="articles/evidence-vivax.html#clinical-allage-eir-pv"><code>clinical-allage-eir-pv</code></a> — All-age clinical incidence tracks the IBM across transmission intensity.</li>
+<li>
+<span class="verdict pass">pass</span> <a href="articles/evidence-vivax.html#clinical-under5-eir-pv"><code>clinical-under5-eir-pv</code></a> — Under-5 clinical incidence tracks the IBM across transmission intensity.</li>
+<li>
+<span class="verdict pass">pass</span> <a href="articles/evidence-vivax.html#relapse-allage-eir-pv"><code>relapse-allage-eir-pv</code></a> — All-age relapse incidence tracks the IBM across transmission intensity.</li>
+<li>
+<span class="verdict pass">pass</span> <a href="articles/evidence-vivax.html#hypnozoite-carriage-eir-pv"><code>hypnozoite-carriage-eir-pv</code></a> — The share of people carrying hypnozoites tracks the IBM across transmission intensity.</li>
+<li>
+<span class="verdict pass">pass</span> <a href="articles/evidence-vivax.html#age-profile-clinical-pv"><code>age-profile-clinical-pv</code></a> — The age distribution of clinical incidence tracks the IBM.</li>
+<li>
+<span class="verdict fail">FAIL</span> <a href="articles/evidence-vivax.html#intervention-impact-pv"><code>intervention-impact-pv</code></a> — The modelled impact of each intervention, radical cure included, matches the IBM.</li>
+<li>
+<span class="verdict pass">pass</span> <a href="articles/evidence-vivax.html#population-age-structure-pv"><code>population-age-structure-pv</code></a> — The population age structure matches the IBM’s.</li>
+<li>
+<span class="verdict fail">FAIL</span> <a href="articles/evidence-vivax.html#speed-pv"><code>speed-pv</code></a> — fleet is fast enough to be worth using in place of the IBM.</li>
+<li>
+<span class="verdict pass">pass</span> <a href="articles/evidence-vivax.html#seed-stability-pv"><code>seed-stability-pv</code></a> — An undisturbed run settles to a steady state, off the equilibrium it was seeded at, as the IBM’s does.</li>
+</ol>
+<!-- END scoreboard --><p>The criterion each claim was judged against, the number measured against it, and the figure it rests on are on the evidence pages, one for <a href="articles/evidence.html"><em>P. falciparum</em></a> and one for <a href="articles/evidence-vivax.html"><em>P. vivax</em></a>, with one section per claim.</p>
 <p>Regenerated from <a href="https://github.com/pwinskill/fleetcheck/blob/main/claims.yml" class="external-link"><code>claims.yml</code></a> by <code>report/make_scoreboard.R</code>; CI fails if it is stale. From R, <code><a href="reference/scoreboard.html">fleetcheck::scoreboard()</a></code> and <code><a href="reference/read_claims.html">fleetcheck::read_claims()</a></code> give the same thing as data rather than as a page.</p>
 <p><code><a href="reference/check_claims.html">check_claims()</a></code> fails in CI on anything failing that is not listed in <code>allow_fail</code>, and an <code>allow_fail</code> entry with no explanatory note is itself an error: a tolerated failure has to say why it is tolerated.</p>
 <p><strong>These claims ask whether <code>fleet</code> tracks the IBM</strong> — shape, direction, and agreement inside the IBM’s own stochastic spread. A mean-field model and an individual-based one sit a few per cent apart for structural reasons; where that matters it is noted against the claim it bears on.</p>
 <p>A criterion is drawn from the mechanism rather than from the observed number: <em>inside the IBM replicate band</em>, because that band is the noise floor a deterministic model should land inside, not <em>at five of six EIRs</em> because five is what happened.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="tiers">Tiers<a class="anchor" aria-label="anchor" href="#tiers"></a>
@@ -122,7 +161,7 @@
 </tr>
 <tr>
 <td>1</td>
-<td>~2 min</td>
+<td>minutes</td>
 <td>anyone; re-runs <code>fleet</code> only</td>
 </tr>
 <tr>
@@ -132,12 +171,12 @@
 </tr>
 <tr>
 <td>3</td>
-<td>~40 min</td>
-<td>~10 cores, and inputs that are not redistributable</td>
+<td>~50 min</td>
+<td>4 cores, and inputs that are not redistributable</td>
 </tr>
 </tbody>
 </table>
-<p>Tier 3 is the 63-country site-file comparison. <strong>Its figures and statistics are public; the site files behind them are not.</strong> The code that produces them is here and can be read, audited and run — the constraint is the inputs, not the compute. It re-runs <code>fleet</code> only, because the IBM arm is the pre-run diagnostic shipped with each site file, so forty minutes on ten cores refreshes it. <code>validations/03-real-settings/example-one-site.R</code> demonstrates the same pipeline on a single sub-site for anyone who has one site file.</p>
+<p>Tier 3 is the 63-country site-file comparison. <strong>Its figures and statistics are public; the site files behind them are not.</strong> The code that produces them is here and can be read, audited and run — the constraint is the inputs, not the compute. It re-runs <code>fleet</code> only, because the IBM arm is the pre-run diagnostic shipped with each site file, so fifty minutes on four cores refreshes it. <code>validations/03-real-settings/example-one-site.R</code> demonstrates the same pipeline on a single sub-site for anyone who has one site file.</p>
 </div>
 <div class="section level2">
 <h2 id="running-it-yourself">Running it yourself<a class="anchor" aria-label="anchor" href="#running-it-yourself"></a>
@@ -156,7 +195,7 @@
 <p><strong>Tier 0 only</strong> (read the verdicts, check the register is consistent — no models run, a few seconds):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"yaml"</span>, <span class="st">"pkgload"</span>, <span class="st">"devtools"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><strong>Tier 1 and 2</strong> (re-run the models) additionally need <code>fleet</code>, the IBM, and the output post-processor. <code>fleet</code> pulls <code>odin2</code>, <code>dust2</code>, <code>monty</code> and <code>malariaEquilibrium</code> with it, and compiles C++, so allow some time:</p>
+<p><strong>Tier 1 and 2</strong> (re-run the models) additionally need <code>fleet</code>, the IBM, and the output post-processor. <code>fleet</code> pulls <code>dust2</code>, <code>monty</code> and <code>malariaEquilibrium</code> with it, and compiles C++, so allow some time:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"pwinskill/fleet"</span><span class="op">)</span></span>
@@ -174,12 +213,12 @@
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'pkgload::load_all(quiet = TRUE); check_claims()'</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="id_4-check-whether-a-change-to-fleet-has-moved-anything--tier-1-2-min">4. Check whether a change to <code>fleet</code> has moved anything — tier 1, ~2 min<a class="anchor" aria-label="anchor" href="#id_4-check-whether-a-change-to-fleet-has-moved-anything--tier-1-2-min"></a>
+<h3 id="id_4-check-whether-a-change-to-fleet-has-moved-anything--tier-1-minutes">4. Check whether a change to <code>fleet</code> has moved anything — tier 1, minutes<a class="anchor" aria-label="anchor" href="#id_4-check-whether-a-change-to-fleet-has-moved-anything--tier-1-minutes"></a>
 </h3>
 <p><strong>This is the one to run often.</strong> It re-runs <code>fleet</code> alone against the committed IBM rows. The IBM does not depend on <code>fleet</code>, so its rows stay valid for any <code>fleet</code>-side change and there is no reason to spend two hours re-running it.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/assess.R</span></code></pre></div>
-<p>It answers two questions separately, because they mean different things. <em>Did anything move?</em> — <code>fleet</code> now against <code>fleet</code>’s committed rows. <em>Is the match still good?</em> — <code>fleet</code> now against the IBM medians and 10–90% bands, at the thresholds the claims rest on. Only the second fails the run by default. It exits non-zero on drift, so it works in CI.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="va">CMP_ONLY</span><span class="op">=</span>eir_20,smc <span class="ex">Rscript</span> validations/02-scenarios/assess.R   <span class="co"># a subset, ~20 s</span></span>
+<p>It answers two questions separately, because they mean different things. <em>Did anything move?</em> — <code>fleet</code> now against <code>fleet</code>’s committed rows. <em>Is the match still good?</em> — <code>fleet</code> now against the IBM medians and replicate bands (median ± 1.28 SD), at the thresholds the claims rest on. Only the second fails the run by default. It exits non-zero on drift, so it works in CI.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="va">CMP_ONLY</span><span class="op">=</span>eir_20,smc <span class="ex">Rscript</span> validations/02-scenarios/assess.R   <span class="co"># a subset, seconds</span></span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="va">CMP_STRICT</span><span class="op">=</span>1 <span class="ex">Rscript</span> validations/02-scenarios/assess.R          <span class="co"># also fail if ANY number moved</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -187,29 +226,35 @@
 </h3>
 <p>Try the smoke path first. It runs every scenario end to end at a 4-year horizon with one replicate, in about two minutes, and writes to <code>validations/02-scenarios/results/smoke/</code> so it cannot touch the committed results:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="va">CMP_SMOKE</span><span class="op">=</span>1 <span class="ex">Rscript</span> validations/02-scenarios/run.R</span></code></pre></div>
-<p>Then the real thing. It runs the IBM <code>N_REP</code> times per scenario on a PSOCK cluster (<code>N_WORKERS</code>, set at the top of <code>run.R</code>) and re-stamps <code>ibm_reference.json</code>:</p>
+<p>Then the real thing. It runs the IBM <code>N_REP</code> times per scenario on a PSOCK cluster (ten workers, or fewer with <code>CMP_WORKERS</code>) and re-stamps <code>ibm_reference.json</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/run.R</span></code></pre></div>
 <p>If you changed <code>fleet</code> and only need <code>fleet</code>’s rows refreshed, keep the IBM’s:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="va">CMP_FLEET_ONLY</span><span class="op">=</span>1 <span class="ex">Rscript</span> validations/02-scenarios/run.R   <span class="co"># ~1 min</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="va">CMP_FLEET_ONLY</span><span class="op">=</span>1 <span class="ex">Rscript</span> validations/02-scenarios/run.R   <span class="co"># minutes</span></span></code></pre></div>
+<p>The <em>P. vivax</em> suite is the same scripts under <code>CMP_PARASITE=pv</code>, with its results in <code>validations/02-scenarios/results/pv/</code>:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="va">CMP_PARASITE</span><span class="op">=</span>pv <span class="ex">Rscript</span> validations/02-scenarios/run.R</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="va">CMP_PARASITE</span><span class="op">=</span>pv <span class="va">CMP_FLEET_ONLY</span><span class="op">=</span>1 <span class="ex">Rscript</span> validations/02-scenarios/run.R</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="va">CMP_PARASITE</span><span class="op">=</span>pv <span class="ex">Rscript</span> validations/02-scenarios/assess.R</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_6-redraw-the-figures-and-tables--seconds">6. Redraw the figures and tables — seconds<a class="anchor" aria-label="anchor" href="#id_6-redraw-the-figures-and-tables--seconds"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/render.R   <span class="co"># cmp_*.png -&gt; man/figures/ and vignettes/</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/tables.R   <span class="co"># -&gt; validations/02-scenarios/results/tables.md</span></span></code></pre></div>
-<p><code>render.R</code> does not redraw the 63-country site-file panel: that is a snapshot from a run this repository cannot repeat (see tier 3 below). <code>CMP_REFRESH_SITES=1</code> re-takes it, and needs the validation results present.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/render.R      <span class="co"># cmp_*.png -&gt; man/figures/ and vignettes/</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/tables.R      <span class="co"># -&gt; validations/02-scenarios/results/tables.md</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/render_pv.R   <span class="co"># the vivax figures, cmp_pv_*.png</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/tables_pv.R   <span class="co"># -&gt; validations/02-scenarios/results/pv/tables.md</span></span></code></pre></div>
+<p>Neither pair redraws its site-file panel: those are snapshots from runs this repository cannot repeat (see tier 3 below). <code>CMP_REFRESH_SITES=1</code> re-takes them, and needs the validation results present.</p>
 </div>
 <div class="section level3">
 <h3 id="id_7-update-the-register-then-regenerate-every-rendered-copy-of-it">7. Update the register, then regenerate every rendered copy of it<a class="anchor" aria-label="anchor" href="#id_7-update-the-register-then-regenerate-every-rendered-copy-of-it"></a>
 </h3>
 <p>Edit <code>claims.yml</code> — the criterion, the measured value, the verdict — and then:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="ex">Rscript</span> report/make_scoreboard.R</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="ex">Rscript</span> report/make_scoreboard.R</span></code></pre></div>
 <p>That rewrites the register list in <code>README.md</code>, in <code>pkgdown/index.md</code> and in <code>inst/claims.yml</code> from the register. Never edit those copies by hand: CI runs the same script with <code>--check</code> and fails if they do not match.</p>
 </div>
 <div class="section level3">
 <h3 id="id_8-rebuild-the-site">8. Rebuild the site<a class="anchor" aria-label="anchor" href="#id_8-rebuild-the-site"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'pkgdown::build_site()'</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'pkgdown::build_site()'</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="what-the-environment-variables-do">What the environment variables do<a class="anchor" aria-label="anchor" href="#what-the-environment-variables-do"></a>
@@ -224,6 +269,10 @@
 <th>what it does</th>
 </tr></thead>
 <tbody>
+<tr>
+<td><code>CMP_PARASITE=pv</code></td>
+<td>the <em>P. vivax</em> suite, or the vivax arm of tier 3, in place of falciparum</td>
+</tr>
 <tr>
 <td><code>CMP_SMOKE=1</code></td>
 <td>4-year, 1-replicate end-to-end check into <code>results/smoke/</code>
@@ -264,14 +313,15 @@
 <div class="section level3">
 <h3 id="what-you-need-inputs-for">What you need inputs for<a class="anchor" aria-label="anchor" href="#what-you-need-inputs-for"></a>
 </h3>
-<p><strong>Tier 3, the 63-country site-file comparison, runs from this repository — but only if you have the malariaverse site files, which are not redistributable.</strong> The constraint is the inputs, not the compute: the sweep re-runs <code>fleet</code> alone, because the IBM arm is the pre-run diagnostic shipped with each site file, so it is about forty minutes on ten cores.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="va">FLEET_VALIDATE</span><span class="op">=</span>/path/to/site-files <span class="ex">Rscript</span> validations/03-real-settings/run.R</span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="ex">Rscript</span> validations/03-real-settings/assess.R</span></code></pre></div>
+<p><strong>Tier 3, the 63-country site-file comparison, runs from this repository — but only if you have the malariaverse site files, which are not redistributable.</strong> The constraint is the inputs, not the compute: the sweep re-runs <code>fleet</code> alone, because the IBM arm is the pre-run diagnostic shipped with each site file, so it is about fifty minutes on four cores.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="va">FLEET_VALIDATE</span><span class="op">=</span>/path/to/site-files <span class="ex">Rscript</span> validations/03-real-settings/run.R</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="ex">Rscript</span> validations/03-real-settings/assess.R</span></code></pre></div>
+<p>The <em>P. vivax</em> arm is the same pair under <code>CMP_PARASITE=pv</code>: the vivax sub-sites of the countries with vivax transmission, up to ten per country, with results in <code>validations/03-real-settings/results/pv/</code>.</p>
 <p>Its figures and statistics are public and committed here; the runs behind them are not. <code>claims.yml</code> marks those claims <code>tier: 3</code> so the cost is attached to the claim rather than buried in prose.</p>
 <p>Without the site files you can still run the <em>method</em>, on any one sub-site you have a file for. <code>validations/03-real-settings/example-one-site.R</code> is the same pipeline — subset the site file, convert ITN usage to a distribution, build the parameter list, seed both models off it, reduce both through <code>postie</code>, and score with the same <code><a href="reference/agreement.html">agreement()</a></code> the register uses — applied to a single sub-site in about two minutes:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="va">FLEET_VALIDATE</span><span class="op">=</span>/path/to/fleet_validate   <span class="ex">Rscript</span> validations/03-real-settings/example-one-site.R BFA</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="va">FLEET_VALIDATE</span><span class="op">=</span>/path/to/fleet_validate   <span class="ex">Rscript</span> validations/03-real-settings/example-one-site.R BFA</span></code></pre></div>
 <p><code>validations/03-real-settings/README.md</code> walks through each step and says which details are load-bearing. Read the shape of the output rather than its third decimal: one sub-site against one IBM replicate is a check that the pipeline runs, not evidence about the model.</p>
-<p>Tier 2, in <code>validations/02-scenarios/</code>, is complete, and is what steps 4 to 6 exercise. <code>validations/01-seed-stability/</code> is still a <strong>stub</strong> — a README and an empty <code>results/</code> — so <code>seed-stability</code> is the one claim in the register whose measured value no script here reproduces.</p>
+<p>Tier 2, in <code>validations/02-scenarios/</code>, is what steps 4 to 6 exercise. <code>Rscript validations/01-seed-stability/run.R</code> (a few minutes, <code>fleet</code> only) reproduces <code>seed-stability</code> and <code>seed-stability-pv</code>, and writes <code>results/seed_stability.json</code> and <code>results/seed_stability_pv.json</code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -281,19 +331,19 @@
 validations/  one directory per body of evidence
 report/       the site: the register first, evidence behind it
 claims.yml    the register</code></pre>
-<p><code>R/metrics.R</code> holds every comparison statistic, defined once and unit-tested. That is not ceremony: <code>fleet</code>’s own documentation once carried two derivations of the same immunity figures, in two articles, and both were wrong. One definition, imported everywhere, tested.</p>
-<p><code>R/provenance.R</code> stamps every result with the <code>fleet</code> and <code>malariasimulation</code> versions, the commits they were installed from, the R version and the date, and holds the rounding rule the stored summaries are written under. It exists because the provenance used to be inverted: the 25-minute comparison recorded the IBM version, the replicate count and a digest of the scenarios, while the site-file sweep — which needs inputs nobody outside the project has — recorded only a date. The tier that is hardest to re-run is the one that most needs to say what made it, and its stamp now carries the <code>fleet</code> version and the age grid too.</p>
+<p><code>R/metrics.R</code> holds every comparison statistic, defined once and unit-tested, so no two pieces of evidence can compute the same statistic two ways.</p>
+<p><code>R/provenance.R</code> stamps every result with the <code>fleet</code> and <code>malariasimulation</code> versions, the commits they were installed from, the R version and the date, and holds the rounding rule the stored summaries are written under. The tier that is hardest to re-run, the site-file sweep, most needs to say what made it, so its stamp carries the <code>fleet</code> version, the age grid and the mosquito sub-step count as well.</p>
 </div>
 <div class="section level2">
 <h2 id="status">Status<a class="anchor" aria-label="anchor" href="#status"></a>
 </h2>
-<p>The register, the tested metrics layer and <strong>tier 2</strong> are in place: the scenario comparison in <code>validations/02-scenarios/</code> runs end to end, has a two-minute smoke path, and is what CI checks. <strong>Tier 3</strong> runs from here too — <code>run.R</code>, <code>assess.R</code> and <code>diagnose.R</code> — given the site files it cannot ship. Tier 1 is still a stub, so <code>seed-stability</code> is the one claim in the register whose measured value no script here reproduces; porting it is the outstanding work.</p>
+<p>The register, the tested metrics layer and every tier are in place. <strong>Tier 1</strong>, <code>validations/01-seed-stability/</code>, runs in seconds. <strong>Tier 2</strong>, the scenario comparison in <code>validations/02-scenarios/</code>, runs end to end, has a few-minute smoke path, and is what CI checks. <strong>Tier 3</strong> runs from here too — <code>run.R</code>, <code>assess.R</code> and <code>diagnose.R</code> — given the site files it cannot ship.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="at-a-glance">
 <h2 data-toc-skip>At a glance</h2>
 <ul class="list-unstyled">
-<li><p>A <strong>twin-fidelity check</strong>, not a validation against data. Every claim carries the criterion that decides it and what it costs to reproduce, from seconds to forty minutes on ten cores.</p></li>
+<li><p>A <strong>twin-fidelity check</strong>, not a validation against data. Every claim carries the criterion that decides it and what it costs to reproduce, from seconds to about two hours on ten cores.</p></li>
 </ul>
 </div>
 

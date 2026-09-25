@@ -18,7 +18,7 @@ biases too.
 
 The unit is a claim, not a scenario. Each one carries the criterion that
 decides it and a verdict, so a reader meets a decision rather than a
-number to interpret. A claim can fail, and no currently do.
+number to interpret. A claim can fail, and two currently do.
 
 A criterion drawn from the mechanism is worth more than one drawn from
 the result. *Inside the IBM replicate band*, because that band is the
@@ -39,22 +39,13 @@ a slope of 1 with a positive bias is a constant offset while a slope
 above 1 with no bias is a fan, and quoting one of them alone hides which
 you have.
 [`band_summary()`](https://pwinskill.github.io/fleetcheck/reference/band_summary.md)
-answers “inside the IBM replicate band”, which is the criterion eight
+answers “inside the IBM replicate band”, which is the criterion 16
 claims in the register are decided by.
 
-This is not ceremony. `fleet`’s own documentation once carried two
-independent derivations of the same immunity figures, in two different
-articles, and both were wrong by 20 to 35%.
-
-It was not true when it was first written here, either. The scripts each
-carried their own copy: the site-file correlation was computed once in
-`render.R` for the figure and again in `tables.R` for the table, and the
-two had already drifted in naming — one called the mean relative
-difference `bias` and the other `rel_bias` — while
-[`agreement()`](https://pwinskill.github.io/fleetcheck/reference/agreement.md)
-sat in the package unused. They call it now, and the numbers it returns
-are identical to six significant figures, which is how the change was
-checked.
+So the figure and the table built from the same results cannot disagree:
+the site-file correlation in `render.R`’s figure and in `tables.R`’s
+table both come from
+[`agreement()`](https://pwinskill.github.io/fleetcheck/reference/agreement.md).
 
 ## Provenance
 
@@ -65,42 +56,36 @@ the date, and whatever the run wants to add. A package installed from a
 local source tree has no commit to record and the field is `null`;
 `Built` is recorded beside it so that case still says when and on what.
 
-It exists because the provenance used to be inverted. The 25-minute
-comparison recorded the IBM version, the replicate count and a digest of
-the scenario definitions; the seven-hour site-file run, which nobody can
-repeat, recorded a date and a version of `fleet`. The tier that cannot
-be re-run is the tier that most needs to say what made it.
+The tier that is hardest to re-run is the one that most needs to say
+what made it, so the site-file statistics also record the age grid and
+the mosquito sub-step count they were measured at.
 
-The site-file snapshot carries two of these and they are not
-interchangeable. `run` is the seven-hour comparison — the `fleet`
-version its per-country results were produced at — and is only changed
-when that run is actually repeated. `summarised` is the seconds-long
-pass that turns those results into the four numbers on this site, and
-can happen at any later version. A single stamp would report today’s
-`fleet` over numbers from months ago.
+The site-file snapshot carries two stamps and they are not
+interchangeable. `run` is the site-file sweep — the `fleet` version its
+per-country results were produced at — and is only changed when that
+sweep is actually repeated. `summarised` is the seconds-long pass that
+turns those results into the four numbers on this site, and can happen
+at any later version. A single stamp would report today’s `fleet` over
+numbers from months ago.
 
 ## Stored precision
 
 Simulation output is quoted to three or four significant figures
-wherever it is reported, and was stored at fifteen. `run.R` rounds to
-six as it writes, which takes `rep_monthly.csv` from 19.0 MB to 10.8 MB
-with nothing lost that anyone reads.
+wherever it is reported. `run.R` rounds the stored summaries to six as
+it writes, with nothing lost that anyone reads. One file keeps full
+precision: `rep_eq.csv`, which the drift check asserts against at 1e-6.
 
-One file keeps full precision: `rep_eq.csv`, which the drift check
-asserts against at 1e-6, and which is 46 KB.
-
-The rounding is applied at the point of writing rather than afterwards
-because it was applied afterwards once. The next run of `run.R` wrote
-full precision again, `rep_monthly.csv` went back to 19 MB, and the
-commit went in without anything noticing. A rule about stored precision
-has to live in the code that stores it, which is what
-[`round_sig()`](https://pwinskill.github.io/fleetcheck/reference/round_sig.md)
-is for.
+The rounding lives in the code that writes the files,
+[`round_sig()`](https://pwinskill.github.io/fleetcheck/reference/round_sig.md),
+so a re-run cannot quietly store full precision again.
 
 ## Reproducing a claim
 
 ``` r
-# tier 0 and 1, seconds to minutes, no special hardware
+# tier 1, a few minutes (both parasites)
+Rscript validations/01-seed-stability/run.R
+
+# fleet against the committed IBM rows, minutes
 Rscript validations/02-scenarios/assess.R
 
 # tier 2, about two hours on ten cores
@@ -108,7 +93,25 @@ Rscript validations/02-scenarios/run.R
 
 # a few-minute end-to-end check of the same path
 CMP_SMOKE=1 Rscript validations/02-scenarios/run.R
+
+# the P. vivax suite: the same scripts, results in results/pv/
+CMP_PARASITE=pv Rscript validations/02-scenarios/run.R
+CMP_PARASITE=pv Rscript validations/02-scenarios/assess.R
+Rscript validations/02-scenarios/tables_pv.R
+Rscript validations/02-scenarios/render_pv.R
+
+# tier 3, which needs the restricted site files
+FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
+FLEET_VALIDATE=/path/to/site-files CMP_PARASITE=pv Rscript validations/03-real-settings/run.R
 ```
+
+The vivax suite runs on its own transmission grid (EIR 0.3 to 30, where
+falciparum’s is 1 to 120), without SMC, PMC or RTS,S –
+`malariasimulation` cannot run chemoprevention under vivax, and its
+vaccines carry no vivax calibration – and with radical cure in their
+place. A vivax run of `fleet` costs about twenty times a falciparum one,
+so tier 3 represents each country by at most ten sub-sites, spread
+evenly across its vivax EIR range.
 
 The register itself is data, so it can be queried rather than read:
 

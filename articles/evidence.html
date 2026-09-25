@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Validation evidence • fleetcheck</title>
+<title>Validation evidence: P. falciparum • fleetcheck</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -15,7 +15,7 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><script src="../extra.js"></script><meta property="og:title" content="Validation evidence">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><script src="../extra.js"></script><meta property="og:title" content="Validation evidence: P. falciparum">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,7 +35,13 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../index.html">Overview</a></li>
-<li class="active nav-item"><a class="nav-link" href="../articles/evidence.html">Evidence</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-evidence" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Evidence</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-evidence">
+<li><a class="dropdown-item" href="../articles/evidence.html">P. falciparum</a></li>
+    <li><a class="dropdown-item" href="../articles/evidence-vivax.html">P. vivax</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../articles/methods.html">How it is produced</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul>
@@ -56,7 +62,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Validation evidence</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Validation evidence: P. falciparum</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/pwinskill/fleetcheck/blob/main/vignettes/evidence.Rmd" class="external-link"><code>vignettes/evidence.Rmd</code></a></small>
@@ -66,12 +72,13 @@
     
     
 <p>How closely does <code>fleet</code> reproduce
-<code>malariasimulation</code>? Each claim below states the criterion
-that decides it, the value measured against that criterion, and a
-verdict. The order runs from transmission through clinical and severe
-burden to their age distributions, then interventions and real settings,
-with the demographic, performance and numerical checks that underwrite
-them at the end.</p>
+<code>malariasimulation</code> for <em>P. falciparum</em>? Each claim
+below states the criterion that decides it, the value measured against
+that criterion, and a verdict. The order runs from transmission through
+clinical and severe burden to their age distributions, then
+interventions and real settings, with the demographic, performance and
+numerical checks that underwrite them at the end. The <em>P. vivax</em>
+claims are on <a href="evidence-vivax.html">a page of their own</a>.</p>
 <p>Every section is generated from <code>claims.yml</code>, so this page
 cannot disagree with the register, and the register cannot be changed
 without the page following.</p>
@@ -97,28 +104,31 @@ pass.</strong></p>
 <td><a href="#prevalence-eir"><code>prevalence-eir</code></a></td>
 <td>2</td>
 <td>inside the IBM replicate band at every EIR on the grid</td>
-<td>inside at 6 of 6; largest departure 0.94% of the IBM median</td>
+<td>inside at 6 of 6; largest departure 1.0% of the IBM median, at EIR
+3</td>
 <td><span class="verdict pass">pass</span></td>
 </tr>
 <tr class="even">
 <td><a href="#clinical-allage-eir"><code>clinical-allage-eir</code></a></td>
 <td>2</td>
 <td>inside the IBM replicate band at every EIR on the grid</td>
-<td>inside at 6 of 6</td>
+<td>inside at 6 of 6; largest departure 1.9% of the IBM median, at EIR
+1, and within 0.9% from EIR 10 up</td>
 <td><span class="verdict pass">pass</span></td>
 </tr>
 <tr class="odd">
 <td><a href="#clinical-under5-eir"><code>clinical-under5-eir</code></a></td>
 <td>2</td>
 <td>inside the IBM replicate band at every EIR on the grid</td>
-<td>inside at 6 of 6</td>
+<td>inside at 6 of 6; largest departure 1.0% of the IBM median</td>
 <td><span class="verdict pass">pass</span></td>
 </tr>
 <tr class="even">
 <td><a href="#severe-allage-eir"><code>severe-allage-eir</code></a></td>
 <td>2</td>
 <td>inside the IBM replicate band at every EIR on the grid</td>
-<td>inside at 6 of 6</td>
+<td>inside at 6 of 6; largest departure 2.0% of the IBM median, at EIR
+1, and within 1.3% from EIR 3 up</td>
 <td><span class="verdict pass">pass</span></td>
 </tr>
 <tr class="odd">
@@ -127,7 +137,8 @@ pass.</strong></p>
 <td>inside the IBM replicate band in every age band carrying at least 5%
 of clinical episodes, at EIR 3, 20 and 120</td>
 <td>inside at 25 of 25 tested bands across the three EIRs, holding 94%
-of episodes; largest departure 1.17 replicate SD</td>
+of episodes; largest departure 0.93 replicate SD, in the 3-5 y band at
+EIR 120</td>
 <td><span class="verdict pass">pass</span></td>
 </tr>
 <tr class="even">
@@ -136,7 +147,7 @@ of episodes; largest departure 1.17 replicate SD</td>
 <td>inside the IBM replicate band in every age band carrying at least 5%
 of severe episodes, at EIR 3, 20 and 120</td>
 <td>inside at 16 of 16 tested bands across the three EIRs, holding 94%
-of episodes; largest departure 0.94 replicate SD, in the 3-5 y band at
+of episodes; largest departure 0.78 replicate SD, in the 1-2 y band at
 EIR 20</td>
 <td><span class="verdict pass">pass</span></td>
 </tr>
@@ -147,7 +158,7 @@ EIR 20</td>
 the best held-out IBM replicate, over every intervention and outcome at
 EIR 3, 20 and 120 (SMC in a seasonal setting, since it is a seasonal
 intervention)</td>
-<td>fleet outside in 8.3% of 72 cells, against 9.7% for the closest of
+<td>fleet outside in 4.2% of 72 cells, against 9.7% for the closest of
 the twenty IBM replicates and 20.1% for the median one</td>
 <td><span class="verdict pass">pass</span></td>
 </tr>
@@ -156,8 +167,8 @@ the twenty IBM replicates and 20.1% for the median one</td>
 <td>3</td>
 <td>r &gt; 0.95 and |slope - 1| &lt; 0.10 on both clinical and severe
 incidence</td>
-<td>clinical r 0.983 slope 0.996; severe r 0.959 slope 0.929, over
-450,684 sub-site-months in 1,391 sub-sites of 63 countries</td>
+<td>clinical r 0.984 slope 0.987; severe r 0.958 slope 0.932, over
+451,008 sub-site-months in 1,392 sub-sites of 63 countries</td>
 <td><span class="verdict pass">pass</span></td>
 </tr>
 <tr class="odd">
@@ -172,8 +183,8 @@ shares renormalised to the 0-60 population</td>
 <td><a href="#speed"><code>speed</code></a></td>
 <td>2</td>
 <td>at least 10x faster than the IBM on the same scenario set</td>
-<td>21x on cost per simulated year; 19.9 CPU-hours for the IBM against
-169 s for fleet</td>
+<td>24x on cost per simulated year; 19.9 CPU-hours for the IBM against
+146 s for fleet</td>
 <td><span class="verdict pass">pass</span></td>
 </tr>
 <tr class="odd">
@@ -181,7 +192,8 @@ shares renormalised to the 0-60 population</td>
 <td>1</td>
 <td>PfPR(2-10) departs from its seeded value by less than 1% over 15
 years at EIR 20</td>
-<td>0.28% maximum excursion; flat to 0.02% over the last five years</td>
+<td>0.35% maximum excursion; flat to 0.008% over the last five
+years</td>
 <td><span class="verdict pass">pass</span></td>
 </tr>
 </tbody>
@@ -191,182 +203,244 @@ years at EIR 20</td>
 </h2>
 <p><span class="verdict pass">pass</span> — LM prevalence in 2-10 year
 olds tracks the IBM across transmission intensity.</p>
+<p><strong>Criterion:</strong> inside the IBM replicate band at every
+EIR on the grid<br><strong>Measured:</strong> inside at 6 of 6; largest departure 1.0% of
+the IBM median, at EIR 3</p>
 <p class="claim-meta">
 tier 2 · <code>validations/02-scenarios</code>
 </p>
-<p><img src="cmp_eir_pfpr_2_10.png" alt="LM prevalence in 2-10 year olds tracks the IBM across transmission intensity."></p>
+<p><a href="cmp_eir_pfpr_2_10.png"><img src="cmp_eir_pfpr_2_10.png" width="2200" height="919" alt="LM prevalence in 2-10 year olds tracks the IBM across transmission intensity. Verdict: pass."></a></p>
 </div>
 <div class="section level2">
 <h2 id="clinical-allage-eir">clinical-allage-eir<a class="anchor" aria-label="anchor" href="#clinical-allage-eir"></a>
 </h2>
 <p><span class="verdict pass">pass</span> — All-age clinical incidence
 tracks the IBM across transmission intensity.</p>
+<p><strong>Criterion:</strong> inside the IBM replicate band at every
+EIR on the grid<br><strong>Measured:</strong> inside at 6 of 6; largest departure 1.9% of
+the IBM median, at EIR 1, and within 0.9% from EIR 10 up</p>
 <p class="claim-meta">
 tier 2 · <code>validations/02-scenarios</code>
 </p>
-<p><img src="cmp_eir_clin_all.png" alt="All-age clinical incidence tracks the IBM across transmission intensity."></p>
+<p><a href="cmp_eir_clin_all.png"><img src="cmp_eir_clin_all.png" width="2200" height="919" alt="All-age clinical incidence tracks the IBM across transmission intensity. Verdict: pass."></a></p>
+<p>The age grid’s first-order discretisation error grows with
+transmission, and the default 209 groups hold it to under 1% of the IBM
+here. A coarser grid runs low where transmission is high:
+default_age_lower(n_group = 53), at a quarter of the cost, puts fleet
+3.4% and 4.7% below the IBM median at EIR 50 and 120, outside the band.
+validations/age-grid measures the grid’s share.</p>
 </div>
 <div class="section level2">
 <h2 id="clinical-under5-eir">clinical-under5-eir<a class="anchor" aria-label="anchor" href="#clinical-under5-eir"></a>
 </h2>
 <p><span class="verdict pass">pass</span> — Under-5 clinical incidence
 tracks the IBM across transmission intensity.</p>
+<p><strong>Criterion:</strong> inside the IBM replicate band at every
+EIR on the grid<br><strong>Measured:</strong> inside at 6 of 6; largest departure 1.0% of
+the IBM median</p>
 <p class="claim-meta">
 tier 2 · <code>validations/02-scenarios</code>
 </p>
-<p>fleet sits within 1.3% of the IBM median at every EIR on the
-grid.</p>
-<p><img src="cmp_eir_clin_0_5.png" alt="Under-5 clinical incidence tracks the IBM across transmission intensity."></p>
+<p><a href="cmp_eir_clin_0_5.png"><img src="cmp_eir_clin_0_5.png" width="2200" height="919" alt="Under-5 clinical incidence tracks the IBM across transmission intensity. Verdict: pass."></a></p>
+<p>On 53 age groups fleet runs 2.5% and 4.6% below the IBM median at EIR
+50 and 120, outside the band; see clinical-allage-eir.</p>
 </div>
 <div class="section level2">
 <h2 id="severe-allage-eir">severe-allage-eir<a class="anchor" aria-label="anchor" href="#severe-allage-eir"></a>
 </h2>
 <p><span class="verdict pass">pass</span> — All-age severe incidence
 tracks the IBM across transmission intensity.</p>
+<p><strong>Criterion:</strong> inside the IBM replicate band at every
+EIR on the grid<br><strong>Measured:</strong> inside at 6 of 6; largest departure 2.0% of
+the IBM median, at EIR 1, and within 1.3% from EIR 3 up</p>
 <p class="claim-meta">
 tier 2 · <code>validations/02-scenarios</code>
 </p>
-<p>fleet sits 2 to 4% below the IBM at every EIR above 1. About -6% of
-that is age-grid discretisation, which refining removes; the remainder
-is not resolved. Not a bias to correct for. A band test cannot see an
-offset repeated at every point. Severe has the widest replicate spread
-here, 15.4% of the median, which is what sets the twenty-replicate
-count.</p>
-<p><img src="cmp_eir_sev_all.png" alt="All-age severe incidence tracks the IBM across transmission intensity."></p>
+<p><a href="cmp_eir_sev_all.png"><img src="cmp_eir_sev_all.png" width="2200" height="919" alt="All-age severe incidence tracks the IBM across transmission intensity. Verdict: pass."></a></p>
+<p>Severe incidence is where the age grid shows most: theta sits on the
+convex tail of its Hill function from early childhood, and a group’s
+severe incidence is evaluated at its mean immunity, so the error is
+first order in the group width. On the default 209 groups fleet sits
+within 1.3% of the IBM median from EIR 3 to 120, with no offset repeated
+at every point; on 53 groups it runs below the IBM at every EIR above 1,
+from 2.7% at EIR 3 to 8.2% at EIR 120. Severe has the widest replicate
+spread here, which is what sets the twenty-replicate count; a band test
+cannot see an offset repeated at every point, which is why the offsets
+are given.</p>
 </div>
 <div class="section level2">
 <h2 id="age-profile-clinical">age-profile-clinical<a class="anchor" aria-label="anchor" href="#age-profile-clinical"></a>
 </h2>
 <p><span class="verdict pass">pass</span> — The age distribution of
 clinical incidence tracks the IBM.</p>
+<p><strong>Criterion:</strong> inside the IBM replicate band in every
+age band carrying at least 5% of clinical episodes, at EIR 3, 20 and
+120<br><strong>Measured:</strong> inside at 25 of 25 tested bands across the
+three EIRs, holding 94% of episodes; largest departure 0.93 replicate
+SD, in the 3-5 y band at EIR 120</p>
 <p class="claim-meta">
 tier 2 · <code>validations/02-scenarios</code>
 </p>
-<p>One untested band is outside: 40-60 y at EIR 20, by 1.50 SD, holding
-1.7% of clinical episodes. tables.R prints it rather than dropping it
-silently. That band is what the claim used to fail on, and the failure
-did not survive examination. Refining the age grid does not close it and
-makes agreement worse – 35 of 36 bands inside at the default 53 groups,
-32 at 105, 27 at 209 – and the biting-heterogeneity quadrature is not a
-candidate, since the IBM discretises it the same way. Re-binned to five
-years the departure is smooth from age 20 to 85, sits in the rates
-rather than the population weights, and falls inside the spread of a
-held-out IBM replicate: 3 of 20 replicates score at least as far from
-the other 19. What the burden floor costs: a defect confined to the
-oldest ages would not be caught here. Grid convergence is measured in
-validations/age-grid/; the held-out check is not yet reproduced by a
-script in this repository.</p>
-<p><img src="cmp_age_clin.png" alt="The age distribution of clinical incidence tracks the IBM."></p>
+<p><a href="cmp_age_clin.png"><img src="cmp_age_clin.png" width="2800" height="919" alt="The age distribution of clinical incidence tracks the IBM. Verdict: pass."></a></p>
+<p>No untested band is outside either. On 53 age groups 6 of the tested
+bands fall outside, young children at high transmission with fleet low:
+the grid’s first-order discretisation error, which validations/age-grid
+measures (see clinical-allage-eir). What the burden floor costs: a
+defect confined to the oldest ages would not be caught here.</p>
 </div>
 <div class="section level2">
 <h2 id="age-profile-severe">age-profile-severe<a class="anchor" aria-label="anchor" href="#age-profile-severe"></a>
 </h2>
 <p><span class="verdict pass">pass</span> — The age distribution of
 severe incidence tracks the IBM.</p>
+<p><strong>Criterion:</strong> inside the IBM replicate band in every
+age band carrying at least 5% of severe episodes, at EIR 3, 20 and
+120<br><strong>Measured:</strong> inside at 16 of 16 tested bands across the
+three EIRs, holding 94% of episodes; largest departure 0.78 replicate
+SD, in the 1-2 y band at EIR 20</p>
 <p class="claim-meta">
 tier 2 · <code>validations/02-scenarios</code>
 </p>
+<p><a href="cmp_age_sev.png"><img src="cmp_age_sev.png" width="2800" height="919" alt="The age distribution of severe incidence tracks the IBM. Verdict: pass."></a></p>
 <p>The burden floor is doing little here: no untested band is outside
-the band either, and the worst departure is in the 3-5 y band, which
-carries 16.6% of severe episodes on its own. Most of what the floor
-excludes is above age 30, where the IBM’s replicate spread reaches 246%
-of its median and agreement is not evidence of much.</p>
-<p><img src="cmp_age_sev.png" alt="The age distribution of severe incidence tracks the IBM."></p>
+the band either. Most of what the floor excludes is above age 30, where
+the IBM’s replicate spread is several times its median and agreement is
+not evidence of much.</p>
 </div>
 <div class="section level2">
 <h2 id="intervention-impact">intervention-impact<a class="anchor" aria-label="anchor" href="#intervention-impact"></a>
 </h2>
 <p><span class="verdict pass">pass</span> — The modelled impact of each
 intervention matches the IBM.</p>
+<p><strong>Criterion:</strong> outside the IBM replicate band in no
+greater a share of cells than the best held-out IBM replicate, over
+every intervention and outcome at EIR 3, 20 and 120 (SMC in a seasonal
+setting, since it is a seasonal intervention)<br><strong>Measured:</strong> fleet outside in 4.2% of 72 cells, against
+9.7% for the closest of the twenty IBM replicates and 20.1% for the
+median one</p>
 <p class="claim-meta">
 tier 2 · <code>validations/02-scenarios</code>
 </p>
+<p><a href="cmp_int_impact.png"><img src="cmp_int_impact.png" width="2700" height="2200" alt="The modelled impact of each intervention matches the IBM. Verdict: pass."></a></p>
 <p>The bar is taken from the IBM because at 72 cells a fixed one cannot
 be: a 1.28 SD band leaves a fifth of cells outside by construction, and
 no replicate is inside all 72. fleet is outside less often than any of
 the twenty. Where fleet does sit outside, the size is small in both
-senses. The worst cell is bed nets at EIR 120 on prevalence, where the
-IBM cuts PfPR(2-10) from 0.787 to 0.571 and fleet to 0.587: a 2.1
-percentage point difference in the reduction, 7.6% of the effect. The
-typical gap does not grow with transmission – 0.49, 0.35 and 0.42
-percentage points at EIR 3, 20 and 120. Impact is a ratio of two runs
-sharing an age grid, so grid discretisation divides out: replacing the
-grid left the worst excursion unchanged. Perennial chemoprevention is
-the one intervention whose delivery the models cannot share. The IBM
-doses each child on reaching a dose age; fleet approximates that as
-monthly pulses over a 30-day band, which doses 8 to 21 days late and
-overstates the infant benefit by about a tenth. The window is the three
-years after deployment. Run longer and fleet develops a severe-incidence
-rebound, -0.5% at EIR 3 to +8% at EIR 120, which these IBM rows are too
-short and too noisy to test.</p>
-<p><img src="cmp_int_impact.png" alt="The modelled impact of each intervention matches the IBM."></p>
+senses. It is outside in three cells, all bed nets: on prevalence at EIR
+20 and 120, and on all-age clinical incidence at EIR 120, that one by
+0.08 points. The worst is prevalence at EIR 120, where the IBM’s bed
+nets cut PfPR(2-10) by 27.5% and fleet’s by 25.3%: 2.1 percentage points
+of the reduction, 7.8% of the effect, the mark of population-averaged
+nets, which lose the correlation of each person’s protection across
+bites. The typical gap does not grow with transmission – a median of
+0.39, 0.37 and 0.49 percentage points at EIR 3, 20 and 120. Impact is a
+ratio of two runs sharing an age grid, so grid discretisation largely
+divides out: four times the groups, 53 to 209, moved the worst excursion
+by 0.11 points. SMC sends the clinical and detectable cases it treats
+through the treated state first, as the IBM does, so prevalence in the
+dosed band falls over the Tr stay rather than overnight; its protection
+is complete while it lasts, where the IBM’s is partial and fades.
+Perennial chemoprevention is the one intervention whose delivery the
+models cannot share. The IBM doses each child on reaching a dose age;
+fleet approximates that as monthly pulses over a 30-day band, which
+doses 8 to 21 days late and overstates the infant benefit by about a
+tenth. The window is the three years after deployment. Over the arms’
+last three years, against the three before deployment, PMC changes
+all-age severe incidence in fleet by -1.1% at EIR 3, +1.7% at EIR 20 and
++7.6% at EIR 120: the rebound of delayed immunity, pushing severe
+disease from infancy into the second and third years of life. The IBM’s
+medians have the same sign at all three (-5.2%, +3.1%, +4.2%), inside
+replicate bands too wide to say more.</p>
 </div>
 <div class="section level2">
 <h2 id="real-settings-correlation">real-settings-correlation<a class="anchor" aria-label="anchor" href="#real-settings-correlation"></a>
 </h2>
 <p><span class="verdict pass">pass</span> — Agreement holds across real
 transmission settings, not just synthetic scenarios.</p>
+<p><strong>Criterion:</strong> r &gt; 0.95 and |slope - 1| &lt; 0.10 on
+both clinical and severe incidence<br><strong>Measured:</strong> clinical r 0.984 slope 0.987; severe r 0.958
+slope 0.932, over 451,008 sub-site-months in 1,392 sub-sites of 63
+countries</p>
 <p class="claim-meta">
 tier 3 · <code>validations/03-real-settings</code>
 </p>
+<p><a href="cmp_core_sites.png"><img src="cmp_core_sites.png" width="2000" height="1080" alt="Agreement holds across real transmission settings, not just synthetic scenarios. Verdict: pass."></a></p>
 <p>r and slope test whether fleet tracks the IBM, not whether it sits on
-top of it. No single excess figure describes the level: it runs from
-+190% below pf EIR 0.1 to +2.3% above 120, and severe crosses zero at
-high transmission. 18% of sub-sites sit below EIR 1, outside any tier-2
-claim, and that is where the departure lives. Guinea-Bissau is a
-separate failure: 18 sub-sites at +108% and r 0.635, against 553 peers
-of the same burden at +11.8% and r 0.991. diagnose.R ranks every
-sub-site. Monthly, and P. falciparum only on both arms. Annual means
-once hid a real seasonal mismatch; the shipped diagnostics carry vivax
-rows that inflate the baseline where pf transmission is low.</p>
-<p><img src="cmp_core_sites.png" alt="Agreement holds across real transmission settings, not just synthetic scenarios."></p>
+top of it. Pooled over every sub-site-month fleet runs 7.3% above the
+IBM on clinical incidence and 7.5% on severe, and the excess sits at low
+transmission: clinical incidence runs +191% below pf EIR 0.1 and +65%
+from 0.1 to 1, falling to +0.2% at 120 and above. 18% of sub-sites sit
+below EIR 1, outside any tier-2 claim, and the excess there is not
+explained. Guinea-Bissau’s 18 sub-sites, whose IBM runs are anomalous,
+sit at +106%. fleet ran every one of the 1,392 sub-sites with P.
+falciparum transmission; none is dropped. Monthly, and P. falciparum
+only on both arms: annual means can hide a seasonal mismatch, and the
+shipped diagnostics carry vivax rows that inflate the baseline where pf
+transmission is low.</p>
 </div>
 <div class="section level2">
 <h2 id="population-age-structure">population-age-structure<a class="anchor" aria-label="anchor" href="#population-age-structure"></a>
 </h2>
 <p><span class="verdict pass">pass</span> — The population age structure
 matches the IBM’s.</p>
+<p><strong>Criterion:</strong> inside the IBM replicate band in every
+age band below 60 years, on shares renormalised to the 0-60
+population<br><strong>Measured:</strong> inside at 11 of 11; largest departure 1.3% of
+the IBM median</p>
 <p class="claim-meta">
 tier 2 · <code>validations/02-scenarios</code>
 </p>
+<p><a href="cmp_core_pop_age.png"><img src="cmp_core_pop_age.png" width="2200" height="1040" alt="The population age structure matches the IBM's. Verdict: pass."></a></p>
 <p>The 0-60 restriction is a rendering convention, not a model
 difference: fleet’s oldest group is absorbing and open-ended above 80,
-and the renderer assigns it wholly to the band containing its lower
-edge, so fleet’s 60-85 share is 41% higher by construction. Agreement at
-this level depends on the ageing rate being exponentially fitted, r =
+and a rendering band that reaches into it is given all of it, so fleet’s
+60-85 share is 41% higher by construction. Agreement at this level
+depends on the ageing rate being exponentially fitted, r =
 mu/expm1(mu*width), exact at the seed and an approximation under
-time-varying demography. Separately: maternal immunity is drawn from the
-group containing age 20, which is 20-22.5 here against the IBM’s 20-21,
-so infants start with about 6.7% too much. Known, not yet fixed.</p>
-<p><img src="cmp_core_pop_age.png" alt="The population age structure matches the IBM's."></p>
+time-varying demography.</p>
 </div>
 <div class="section level2">
 <h2 id="speed">speed<a class="anchor" aria-label="anchor" href="#speed"></a>
 </h2>
 <p><span class="verdict pass">pass</span> — fleet is fast enough to be
 worth using in place of the IBM.</p>
+<p><strong>Criterion:</strong> at least 10x faster than the IBM on the
+same scenario set<br><strong>Measured:</strong> 24x on cost per simulated year; 19.9
+CPU-hours for the IBM against 146 s for fleet</p>
 <p class="claim-meta">
 tier 2 · <code>validations/02-scenarios</code>
 </p>
-<p><em>No figure: this claim is a single number rather than a
-relationship across a range, and a chart of one number carries less than
-the number.</em></p>
+<p><em>No figure: the numbers above decide this claim.</em></p>
+<p>Each fleet figure is one complete run_simulation_ode() call – inputs,
+seed, the run and its outputs – on one core; the IBM’s are its runs on a
+worker pool. One fleet run stands in for the IBM’s twenty replicates of
+10,000 people, and its cost does not grow with the population. On one
+laptop core a run takes just over a second per 10 simulated years, 3 to
+4 s for 30. The age grid sets fleet’s cost, in proportion to its groups:
+on the 53 of default_age_lower(n_group = 53) fleet is 140x the IBM’s
+speed.</p>
 </div>
 <div class="section level2">
 <h2 id="seed-stability">seed-stability<a class="anchor" aria-label="anchor" href="#seed-stability"></a>
 </h2>
 <p><span class="verdict pass">pass</span> — An undisturbed run holds the
 equilibrium it was seeded at.</p>
+<p><strong>Criterion:</strong> PfPR(2-10) departs from its seeded value
+by less than 1% over 15 years at EIR 20<br><strong>Measured:</strong> 0.35% maximum excursion; flat to 0.008% over
+the last five years</p>
 <p class="claim-meta">
 tier 1 · <code>validations/01-seed-stability</code>
 </p>
-<p>The one claim here whose measured value no script in this repository
-reproduces: validations/01-seed-stability/ is a stub. The figure comes
-from a run made outside it, which is the arrangement the rest of the
-register exists to avoid.</p>
-<p><em>No figure: this claim is a single number rather than a
-relationship across a range, and a chart of one number carries less than
-the number.</em></p>
+<p><em>No figure: the numbers above decide this claim.</em></p>
+<p>The seed is malariaEquilibrium’s continuous-time solution, not
+fleet’s own fixed point on the daily clock, so the run moves off it and
+settles 0.26% below it. The claim is about prevalence: incidence relaxes
+further, under-5 clinical incidence by -0.1% at EIR 1, +1.7% at EIR 20
+and +6.0% at EIR 120, nine-tenths of it within five years, so a
+comparison of incidence levels wants a burn-in (every tier-2 scenario
+has thirty years), as the IBM’s does.
+validations/01-seed-stability/run.R reproduces the prevalence
+figures.</p>
 </div>
 <div class="section level2">
 <h2 id="what-tier-means">What “tier” means<a class="anchor" aria-label="anchor" href="#what-tier-means"></a>
@@ -374,11 +448,6 @@ the number.</em></p>
 <p>What it costs to reproduce a result is a property of that result, so
 it is recorded against every claim rather than stated once in prose.</p>
 <table class="table">
-<colgroup>
-<col width="33%">
-<col width="33%">
-<col width="33%">
-</colgroup>
 <thead><tr class="header">
 <th>tier</th>
 <th>cost</th>
@@ -392,7 +461,7 @@ it is recorded against every claim rather than stated once in prose.</p>
 </tr>
 <tr class="even">
 <td>1</td>
-<td>~2 min</td>
+<td>minutes</td>
 <td>anyone; re-runs <code>fleet</code> only</td>
 </tr>
 <tr class="odd">
@@ -402,8 +471,8 @@ it is recorded against every claim rather than stated once in prose.</p>
 </tr>
 <tr class="even">
 <td>3</td>
-<td>~40 min</td>
-<td>about ten cores, and inputs that are not redistributable</td>
+<td>~50 min</td>
+<td>four cores, and inputs that are not redistributable</td>
 </tr>
 </tbody>
 </table>
@@ -411,8 +480,8 @@ it is recorded against every claim rather than stated once in prose.</p>
 and statistics are public; the site files behind them are not.</strong>
 The constraint is the inputs rather than the compute: the sweep re-runs
 <code>fleet</code> only, because the IBM arm is the pre-run diagnostic
-shipped with each site file, so forty minutes on ten cores refreshes it.
-But the site files are not redistributable, so nobody outside the
+shipped with each site file, so fifty minutes on four cores refreshes
+it. But the site files are not redistributable, so nobody outside the
 project can repeat it. That is a limitation of this evidence, not a
 property of the result, and
 <code>validations/03-real-settings/example-one-site.R</code> runs the

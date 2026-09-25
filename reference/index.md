@@ -16,15 +16,18 @@
   : The README badge row
 - [`verdict_html()`](https://pwinskill.github.io/fleetcheck/reference/verdict_html.md)
   : A verdict as its HTML lozenge
+- [`evidence_page()`](https://pwinskill.github.io/fleetcheck/reference/evidence_page.md)
+  : The evidence article a claim is presented on
+- [`claim_sections_md()`](https://pwinskill.github.io/fleetcheck/reference/claim_sections_md.md)
+  : The evidence article's section for each claim
 - [`check_claims()`](https://pwinskill.github.io/fleetcheck/reference/check_claims.md)
   : Fail if the register has regressed
 
 ## Comparison statistics
 
 Every statistic quoted anywhere in this project. Defined once and
-unit-tested, because the alternative is what happened to fleet’s own
-documentation: the same quantity derived twice, in two articles, wrong
-both times.
+unit-tested, so no two pieces of evidence can compute the same quantity
+two ways.
 
 - [`agreement()`](https://pwinskill.github.io/fleetcheck/reference/agreement.md)
   : Agreement between two models on the same quantity
@@ -75,6 +78,10 @@ against an installed package and not only under pkgload::load_all().
   [`EIR_GRID`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`EIR_REF`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`PROFILE_EIR`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
+  [`EIR_GRID_PV`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
+  [`EIR_REF_PV`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
+  [`PROFILE_EIR_PV`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
+  [`INT_LABELS_PV`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`INT_LABELS`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`TS_LABELS`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`TS_YEARS`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)

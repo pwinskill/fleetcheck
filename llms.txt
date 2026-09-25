@@ -2,8 +2,10 @@
 
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
-[![Claims: 11
-pass](https://img.shields.io/badge/claims-11%20pass-brightgreen.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
+[![Falciparum claims: 11
+pass](https://img.shields.io/badge/falciparum%20claims-11%20pass-brightgreen.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
+[![Vivax claims: 8 pass, 2
+fail](https://img.shields.io/badge/vivax%20claims-8%20pass%2C%202%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License:
@@ -27,6 +29,8 @@ with the criterion that decides it, the measured value, and a verdict.
 The register is the point of the repository: a reader should meet the
 verdict before the figures, not be left to infer it from a wall of
 plots.
+
+### *P. falciparum*
 
 **11 claims — 0 failing, 0 untested, 0 open, 11 pass.**
 
@@ -69,10 +73,54 @@ plots.
     [`seed-stability`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#seed-stability)
     — An undisturbed run holds the equilibrium it was seeded at.
 
+### *P. vivax*
+
+**10 claims — 2 failing, 0 untested, 0 open, 8 pass.**
+
+1.  pass
+    [`prevalence-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#prevalence-eir-pv)
+    — LM prevalence in 2-10 year olds tracks the IBM across transmission
+    intensity.
+2.  pass
+    [`clinical-allage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#clinical-allage-eir-pv)
+    — All-age clinical incidence tracks the IBM across transmission
+    intensity.
+3.  pass
+    [`clinical-under5-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#clinical-under5-eir-pv)
+    — Under-5 clinical incidence tracks the IBM across transmission
+    intensity.
+4.  pass
+    [`relapse-allage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#relapse-allage-eir-pv)
+    — All-age relapse incidence tracks the IBM across transmission
+    intensity.
+5.  pass
+    [`hypnozoite-carriage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#hypnozoite-carriage-eir-pv)
+    — The share of people carrying hypnozoites tracks the IBM across
+    transmission intensity.
+6.  pass
+    [`age-profile-clinical-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#age-profile-clinical-pv)
+    — The age distribution of clinical incidence tracks the IBM.
+7.  FAIL
+    [`intervention-impact-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#intervention-impact-pv)
+    — The modelled impact of each intervention, radical cure included,
+    matches the IBM.
+8.  pass
+    [`population-age-structure-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#population-age-structure-pv)
+    — The population age structure matches the IBM’s.
+9.  FAIL
+    [`speed-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#speed-pv)
+    — fleet is fast enough to be worth using in place of the IBM.
+10. pass
+    [`seed-stability-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#seed-stability-pv)
+    — An undisturbed run settles to a steady state, off the equilibrium
+    it was seeded at, as the IBM’s does.
+
 The criterion each claim was judged against, the number measured against
-it, and the figure it rests on are on the [evidence
-page](https://pwinskill.github.io/fleetcheck/articles/evidence.md), one
-section per claim.
+it, and the figure it rests on are on the evidence pages, one for [*P.
+falciparum*](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
+and one for [*P.
+vivax*](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md),
+with one section per claim.
 
 Regenerated from
 [`claims.yml`](https://github.com/pwinskill/fleetcheck/blob/main/claims.yml)
@@ -102,19 +150,19 @@ EIRs* because five is what happened.
 What it costs to reproduce a result is a property of the result, so it
 is recorded against every claim rather than mentioned in prose.
 
-| tier | cost    | who can reproduce it                               |
-|------|---------|----------------------------------------------------|
-| 0    | seconds | anyone, from committed summaries                   |
-| 1    | ~2 min  | anyone; re-runs `fleet` only                       |
-| 2    | ~2 h    | anyone with about 10 cores                         |
-| 3    | ~40 min | ~10 cores, and inputs that are not redistributable |
+| tier | cost    | who can reproduce it                             |
+|------|---------|--------------------------------------------------|
+| 0    | seconds | anyone, from committed summaries                 |
+| 1    | minutes | anyone; re-runs `fleet` only                     |
+| 2    | ~2 h    | anyone with about 10 cores                       |
+| 3    | ~50 min | 4 cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and
 statistics are public; the site files behind them are not.** The code
 that produces them is here and can be read, audited and run — the
 constraint is the inputs, not the compute. It re-runs `fleet` only,
 because the IBM arm is the pre-run diagnostic shipped with each site
-file, so forty minutes on ten cores refreshes it.
+file, so fifty minutes on four cores refreshes it.
 `validations/03-real-settings/example-one-site.R` demonstrates the same
 pipeline on a single sub-site for anyone who has one site file.
 
@@ -146,8 +194,8 @@ install.packages(c("yaml", "pkgload", "devtools"))
 ```
 
 **Tier 1 and 2** (re-run the models) additionally need `fleet`, the IBM,
-and the output post-processor. `fleet` pulls `odin2`, `dust2`, `monty`
-and `malariaEquilibrium` with it, and compiles C++, so allow some time:
+and the output post-processor. `fleet` pulls `dust2`, `monty` and
+`malariaEquilibrium` with it, and compiles C++, so allow some time:
 
 ``` r
 
@@ -174,7 +222,7 @@ Rscript report/make_scoreboard.R --check
 Rscript -e 'pkgload::load_all(quiet = TRUE); check_claims()'
 ```
 
-### 4. Check whether a change to `fleet` has moved anything — tier 1, ~2 min
+### 4. Check whether a change to `fleet` has moved anything — tier 1, minutes
 
 **This is the one to run often.** It re-runs `fleet` alone against the
 committed IBM rows. The IBM does not depend on `fleet`, so its rows stay
@@ -187,12 +235,13 @@ Rscript validations/02-scenarios/assess.R
 
 It answers two questions separately, because they mean different things.
 *Did anything move?* — `fleet` now against `fleet`’s committed rows. *Is
-the match still good?* — `fleet` now against the IBM medians and 10–90%
-bands, at the thresholds the claims rest on. Only the second fails the
-run by default. It exits non-zero on drift, so it works in CI.
+the match still good?* — `fleet` now against the IBM medians and
+replicate bands (median ± 1.28 SD), at the thresholds the claims rest
+on. Only the second fails the run by default. It exits non-zero on
+drift, so it works in CI.
 
 ``` bash
-CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R   # a subset, ~20 s
+CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R   # a subset, seconds
 CMP_STRICT=1 Rscript validations/02-scenarios/assess.R          # also fail if ANY number moved
 ```
 
@@ -208,7 +257,7 @@ CMP_SMOKE=1 Rscript validations/02-scenarios/run.R
 ```
 
 Then the real thing. It runs the IBM `N_REP` times per scenario on a
-PSOCK cluster (`N_WORKERS`, set at the top of `run.R`) and re-stamps
+PSOCK cluster (ten workers, or fewer with `CMP_WORKERS`) and re-stamps
 `ibm_reference.json`:
 
 ``` bash
@@ -219,20 +268,30 @@ If you changed `fleet` and only need `fleet`’s rows refreshed, keep the
 IBM’s:
 
 ``` bash
-CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # ~1 min
+CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # minutes
+```
+
+The *P. vivax* suite is the same scripts under `CMP_PARASITE=pv`, with
+its results in `validations/02-scenarios/results/pv/`:
+
+``` bash
+CMP_PARASITE=pv Rscript validations/02-scenarios/run.R
+CMP_PARASITE=pv CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R
+CMP_PARASITE=pv Rscript validations/02-scenarios/assess.R
 ```
 
 ### 6. Redraw the figures and tables — seconds
 
 ``` bash
-Rscript validations/02-scenarios/render.R   # cmp_*.png -> man/figures/ and vignettes/
-Rscript validations/02-scenarios/tables.R   # -> validations/02-scenarios/results/tables.md
+Rscript validations/02-scenarios/render.R      # cmp_*.png -> man/figures/ and vignettes/
+Rscript validations/02-scenarios/tables.R      # -> validations/02-scenarios/results/tables.md
+Rscript validations/02-scenarios/render_pv.R   # the vivax figures, cmp_pv_*.png
+Rscript validations/02-scenarios/tables_pv.R   # -> validations/02-scenarios/results/pv/tables.md
 ```
 
-`render.R` does not redraw the 63-country site-file panel: that is a
-snapshot from a run this repository cannot repeat (see tier 3 below).
-`CMP_REFRESH_SITES=1` re-takes it, and needs the validation results
-present.
+Neither pair redraws its site-file panel: those are snapshots from runs
+this repository cannot repeat (see tier 3 below). `CMP_REFRESH_SITES=1`
+re-takes them, and needs the validation results present.
 
 ### 7. Update the register, then regenerate every rendered copy of it
 
@@ -258,6 +317,7 @@ Rscript -e 'pkgdown::build_site()'
 
 | variable | what it does |
 |----|----|
+| `CMP_PARASITE=pv` | the *P. vivax* suite, or the vivax arm of tier 3, in place of falciparum |
 | `CMP_SMOKE=1` | 4-year, 1-replicate end-to-end check into `results/smoke/` |
 | `CMP_ONLY=a,b` | run or check only these scenarios, merging into the existing CSVs |
 | `CMP_FLEET_ONLY=1` | re-run `fleet`’s rows only, keeping the committed IBM rows |
@@ -273,13 +333,17 @@ Rscript -e 'pkgdown::build_site()'
 — but only if you have the malariaverse site files, which are not
 redistributable.** The constraint is the inputs, not the compute: the
 sweep re-runs `fleet` alone, because the IBM arm is the pre-run
-diagnostic shipped with each site file, so it is about forty minutes on
-ten cores.
+diagnostic shipped with each site file, so it is about fifty minutes on
+four cores.
 
 ``` bash
 FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
 Rscript validations/03-real-settings/assess.R
 ```
+
+The *P. vivax* arm is the same pair under `CMP_PARASITE=pv`: the vivax
+sub-sites of the countries with vivax transmission, up to ten per
+country, with results in `validations/03-real-settings/results/pv/`.
 
 Its figures and statistics are public and committed here; the runs
 behind them are not. `claims.yml` marks those claims `tier: 3` so the
@@ -303,10 +367,10 @@ says which details are load-bearing. Read the shape of the output rather
 than its third decimal: one sub-site against one IBM replicate is a
 check that the pipeline runs, not evidence about the model.
 
-Tier 2, in `validations/02-scenarios/`, is complete, and is what steps 4
-to 6 exercise. `validations/01-seed-stability/` is still a **stub** — a
-README and an empty `results/` — so `seed-stability` is the one claim in
-the register whose measured value no script here reproduces.
+Tier 2, in `validations/02-scenarios/`, is what steps 4 to 6 exercise.
+`Rscript validations/01-seed-stability/run.R` (a few minutes, `fleet`
+only) reproduces `seed-stability` and `seed-stability-pv`, and writes
+`results/seed_stability.json` and `results/seed_stability_pv.json`.
 
 ## Layout
 
@@ -316,29 +380,24 @@ the register whose measured value no script here reproduces.
     claims.yml    the register
 
 `R/metrics.R` holds every comparison statistic, defined once and
-unit-tested. That is not ceremony: `fleet`’s own documentation once
-carried two derivations of the same immunity figures, in two articles,
-and both were wrong. One definition, imported everywhere, tested.
+unit-tested, so no two pieces of evidence can compute the same statistic
+two ways.
 
 `R/provenance.R` stamps every result with the `fleet` and
 `malariasimulation` versions, the commits they were installed from, the
 R version and the date, and holds the rounding rule the stored summaries
-are written under. It exists because the provenance used to be inverted:
-the 25-minute comparison recorded the IBM version, the replicate count
-and a digest of the scenarios, while the site-file sweep — which needs
-inputs nobody outside the project has — recorded only a date. The tier
-that is hardest to re-run is the one that most needs to say what made
-it, and its stamp now carries the `fleet` version and the age grid too.
+are written under. The tier that is hardest to re-run, the site-file
+sweep, most needs to say what made it, so its stamp carries the `fleet`
+version, the age grid and the mosquito sub-step count as well.
 
 ## Status
 
-The register, the tested metrics layer and **tier 2** are in place: the
-scenario comparison in `validations/02-scenarios/` runs end to end, has
-a two-minute smoke path, and is what CI checks. **Tier 3** runs from
-here too — `run.R`, `assess.R` and `diagnose.R` — given the site files
-it cannot ship. Tier 1 is still a stub, so `seed-stability` is the one
-claim in the register whose measured value no script here reproduces;
-porting it is the outstanding work.
+The register, the tested metrics layer and every tier are in place.
+**Tier 1**, `validations/01-seed-stability/`, runs in seconds. **Tier
+2**, the scenario comparison in `validations/02-scenarios/`, runs end to
+end, has a few-minute smoke path, and is what CI checks. **Tier 3** runs
+from here too — `run.R`, `assess.R` and `diagnose.R` — given the site
+files it cannot ship.
 
 # Package index
 
@@ -358,15 +417,18 @@ porting it is the outstanding work.
   : The README badge row
 - [`verdict_html()`](https://pwinskill.github.io/fleetcheck/reference/verdict_html.md)
   : A verdict as its HTML lozenge
+- [`evidence_page()`](https://pwinskill.github.io/fleetcheck/reference/evidence_page.md)
+  : The evidence article a claim is presented on
+- [`claim_sections_md()`](https://pwinskill.github.io/fleetcheck/reference/claim_sections_md.md)
+  : The evidence article's section for each claim
 - [`check_claims()`](https://pwinskill.github.io/fleetcheck/reference/check_claims.md)
   : Fail if the register has regressed
 
 ## Comparison statistics
 
 Every statistic quoted anywhere in this project. Defined once and
-unit-tested, because the alternative is what happened to fleet’s own
-documentation: the same quantity derived twice, in two articles, wrong
-both times.
+unit-tested, so no two pieces of evidence can compute the same quantity
+two ways.
 
 - [`agreement()`](https://pwinskill.github.io/fleetcheck/reference/agreement.md)
   : Agreement between two models on the same quantity
@@ -417,6 +479,10 @@ against an installed package and not only under pkgload::load_all().
   [`EIR_GRID`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`EIR_REF`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`PROFILE_EIR`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
+  [`EIR_GRID_PV`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
+  [`EIR_REF_PV`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
+  [`PROFILE_EIR_PV`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
+  [`INT_LABELS_PV`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`INT_LABELS`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`TS_LABELS`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`TS_YEARS`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
@@ -430,7 +496,9 @@ against an installed package and not only under pkgload::load_all().
 
 ### All vignettes
 
-- [Validation
-  evidence](https://pwinskill.github.io/fleetcheck/articles/evidence.md):
+- [Validation evidence: P.
+  vivax](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md):
+- [Validation evidence: P.
+  falciparum](https://pwinskill.github.io/fleetcheck/articles/evidence.md):
 - [How it is
   produced](https://pwinskill.github.io/fleetcheck/articles/methods.md):

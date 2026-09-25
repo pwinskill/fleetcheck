@@ -1,6 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://pwinskill.github.io/fleetcheck/404.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/LICENSE-text.html</loc></url>
+<url><loc>https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/articles/evidence.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/articles/index.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/articles/methods.html</loc></url>
@@ -12,9 +13,11 @@
 <url><loc>https://pwinskill.github.io/fleetcheck/reference/band_summary.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/reference/band_z.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/reference/check_claims.html</loc></url>
+<url><loc>https://pwinskill.github.io/fleetcheck/reference/claim_sections_md.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/reference/claims_list_md.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/reference/claims_summary.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/reference/comparison-settings.html</loc></url>
+<url><loc>https://pwinskill.github.io/fleetcheck/reference/evidence_page.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/reference/fc_results.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/reference/fc_root.html</loc></url>
 <url><loc>https://pwinskill.github.io/fleetcheck/reference/find_claims.html</loc></url>

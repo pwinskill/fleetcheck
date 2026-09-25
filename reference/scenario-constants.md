@@ -25,6 +25,14 @@ EIR_REF
 
 PROFILE_EIR
 
+EIR_GRID_PV
+
+EIR_REF_PV
+
+PROFILE_EIR_PV
+
+INT_LABELS_PV
+
 INT_LABELS
 
 TS_LABELS
@@ -51,6 +59,14 @@ An object of class `numeric` of length 6.
 An object of class `numeric` of length 1.
 
 An object of class `numeric` of length 3.
+
+An object of class `numeric` of length 5.
+
+An object of class `numeric` of length 1.
+
+An object of class `numeric` of length 3.
+
+An object of class `character` of length 5.
 
 An object of class `character` of length 6.
 
@@ -105,6 +121,11 @@ An object of class `integer` of length 1.
 - `INT_LABELS`, `TS_LABELS`:
 
   display labels, in display order.
+
+- `EIR_GRID_PV`, `EIR_REF_PV`, `PROFILE_EIR_PV`, `INT_LABELS_PV`:
+
+  the same for the P. vivax suite, which runs on its own lower grid and
+  without chemoprevention or vaccines.
 
 - `TS_YEARS`, `TS_NET_EVERY`:
 

@@ -9,9 +9,9 @@ predate the grid still mean what they meant; the others carry an
 ## Usage
 
 ``` r
-int_scenario(intervention, eir)
+int_scenario(intervention, eir, ref = EIR_REF)
 
-int_parts(scenario)
+int_parts(scenario, ref = EIR_REF)
 ```
 
 ## Arguments
@@ -23,6 +23,14 @@ int_parts(scenario)
 - eir:
 
   transmission intensity.
+
+- ref:
+
+  the reference EIR whose runs carry the bare name:
+  [EIR_REF](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
+  for the falciparum suite,
+  [EIR_REF_PV](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
+  for the vivax one.
 
 - scenario:
 

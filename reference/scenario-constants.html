@@ -20,7 +20,11 @@ plots the result."><meta property="og:image" content="https://pwinskill.github.i
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html">Overview</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/evidence.html">Evidence</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-evidence" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Evidence</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-evidence"><li><a class="dropdown-item" href="../articles/evidence.html">P. falciparum</a></li>
+    <li><a class="dropdown-item" href="../articles/evidence-vivax.html">P. vivax</a></li>
+  </ul></li>
 <li class="nav-item"><a class="nav-link" href="../articles/methods.html">How it is produced</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -64,6 +68,14 @@ plots the result.</p>
 <span></span>
 <span><span class="va">PROFILE_EIR</span></span>
 <span></span>
+<span><span class="va">EIR_GRID_PV</span></span>
+<span></span>
+<span><span class="va">EIR_REF_PV</span></span>
+<span></span>
+<span><span class="va">PROFILE_EIR_PV</span></span>
+<span></span>
+<span><span class="va">INT_LABELS_PV</span></span>
+<span></span>
 <span><span class="va">INT_LABELS</span></span>
 <span></span>
 <span><span class="va">TS_LABELS</span></span>
@@ -83,6 +95,10 @@ plots the result.</p>
 <p>An object of class <code>numeric</code> of length 6.</p>
 <p>An object of class <code>numeric</code> of length 1.</p>
 <p>An object of class <code>numeric</code> of length 3.</p>
+<p>An object of class <code>numeric</code> of length 5.</p>
+<p>An object of class <code>numeric</code> of length 1.</p>
+<p>An object of class <code>numeric</code> of length 3.</p>
+<p>An object of class <code>character</code> of length 5.</p>
 <p>An object of class <code>character</code> of length 6.</p>
 <p>An object of class <code>character</code> of length 5.</p>
 <p>An object of class <code>integer</code> of length 1.</p>
@@ -124,6 +140,11 @@ shape claims are carried at.</p></dd>
 
 <dt><code>INT_LABELS</code>, <code>TS_LABELS</code></dt>
 <dd><p>display labels, in display order.</p></dd>
+
+<dt><code>EIR_GRID_PV</code>, <code>EIR_REF_PV</code>, <code>PROFILE_EIR_PV</code>, <code>INT_LABELS_PV</code></dt>
+<dd><p>the
+same for the P. vivax suite, which runs on its own lower grid and without
+chemoprevention or vaccines.</p></dd>
 
 <dt><code>TS_YEARS</code>, <code>TS_NET_EVERY</code></dt>
 <dd><p>long-horizon programme timings.</p></dd>
