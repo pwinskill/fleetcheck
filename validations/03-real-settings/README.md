@@ -16,7 +16,7 @@ the register yet.
 not.** The site files are not redistributable. So this directory cannot hand you
 the tier-3 result; it can show you exactly how the result is made, and let you
 reproduce the *method* on any single sub-site you have a site file for. With the
-site files, the sweep re-runs `fleet` only, about twenty minutes on four cores.
+site files, the sweep re-runs `fleet` only, about fifty minutes on four cores.
 
 `example-one-site.R` is that: the same pipeline, one sub-site, about two minutes.
 
@@ -110,7 +110,7 @@ not evidence.
 
 The sweep runs **fleet only**, and not as an option. The IBM arm is the pre-run
 diagnostic shipped with each site file, so there is no second model to run and
-nothing that needs a cluster: the full 63 countries take about twenty minutes on
+nothing that needs a cluster: the full 63 countries take about fifty minutes on
 four cores. That is why a fleet-side change can be re-measured here directly.
 
 ```bash

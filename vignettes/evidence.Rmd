@@ -48,12 +48,12 @@ recorded against every claim rather than stated once in prose.
 | 0 | seconds | anyone, from the committed summaries |
 | 1 | minutes | anyone; re-runs `fleet` only |
 | 2 | ~2 h | anyone with about ten cores |
-| 3 | ~20 min | four cores, and inputs that are not redistributable |
+| 3 | ~50 min | four cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and statistics are
 public; the site files behind them are not.** The constraint is the inputs
 rather than the compute: the sweep re-runs `fleet` only, because the IBM arm is
-the pre-run diagnostic shipped with each site file, so twenty minutes on four
+the pre-run diagnostic shipped with each site file, so fifty minutes on four
 cores refreshes it. But the site files are not redistributable, so nobody
 outside the project can repeat it. That is a limitation of this evidence, not a
 property of the result, and

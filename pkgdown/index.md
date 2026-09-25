@@ -6,7 +6,7 @@
 
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
-[![Falciparum claims: 10 pass, 1 fail](https://img.shields.io/badge/falciparum%20claims-10%20pass%2C%201%20fail-orange.svg)](articles/evidence.html)
+[![Falciparum claims: 11 pass](https://img.shields.io/badge/falciparum%20claims-11%20pass-brightgreen.svg)](articles/evidence.html)
 [![Vivax claims: 8 pass, 2 fail](https://img.shields.io/badge/vivax%20claims-8%20pass%2C%202%20fail-orange.svg)](articles/evidence-vivax.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
@@ -33,7 +33,7 @@ of plots.
 
 ### *P. falciparum*
 
-**11 claims — 1 failing, 0 untested, 0 open, 10 pass.**
+**11 claims — 0 failing, 0 untested, 0 open, 11 pass.**
 
 1. <span class="verdict pass">pass</span> [`prevalence-eir`](articles/evidence.html#prevalence-eir) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
 2. <span class="verdict pass">pass</span> [`clinical-allage-eir`](articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
@@ -42,7 +42,7 @@ of plots.
 5. <span class="verdict pass">pass</span> [`age-profile-clinical`](articles/evidence.html#age-profile-clinical) &mdash; The age distribution of clinical incidence tracks the IBM.
 6. <span class="verdict pass">pass</span> [`age-profile-severe`](articles/evidence.html#age-profile-severe) &mdash; The age distribution of severe incidence tracks the IBM.
 7. <span class="verdict pass">pass</span> [`intervention-impact`](articles/evidence.html#intervention-impact) &mdash; The modelled impact of each intervention matches the IBM.
-8. <span class="verdict fail">FAIL</span> [`real-settings-correlation`](articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
+8. <span class="verdict pass">pass</span> [`real-settings-correlation`](articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
 9. <span class="verdict pass">pass</span> [`population-age-structure`](articles/evidence.html#population-age-structure) &mdash; The population age structure matches the IBM's.
 10. <span class="verdict pass">pass</span> [`speed`](articles/evidence.html#speed) &mdash; fleet is fast enough to be worth using in place of the IBM.
 11. <span class="verdict pass">pass</span> [`seed-stability`](articles/evidence.html#seed-stability) &mdash; An undisturbed run holds the equilibrium it was seeded at.
@@ -60,7 +60,7 @@ of plots.
 7. <span class="verdict fail">FAIL</span> [`intervention-impact-pv`](articles/evidence-vivax.html#intervention-impact-pv) &mdash; The modelled impact of each intervention, radical cure included, matches the IBM.
 8. <span class="verdict pass">pass</span> [`population-age-structure-pv`](articles/evidence-vivax.html#population-age-structure-pv) &mdash; The population age structure matches the IBM's.
 9. <span class="verdict fail">FAIL</span> [`speed-pv`](articles/evidence-vivax.html#speed-pv) &mdash; fleet is fast enough to be worth using in place of the IBM.
-10. <span class="verdict pass">pass</span> [`seed-stability-pv`](articles/evidence-vivax.html#seed-stability-pv) &mdash; An undisturbed run settles, a few per cent from the equilibrium it was seeded at.
+10. <span class="verdict pass">pass</span> [`seed-stability-pv`](articles/evidence-vivax.html#seed-stability-pv) &mdash; An undisturbed run settles to a steady state, off the equilibrium it was seeded at, as the IBM's does.
 
 <!-- END scoreboard -->
 
@@ -99,13 +99,13 @@ recorded against every claim rather than mentioned in prose.
 | 0 | seconds | anyone, from committed summaries |
 | 1 | minutes | anyone; re-runs `fleet` only |
 | 2 | ~2 h | anyone with about 10 cores |
-| 3 | ~20 min | 4 cores, and inputs that are not redistributable |
+| 3 | ~50 min | 4 cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and statistics are
 public; the site files behind them are not.** The code that produces them is
 here and can be read, audited and run — the constraint is the inputs, not the
 compute. It re-runs `fleet` only, because the IBM arm is the pre-run diagnostic
-shipped with each site file, so twenty minutes on four cores refreshes it.
+shipped with each site file, so fifty minutes on four cores refreshes it.
 `validations/03-real-settings/example-one-site.R` demonstrates the same pipeline
 on a single sub-site for anyone who has one site file.
 
@@ -267,7 +267,7 @@ Rscript -e 'pkgdown::build_site()'
 only if you have the malariaverse site files, which are not redistributable.**
 The constraint is the inputs, not the compute: the sweep re-runs `fleet` alone,
 because the IBM arm is the pre-run diagnostic shipped with each site file, so it
-is about twenty minutes on four cores.
+is about fifty minutes on four cores.
 
 ```bash
 FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R

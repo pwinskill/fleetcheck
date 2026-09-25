@@ -399,8 +399,8 @@ if (length(fs)) {
     plot_annotation(
       title = sprintf("Country site files: %s sub-site-months across %d countries",
                       format(st_c$n, big.mark = ","), length(unique(v$iso3c))),
-      subtitle = sprintf("Every P. falciparum admin-1 \u00d7 urban/rural sub-site in the malariaverse site files, %d\u2013%d, with its full intervention history",
-                         min(v$year), max(v$year)),
+      subtitle = cap(sprintf("Every P. falciparum admin-1 \u00d7 urban/rural sub-site in the malariaverse site files, %d\u2013%d, with its full intervention history",
+                         min(v$year), max(v$year)), fig_width = 9),
       caption = cap("Dashed line = perfect agreement. All ages, P. falciparum only on both sides. Cell colour = number of sub-site-months (log scale); the axes stop at the 99.9th percentile of the values, and r and slope are over all of them. IBM values are the site files' own calibration diagnostic runs; fleet was run here from the same site_parameters() lists."),
       theme = theme_cmp())
   save_fig(g, "core_sites", width = 10, height = 5.4)

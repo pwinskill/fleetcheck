@@ -107,11 +107,11 @@ clinical peak (per child-year): IBM 4.36 (day 305), fleet 4.38 (day 298); annual
 
 seasonal realised EIR: IBM 18.7, fleet 18.6 (target 20); annual PfPR IBM 0.491 (0.483–0.499), fleet 0.489
 
-## Country site files (run: 2026-09-24, fleet 0.0.0.9003; summarised 2026-09-24)
+## Country site files (run: 2026-09-25, fleet 0.0.0.9003; summarised 2026-09-25)
 
 countries: 63; sub-sites: 1392; years 2000–2026
-clinical: n = 451,008, r = 0.983, slope = 0.966, relative bias = 5.5%
-severe:   n = 451,008, r = 0.957, slope = 0.890, relative bias = 3.3%
+clinical: n = 451,008, r = 0.984, slope = 0.987, relative bias = 7.3%
+severe:   n = 451,008, r = 0.958, slope = 0.932, relative bias = 7.5%
 NOT refreshed by this harness or by CI: re-take with CMP_REFRESH_SITES=1 when the validation run is repeated
 
 ## Intervention impact: reduction over post-deployment years 0-3 vs pre-deployment years -3-0
