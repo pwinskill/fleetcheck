@@ -33,7 +33,9 @@ source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
 
 DDIR <- fc_results("age-grid"); dir.create(DDIR, showWarnings = FALSE, recursive = TRUE)
 SC <- "eir_20"
-N_GROUPS <- c(53L, 105L, 209L, 417L)
+## A doubling series through the default, so successive ratios read the order
+## and the two finest give a Richardson limit.
+N_GROUPS <- c(59L, 118L, 236L, 472L)
 
 ## The old grid, kept verbatim, because "the new grid halves the error" is a
 ## comparison against something and that something has to be reproducible.
@@ -55,7 +57,7 @@ cat(sprintf("age-grid convergence, %s, fleet only\n\n", SC))
 grids <- c(
   setNames(lapply(N_GROUPS, function(n) default_age_lower(n_group = n)),
            paste0("log", N_GROUPS)),
-  list(old = old_grid(), flat = flat_grid(53L)))
+  list(log53 = default_age_lower(n_group = 53L), old = old_grid(), flat = flat_grid(53L)))
 prof <- lapply(grids, profile_on)
 mids <- sort(unique(prof[[1]]$age_mid))
 clin <- vapply(prof, function(p) p$clin[match(mids, p$age_mid)], numeric(length(mids)))

@@ -1,40 +1,40 @@
 "table","scenario","years","pop","settings","seconds","s_per_year"
-"scenario","No interventions",5,1e+05,"default",0.63,0.126
-"scenario","No interventions",10,1e+05,"default",1.16,0.116
-"scenario","No interventions",30,1e+05,"default",3.29,0.11
-"scenario","Seasonal",5,1e+05,"default",0.64,0.128
-"scenario","Seasonal",10,1e+05,"default",1.21,0.121
-"scenario","Seasonal",30,1e+05,"default",3.46,0.115
-"scenario","Seasonal + treatment (AL)",5,1e+05,"default",0.72,0.144
-"scenario","Seasonal + treatment (AL)",10,1e+05,"default",1.32,0.132
-"scenario","Seasonal + treatment (AL)",30,1e+05,"default",3.48,0.116
-"scenario","Seasonal + nets + IRS",5,1e+05,"default",0.64,0.128
-"scenario","Seasonal + nets + IRS",10,1e+05,"default",1.28,0.128
-"scenario","Seasonal + nets + IRS",30,1e+05,"default",3.72,0.124
-"scenario","Seasonal + SMC (4 rounds/yr)",5,1e+05,"default",0.88,0.176
-"scenario","Seasonal + SMC (4 rounds/yr)",10,1e+05,"default",1.57,0.157
-"scenario","Seasonal + SMC (4 rounds/yr)",30,1e+05,"default",4.36,0.145
-"scenario","All of the above + RTS,S",5,1e+05,"default",0.92,0.184
-"scenario","All of the above + RTS,S",10,1e+05,"default",1.57,0.157
-"scenario","All of the above + RTS,S",30,1e+05,"default",4.31,0.144
-"scenario_pv","No interventions",5,1e+05,"default",11.64,2.328
-"scenario_pv","No interventions",10,1e+05,"default",24.36,2.436
-"scenario_pv","No interventions",30,1e+05,"default",62.69,2.09
-"scenario_pv","Treatment (chloroquine)",5,1e+05,"default",13.39,2.678
-"scenario_pv","Treatment (chloroquine)",10,1e+05,"default",25.45,2.545
-"scenario_pv","Treatment (chloroquine)",30,1e+05,"default",74.21,2.474
-"scenario_pv","Radical cure (CQ + primaquine)",5,1e+05,"default",27.55,5.51
-"scenario_pv","Radical cure (CQ + primaquine)",10,1e+05,"default",52.14,5.214
-"scenario_pv","Radical cure (CQ + primaquine)",30,1e+05,"default",150.01,5
-"scenario_pv","Radical cure (CQ + tafenoquine)",5,1e+05,"default",44.14,8.828
-"scenario_pv","Radical cure (CQ + tafenoquine)",10,1e+05,"default",86.04,8.604
-"scenario_pv","Radical cure (CQ + tafenoquine)",30,1e+05,"default",248.77,8.292
-"population","Seasonal",30,1000,"default",3.06,0.102
-"population","Seasonal",30,10000,"default",3.06,0.102
-"population","Seasonal",30,1e+05,"default",3.06,0.102
-"population","Seasonal",30,1e+06,"default",3.05,0.102
-"population","Seasonal",30,1e+07,"default",3.08,0.103
-"settings","n_sub = 8",30,1e+05,"n_sub = 8",3.05,0.102
-"settings","n_sub = 16",30,1e+05,"n_sub = 16",3.03,0.101
-"settings","n_sub = 32 (default)",30,1e+05,"n_sub = 32 (default)",3.09,0.103
-"settings","n_sub = 64",30,1e+05,"n_sub = 64",3.11,0.104
+"scenario","No interventions",5,1e+05,"default",0.3,0.06
+"scenario","No interventions",10,1e+05,"default",0.59,0.059
+"scenario","No interventions",30,1e+05,"default",1.65,0.055
+"scenario","Seasonal",5,1e+05,"default",0.31,0.062
+"scenario","Seasonal",10,1e+05,"default",0.6,0.06
+"scenario","Seasonal",30,1e+05,"default",1.67,0.056
+"scenario","Seasonal + treatment (AL)",5,1e+05,"default",0.33,0.066
+"scenario","Seasonal + treatment (AL)",10,1e+05,"default",0.62,0.062
+"scenario","Seasonal + treatment (AL)",30,1e+05,"default",1.75,0.058
+"scenario","Seasonal + nets + IRS",5,1e+05,"default",0.31,0.062
+"scenario","Seasonal + nets + IRS",10,1e+05,"default",0.61,0.061
+"scenario","Seasonal + nets + IRS",30,1e+05,"default",1.79,0.06
+"scenario","Seasonal + SMC (4 rounds/yr)",5,1e+05,"default",0.42,0.084
+"scenario","Seasonal + SMC (4 rounds/yr)",10,1e+05,"default",0.75,0.075
+"scenario","Seasonal + SMC (4 rounds/yr)",30,1e+05,"default",2.15,0.072
+"scenario","All of the above + RTS,S",5,1e+05,"default",0.43,0.086
+"scenario","All of the above + RTS,S",10,1e+05,"default",0.81,0.081
+"scenario","All of the above + RTS,S",30,1e+05,"default",2.34,0.078
+"scenario_pv","No interventions",5,1e+05,"default",4.72,0.944
+"scenario_pv","No interventions",10,1e+05,"default",8.77,0.877
+"scenario_pv","No interventions",30,1e+05,"default",25.83,0.861
+"scenario_pv","Treatment (chloroquine)",5,1e+05,"default",5.5,1.1
+"scenario_pv","Treatment (chloroquine)",10,1e+05,"default",9.89,0.989
+"scenario_pv","Treatment (chloroquine)",30,1e+05,"default",27.25,0.908
+"scenario_pv","Radical cure (CQ + primaquine)",5,1e+05,"default",10.9,2.18
+"scenario_pv","Radical cure (CQ + primaquine)",10,1e+05,"default",20.39,2.039
+"scenario_pv","Radical cure (CQ + primaquine)",30,1e+05,"default",58.54,1.951
+"scenario_pv","Radical cure (CQ + tafenoquine)",5,1e+05,"default",19.76,3.952
+"scenario_pv","Radical cure (CQ + tafenoquine)",10,1e+05,"default",38.4,3.84
+"scenario_pv","Radical cure (CQ + tafenoquine)",30,1e+05,"default",107.42,3.581
+"population","Seasonal",30,1000,"default",1.74,0.058
+"population","Seasonal",30,10000,"default",1.73,0.058
+"population","Seasonal",30,1e+05,"default",1.7,0.057
+"population","Seasonal",30,1e+06,"default",1.72,0.057
+"population","Seasonal",30,1e+07,"default",1.7,0.057
+"settings","n_sub = 8",30,1e+05,"n_sub = 8",1.7,0.057
+"settings","n_sub = 16",30,1e+05,"n_sub = 16",1.71,0.057
+"settings","n_sub = 32 (default)",30,1e+05,"n_sub = 32 (default)",1.72,0.057
+"settings","n_sub = 64",30,1e+05,"n_sub = 64",1.75,0.058

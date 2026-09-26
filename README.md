@@ -5,7 +5,7 @@
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
 [![Falciparum claims: 11 pass](https://img.shields.io/badge/falciparum%20claims-11%20pass-brightgreen.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.html)
-[![Vivax claims: 8 pass, 2 fail](https://img.shields.io/badge/vivax%20claims-8%20pass%2C%202%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html)
+[![Vivax claims: 7 pass, 3 fail](https://img.shields.io/badge/vivax%20claims-7%20pass%2C%203%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
 
@@ -47,14 +47,14 @@ of plots.
 
 ### *P. vivax*
 
-**10 claims — 2 failing, 0 untested, 0 open, 8 pass.**
+**10 claims — 3 failing, 0 untested, 0 open, 7 pass.**
 
 1. <span class="verdict pass">pass</span> [`prevalence-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#prevalence-eir-pv) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
 2. <span class="verdict pass">pass</span> [`clinical-allage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#clinical-allage-eir-pv) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
 3. <span class="verdict pass">pass</span> [`clinical-under5-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#clinical-under5-eir-pv) &mdash; Under-5 clinical incidence tracks the IBM across transmission intensity.
 4. <span class="verdict pass">pass</span> [`relapse-allage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#relapse-allage-eir-pv) &mdash; All-age relapse incidence tracks the IBM across transmission intensity.
 5. <span class="verdict pass">pass</span> [`hypnozoite-carriage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#hypnozoite-carriage-eir-pv) &mdash; The share of people carrying hypnozoites tracks the IBM across transmission intensity.
-6. <span class="verdict pass">pass</span> [`age-profile-clinical-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#age-profile-clinical-pv) &mdash; The age distribution of clinical incidence tracks the IBM.
+6. <span class="verdict fail">FAIL</span> [`age-profile-clinical-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#age-profile-clinical-pv) &mdash; The age distribution of clinical incidence tracks the IBM.
 7. <span class="verdict fail">FAIL</span> [`intervention-impact-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#intervention-impact-pv) &mdash; The modelled impact of each intervention, radical cure included, matches the IBM.
 8. <span class="verdict pass">pass</span> [`population-age-structure-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#population-age-structure-pv) &mdash; The population age structure matches the IBM's.
 9. <span class="verdict fail">FAIL</span> [`speed-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#speed-pv) &mdash; fleet is fast enough to be worth using in place of the IBM.
@@ -97,13 +97,13 @@ recorded against every claim rather than mentioned in prose.
 | 0 | seconds | anyone, from committed summaries |
 | 1 | minutes | anyone; re-runs `fleet` only |
 | 2 | ~2 h | anyone with about 10 cores |
-| 3 | ~50 min | 4 cores, and inputs that are not redistributable |
+| 3 | ~30 min | 4 cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and statistics are
 public; the site files behind them are not.** The code that produces them is
 here and can be read, audited and run — the constraint is the inputs, not the
 compute. It re-runs `fleet` only, because the IBM arm is the pre-run diagnostic
-shipped with each site file, so fifty minutes on four cores refreshes it.
+shipped with each site file, so thirty minutes on four cores refreshes it.
 `validations/03-real-settings/example-one-site.R` demonstrates the same pipeline
 on a single sub-site for anyone who has one site file.
 
@@ -265,7 +265,7 @@ Rscript -e 'pkgdown::build_site()'
 only if you have the malariaverse site files, which are not redistributable.**
 The constraint is the inputs, not the compute: the sweep re-runs `fleet` alone,
 because the IBM arm is the pre-run diagnostic shipped with each site file, so it
-is about fifty minutes on four cores.
+is about thirty minutes on four cores.
 
 ```bash
 FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R

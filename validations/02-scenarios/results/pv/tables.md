@@ -4,97 +4,97 @@
 
 | Outcome | EIR | IBM (replicate band) | fleet | fleet / IBM | inside |
 | --- | --- | --- | --- | --- | --- |
-| clinical, 0-5 | 0.3 | 0.172 (0.139–0.2049) | 0.1752 | +1.9% | yes |
-| clinical, 0-5 | 1 | 0.4916 (0.4471–0.5361) | 0.4978 | +1.3% | yes |
-| clinical, 0-5 | 3 | 1.145 (1.08–1.21) | 1.157 | +1.1% | yes |
-| clinical, 0-5 | 10 | 2.231 (2.146–2.315) | 2.262 | +1.4% | yes |
-| clinical, 0-5 | 30 | 3.445 (3.364–3.525) | 3.5 | +1.6% | yes |
-| clinical, all ages | 0.3 | 0.2611 (0.2126–0.3096) | 0.2609 | -0.1% | yes |
-| clinical, all ages | 1 | 0.4681 (0.4396–0.4965) | 0.4762 | +1.7% | yes |
-| clinical, all ages | 3 | 0.6689 (0.6416–0.6961) | 0.6779 | +1.4% | yes |
-| clinical, all ages | 10 | 0.854 (0.8343–0.8737) | 0.8637 | +1.1% | yes |
-| clinical, all ages | 30 | 0.9782 (0.9508–1.006) | 0.9937 | +1.6% | yes |
-| carrying hypnozoites | 0.3 | 0.05952 (0.04981–0.06924) | 0.05767 | -3.1% | yes |
-| carrying hypnozoites | 1 | 0.1515 (0.1451–0.158) | 0.1508 | -0.5% | yes |
-| carrying hypnozoites | 3 | 0.3093 (0.3039–0.3146) | 0.3088 | -0.2% | yes |
-| carrying hypnozoites | 10 | 0.5469 (0.5403–0.5536) | 0.5441 | -0.5% | yes |
-| carrying hypnozoites | 30 | 0.769 (0.7629–0.7751) | 0.7631 | -0.8% | yes |
-| PvPR 2-10 (LM) | 0.3 | 0.01638 (0.01346–0.01931) | 0.01636 | -0.2% | yes |
-| PvPR 2-10 (LM) | 1 | 0.04367 (0.04075–0.04659) | 0.04412 | +1.0% | yes |
-| PvPR 2-10 (LM) | 3 | 0.09166 (0.08885–0.09446) | 0.09334 | +1.8% | yes |
-| PvPR 2-10 (LM) | 10 | 0.1728 (0.1687–0.1769) | 0.174 | +0.7% | yes |
-| PvPR 2-10 (LM) | 30 | 0.2603 (0.2563–0.2643) | 0.2633 | +1.1% | yes |
-| relapses, all ages | 0.3 | 0.5922 (0.4852–0.6992) | 0.573 | -3.2% | yes |
-| relapses, all ages | 1 | 1.809 (1.711–1.906) | 1.801 | -0.4% | yes |
-| relapses, all ages | 3 | 4.769 (4.655–4.884) | 4.786 | +0.4% | yes |
-| relapses, all ages | 10 | 13.06 (12.8–13.33) | 12.93 | -1.0% | yes |
-| relapses, all ages | 30 | 26.03 (25.68–26.37) | 25.82 | -0.8% | yes |
+| clinical, 0-5 | 0.3 | 0.172 (0.139–0.2049) | 0.1761 | +2.4% | yes |
+| clinical, 0-5 | 1 | 0.4916 (0.4471–0.5361) | 0.4995 | +1.6% | yes |
+| clinical, 0-5 | 3 | 1.145 (1.08–1.21) | 1.16 | +1.3% | yes |
+| clinical, 0-5 | 10 | 2.231 (2.146–2.315) | 2.265 | +1.5% | yes |
+| clinical, 0-5 | 30 | 3.445 (3.364–3.525) | 3.499 | +1.6% | yes |
+| clinical, all ages | 0.3 | 0.2611 (0.2126–0.3096) | 0.2618 | +0.3% | yes |
+| clinical, all ages | 1 | 0.4681 (0.4396–0.4965) | 0.4772 | +2.0% | yes |
+| clinical, all ages | 3 | 0.6689 (0.6416–0.6961) | 0.6787 | +1.5% | yes |
+| clinical, all ages | 10 | 0.854 (0.8343–0.8737) | 0.8644 | +1.2% | yes |
+| clinical, all ages | 30 | 0.9782 (0.9508–1.006) | 0.9946 | +1.7% | yes |
+| carrying hypnozoites | 0.3 | 0.05952 (0.04981–0.06924) | 0.05795 | -2.6% | yes |
+| carrying hypnozoites | 1 | 0.1515 (0.1451–0.158) | 0.1513 | -0.1% | yes |
+| carrying hypnozoites | 3 | 0.3093 (0.3039–0.3146) | 0.3097 | +0.1% | yes |
+| carrying hypnozoites | 10 | 0.5469 (0.5403–0.5536) | 0.5452 | -0.3% | yes |
+| carrying hypnozoites | 30 | 0.769 (0.7629–0.7751) | 0.7638 | -0.7% | yes |
+| PvPR 2-10 (LM) | 0.3 | 0.01638 (0.01346–0.01931) | 0.01643 | +0.3% | yes |
+| PvPR 2-10 (LM) | 1 | 0.04367 (0.04075–0.04659) | 0.04424 | +1.3% | yes |
+| PvPR 2-10 (LM) | 3 | 0.09166 (0.08885–0.09446) | 0.09351 | +2.0% | yes |
+| PvPR 2-10 (LM) | 10 | 0.1728 (0.1687–0.1769) | 0.1742 | +0.8% | yes |
+| PvPR 2-10 (LM) | 30 | 0.2603 (0.2563–0.2643) | 0.2636 | +1.2% | yes |
+| relapses, all ages | 0.3 | 0.5922 (0.4852–0.6992) | 0.5761 | -2.7% | yes |
+| relapses, all ages | 1 | 1.809 (1.711–1.906) | 1.809 | +0.0% | yes |
+| relapses, all ages | 3 | 4.769 (4.655–4.884) | 4.807 | +0.8% | yes |
+| relapses, all ages | 10 | 13.06 (12.8–13.33) | 12.97 | -0.7% | yes |
+| relapses, all ages | 30 | 26.03 (25.68–26.37) | 25.87 | -0.6% | yes |
 
-PvPR 2-10 (LM): inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 1.8%
+PvPR 2-10 (LM): inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 2.0%
 
-PCR prevalence 2-10: inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 1.4% (reported, not scored)
+PCR prevalence 2-10: inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 1.6% (reported, not scored)
 
-clinical, 0-5: inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 1.9%
+clinical, 0-5: inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 2.4%
 
-clinical, all ages: inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 1.7%
+clinical, all ages: inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 2.0%
 
-relapses, all ages: inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 3.2%
+relapses, all ages: inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 2.7%
 
-carrying hypnozoites: inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 3.1%
+carrying hypnozoites: inside the replicate band at 5 of 5 EIRs; largest |fleet/IBM - 1| 2.6%
 
 ## Drift from the seed at EIR 3 (PvPR 2-10, 30-day bins)
 
 IBM: first bin 0.0893; largest departure in the first 15 years +7.2%; final three years +1.8%
 
-fleet: first bin 0.0888; largest departure in the first 15 years +6.6%; final three years +5.1%
+fleet: first bin 0.0886; largest departure in the first 15 years +7.2%; final three years +5.6%
 
 ## Age-profile claim, scored over EIR 1, 3, 10
 
 vivax age-profile-clinical: 23 of 36 cells carry at least 5% of clinical episodes and are tested; they hold 90% of all episodes
 
-  inside the replicate band: 23 of 23; max |z| 1.21 (EIR 10, 3-5y)
+  inside the replicate band: 22 of 23; max |z| 1.30 (EIR 10, 3-5y)
 
   not tested and outside the band: none
 
 
 | EIR | age band (y) | IBM (replicate band) | fleet | z | share of episodes | tested |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 0–1 | 0.184 (0.152–0.216) | 0.175 | -0.33 | 1.9% | no |
-| 1 | 1–2 | 0.426 (0.372–0.479) | 0.418 | -0.19 | 4.1% | no |
-| 1 | 2–3 | 0.558 (0.488–0.629) | 0.576 | +0.32 | 5.2% | yes |
-| 1 | 3–5 | 0.642 (0.578–0.705) | 0.691 | +0.99 | 10.9% | yes |
-| 1 | 5–7 | 0.751 (0.687–0.815) | 0.763 | +0.25 | 11.6% | yes |
-| 1 | 7–10 | 0.739 (0.677–0.801) | 0.747 | +0.16 | 15.2% | yes |
+| 1 | 0–1 | 0.184 (0.152–0.216) | 0.177 | -0.26 | 1.9% | no |
+| 1 | 1–2 | 0.426 (0.372–0.479) | 0.420 | -0.15 | 4.1% | no |
+| 1 | 2–3 | 0.558 (0.488–0.629) | 0.578 | +0.35 | 5.2% | yes |
+| 1 | 3–5 | 0.642 (0.578–0.705) | 0.693 | +1.03 | 10.9% | yes |
+| 1 | 5–7 | 0.751 (0.687–0.815) | 0.764 | +0.26 | 11.6% | yes |
+| 1 | 7–10 | 0.739 (0.677–0.801) | 0.746 | +0.13 | 15.2% | yes |
 | 1 | 10–15 | 0.591 (0.526–0.657) | 0.610 | +0.37 | 17.0% | yes |
-| 1 | 15–20 | 0.455 (0.404–0.507) | 0.469 | +0.35 | 10.2% | yes |
-| 1 | 20–30 | 0.365 (0.326–0.403) | 0.376 | +0.38 | 11.4% | yes |
-| 1 | 30–40 | 0.293 (0.252–0.333) | 0.303 | +0.31 | 5.8% | yes |
-| 1 | 40–60 | 0.247 (0.218–0.276) | 0.244 | -0.15 | 4.9% | no |
-| 1 | 60–85 | 0.207 (0.157–0.256) | 0.192 | -0.37 | 1.8% | no |
-| 10 | 0–1 | 1.268 (1.167–1.368) | 1.250 | -0.22 | 6.9% | yes |
-| 10 | 1–2 | 2.792 (2.653–2.932) | 2.763 | -0.27 | 14.6% | yes |
-| 10 | 2–3 | 2.867 (2.723–3.012) | 2.925 | +0.51 | 14.4% | yes |
-| 10 | 3–5 | 2.137 (2.047–2.227) | 2.222 | +1.21 | 19.7% | yes |
-| 10 | 5–7 | 1.618 (1.525–1.710) | 1.693 | +1.04 | 13.7% | yes |
-| 10 | 7–10 | 1.159 (1.093–1.225) | 1.165 | +0.11 | 13.0% | yes |
-| 10 | 10–15 | 0.546 (0.507–0.584) | 0.554 | +0.27 | 8.7% | yes |
-| 10 | 15–20 | 0.274 (0.250–0.298) | 0.273 | -0.04 | 3.4% | no |
-| 10 | 20–30 | 0.167 (0.142–0.192) | 0.185 | +0.93 | 2.9% | no |
-| 10 | 30–40 | 0.128 (0.111–0.145) | 0.131 | +0.21 | 1.4% | no |
-| 10 | 40–60 | 0.089 (0.071–0.107) | 0.092 | +0.24 | 0.9% | no |
-| 10 | 60–85 | 0.061 (0.043–0.079) | 0.059 | -0.11 | 0.3% | no |
-| 3 | 0–1 | 0.456 (0.394–0.518) | 0.468 | +0.25 | 3.2% | no |
-| 3 | 1–2 | 1.068 (0.947–1.189) | 1.091 | +0.24 | 7.2% | yes |
-| 3 | 2–3 | 1.362 (1.262–1.463) | 1.371 | +0.11 | 8.6% | yes |
+| 1 | 15–20 | 0.455 (0.404–0.507) | 0.472 | +0.42 | 10.2% | yes |
+| 1 | 20–30 | 0.365 (0.326–0.403) | 0.376 | +0.37 | 11.4% | yes |
+| 1 | 30–40 | 0.293 (0.252–0.333) | 0.303 | +0.34 | 5.8% | yes |
+| 1 | 40–60 | 0.247 (0.218–0.276) | 0.247 | -0.03 | 4.9% | no |
+| 1 | 60–85 | 0.207 (0.157–0.256) | 0.196 | -0.29 | 1.8% | no |
+| 10 | 0–1 | 1.268 (1.167–1.368) | 1.255 | -0.16 | 6.9% | yes |
+| 10 | 1–2 | 2.792 (2.653–2.932) | 2.765 | -0.25 | 14.6% | yes |
+| 10 | 2–3 | 2.867 (2.723–3.012) | 2.918 | +0.45 | 14.4% | yes |
+| 10 | 3–5 | 2.137 (2.047–2.227) | 2.229 | +1.30 | 19.7% | yes |
+| 10 | 5–7 | 1.618 (1.525–1.710) | 1.687 | +0.96 | 13.7% | yes |
+| 10 | 7–10 | 1.159 (1.093–1.225) | 1.160 | +0.01 | 13.0% | yes |
+| 10 | 10–15 | 0.546 (0.507–0.584) | 0.558 | +0.41 | 8.7% | yes |
+| 10 | 15–20 | 0.274 (0.250–0.298) | 0.277 | +0.13 | 3.4% | no |
+| 10 | 20–30 | 0.167 (0.142–0.192) | 0.184 | +0.88 | 2.9% | no |
+| 10 | 30–40 | 0.128 (0.111–0.145) | 0.131 | +0.26 | 1.4% | no |
+| 10 | 40–60 | 0.089 (0.071–0.107) | 0.095 | +0.39 | 0.9% | no |
+| 10 | 60–85 | 0.061 (0.043–0.079) | 0.061 | +0.01 | 0.3% | no |
+| 3 | 0–1 | 0.456 (0.394–0.518) | 0.472 | +0.33 | 3.2% | no |
+| 3 | 1–2 | 1.068 (0.947–1.189) | 1.094 | +0.27 | 7.2% | yes |
+| 3 | 2–3 | 1.362 (1.262–1.463) | 1.374 | +0.15 | 8.6% | yes |
 | 3 | 3–5 | 1.451 (1.352–1.550) | 1.487 | +0.46 | 17.2% | yes |
-| 3 | 5–7 | 1.259 (1.174–1.345) | 1.289 | +0.45 | 13.5% | yes |
-| 3 | 7–10 | 0.967 (0.912–1.022) | 0.996 | +0.67 | 14.1% | yes |
-| 3 | 10–15 | 0.751 (0.703–0.799) | 0.775 | +0.64 | 14.9% | yes |
+| 3 | 5–7 | 1.259 (1.174–1.345) | 1.285 | +0.38 | 13.5% | yes |
+| 3 | 7–10 | 0.967 (0.912–1.022) | 1.000 | +0.75 | 14.1% | yes |
+| 3 | 10–15 | 0.751 (0.703–0.799) | 0.775 | +0.63 | 14.9% | yes |
 | 3 | 15–20 | 0.559 (0.515–0.603) | 0.557 | -0.05 | 8.8% | yes |
-| 3 | 20–30 | 0.338 (0.313–0.363) | 0.355 | +0.87 | 7.5% | yes |
-| 3 | 30–40 | 0.184 (0.160–0.208) | 0.187 | +0.16 | 2.6% | no |
-| 3 | 40–60 | 0.125 (0.104–0.146) | 0.123 | -0.11 | 1.8% | no |
-| 3 | 60–85 | 0.095 (0.073–0.116) | 0.095 | +0.03 | 0.6% | no |
+| 3 | 20–30 | 0.338 (0.313–0.363) | 0.353 | +0.76 | 7.5% | yes |
+| 3 | 30–40 | 0.184 (0.160–0.208) | 0.190 | +0.32 | 2.6% | no |
+| 3 | 40–60 | 0.125 (0.104–0.146) | 0.126 | +0.07 | 1.8% | no |
+| 3 | 60–85 | 0.095 (0.073–0.116) | 0.097 | +0.13 | 0.6% | no |
 
 ## Custom demography at EIR 3
 
@@ -165,7 +165,7 @@ vivax population-age-structure: inside at 11 of 11 bands below 60 y; largest dep
 | Radical cure, CQ + tafenoquine at 60% | 1 | clinical, 0-5 | 78% (76%–80%) | 78% |
 | Radical cure, CQ + tafenoquine at 60% | 1 | clinical, all ages | 76% (75%–78%) | 76% |
 | Radical cure, CQ + tafenoquine at 60% | 1 | relapses, all ages | 53% (50%–56%) | 54% |
-| Radical cure, CQ + tafenoquine at 60% | 3 | PvPR 2-10 (LM) | 71% (69%–72%) | 72% |
+| Radical cure, CQ + tafenoquine at 60% | 3 | PvPR 2-10 (LM) | 71% (69%–72%) | 71% |
 | Radical cure, CQ + tafenoquine at 60% | 3 | clinical, 0-5 | 71% (69%–73%) | 71% |
 | Radical cure, CQ + tafenoquine at 60% | 3 | clinical, all ages | 68% (67%–70%) | 68% |
 | Radical cure, CQ + tafenoquine at 60% | 3 | relapses, all ages | 37% (35%–39%) | 37% |
@@ -212,21 +212,21 @@ IBM replicates that eliminated vivax within the window: irs 20 of 20; irs_e1 20 
 
 | burn_in | EIR | PvPR 2-10 | clinical, all ages |
 | --- | --- | --- | --- |
-| 20% chloroquine | 1 | +5.8% | +7.8% |
-| 20% chloroquine (radical-cure runs) | 1 | -0.8% | +1.2% |
-| untreated | 1 | +3.5% | +3.6% |
-| 20% chloroquine | 3 | +4.0% | +4.6% |
-| 20% chloroquine (radical-cure runs) | 3 | +1.8% | +1.8% |
-| untreated | 3 | +3.7% | +2.9% |
-| 20% chloroquine | 10 | +1.0% | +1.2% |
-| 20% chloroquine (radical-cure runs) | 10 | +0.9% | +1.1% |
-| untreated | 10 | +2.5% | +1.3% |
+| 20% chloroquine | 1 | +6.1% | +8.0% |
+| 20% chloroquine (radical-cure runs) | 1 | -0.5% | +1.4% |
+| untreated | 1 | +3.7% | +3.8% |
+| 20% chloroquine | 3 | +4.2% | +4.7% |
+| 20% chloroquine (radical-cure runs) | 3 | +2.0% | +1.9% |
+| untreated | 3 | +3.9% | +3.0% |
+| 20% chloroquine | 10 | +1.2% | +1.3% |
+| 20% chloroquine (radical-cure runs) | 10 | +1.1% | +1.2% |
+| untreated | 10 | +2.6% | +1.4% |
 
 ## Run time per simulated year
 
 IBM: 2.07 s per simulated year (median over runs)
 
-fleet: 3.88 s per simulated year (median over runs)
+fleet: 1.37 s per simulated year (median over runs)
 
-IBM total CPU: 9.5 h across 440 runs; fleet total: 4137 s across 22 runs (IBM/fleet per-year ratio 0.41x)
+IBM total CPU: 9.5 h across 440 runs; fleet total: 1585 s across 22 runs (IBM/fleet per-year ratio 1.07x)
 

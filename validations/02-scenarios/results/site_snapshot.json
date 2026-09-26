@@ -1,41 +1,41 @@
 {
   "run": {
-    "taken": "2026-09-25",
+    "taken": "2026-09-26",
     "fleet": "0.0.0.9003",
-    "n_age_groups": 209
+    "n_age_groups": 118
   },
   "summarised": {
-    "taken": "2026-09-25T14:32:48+0100",
+    "taken": "2026-09-26T18:03:49+0100",
     "fleet": "0.0.0.9003",
     "fleet_sha": null,
-    "fleet_built": "R 4.5.2; aarch64-w64-mingw32; 2026-09-25 10:25:38 UTC; windows",
+    "fleet_built": "R 4.5.2; aarch64-w64-mingw32; 2026-09-26 16:10:33 UTC; windows",
     "malariasimulation": "3.0.0",
     "malariasimulation_sha": "5f63ccd",
     "postie": "1.1.0",
     "R": "4.5.2",
     "platform": "aarch64-w64-mingw32",
-    "fleetcheck_sha": "ae9974f",
+    "fleetcheck_sha": "a40ff22",
     "files": 63
   },
-  "note": "The 63-country site-file comparison. It re-runs fleet only -- the IBM arm is the pre-run diagnostic shipped with each site file -- so it is about fifty minutes on four cores, but it needs the malariaverse site files, which are not redistributable. Re-take it with validations/03-real-settings/run.R followed by CMP_REFRESH_SITES=1 on render.R and tables.R.",
+  "note": "The 63-country site-file comparison. It re-runs fleet only -- the IBM arm is the pre-run diagnostic shipped with each site file -- so it is about thirty minutes on four cores, but it needs the malariaverse site files, which are not redistributable. Re-take it with validations/03-real-settings/run.R followed by CMP_REFRESH_SITES=1 on render.R and tables.R.",
   "countries": 63,
   "sub_sites": 1392,
   "year_from": 2000,
   "year_to": 2026,
   "clinical": {
     "n": 451008,
-    "cor": 0.983588,
-    "rmse": 0.072215,
-    "bias": 0.022021,
-    "rel_bias": 0.073247,
-    "slope": 0.98723
+    "cor": 0.983396,
+    "rmse": 0.072145,
+    "bias": 0.020993,
+    "rel_bias": 0.06983,
+    "slope": 0.983058
   },
   "severe": {
     "n": 451008,
-    "cor": 0.958348,
-    "rmse": 0.001671,
-    "bias": 0.000364,
-    "rel_bias": 0.075413,
-    "slope": 0.932376
+    "cor": 0.958101,
+    "rmse": 0.001669,
+    "bias": 0.00034,
+    "rel_bias": 0.070481,
+    "slope": 0.927339
   }
 }
