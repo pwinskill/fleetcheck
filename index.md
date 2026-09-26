@@ -4,8 +4,8 @@
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
 [![Falciparum claims: 11
 pass](https://img.shields.io/badge/falciparum%20claims-11%20pass-brightgreen.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
-[![Vivax claims: 8 pass, 2
-fail](https://img.shields.io/badge/vivax%20claims-8%20pass%2C%202%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md)
+[![Vivax claims: 7 pass, 3
+fail](https://img.shields.io/badge/vivax%20claims-7%20pass%2C%203%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License:
@@ -75,7 +75,7 @@ plots.
 
 ### *P. vivax*
 
-**10 claims — 2 failing, 0 untested, 0 open, 8 pass.**
+**10 claims — 3 failing, 0 untested, 0 open, 7 pass.**
 
 1.  pass
     [`prevalence-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#prevalence-eir-pv)
@@ -97,7 +97,7 @@ plots.
     [`hypnozoite-carriage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#hypnozoite-carriage-eir-pv)
     — The share of people carrying hypnozoites tracks the IBM across
     transmission intensity.
-6.  pass
+6.  FAIL
     [`age-profile-clinical-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#age-profile-clinical-pv)
     — The age distribution of clinical incidence tracks the IBM.
 7.  FAIL
@@ -155,14 +155,14 @@ is recorded against every claim rather than mentioned in prose.
 | 0    | seconds | anyone, from committed summaries                 |
 | 1    | minutes | anyone; re-runs `fleet` only                     |
 | 2    | ~2 h    | anyone with about 10 cores                       |
-| 3    | ~50 min | 4 cores, and inputs that are not redistributable |
+| 3    | ~30 min | 4 cores, and inputs that are not redistributable |
 
 Tier 3 is the 63-country site-file comparison. **Its figures and
 statistics are public; the site files behind them are not.** The code
 that produces them is here and can be read, audited and run — the
 constraint is the inputs, not the compute. It re-runs `fleet` only,
 because the IBM arm is the pre-run diagnostic shipped with each site
-file, so fifty minutes on four cores refreshes it.
+file, so thirty minutes on four cores refreshes it.
 `validations/03-real-settings/example-one-site.R` demonstrates the same
 pipeline on a single sub-site for anyone who has one site file.
 
@@ -333,7 +333,7 @@ Rscript -e 'pkgdown::build_site()'
 — but only if you have the malariaverse site files, which are not
 redistributable.** The constraint is the inputs, not the compute: the
 sweep re-runs `fleet` alone, because the IBM arm is the pre-run
-diagnostic shipped with each site file, so it is about fifty minutes on
+diagnostic shipped with each site file, so it is about thirty minutes on
 four cores.
 
 ``` bash

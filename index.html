@@ -68,7 +68,7 @@
 </h1>
 </div>
 <!-- BEGIN badges -->
-<p><a href="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg" alt="check"></a> <a href="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a> <a href="articles/evidence.html"><img src="https://img.shields.io/badge/falciparum%20claims-11%20pass-brightgreen.svg" alt="Falciparum claims: 11 pass"></a> <a href="articles/evidence-vivax.html"><img src="https://img.shields.io/badge/vivax%20claims-8%20pass%2C%202%20fail-orange.svg" alt="Vivax claims: 8 pass, 2 fail"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://github.com/pwinskill/fleetcheck/blob/main/LICENSE" class="external-link"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a></p>
+<p><a href="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg" alt="check"></a> <a href="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a> <a href="articles/evidence.html"><img src="https://img.shields.io/badge/falciparum%20claims-11%20pass-brightgreen.svg" alt="Falciparum claims: 11 pass"></a> <a href="articles/evidence-vivax.html"><img src="https://img.shields.io/badge/vivax%20claims-7%20pass%2C%203%20fail-orange.svg" alt="Vivax claims: 7 pass, 3 fail"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://github.com/pwinskill/fleetcheck/blob/main/LICENSE" class="external-link"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a></p>
 <!-- END badges -->
 <blockquote>
 <p>How closely does <a href="https://github.com/pwinskill/fleet" class="external-link"><code>fleet</code></a> reproduce <a href="https://github.com/mrc-ide/malariasimulation" class="external-link"><code>malariasimulation</code></a>?</p>
@@ -113,7 +113,7 @@
 <h3 id="p-vivax">
 <em>P. vivax</em><a class="anchor" aria-label="anchor" href="#p-vivax"></a>
 </h3>
-<p><strong>10 claims — 2 failing, 0 untested, 0 open, 8 pass.</strong></p>
+<p><strong>10 claims — 3 failing, 0 untested, 0 open, 7 pass.</strong></p>
 <ol style="list-style-type: decimal">
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence-vivax.html#prevalence-eir-pv"><code>prevalence-eir-pv</code></a> — LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.</li>
@@ -126,7 +126,7 @@
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence-vivax.html#hypnozoite-carriage-eir-pv"><code>hypnozoite-carriage-eir-pv</code></a> — The share of people carrying hypnozoites tracks the IBM across transmission intensity.</li>
 <li>
-<span class="verdict pass">pass</span> <a href="articles/evidence-vivax.html#age-profile-clinical-pv"><code>age-profile-clinical-pv</code></a> — The age distribution of clinical incidence tracks the IBM.</li>
+<span class="verdict fail">FAIL</span> <a href="articles/evidence-vivax.html#age-profile-clinical-pv"><code>age-profile-clinical-pv</code></a> — The age distribution of clinical incidence tracks the IBM.</li>
 <li>
 <span class="verdict fail">FAIL</span> <a href="articles/evidence-vivax.html#intervention-impact-pv"><code>intervention-impact-pv</code></a> — The modelled impact of each intervention, radical cure included, matches the IBM.</li>
 <li>
@@ -171,12 +171,12 @@
 </tr>
 <tr>
 <td>3</td>
-<td>~50 min</td>
+<td>~30 min</td>
 <td>4 cores, and inputs that are not redistributable</td>
 </tr>
 </tbody>
 </table>
-<p>Tier 3 is the 63-country site-file comparison. <strong>Its figures and statistics are public; the site files behind them are not.</strong> The code that produces them is here and can be read, audited and run — the constraint is the inputs, not the compute. It re-runs <code>fleet</code> only, because the IBM arm is the pre-run diagnostic shipped with each site file, so fifty minutes on four cores refreshes it. <code>validations/03-real-settings/example-one-site.R</code> demonstrates the same pipeline on a single sub-site for anyone who has one site file.</p>
+<p>Tier 3 is the 63-country site-file comparison. <strong>Its figures and statistics are public; the site files behind them are not.</strong> The code that produces them is here and can be read, audited and run — the constraint is the inputs, not the compute. It re-runs <code>fleet</code> only, because the IBM arm is the pre-run diagnostic shipped with each site file, so thirty minutes on four cores refreshes it. <code>validations/03-real-settings/example-one-site.R</code> demonstrates the same pipeline on a single sub-site for anyone who has one site file.</p>
 </div>
 <div class="section level2">
 <h2 id="running-it-yourself">Running it yourself<a class="anchor" aria-label="anchor" href="#running-it-yourself"></a>
@@ -313,7 +313,7 @@
 <div class="section level3">
 <h3 id="what-you-need-inputs-for">What you need inputs for<a class="anchor" aria-label="anchor" href="#what-you-need-inputs-for"></a>
 </h3>
-<p><strong>Tier 3, the 63-country site-file comparison, runs from this repository — but only if you have the malariaverse site files, which are not redistributable.</strong> The constraint is the inputs, not the compute: the sweep re-runs <code>fleet</code> alone, because the IBM arm is the pre-run diagnostic shipped with each site file, so it is about fifty minutes on four cores.</p>
+<p><strong>Tier 3, the 63-country site-file comparison, runs from this repository — but only if you have the malariaverse site files, which are not redistributable.</strong> The constraint is the inputs, not the compute: the sweep re-runs <code>fleet</code> alone, because the IBM arm is the pre-run diagnostic shipped with each site file, so it is about thirty minutes on four cores.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="va">FLEET_VALIDATE</span><span class="op">=</span>/path/to/site-files <span class="ex">Rscript</span> validations/03-real-settings/run.R</span>
 <span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="ex">Rscript</span> validations/03-real-settings/assess.R</span></code></pre></div>
 <p>The <em>P. vivax</em> arm is the same pair under <code>CMP_PARASITE=pv</code>: the vivax sub-sites of the countries with vivax transmission, up to ten per country, with results in <code>validations/03-real-settings/results/pv/</code>.</p>
