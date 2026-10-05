@@ -6,7 +6,10 @@
 # Writes cmp_*.png. All visual decisions live in theme.R; this file only shapes
 # data and composes panels. Figures:
 #   core_eir       four equilibrium relationships vs EIR (2x2)
-#   core_age       age profiles at EIR 20: prevalence, clinical, severe
+#   eir_*          each of the four alone, beside its test: one per EIR claim
+#   age_clin/_sev  clinical and severe incidence by age band, three EIRs
+#   core_pop_age   the population age structure and its test
+#   core_demography custom demography: age structure and age-prevalence
 #   core_seasonal  the settled annual cycle: prevalence and clinical incidence
 #   core_sites     63-country monthly comparison (from fleet_validate results)
 #   int_timeseries five interventions x {prevalence, clinical}, time series
@@ -71,10 +74,12 @@ CLIN_LAB <- "clinical episodes per child-year, ages 0\u20135"
 ## so a title on top of it can only restate it or editorialise. The shape of each
 ## curve is what the panel is for, and the article says what to make of it.
 EIR_MET <- list(
-  list(key = "pfpr_2_10", lab = PREV_LAB, pct = TRUE),
-  list(key = "clin_0_5", lab = CLIN_LAB),
-  list(key = "clin_all", lab = "clinical episodes per person-year, all ages"),
-  list(key = "sev_all", lab = "severe episodes per 1,000 person-years, all ages"))
+  list(key = "pfpr_2_10", lab = PREV_LAB, pct = TRUE, name = "LM prevalence, ages 2–10"),
+  list(key = "clin_0_5", lab = CLIN_LAB, name = "clinical incidence, ages 0–5"),
+  list(key = "clin_all", lab = "clinical episodes per person-year, all ages",
+       name = "clinical incidence, all ages"),
+  list(key = "sev_all", lab = "severe episodes per 1,000 person-years, all ages",
+       name = "severe incidence, all ages"))
 e_long <- eq %>% filter(grepl("^eir_", scenario)) %>%
   mutate(init_EIR = as.numeric(sub("eir_", "", scenario))) %>%
   select(init_EIR, model, rep, all_of(vapply(EIR_MET, `[[`, "", "key"))) %>%
@@ -83,39 +88,21 @@ ibm_e <- e_long %>% filter(model == "IBM") %>% group_by(metric) %>%
   group_modify(~ envelope(.x, by = "init_EIR")) %>% ungroup()
 ode_e <- e_long %>% filter(model == "fleet") %>% rename(mid = y)
 
-panel_eir <- function(metric_id, ylab) {
-  gi <- filter(ibm_e, metric == metric_id); go <- filter(ode_e, metric == metric_id)
-  ggplot() +
-    geom_linerange(data = gi, aes(init_EIR, ymin = lo, ymax = hi, colour = model),
-                   linewidth = 0.7, alpha = 0.55, show.legend = FALSE) +
-    ## dashed over solid, hollow over filled -- see the layer-order rule in theme.R
-    geom_line(data = go, aes(init_EIR, mid, colour = model, linetype = model), linewidth = 0.8) +
-    geom_line(data = gi, aes(init_EIR, mid, colour = model, linetype = model), linewidth = 0.8) +
-    geom_point(data = gi, aes(init_EIR, mid, colour = model, shape = model, fill = model),
-               size = 2.6, stroke = 0.5) +
-    geom_point(data = go, aes(init_EIR, mid, colour = model, shape = model, fill = model),
-               size = 2.6, stroke = 0.5) +
-    scale_x_log10(breaks = EIR_GRID, minor_breaks = NULL) +
-    scale_models() + guide_models() +
-    labs(x = "EIR (infectious bites per adult per year)", y = ylab) +
-    theme_cmp()
-}
+eir_parts <- function(m) list(gi = filter(ibm_e, metric == m$key), go = filter(ode_e, metric == m$key))
 ps <- lapply(seq_along(EIR_MET), function(i) {
-  m <- EIR_MET[[i]]
-  p <- panel_eir(m$key, m$lab) +
-    if (isTRUE(m$pct)) scale_y_continuous(limits = c(0, 1), labels = scales::percent)
-    else scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.06)))
+  m <- EIR_MET[[i]]; e <- eir_parts(m)
+  p <- panel_eir_curve(e$gi, e$go, EIR_GRID, m$lab, isTRUE(m$pct))
   ## the x axis is the same in all four; name it once, on the bottom row
   if (i <= 2) p + labs(x = NULL) else p
 })
 ## one collected legend for the whole figure, not a legend sitting inside panel 1:
 ## with no panel titles left to anchor the eye, a legend in one panel pushes that
 ## panel's plot area down and the top row stops lining up
-g <- patchwork::wrap_plots(ps, ncol = 2) + plot_layout(guides = "collect") +
+g <- patchwork::wrap_plots(ps, ncol = 2) + plot_layout(guides = "collect", axis_titles = "collect") +
   plot_annotation(
-    title = "Core transmission relationships at equilibrium",
-    subtitle = "The same parameter list through both models, across a 120-fold range of transmission intensity",
-    caption = cap("x = the EIR passed to set_equilibrium(); each model's realised EIR is reported in the article.", ibm_note),
+    title = "P. falciparum: core transmission relationships at equilibrium",
+    subtitle = subt("The same parameter list through both models, across a 120-fold range of transmission intensity."),
+    caption = cap("Each model's realised EIR is reported in the article.", ibm_note),
     theme = theme_cmp()) &
   theme(legend.position = "top", legend.justification = "left")
 save_fig(g, "core_eir", width = 10, height = 9)
@@ -124,14 +111,12 @@ save_fig(g, "core_eir", width = 10, height = 9)
 ## claim in the register: prevalence-eir, clinical-under5-eir, clinical-allage-eir
 ## and severe-allage-eir. Showing the same four-panel figure against all four
 ## would not be evidence for any one of them.
-for (i in seq_along(EIR_MET)) {
-  m <- EIR_MET[[i]]
-  dev <- panel_deviation(filter(ibm_e, metric == m$key), filter(ode_e, metric == m$key), EIR_GRID)
-  one <- (ps[[i]] + labs(x = "EIR passed to set_equilibrium() (bites per adult per year, log scale)")) |
-    dev
-  one <- one + plot_annotation(caption = cap(ibm_note, DEV_NOTE, fig_width = 11), theme = theme_cmp()) &
-    theme(legend.position = "top", legend.justification = "left")
-  save_fig(one, paste0("eir_", m$key), width = 11, height = 4.6)
+for (m in EIR_MET) {
+  e <- eir_parts(m)
+  save_fig(fig_eir_claim(e$gi, e$go, EIR_GRID, m$lab, isTRUE(m$pct),
+                         sprintf("P. falciparum: %s, across transmission intensity", m$name),
+                         cap(ibm_note, DEV_NOTE, fig_width = 11)),
+           paste0("eir_", m$key), width = 11, height = 5.6)
 }
 
 ## ============================================================================
@@ -157,147 +142,60 @@ lab_a <- c(clin = "clinical episodes per person-year",
 ## the panel is shared with render_pv.R: panel_outcome() in validations/_shared/theme.R
 
 ## Width follows the number of panels: only some EIR scenarios carry the 12-band
-## age profile, because it roughly doubles the IBM's rendering cost. Captions are
-## folded to the figure's own width -- at 6 inches a line that fits a 10-inch
-## figure runs off both edges, which is what it did.
+## age profile, because it roughly doubles the IBM's rendering cost.
 n_ap <- length(age_eirs)
-fw <- 2.0 + 4.0 * n_ap
-band_note <- BAND_NOTE
+fw <- 2.0 + 3.0 * n_ap
+eir_list <- function(e) sub(", ([^,]*)$", " and \\1", paste(e, collapse = ", "))
 
 g <- panel_outcome(ap, "clin", lab_a[["clin"]]) + plot_annotation(
   title = "P. falciparum: clinical incidence by age band",
-  caption = cap(band_note, fig_width = fw),
+  subtitle = subt(sprintf("Final three years of each run, at EIR %s.", eir_list(age_eirs))),
+  caption = cap(BAND_NOTE, ibm_note),
   theme = theme_cmp())
-save_fig(g, "age_clin", width = fw, height = 4.6)
+save_fig(g, "age_clin", width = fw, height = 5.8)
 
 g <- panel_outcome(ap, "sev", lab_a[["sev"]]) + plot_annotation(
   title = "P. falciparum: severe incidence by age band",
-  subtitle = cap("Severe disease in a narrow age band is the rarest thing either model counts, so the IBM's range is very wide above age 5.", fig_width = fw),
-  caption = cap(band_note, fig_width = fw),
+  subtitle = subt("Severe disease in a narrow age band is the rarest thing either model counts, so the IBM's band is very wide above age 5."),
+  caption = cap(BAND_NOTE, ibm_note),
   theme = theme_cmp())
-save_fig(g, "age_sev", width = fw, height = 4.6)
+save_fig(g, "age_sev", width = fw, height = 5.8)
 
 ## ============================================================================
 ## 2a. core_pop_age -- the POPULATION age structure, default demography
 ## ============================================================================
 ## Evidence for population-age-structure, which is about the denominator and
 ## nothing else. It had been illustrated with the age-profile figure, which
-## shows prevalence and incidence by age -- a different quantity entirely.
-##
-## Shares are divided by band width, because the bands are unequal (one year
-## wide in infancy, twenty-five at the top) and a raw share makes a wide band
-## look populous for no reason but its width. So the y axis is the share of the
-## population per year of age, which is comparable across bands and is what an
-## age pyramid actually plots.
-pa <- age %>% filter(scenario == "eir_20")
-.edges <- pa %>% distinct(age_lo, age_hi) %>% arrange(age_lo)
-.labs <- sprintf("%g-%g", .edges$age_lo, .edges$age_hi)
-pa <- pa %>% mutate(dens = 100 * pop_frac / (age_hi - age_lo),
-                    band = factor(sprintf("%g-%g", age_lo, age_hi), levels = .labs))
-pa_i <- pa %>% filter(model == "IBM") %>% group_by(band) %>%
-  summarise(mid = replicate_band(dens)$centre, lo = replicate_band(dens)$lower,
-            hi = replicate_band(dens)$upper, .groups = "drop") %>% mutate(model = "IBM")
-pa_o <- pa %>% filter(model == "fleet") %>%
-  transmute(band, mid = dens, lo = NA_real_, hi = NA_real_, model = "fleet")
-pa_b <- bind_rows(pa_i, pa_o) %>% mutate(model = factor(model, levels = c("IBM", "fleet")))
-
-## The top band is not a like-for-like comparison and is drawn but marked.
-## fleet's oldest age group is ABSORBING -- open-ended above 80 -- and the
-## renderer assigns an open-ended group wholly to the band containing its lower
-## edge, so fleet's 60-85 bar holds everyone over 80 however old while the IBM's
-## holds 60-85 year olds only.
-top <- levels(pa_b$band)[nlevels(pa_b$band)]
-
-p_struct <- ggplot(pa_b, aes(band, mid, fill = model, colour = model)) +
-  annotate("rect", xmin = nlevels(pa_b$band) - 0.5, xmax = nlevels(pa_b$band) + 0.5,
-           ymin = -Inf, ymax = Inf, fill = MUTED, alpha = 0.10) +
-  geom_col(position = position_dodge(width = 0.72), width = 0.66, linewidth = 0.4) +
-  geom_linerange(aes(ymin = lo, ymax = hi), position = position_dodge(width = 0.72),
-                 colour = INK, linewidth = 0.5, na.rm = TRUE) +
-  scale_fill_manual(values = TINT, name = NULL) +
-  scale_colour_manual(values = COL, name = NULL) +
-  scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.14))) +
-  ## right-aligned and inside the panel: centred on the band it labels, the
-  ## text is wider than the band and was clipped by the panel edge
-  annotate("text", x = nlevels(pa_b$band) + 0.45, y = Inf, vjust = 1.3, hjust = 1,
-           size = 2.6, lineheight = 0.95, colour = INK2, label = "not\ncomparable") +
-  labs(x = "age band (years)", y = "% of the population per year of age",
-       title = "The age pyramid, band by band") +
-  theme_cmp() +
-  theme(legend.position = "top", legend.justification = "left",
-        axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.85)))
-
-## Panel 2 is the test itself: fleet against the IBM median, with the IBM's own
-## replicate band as the tolerance. A bar inside the grey is a band the
-## claim passes; outside it is a miss. Shares are renormalised to the 0-60
-## population first, exactly as the criterion states, so the top band's
-## convention does not move every other bar.
-rn <- function(d) d %>% filter(age_hi <= 60) %>% mutate(share = pop_frac / sum(pop_frac))
-pa_rn_i <- pa %>% filter(model == "IBM") %>% group_by(rep) %>% group_modify(~ rn(.x)) %>%
-  ungroup() %>% group_by(band) %>%
-  summarise(mid = replicate_band(share)$centre, lo = replicate_band(share)$lower,
-            hi = replicate_band(share)$upper, .groups = "drop")
-pa_rn_o <- pa %>% filter(model == "fleet") %>% rn() %>% select(band, share)
-dev <- pa_rn_o %>% inner_join(pa_rn_i, by = "band") %>%
-  mutate(rel = 100 * (share / mid - 1),
-         tol_lo = 100 * (lo / mid - 1), tol_hi = 100 * (hi / mid - 1),
-         miss = share < lo | share > hi)
-
-p_dev <- ggplot(dev, aes(band, rel)) +
-  geom_rect(aes(xmin = as.numeric(band) - 0.45, xmax = as.numeric(band) + 0.45,
-                ymin = tol_lo, ymax = tol_hi), fill = MUTED, alpha = 0.22) +
-  geom_hline(yintercept = 0, colour = AXIS, linewidth = 0.5) +
-  geom_col(aes(fill = miss), width = 0.5, show.legend = FALSE) +
-  scale_fill_manual(values = c(`FALSE` = COL[["fleet"]], `TRUE` = REF)) +
-  labs(x = "age band (years)", y = "fleet vs the IBM median (%)",
-       title = "Where it sits inside the IBM's own spread",
-       subtitle = cap(sprintf("grey = the IBM replicate band; %d of %d bands inside it, an orange bar outside it",
-                              sum(!dev$miss), nrow(dev)), fig_width = 5)) +
-  theme_cmp() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.85)))
-
-g <- (p_struct | p_dev) +
-  plot_annotation(
-    title = sprintf("Population age structure at EIR %s", EIR_REF),
-    subtitle = cap("The denominator every per-capita rate is divided by, compared on its own terms. Default demography: a constant death rate, so the pyramid is close to exponential.", width = 125),
-    caption = cap("Shares are divided by band width, so bands of unequal width are comparable. The right panel renormalises to the 0-60 population, as the claim's criterion does.", ibm_note),
-    theme = theme_cmp())
-save_fig(g, "core_pop_age", width = 11, height = 5.2)
+## shows prevalence and incidence by age -- a different quantity entirely. The
+## figure is fig_pop_age() in theme.R, shared with render_pv.R.
+g <- fig_pop_age(
+  age %>% filter(scenario == paste0("eir_", EIR_REF)),
+  title = sprintf("P. falciparum: population age structure at EIR %s", EIR_REF),
+  subtitle = subt("The denominator every per-capita rate is divided by, compared on its own terms. Default demography: a constant death rate, so the pyramid is close to exponential."),
+  caption = cap(POP_NOTE, ibm_note))
+save_fig(g, "core_pop_age", width = 11, height = 5.8)
 
 ## ============================================================================
 ## 2b. core_demography -- custom demography: age structure and age-prevalence
 ## ============================================================================
+## Band by band, as every other age figure: the axes name both panels, so
+## neither carries a title, and one legend serves the two.
 if ("demography" %in% age$scenario) {
-  d <- age %>% filter(scenario == "demography") %>%
-    mutate(dens = pop_frac / (age_hi - age_lo)) %>%
-    pivot_longer(c(dens, prev), names_to = "metric", values_to = "y")
-  ibm_d <- d %>% filter(model == "IBM") %>% group_by(metric) %>%
-    group_modify(~ envelope(.x, by = "age_mid")) %>% ungroup()
-  ode_d <- d %>% filter(model == "fleet") %>% rename(mid = y)
-  panel_dem <- function(m, ylab, title, pct = FALSE) {
-    gi <- filter(ibm_d, metric == m); go <- filter(ode_d, metric == m)
-    ggplot() +
-      geom_ribbon(data = gi, aes(age_mid, ymin = lo, ymax = hi, fill = model), alpha = ENV_ALPHA) +
-      geom_line(data = go, aes(age_mid, mid, colour = model, linetype = model), linewidth = 0.8) +
-      geom_line(data = gi, aes(age_mid, mid, colour = model, linetype = model), linewidth = 0.8) +
-      geom_point(data = gi, aes(age_mid, mid, colour = model, shape = model, fill = model), size = 2, stroke = 0.4) +
-      geom_point(data = go, aes(age_mid, mid, colour = model, shape = model, fill = model), size = 2, stroke = 0.4) +
-      scale_models() + guide_models() +
-      scale_x_continuous(breaks = c(0, 10, 20, 40, 60, 80)) +
-      scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.06)),
-                         labels = if (pct) scales::percent else scales::percent) +
-      labs(title = title, x = "age (years)", y = ylab) +
-      theme_cmp() + theme(legend.position = if (pct) "none" else "top")
-  }
-  g <- (panel_dem("dens", "share of the population per year of age",
-                  "The age pyramid the mortality schedule implies") |
-        panel_dem("prev", "LM prevalence", "Age-prevalence under that demography", TRUE)) +
+  d <- age %>% filter(scenario == "demography") %>% mutate(dens = pop_frac / (age_hi - age_lo))
+  sd <- band_summary(d, "dens"); sp <- band_summary(d, "prev")
+  ## the top band's shares are not like for like, for the reason fig_pop_age() gives
+  n <- nlevels(sd$gi$band)
+  g <- (panel_bands(sd$gi, sd$go, POP_DENS_LAB, pct = TRUE, shade = data.frame(x = n)) +
+          not_comparable(n) |
+        panel_bands(sp$gi, sp$go, "LM prevalence", pct = TRUE)) +
+    plot_layout(guides = "collect", axis_titles = "collect") +
     plot_annotation(
-      title = sprintf("Custom demography at EIR %s: high infant and elderly mortality", EIR_REF),
-      subtitle = cap("set_demography() with age-specific death rates from 4.8% per year in infancy to 12% per year over 80; fleet derives its equilibrium age structure from the same schedule", width = 115),
-      caption = cap("Population shares are per band divided by band width, so bands of different width are comparable; the bands cover ages 0-85.", ibm_note),
-      theme = theme_cmp())
-  save_fig(g, "core_demography", width = 10, height = 5)
+      title = sprintf("P. falciparum: custom demography at EIR %s, with high infant and elderly mortality", EIR_REF),
+      subtitle = subt("set_demography() with age-specific death rates from 4.8% per year in infancy to 12% per year over 80; fleet derives its equilibrium age structure from the same schedule."),
+      caption = cap("Population shares are per band divided by band width, so bands of different width are comparable; the bands cover ages 0–85.", ibm_note),
+      theme = theme_cmp()) &
+    theme(legend.position = "top", legend.justification = "left")
+  save_fig(g, "core_demography", width = 10, height = 5.6)
 }
 
 ## ============================================================================
@@ -309,26 +207,26 @@ ibm_s <- s %>% filter(model == "IBM") %>% group_by(metric) %>%
   group_modify(~ envelope(.x, by = "doy")) %>% ungroup()
 ode_s <- s %>% filter(model == "fleet") %>% rename(mid = y)
 mon_brk <- cumsum(c(0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30))[c(1, 4, 7, 10)] + 1
-panel_doy <- function(m, ylab, title, pct = FALSE) {
+## the axes name both panels, so neither carries a title, and one legend serves both
+panel_doy <- function(m, ylab, pct = FALSE) {
   gi <- filter(ibm_s, metric == m); go <- filter(ode_s, metric == m)
   ggplot() +
     geom_ribbon(data = gi, aes(doy, ymin = lo, ymax = hi, fill = model), alpha = ENV_ALPHA) +
-    geom_line(data = go, aes(doy, mid, colour = model, linetype = model), linewidth = 0.8) +
-    geom_line(data = gi, aes(doy, mid, colour = model, linetype = model), linewidth = 0.8) +
-    scale_models(shapes = FALSE) +
+    geom_line(data = go, aes(doy, mid, colour = model, linetype = model), linewidth = 0.75) +
+    geom_line(data = gi, aes(doy, mid, colour = model, linetype = model), linewidth = 0.75) +
+    scale_models(shapes = FALSE) + guide_models() +
     scale_x_continuous(breaks = mon_brk, labels = c("Jan", "Apr", "Jul", "Oct")) +
-    scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.06)),
-                       labels = if (pct) scales::percent else waiver()) +
-    labs(title = title, x = NULL, y = ylab) + theme_cmp() +
-    theme(legend.position = if (pct) "top" else "none")
+    y_from_zero(pct) +
+    labs(x = NULL, y = ylab) + theme_cmp()
 }
-g <- (panel_doy("pfpr_2_10", PREV_LAB, "Prevalence lags the season", TRUE) |
-      panel_doy("clin_0_5", CLIN_LAB, "Incidence follows the rains more sharply")) +
+g <- (panel_doy("pfpr_2_10", PREV_LAB, TRUE) | panel_doy("clin_0_5", CLIN_LAB)) +
+  plot_layout(guides = "collect") +
   plot_annotation(
-    title = sprintf("Seasonal transmission: the settled annual cycle at EIR %s", EIR_REF),
-    subtitle = "Final year of the run, weekly bins. Rainfall enters both models through the larval carrying capacity",
-    caption = cap("Both models are seeded at the aseasonal equilibrium and converge onto the same limit cycle during the burn-in.", ibm_note),
-    theme = theme_cmp())
+    title = sprintf("P. falciparum: the settled seasonal cycle at EIR %s", EIR_REF),
+    subtitle = subt("Final year of the run, weekly bins. Rainfall enters both models through the larval carrying capacity."),
+    caption = cap("Seeded at the aseasonal equilibrium, the two models settle onto the same limit cycle during the burn-in.", ibm_note),
+    theme = theme_cmp()) &
+  theme(legend.position = "top", legend.justification = "left")
 save_fig(g, "core_seasonal", width = 10, height = 5)
 
 ## ============================================================================
@@ -367,13 +265,21 @@ if (length(fs)) {
   ## Deriving one quantity twice is the thing this project exists to catch.
   st_c <- agreement(v$ms_clinical, v$fleet_clinical)
   st_s <- agreement(v$ms_severe, v$fleet_severe)
+  ## one colour key for both panels, on top as every legend is: the two share
+  ## their limits, so a cell of a given count is the same colour in each
+  hex_max <- function(x, y) {
+    d <- data.frame(x = x, y = y) %>% filter(is.finite(x), is.finite(y))
+    max(layer_data(ggplot(d, aes(x, y)) + geom_hex(bins = 60))$count)
+  }
+  hex_lim <- c(1, max(hex_max(v$ms_clinical, v$fleet_clinical),
+                      hex_max(1000 * v$ms_severe, 1000 * v$fleet_severe)))
   hexp <- function(x, y, st, unit, title) {
     d <- data.frame(x = x, y = y) %>% filter(is.finite(x), is.finite(y))
     top <- unname(quantile(c(d$x, d$y), 0.999))
     ggplot(d, aes(x, y)) +
       geom_hex(bins = 60) +
       geom_abline(slope = 1, intercept = 0, colour = REF, linewidth = 0.8,
-                  linetype = "22") +
+                  linetype = REF_LTY) +
       ## The low end of the ramp is near-white on purpose. The counts are wildly
       ## skewed -- 52% of the hex cells carry 0.2% of the sub-site-months, while
       ## the top 5% of cells carry 90% of them -- so a saturated low end spends
@@ -382,28 +288,34 @@ if (length(fs)) {
       ## (they are real, and the scatter is the point); making them faint stops
       ## them out-shouting the ridge.
       scale_fill_gradient(low = HEX_LOW, high = HEX_HIGH, transform = "log10",
-                          name = "sub-site\nmonths",
+                          limits = hex_lim, name = "sub-site-months",
                           breaks = c(1, 10, 100, 1000, 10000),
-                          labels = scales::label_comma()) +
+                          labels = scales::label_comma(),
+                          guide = guide_colourbar(direction = "horizontal",
+                                                  theme = theme(legend.key.width = unit(12, "lines"),
+                                                                legend.key.height = unit(0.6, "lines")))) +
       coord_equal(xlim = c(0, top), ylim = c(0, top), expand = FALSE) +
       labs(title = title,
            subtitle = sprintf("r = %.3f \u00b7 slope = %.3f\nfleet \u2212 IBM on average: %+.1f%% of the IBM mean", st$cor, st$slope, 100 * st$rel_bias),
            x = sprintf("IBM (%s)", unit), y = sprintf("fleet (%s)", unit)) +
-      theme_cmp() + theme(legend.position = "right", legend.justification = "center",
-                          legend.title = element_text(size = rel(0.8), colour = INK2),
-                          panel.grid.major = element_blank())
+      theme_cmp() + theme_panel_title() + theme(panel.grid.major = element_blank())
   }
-  g <- (hexp(v$ms_clinical, v$fleet_clinical, st_c, "episodes per person-year", "Monthly clinical incidence") |
+  g <- (hexp(v$ms_clinical, v$fleet_clinical, st_c, "episodes per person-year", "monthly clinical incidence") |
         hexp(1000 * v$ms_severe, 1000 * v$fleet_severe, st_s, "episodes per 1,000 person-years",
-             "Monthly severe incidence")) +
+             "monthly severe incidence")) +
+    plot_layout(guides = "collect") +
     plot_annotation(
-      title = sprintf("Country site files: %s sub-site-months across %d countries",
+      title = sprintf("P. falciparum: site files, %s sub-site-months across %d countries",
                       format(st_c$n, big.mark = ","), length(unique(v$iso3c))),
-      subtitle = cap(sprintf("Every P. falciparum admin-1 \u00d7 urban/rural sub-site in the malariaverse site files, %d\u2013%d, with its full intervention history",
-                         min(v$year), max(v$year)), fig_width = 9),
-      caption = cap("Dashed line = perfect agreement. All ages, P. falciparum only on both sides. Cell colour = number of sub-site-months (log scale); the axes stop at the 99.9th percentile of the values, and r and slope are over all of them. IBM values are the site files' own calibration diagnostic runs; fleet was run here from the same site_parameters() lists."),
-      theme = theme_cmp())
-  save_fig(g, "core_sites", width = 10, height = 5.4)
+      subtitle = subt(sprintf("Every P. falciparum admin-1 \u00d7 urban/rural sub-site in the malariaverse site files, %d\u2013%d, with its full intervention history.",
+                              min(v$year), max(v$year))),
+      caption = cap("Dotted line = perfect agreement. All ages, P. falciparum only on both sides. Cell colour = number of sub-site-months (log scale); the axes stop at the 99.9th percentile of the values, and r and slope are over all of them. IBM values are the site files' own calibration diagnostic runs; fleet was run here from the same site_parameters() lists."),
+      theme = theme_cmp()) &
+    theme(legend.position = "top", legend.justification = "left",
+          legend.title = element_text(size = rel(0.8), colour = INK2, vjust = 0.9))
+  ## the panels are square, so the canvas is as wide as two of them: any wider
+  ## and the whole figure sits indented from the others' left edge
+  save_fig(g, "core_sites", width = 8.8, height = 6.3)
 }
 
 ## ============================================================================
@@ -422,25 +334,37 @@ smc_rounds <- data.frame(scenario = factor(INT_LABELS[["smc"]], levels = INT_LAB
                          x = as.vector(sapply(0:2, function(y) BURN_Y + y + (c(0, 30, 60, 90) + 200) / 365)))
 onset_lab <- data.frame(scenario = factor(INT_LABELS[[INT[1]]], levels = INT_LABELS),
                         metric = factor(PREV_LAB, levels = c(PREV_LAB, CLIN_LAB)))
-g <- ggplot() +
-  geom_vline(data = smc_rounds, aes(xintercept = x), colour = GRID, linewidth = 0.5) +
-  geom_vline(xintercept = BURN_Y, colour = AXIS, linewidth = 0.5, linetype = "22") +
-  geom_text(data = onset_lab, aes(x = BURN_Y, y = Inf, label = "deployment"),
-            hjust = -0.08, vjust = 1.6, size = 3.1, colour = INK2, family = FONT) +
-  geom_ribbon(data = ibm_m, aes(year, ymin = lo, ymax = hi, fill = model), alpha = ENV_ALPHA) +
-  geom_line(data = ode_m, aes(year, mid, colour = model, linetype = model), linewidth = 0.75) +
-  geom_line(data = ibm_m, aes(year, mid, colour = model, linetype = model), linewidth = 0.75) +
-  facet_grid(scenario ~ metric, scales = "free_y", switch = "y") +
-  scale_models(shapes = FALSE) +
-  scale_x_continuous(breaks = seq(BURN_Y - 3, BURN_Y + 6, 3),
-                     labels = function(b) ifelse(b == BURN_Y, "0", sprintf("%+d y", as.integer(b - BURN_Y)))) +
-  scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.08))) +
-  labs(title = "Intervention impact: the same deployment through both models",
-       subtitle = cap(sprintf("Monthly series, three years before to six after deployment, EIR %s. SMC: the same EIR in a seasonal setting, three years of rounds (marked). The other two transmission levels are in the impact figure", EIR_REF), width = 120),
-       x = "years relative to deployment", y = NULL,
-       caption = cap("Each row is one intervention layered on the same baseline with the ordinary malariasimulation set_*() builders.", ibm_note)) +
-  theme_cmp() + theme(strip.text.y.left = element_text(angle = 0, hjust = 1, vjust = 1),
-                      strip.placement = "outside", panel.spacing.x = unit(2.2, "lines"))
+## One column per outcome, each its own plot, as programme_ts: facet_grid frees y
+## by ROW, and prevalence and clinical incidence share no scale -- in one grid the
+## prevalence column sat squashed on the clinical axis, as a raw proportion.
+it_col <- function(mlab, first, pct) {
+  gi <- filter(ibm_m, metric == mlab); go <- filter(ode_m, metric == mlab)
+  p <- ggplot() + campaign_rules(smc_rounds) + deploy_rule(BURN_Y)
+  ## at the foot of the rule, where no series runs: prevalence sits near the top
+  if (first) p <- p + geom_text(data = onset_lab, aes(x = BURN_Y, y = -Inf, label = "deployment"),
+                                hjust = -0.08, vjust = -0.6, size = ANNOT_SIZE, colour = INK2,
+                                family = FONT)
+  p <- p +
+    geom_ribbon(data = gi, aes(year, ymin = lo, ymax = hi, fill = model), alpha = ENV_ALPHA) +
+    geom_line(data = go, aes(year, mid, colour = model, linetype = model), linewidth = 0.75) +
+    geom_line(data = gi, aes(year, mid, colour = model, linetype = model), linewidth = 0.75) +
+    facet_grid(scenario ~ metric, scales = "free_y", switch = "y",
+               labeller = labeller(metric = label_wrap_gen(30))) +
+    scale_models(shapes = FALSE) + guide_models() +
+    scale_x_continuous(breaks = seq(BURN_Y - 3, BURN_Y + 6, 3), labels = lab_years(BURN_Y)) +
+    y_from_zero(pct, headroom = 0.08) +
+    labs(x = YEARS_LAB, y = NULL) + theme_cmp()
+  if (first) p + theme(strip.text.y.left = element_text(angle = 0, hjust = 1, vjust = 1))
+  else p + theme(strip.text.y = element_blank())
+}
+g <- (it_col(PREV_LAB, TRUE, TRUE) | it_col(CLIN_LAB, FALSE, FALSE)) +
+  plot_layout(guides = "collect", axis_titles = "collect", widths = c(1, 1)) +
+  plot_annotation(
+    title = "P. falciparum: the same deployment through both models",
+    subtitle = subt(sprintf("Monthly series, three years before to six after deployment, EIR %s. SMC: the same EIR in a seasonal setting, three years of rounds (marked). The other two transmission levels are in the impact figure.", EIR_REF)),
+    caption = cap("Each row is one intervention layered on the same baseline with the ordinary malariasimulation set_*() builders.", ibm_note),
+    theme = theme_cmp()) &
+  theme(legend.position = "top", legend.justification = "left")
 save_fig(g, "int_timeseries", width = 10, height = 12)
 
 ## ============================================================================
@@ -455,10 +379,10 @@ save_fig(g, "int_timeseries", width = 10, height = 12)
 TS <- names(TS_LABELS)
 if (all(TS %in% monthly$scenario)) {
   TS_MET <- list(
-    list(key = "pfpr_2_10", title = "LM prevalence\nages 2–10", pct = TRUE),
-    list(key = "clin_0_5",  title = "Clinical incidence\nages 0–5, per child-year"),
-    list(key = "clin_all",  title = "Clinical incidence\nall ages, per person-year"),
-    list(key = "sev_all",   title = "Severe incidence\nall ages, per 1,000 py"))
+    list(key = "pfpr_2_10", title = PREV_LAB, pct = TRUE),
+    list(key = "clin_0_5",  title = CLIN_LAB),
+    list(key = "clin_all",  title = "clinical episodes per person-year, all ages"),
+    list(key = "sev_all",   title = "severe episodes per 1,000 person-years, all ages"))
   ts_long <- monthly %>%
     filter(scenario %in% TS, year >= BURN_Y - 2, year <= BURN_Y + TS_YEARS) %>%
     select(scenario, model, rep, year, all_of(vapply(TS_MET, `[[`, "", "key"))) %>%
@@ -474,53 +398,39 @@ if (all(TS %in% monthly$scenario)) {
     scenario = factor(rep(TS_LABELS[c("ts_nets", "ts_all")], each = 5L),
                       levels = TS_LABELS),
     x = rep(BURN_Y + seq(0, by = TS_NET_EVERY, length.out = 5L), times = 2L))
-  ## a heavier envelope than the rest of the figure set (ENV_ALPHA = 0.16). This
-  ## figure is 183 monthly points in a ~495 px panel -- 2.7 px per month, 32 px
-  ## per seasonal cycle -- so the band only opens at the spike tips, and at 0.16
-  ## it is invisible there. It has real width to show: over the months carrying
-  ## the top quartile of burden the IBM's replicate band is 26% of the panel peak
-  ## for all-age severe, against 3-6% for prevalence and the two clinical
-  ## measures. Kept local to this figure rather than raised in theme.R, so the
-  ## four already-reviewed figures are not changed unseen.
-  TS_ENV_ALPHA <- 0.40
 
+  ## the column header is a facet strip, as every other figure's, so the legend
+  ## sits above the headers rather than between them and the panels
   ts_col <- function(m, first) {
-    gi <- filter(ibm_t, metric == m$key); go <- filter(ode_t, metric == m$key)
+    gi <- filter(ibm_t, metric == m$key) %>% mutate(hdr = m$title)
+    go <- filter(ode_t, metric == m$key) %>% mutate(hdr = m$title)
     p <- ggplot() +
-      geom_vline(data = net_x, aes(xintercept = x), colour = AXIS, linewidth = 0.45) +
-      geom_vline(xintercept = BURN_Y, colour = INK2, linewidth = 0.45, linetype = "22") +
-      geom_ribbon(data = gi, aes(year, ymin = lo, ymax = hi, fill = model),
-                  alpha = TS_ENV_ALPHA) +
+      campaign_rules(net_x) + deploy_rule(BURN_Y) +
+      geom_ribbon(data = gi, aes(year, ymin = lo, ymax = hi, fill = model), alpha = ENV_ALPHA) +
       geom_line(data = go, aes(year, mid, colour = model, linetype = model), linewidth = 0.6) +
       geom_line(data = gi, aes(year, mid, colour = model, linetype = model), linewidth = 0.6) +
-      facet_grid(scenario ~ ., switch = "y") +
-      scale_models(shapes = FALSE) +
-      scale_x_continuous(breaks = BURN_Y + seq(0, TS_YEARS, 5),
-                         labels = function(b) paste0("+", as.integer(b - BURN_Y), " y")) +
-      labs(title = m$title, x = NULL, y = NULL) +
-      theme_cmp() + theme(legend.position = "none")
-    p <- p + if (isTRUE(m$pct))
-      scale_y_continuous(limits = c(0, NA), labels = scales::percent,
-                         expand = expansion(mult = c(0, 0.08)))
-      else scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.08)))
+      facet_grid(scenario ~ hdr, switch = "y", labeller = labeller(hdr = strip_lines)) +
+      scale_models(shapes = FALSE) + guide_models() +
+      scale_x_continuous(breaks = BURN_Y + seq(0, TS_YEARS, 5), labels = lab_years(BURN_Y)) +
+      y_from_zero(isTRUE(m$pct), headroom = 0.08) +
+      labs(x = YEARS_LAB, y = NULL) + theme_cmp()
     ## scenario strips on the leftmost column only; repeating them four times
     ## would cost a third of the width and say nothing new
-    if (first) p + theme(strip.text.y.left = element_text(angle = 0, hjust = 0, vjust = 0.5),
-                         strip.placement = "outside")
-    else p + theme(strip.text.y = element_blank(), strip.background = element_blank())
+    if (first) p + theme(strip.text.y.left = element_text(angle = 0, hjust = 1, vjust = 1))
+    else p + theme(strip.text.y = element_blank())
   }
   ps <- lapply(seq_along(TS_MET), function(i) ts_col(TS_MET[[i]], i == 1L))
-  g <- patchwork::wrap_plots(ps, nrow = 1, widths = c(1.12, 1, 1, 1)) +
-    plot_layout(guides = "collect") +
+  g <- patchwork::wrap_plots(ps, nrow = 1, widths = c(1, 1, 1, 1)) +
+    plot_layout(guides = "collect", axis_titles = "collect") +
     plot_annotation(
-      title = "Programmes over fifteen years, through both models",
-      subtitle = cap(sprintf("Monthly series at EIR %s in a seasonal setting, from two years before deployment. Every row carries 20%% baseline case management; rows 2–4 add one intervention, row 5 adds all three. Grey rules mark the five net distributions.", EIR_REF), width = 128),
-      caption = cap("x = years relative to deployment; the dashed rule is deployment. Nets: 80% coverage every 3 years, 5-year mean retention. SMC: 4 monthly rounds a year, ages 3 months to 5 years, 90% coverage. Case management: SP-AQ, coverage of clinical cases raised from 20% to 60%.",
-                    "The IBM band is hard to resolve here -- 15 years of monthly points is ~3 px per month -- so its width is given instead: over the months carrying the top quartile of burden the replicate band is 26% of the panel peak for severe incidence, and 3-6% for the other three. Severe is the noisiest because a 30-day bin holds only ~20 severe episodes at the seasonal peak in a population of 10,000.",
+      title = "P. falciparum: programmes over fifteen years through both models",
+      subtitle = subt(sprintf("Monthly series at EIR %s in a seasonal setting, from two years before deployment. Every row carries 20%% baseline case management; rows 2–4 add one intervention, row 5 adds all three. Grey rules mark the five net distributions.", EIR_REF)),
+      caption = cap("The dashed rule is deployment. Nets: 80% coverage every 3 years, 5-year mean retention. SMC: 4 monthly rounds a year, ages 3 months to 5 years, 90% coverage. Case management: SP-AQ, coverage of clinical cases raised from 20% to 60%.",
+                    "The IBM band is hard to resolve here — 15 years of monthly points is ~3 px per month — so its width is given instead: over the months carrying the top quartile of burden the replicate band is 26% of the panel peak for severe incidence, and 3–6% for the other three. Severe is the noisiest because a 30-day bin holds only ~20 severe episodes at the seasonal peak in a population of 10,000.",
                     ibm_note),
       theme = theme_cmp()) &
     theme(legend.position = "top", legend.justification = "left")
-  save_fig(g, "programme_ts", width = 13.5, height = 11)
+  save_fig(g, "programme_ts", width = 12, height = 12)
 } else {
   message("programme_ts skipped: ts_* scenarios not in rep_monthly.csv")
 }
@@ -579,53 +489,25 @@ both <- bind_rows(ibm_r, ode_r) %>%
 ## and far above the platform noise, which makes the artifact reproducible.
 write.csv(dplyr::mutate(both, dplyr::across(where(is.numeric), ~ signif(.x, 10))),
           file.path(DDIR, "int_impact_summary.csv"), row.names = FALSE)
-seg  <- both %>% select(scenario, eir, metric, model, mid) %>%
-  pivot_wider(names_from = model, values_from = mid)
 ## The numeric columns that used to sit beside the panels are gone: at four
 ## outcomes by three transmission levels they are 144 numbers, which is a table
-## and not a figure. int_impact_summary.csv carries them, and is committed.
-xmin <- min(-0.04, floor(min(c(both$lo, both$mid), na.rm = TRUE) * 20) / 20 - 0.03)
-
-g <- ggplot(both, aes(y = scenario)) +
-  geom_vline(xintercept = 0, colour = AXIS, linewidth = 0.5) +
-  geom_segment(data = seg, aes(x = IBM, xend = fleet, yend = scenario), colour = GRID,
-               linewidth = 2.2, lineend = "round") +
-  geom_linerange(data = filter(both, model == "IBM"), aes(xmin = lo, xmax = hi, colour = model),
-                 linewidth = 0.9, alpha = 0.55) +
-  geom_point(aes(x = mid, colour = model, shape = model, fill = model), size = 2.8, stroke = 0.6) +
-  ## fleet's triangle filled solid wherever it falls outside the IBM's band --
-  ## the cells the criterion counts
-  geom_point(data = outside_cells(both), aes(x = mid), shape = 17, colour = COL[["fleet"]],
-             size = 2.8) +
-  facet_grid(eir ~ metric) +
-  scale_models(lines = FALSE) + guide_models() +
-  scale_x_continuous(labels = scales::percent, breaks = seq(0, 1, 0.5),
-                     minor_breaks = seq(-0.25, 1, 0.25), limits = c(xmin, 1.02),
-                     expand = expansion(mult = 0.02)) +
-  scale_y_discrete(limits = rev(unname(INT_LABELS)), expand = expansion(add = 0.7)) +
-  coord_cartesian(clip = "off") +
-  labs(title = "P. falciparum: intervention impact over the first three years, at three transmission levels",
-       subtitle = cap(paste("Each intervention deployed unchanged at EIR 3, 20 and 120,",
-                            "relative to the three pre-deployment years of the same run.",
-                            "SMC is run in a seasonal setting, the other five without seasonality.",
-                            "Circle = IBM median with its replicate band (median \u00b1 1.28 SD); triangle = fleet,",
-                            "filled solid where it falls outside the band."),
-                      width = 128),
-       x = "reduction relative to baseline", y = NULL,
-       caption = cap(paste("Plotted medians are in int_impact_summary.csv.",
-                           "Impact varies with transmission in both directions -- nets and",
-                           "case management fall away as transmission rises, RTS,S and SMC",
-                           "strengthen -- so a single figure per intervention would not be an",
-                           "effect size."), ibm_note)) +
-  theme_cmp() + theme(panel.grid.major.y = element_blank(), axis.line.x = element_blank(),
-                      axis.text.y = element_text(size = rel(0.9), lineheight = 0.95, hjust = 1),
-                      panel.spacing.x = unit(1.3, "lines"),
-                      panel.spacing.y = unit(1.3, "lines"))
-save_fig(g, "int_impact", width = 13.5, height = 11)
+## and not a figure. int_impact_summary.csv carries them, and is committed. The
+## figure is fig_impact() in theme.R, shared with render_pv.R.
+g <- fig_impact(both, INT_LABELS,
+  title = "P. falciparum: intervention impact over the first three years, at three transmission levels",
+  subtitle = subt("Each intervention deployed unchanged at EIR 3, 20 and 120,",
+                  "relative to the three pre-deployment years of the same run.",
+                  "SMC is run in a seasonal setting, the other five without seasonality."),
+  caption = cap(IMPACT_NOTE, "Plotted medians are in results/int_impact_summary.csv.",
+                "Impact varies with transmission in both directions — nets and",
+                "case management fall away as transmission rises, RTS,S and SMC",
+                "strengthen — so a single figure per intervention would not be an",
+                "effect size.", ibm_note))
+save_fig(g, "int_impact", width = 12, height = 13)
 
 ## ---- console summary ---------------------------------------------------------
 cat("figures written", if (SMOKE) "to validations/02-scenarios/results/plots/smoke" else "to man/figures and vignettes", "\n\n")
-print(both %>% select(scenario, metric, model, mid) %>% mutate(mid = round(mid, 3)) %>%
+print(both %>% select(scenario, eir, metric, model, mid) %>% mutate(mid = round(mid, 3)) %>%
         pivot_wider(names_from = model, values_from = mid) %>% mutate(scenario = sub("\n.*", "", scenario)), n = 20)
 cat("\nrealised EIR (final 3 years):\n")
 print(eq %>% filter(grepl("^eir_", scenario)) %>% group_by(scenario, model) %>%
