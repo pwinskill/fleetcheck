@@ -39,7 +39,7 @@ a slope of 1 with a positive bias is a constant offset while a slope
 above 1 with no bias is a fan, and quoting one of them alone hides which
 you have.
 [`band_summary()`](https://pwinskill.github.io/fleetcheck/reference/band_summary.md)
-answers “inside the IBM replicate band”, which is the criterion 16
+answers “inside the IBM replicate band”, which is the criterion 17
 claims in the register are decided by.
 
 So the figure and the table built from the same results cannot disagree:
@@ -99,6 +99,14 @@ CMP_PARASITE=pv Rscript validations/02-scenarios/run.R
 CMP_PARASITE=pv Rscript validations/02-scenarios/assess.R
 Rscript validations/02-scenarios/tables_pv.R
 Rscript validations/02-scenarios/render_pv.R
+
+# parameter-draws: eight posterior draws at three EIRs, tier 2 (two hours on
+# four workers); assess.R re-runs fleet alone against the committed IBM rows
+Rscript validations/04-parameter-draws/run.R
+Rscript validations/04-parameter-draws/assess.R
+Rscript validations/04-parameter-draws/render.R
+# and what moves its severe-incidence gap: 40 IBM runs, fifteen minutes
+Rscript validations/04-parameter-draws/diagnose.R
 
 # tier 3, which needs the restricted site files
 FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R

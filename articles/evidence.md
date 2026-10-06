@@ -4,16 +4,17 @@ How closely does `fleet` reproduce `malariasimulation` for *P.
 falciparum*? Each claim below states the criterion that decides it, the
 value measured against that criterion, and a verdict. The order runs
 from transmission through clinical and severe burden to their age
-distributions, then interventions and real settings, with the
-demographic, performance and numerical checks that underwrite them at
-the end. The *P. vivax* claims are on [a page of their
+distributions, then interventions, real settings and the parameter
+posterior, with the demographic, performance and numerical checks that
+underwrite them at the end. The *P. vivax* claims are on [a page of
+their
 own](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md).
 
 Every section is generated from `claims.yml`, so this page cannot
 disagree with the register, and the register cannot be changed without
 the page following.
 
-**11 claims — 0 failing, 0 untested, 0 open, 11 pass.**
+**12 claims — 0 failing, 0 untested, 1 open, 11 pass.**
 
 | claim | tier | criterion | measured | verdict |
 |----|----|----|----|----|
@@ -25,6 +26,7 @@ the page following.
 | [`age-profile-severe`](#age-profile-severe) | 2 | inside the IBM replicate band in every age band carrying at least 5% of severe episodes, at EIR 3, 20 and 120 | inside at 16 of 16 tested bands across the three EIRs, holding 94% of episodes; largest departure 0.78 replicate SD, in the 1-2 y band at EIR 20 | pass |
 | [`intervention-impact`](#intervention-impact) | 2 | outside the IBM replicate band in no greater a share of cells than the best held-out IBM replicate, over every intervention and outcome at EIR 3, 20 and 120 (SMC in a seasonal setting, since it is a seasonal intervention) | fleet outside in 2.8% of 72 cells, against 9.7% for the closest of the twenty IBM replicates and 20.1% for the median one | pass |
 | [`real-settings-correlation`](#real-settings-correlation) | 3 | r \> 0.95 and \|slope - 1\| \< 0.10 on both clinical and severe incidence | clinical r 0.983 slope 0.983; severe r 0.958 slope 0.927, over 451,008 sub-site-months in 1,392 sub-sites of 63 countries | pass |
+| [`parameter-draws`](#parameter-draws) | 2 | each draw’s change from the default parameters inside the IBM replicate band of that change, for eight posterior draws chosen at EIR 20 to span all-age clinical and severe incidence, at EIR 3, 20 and 120, on LM prevalence 2-10, clinical incidence under 5 and at all ages, and severe incidence at all ages | inside at 96 of 96; largest departure 0.66 replicate SD, all-age severe incidence at draw 260 and EIR 120; fleet’s changes against the IBM’s slope 1.01, r 0.997; against the IBM’s mean changes, severe incidence is off by 1.7 points RMS beyond the IBM’s noise (p \< 0.001), prevalence and clinical incidence are not | open |
 | [`population-age-structure`](#population-age-structure) | 2 | inside the IBM replicate band in every age band below 60 years, on shares renormalised to the 0-60 population | inside at 11 of 11; largest departure 1.3% of the IBM median | pass |
 | [`speed`](#speed) | 2 | at least 10x faster than the IBM on the same scenario set | 44x on cost per simulated year; 19.9 CPU-hours for the IBM against 82 s for fleet | pass |
 | [`seed-stability`](#seed-stability) | 1 | PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20 | 0.35% maximum excursion; flat to 0.007% over the last five years | pass |
@@ -173,11 +175,11 @@ The bar is taken from the IBM because at 72 cells a fixed one cannot be:
 a 1.28 SD band leaves a fifth of cells outside by construction, and no
 replicate is inside all 72. fleet is outside less often than any of the
 twenty. Where fleet does sit outside, the size is small in both senses.
-It is outside in three cells, all bed nets: on prevalence at EIR 20 and
-120, and on all-age clinical incidence at EIR 120, that one by 0.08
-points. The worst is prevalence at EIR 120, where the IBM’s bed nets cut
-PfPR(2-10) by 27.5% and fleet’s by 25.3%: 2.1 percentage points of the
-reduction, 7.8% of the effect, the mark of population-averaged nets,
+It is outside in two cells, both bed nets, on prevalence at EIR 20 and
+120; on all-age clinical incidence at EIR 120 it sits 0.01 points
+inside. The worst is prevalence at EIR 120, where the IBM’s bed nets cut
+PfPR(2-10) by 27.5% and fleet’s by 25.4%: 2.1 percentage points of the
+reduction, 7.7% of the effect, the mark of population-averaged nets,
 which lose the correlation of each person’s protection across bites. The
 typical gap does not grow with transmission – a median of 0.39, 0.37 and
 0.49 percentage points at EIR 3, 20 and 120. Impact is a ratio of two
@@ -227,6 +229,61 @@ falciparum transmission; none is dropped. Monthly, and P. falciparum
 only on both arms: annual means can hide a seasonal mismatch, and the
 shipped diagnostics carry vivax rows that inflate the baseline where pf
 transmission is low.
+
+## parameter-draws
+
+open — The change a posterior parameter draw makes to prevalence,
+clinical and severe incidence matches the IBM’s.
+
+**Criterion:** each draw’s change from the default parameters inside the
+IBM replicate band of that change, for eight posterior draws chosen at
+EIR 20 to span all-age clinical and severe incidence, at EIR 3, 20 and
+120, on LM prevalence 2-10, clinical incidence under 5 and at all ages,
+and severe incidence at all ages  
+**Measured:** inside at 96 of 96; largest departure 0.66 replicate SD,
+all-age severe incidence at draw 260 and EIR 120; fleet’s changes
+against the IBM’s slope 1.01, r 0.997; against the IBM’s mean changes,
+severe incidence is off by 1.7 points RMS beyond the IBM’s noise (p \<
+0.001), prevalence and clinical incidence are not
+
+tier 2 · `validations/04-parameter-draws`
+
+[![The change a posterior parameter draw makes to prevalence, clinical
+and severe incidence matches the IBM's. Verdict:
+open.](cmp_draws.png)](https://pwinskill.github.io/fleetcheck/articles/cmp_draws.png)
+
+set_parameter_draw() replaces 32 core parameters with one of 1,000 draws
+from the model fit’s joint posterior. The IBM’s band is the spread of
+the change over every pairing of a replicate at the draw with one at the
+default parameters (20 x 20); those default-parameter runs are the EIR
+grid’s own, so the claim needs no other IBM runs. A ratio of two runs
+divides out an offset common to both, as intervention impact does. The
+band, the noise of a single pair of runs, reaches about four and a half
+standard errors of the IBM’s mean change either side, so it catches
+gross errors only. Against the mean changes and their standard errors,
+prevalence and clinical incidence agree with the IBM (chi-squared p 0.12
+to 0.77 over each outcome’s 24 cells) and severe incidence does not (p =
+3e-8): six of the 96 cells sit more than two standard errors from the
+IBM, all with fleet low. That is why the claim is open.
+validations/04-parameter-draws/diagnose.R finds the cause in uv, the
+refractory period between boosts of severe-disease immunity. At the
+default parameters with uv alone changed, fleet’s all-age severe
+incidence at EIR 120 sits 2.9% below the IBM’s mean at uv 1.67 days,
+0.6% below at the default 11.4, and 6.7% above at 35 (5.3 standard
+errors), extrapolated to a converged age grid. fleet evaluates severe
+risk at a cell’s mean immunity, with no immunity offset where the IBM
+adds 0.5 to each person’s. That matches the IBM at the default
+parameters, but not as uv changes how widely immunity spreads within a
+cell. Not tested: the other 990 draws, EIR below 3, seasonality,
+interventions under a draw, and vivax draws. Chosen at EIR 20, the eight
+draws span the 4th to 87th percentiles of fleet’s severe incidence at
+EIR 120, and only about the 15th to 80th of prevalence at any EIR. The
+infectivity parameters (cd, cu, gamma1) act on the mosquitoes, which
+set_equilibrium() rescales to hold the EIR, so this design cannot test
+them. fleet refuses draws 410 and 464, whose b0 of 0.96 and 0.99 fail
+its pre-run check on the default age grid. The check bounds a day’s
+infections by b0, as if everyone were bitten every day, and tightens as
+the grid is refined: it is a limit of the check, not of the draws.
 
 ## population-age-structure
 

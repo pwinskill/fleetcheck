@@ -2,8 +2,8 @@
 
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
-[![Falciparum claims: 11
-pass](https://img.shields.io/badge/falciparum%20claims-11%20pass-brightgreen.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
+[![Falciparum claims: 11 pass, 1
+open](https://img.shields.io/badge/falciparum%20claims-11%20pass%2C%201%20open-yellow.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
 [![Vivax claims: 7 pass, 3
 fail](https://img.shields.io/badge/vivax%20claims-7%20pass%2C%203%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md)
 [![Lifecycle:
@@ -32,7 +32,7 @@ plots.
 
 ### *P. falciparum*
 
-**11 claims — 0 failing, 0 untested, 0 open, 11 pass.**
+**12 claims — 0 failing, 0 untested, 1 open, 11 pass.**
 
 1.  pass
     [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir)
@@ -63,13 +63,17 @@ plots.
     [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation)
     — Agreement holds across real transmission settings, not just
     synthetic scenarios.
-9.  pass
+9.  open
+    [`parameter-draws`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#parameter-draws)
+    — The change a posterior parameter draw makes to prevalence,
+    clinical and severe incidence matches the IBM’s.
+10. pass
     [`population-age-structure`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#population-age-structure)
     — The population age structure matches the IBM’s.
-10. pass
+11. pass
     [`speed`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#speed)
     — fleet is fast enough to be worth using in place of the IBM.
-11. pass
+12. pass
     [`seed-stability`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#seed-stability)
     — An undisturbed run holds the equilibrium it was seeded at.
 
@@ -368,9 +372,16 @@ than its third decimal: one sub-site against one IBM replicate is a
 check that the pipeline runs, not evidence about the model.
 
 Tier 2, in `validations/02-scenarios/`, is what steps 4 to 6 exercise.
-`Rscript validations/01-seed-stability/run.R` (a few minutes, `fleet`
-only) reproduces `seed-stability` and `seed-stability-pv`, and writes
-`results/seed_stability.json` and `results/seed_stability_pv.json`.
+`validations/04-parameter-draws/` is tier 2 as well: eight of
+`set_parameter_draw()`’s posterior draws at three EIRs, for
+`parameter-draws`. It has the same scripts — `run.R` for both models
+(about two hours on four workers), `assess.R` to re-run `fleet` against
+the committed IBM rows, `render.R` for its figure — and `select.R`,
+which chooses the draws, and `diagnose.R`, which tests what moves its
+severe-incidence gap. `Rscript validations/01-seed-stability/run.R` (a
+few minutes, `fleet` only) reproduces `seed-stability` and
+`seed-stability-pv`, and writes `results/seed_stability.json` and
+`results/seed_stability_pv.json`.
 
 ## Layout
 
@@ -394,10 +405,12 @@ version, the age grid and the mosquito sub-step count as well.
 
 The register, the tested metrics layer and every tier are in place.
 **Tier 1**, `validations/01-seed-stability/`, runs in seconds. **Tier
-2**, the scenario comparison in `validations/02-scenarios/`, runs end to
-end, has a few-minute smoke path, and is what CI checks. **Tier 3** runs
-from here too — `run.R`, `assess.R` and `diagnose.R` — given the site
-files it cannot ship.
+2**, the scenario comparison in `validations/02-scenarios/` and the
+parameter-draws comparison in `validations/04-parameter-draws/`, runs
+end to end and has a few-minute smoke path; CI checks its scripts and
+the register’s verdicts without re-running it. **Tier 3** runs from here
+too — `run.R`, `assess.R` and `diagnose.R` — given the site files it
+cannot ship.
 
 # Package index
 

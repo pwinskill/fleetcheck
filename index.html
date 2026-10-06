@@ -68,7 +68,7 @@
 </h1>
 </div>
 <!-- BEGIN badges -->
-<p><a href="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg" alt="check"></a> <a href="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a> <a href="articles/evidence.html"><img src="https://img.shields.io/badge/falciparum%20claims-11%20pass-brightgreen.svg" alt="Falciparum claims: 11 pass"></a> <a href="articles/evidence-vivax.html"><img src="https://img.shields.io/badge/vivax%20claims-7%20pass%2C%203%20fail-orange.svg" alt="Vivax claims: 7 pass, 3 fail"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://github.com/pwinskill/fleetcheck/blob/main/LICENSE" class="external-link"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a></p>
+<p><a href="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg" alt="check"></a> <a href="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a> <a href="articles/evidence.html"><img src="https://img.shields.io/badge/falciparum%20claims-11%20pass%2C%201%20open-yellow.svg" alt="Falciparum claims: 11 pass, 1 open"></a> <a href="articles/evidence-vivax.html"><img src="https://img.shields.io/badge/vivax%20claims-7%20pass%2C%203%20fail-orange.svg" alt="Vivax claims: 7 pass, 3 fail"></a> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a> <a href="https://github.com/pwinskill/fleetcheck/blob/main/LICENSE" class="external-link"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a></p>
 <!-- END badges -->
 <blockquote>
 <p>How closely does <a href="https://github.com/pwinskill/fleet" class="external-link"><code>fleet</code></a> reproduce <a href="https://github.com/mrc-ide/malariasimulation" class="external-link"><code>malariasimulation</code></a>?</p>
@@ -83,7 +83,7 @@
 <h3 id="p-falciparum">
 <em>P. falciparum</em><a class="anchor" aria-label="anchor" href="#p-falciparum"></a>
 </h3>
-<p><strong>11 claims — 0 failing, 0 untested, 0 open, 11 pass.</strong></p>
+<p><strong>12 claims — 0 failing, 0 untested, 1 open, 11 pass.</strong></p>
 <ol style="list-style-type: decimal">
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence.html#prevalence-eir"><code>prevalence-eir</code></a> — LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.</li>
@@ -101,6 +101,8 @@
 <span class="verdict pass">pass</span> <a href="articles/evidence.html#intervention-impact"><code>intervention-impact</code></a> — The modelled impact of each intervention matches the IBM.</li>
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence.html#real-settings-correlation"><code>real-settings-correlation</code></a> — Agreement holds across real transmission settings, not just synthetic scenarios.</li>
+<li>
+<span class="verdict open">open</span> <a href="articles/evidence.html#parameter-draws"><code>parameter-draws</code></a> — The change a posterior parameter draw makes to prevalence, clinical and severe incidence matches the IBM’s.</li>
 <li>
 <span class="verdict pass">pass</span> <a href="articles/evidence.html#population-age-structure"><code>population-age-structure</code></a> — The population age structure matches the IBM’s.</li>
 <li>
@@ -321,7 +323,7 @@
 <p>Without the site files you can still run the <em>method</em>, on any one sub-site you have a file for. <code>validations/03-real-settings/example-one-site.R</code> is the same pipeline — subset the site file, convert ITN usage to a distribution, build the parameter list, seed both models off it, reduce both through <code>postie</code>, and score with the same <code><a href="reference/agreement.html">agreement()</a></code> the register uses — applied to a single sub-site in about two minutes:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="va">FLEET_VALIDATE</span><span class="op">=</span>/path/to/fleet_validate   <span class="ex">Rscript</span> validations/03-real-settings/example-one-site.R BFA</span></code></pre></div>
 <p><code>validations/03-real-settings/README.md</code> walks through each step and says which details are load-bearing. Read the shape of the output rather than its third decimal: one sub-site against one IBM replicate is a check that the pipeline runs, not evidence about the model.</p>
-<p>Tier 2, in <code>validations/02-scenarios/</code>, is what steps 4 to 6 exercise. <code>Rscript validations/01-seed-stability/run.R</code> (a few minutes, <code>fleet</code> only) reproduces <code>seed-stability</code> and <code>seed-stability-pv</code>, and writes <code>results/seed_stability.json</code> and <code>results/seed_stability_pv.json</code>.</p>
+<p>Tier 2, in <code>validations/02-scenarios/</code>, is what steps 4 to 6 exercise. <code>validations/04-parameter-draws/</code> is tier 2 as well: eight of <code>set_parameter_draw()</code>’s posterior draws at three EIRs, for <code>parameter-draws</code>. It has the same scripts — <code>run.R</code> for both models (about two hours on four workers), <code>assess.R</code> to re-run <code>fleet</code> against the committed IBM rows, <code>render.R</code> for its figure — and <code>select.R</code>, which chooses the draws, and <code>diagnose.R</code>, which tests what moves its severe-incidence gap. <code>Rscript validations/01-seed-stability/run.R</code> (a few minutes, <code>fleet</code> only) reproduces <code>seed-stability</code> and <code>seed-stability-pv</code>, and writes <code>results/seed_stability.json</code> and <code>results/seed_stability_pv.json</code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -337,7 +339,7 @@ claims.yml    the register</code></pre>
 <div class="section level2">
 <h2 id="status">Status<a class="anchor" aria-label="anchor" href="#status"></a>
 </h2>
-<p>The register, the tested metrics layer and every tier are in place. <strong>Tier 1</strong>, <code>validations/01-seed-stability/</code>, runs in seconds. <strong>Tier 2</strong>, the scenario comparison in <code>validations/02-scenarios/</code>, runs end to end, has a few-minute smoke path, and is what CI checks. <strong>Tier 3</strong> runs from here too — <code>run.R</code>, <code>assess.R</code> and <code>diagnose.R</code> — given the site files it cannot ship.</p>
+<p>The register, the tested metrics layer and every tier are in place. <strong>Tier 1</strong>, <code>validations/01-seed-stability/</code>, runs in seconds. <strong>Tier 2</strong>, the scenario comparison in <code>validations/02-scenarios/</code> and the parameter-draws comparison in <code>validations/04-parameter-draws/</code>, runs end to end and has a few-minute smoke path; CI checks its scripts and the register’s verdicts without re-running it. <strong>Tier 3</strong> runs from here too — <code>run.R</code>, <code>assess.R</code> and <code>diagnose.R</code> — given the site files it cannot ship.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="at-a-glance">
