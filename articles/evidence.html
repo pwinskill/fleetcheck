@@ -444,10 +444,8 @@ draws span the 4th to 87th percentiles of fleet’s severe incidence at
 EIR 120, and only about the 15th to 80th of prevalence at any EIR. The
 infectivity parameters (cd, cu, gamma1) act on the mosquitoes, which
 set_equilibrium() rescales to hold the EIR, so this design cannot test
-them. fleet refuses draws 410 and 464, whose b0 of 0.96 and 0.99 fail
-its pre-run check on the default age grid. The check bounds a day’s
-infections by b0, as if everyone were bitten every day, and tightens as
-the grid is refined: it is a limit of the check, not of the draws.</p>
+them. fleet runs all 1,000 draws at EIR 3, 20 and 120, including the two
+with the highest b0, draws 410 and 464 (0.96 and 0.99).</p>
 </div>
 <div class="section level2">
 <h2 id="population-age-structure">population-age-structure<a class="anchor" aria-label="anchor" href="#population-age-structure"></a>
