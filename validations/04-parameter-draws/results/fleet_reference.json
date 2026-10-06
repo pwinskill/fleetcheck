@@ -1,0 +1,13 @@
+{
+  "taken": "2026-10-06T10:28:51+0100",
+  "fleet": "0.0.0.9004",
+  "fleet_sha": null,
+  "fleet_built": "R 4.5.2; aarch64-w64-mingw32; 2026-10-06 09:00:55 UTC; windows",
+  "malariasimulation": "3.0.0",
+  "malariasimulation_sha": "5f63ccd",
+  "postie": "1.1.0",
+  "R": "4.5.2",
+  "platform": "aarch64-w64-mingw32",
+  "fleetcheck_sha": "7345a25",
+  "age_groups": 118
+}

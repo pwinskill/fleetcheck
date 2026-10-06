@@ -21,9 +21,9 @@ claims <- claims[claims$parasite == "falciparum", ]
 How closely does `fleet` reproduce `malariasimulation` for *P. falciparum*? Each
 claim below states the criterion that decides it, the value measured against
 that criterion, and a verdict. The order runs from transmission through clinical
-and severe burden to their age distributions, then interventions and real
-settings, with the demographic, performance and numerical checks that underwrite
-them at the end. The *P. vivax* claims are on [a page of their
+and severe burden to their age distributions, then interventions, real settings
+and the parameter posterior, with the demographic, performance and numerical
+checks that underwrite them at the end. The *P. vivax* claims are on [a page of their
 own](evidence-vivax.html).
 
 Every section is generated from `claims.yml`, so this page cannot disagree with

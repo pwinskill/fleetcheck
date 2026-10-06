@@ -6,7 +6,7 @@
 
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
-[![Falciparum claims: 11 pass](https://img.shields.io/badge/falciparum%20claims-11%20pass-brightgreen.svg)](articles/evidence.html)
+[![Falciparum claims: 11 pass, 1 open](https://img.shields.io/badge/falciparum%20claims-11%20pass%2C%201%20open-yellow.svg)](articles/evidence.html)
 [![Vivax claims: 7 pass, 3 fail](https://img.shields.io/badge/vivax%20claims-7%20pass%2C%203%20fail-orange.svg)](articles/evidence-vivax.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
@@ -33,7 +33,7 @@ of plots.
 
 ### *P. falciparum*
 
-**11 claims — 0 failing, 0 untested, 0 open, 11 pass.**
+**12 claims — 0 failing, 0 untested, 1 open, 11 pass.**
 
 1. <span class="verdict pass">pass</span> [`prevalence-eir`](articles/evidence.html#prevalence-eir) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
 2. <span class="verdict pass">pass</span> [`clinical-allage-eir`](articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
@@ -43,9 +43,10 @@ of plots.
 6. <span class="verdict pass">pass</span> [`age-profile-severe`](articles/evidence.html#age-profile-severe) &mdash; The age distribution of severe incidence tracks the IBM.
 7. <span class="verdict pass">pass</span> [`intervention-impact`](articles/evidence.html#intervention-impact) &mdash; The modelled impact of each intervention matches the IBM.
 8. <span class="verdict pass">pass</span> [`real-settings-correlation`](articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
-9. <span class="verdict pass">pass</span> [`population-age-structure`](articles/evidence.html#population-age-structure) &mdash; The population age structure matches the IBM's.
-10. <span class="verdict pass">pass</span> [`speed`](articles/evidence.html#speed) &mdash; fleet is fast enough to be worth using in place of the IBM.
-11. <span class="verdict pass">pass</span> [`seed-stability`](articles/evidence.html#seed-stability) &mdash; An undisturbed run holds the equilibrium it was seeded at.
+9. <span class="verdict open">open</span> [`parameter-draws`](articles/evidence.html#parameter-draws) &mdash; The change a posterior parameter draw makes to prevalence, clinical and severe incidence matches the IBM's.
+10. <span class="verdict pass">pass</span> [`population-age-structure`](articles/evidence.html#population-age-structure) &mdash; The population age structure matches the IBM's.
+11. <span class="verdict pass">pass</span> [`speed`](articles/evidence.html#speed) &mdash; fleet is fast enough to be worth using in place of the IBM.
+12. <span class="verdict pass">pass</span> [`seed-stability`](articles/evidence.html#seed-stability) &mdash; An undisturbed run holds the equilibrium it was seeded at.
 
 ### *P. vivax*
 
@@ -300,6 +301,12 @@ decimal: one sub-site against one IBM replicate is a check that the pipeline
 runs, not evidence about the model.
 
 Tier 2, in `validations/02-scenarios/`, is what steps 4 to 6 exercise.
+`validations/04-parameter-draws/` is tier 2 as well: eight of
+`set_parameter_draw()`'s posterior draws at three EIRs, for `parameter-draws`.
+It has the same scripts — `run.R` for both models (about two hours on four
+workers), `assess.R` to re-run `fleet` against the committed IBM rows,
+`render.R` for its figure — and `select.R`, which chooses the draws, and
+`diagnose.R`, which tests what moves its severe-incidence gap.
 `Rscript validations/01-seed-stability/run.R` (a few minutes, `fleet` only)
 reproduces `seed-stability` and `seed-stability-pv`, and writes
 `results/seed_stability.json` and `results/seed_stability_pv.json`.
@@ -327,6 +334,8 @@ as well.
 
 The register, the tested metrics layer and every tier are in place. **Tier 1**,
 `validations/01-seed-stability/`, runs in seconds. **Tier 2**, the scenario
-comparison in `validations/02-scenarios/`, runs end to end, has a few-minute
-smoke path, and is what CI checks. **Tier 3** runs from here too — `run.R`,
+comparison in `validations/02-scenarios/` and the parameter-draws comparison in
+`validations/04-parameter-draws/`, runs end to end and has a few-minute smoke
+path; CI checks its scripts and the register's verdicts without re-running it.
+**Tier 3** runs from here too — `run.R`,
 `assess.R` and `diagnose.R` — given the site files it cannot ship.

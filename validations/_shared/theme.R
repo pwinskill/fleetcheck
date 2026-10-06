@@ -75,6 +75,21 @@ lab_years <- function(zero) function(b) {
 }
 ## numbers with a true minus sign, at one precision along the axis
 lab_signed <- scales::label_number(style_negative = "minus")
+## At most `n` ticks, at multiples of the smallest nice step that allows it, for
+## an axis a quarter of a figure wide: four percentages collide there. ggplot
+## hands a breaks function the expanded range, so an ordinary pretty() rule
+## lands on five. The steps scale with the range, so a column of changes within
+## a per cent still gets ticks, and a step with no multiple inside the range is
+## skipped rather than returned.
+breaks_few <- function(n = 3) function(lim) {
+  if (!all(is.finite(lim)) || diff(lim) <= 0) return(unique(lim[is.finite(lim)]))
+  s0 <- 10^floor(log10(diff(lim) / n))
+  for (s in s0 * c(1, 2, 2.5, 5, 10, 20, 25, 50, 100)) {
+    lo <- ceiling(lim[1] / s); hi <- floor(lim[2] / s)
+    if (hi >= lo && hi - lo + 1 <= n) return(seq(lo, hi) * s)
+  }
+  pretty(lim, n)
+}
 
 theme_cmp <- function(base_size = 13) {
   theme_minimal(base_size = base_size, base_family = FONT) +
@@ -380,50 +395,79 @@ fig_pop_age <- function(pa, title, subtitle, caption) {
     plot_annotation(title = title, subtitle = subtitle, caption = caption, theme = theme_cmp())
 }
 
-## the impact figures' fleet rows that fall outside the IBM's band in their cell
-outside_cells <- function(both) {
+## the impact figures' fleet rows, each beside its cell's IBM band and whether
+## it sits inside it: TRUE, FALSE, or NA for a cell with no band
+fleet_cells <- function(both) {
   ibm <- both[both$model == "IBM", c("scenario", "eir", "metric", "lo", "hi")]
   fl <- merge(both[both$model == "fleet", c("scenario", "eir", "metric", "mid")], ibm,
               by = c("scenario", "eir", "metric"))
-  fl[fl$mid < fl$lo | fl$mid > fl$hi, ]
+  fl$inside <- fl$mid >= fl$lo & fl$mid <= fl$hi
+  fl
+}
+## ...and the ones outside it
+outside_cells <- function(both) {
+  fl <- fleet_cells(both)
+  fl[!is.na(fl$inside) & !fl$inside, ]
 }
 ## Intervention impact, cell by cell: each intervention's reduction at each EIR,
 ## the IBM's median and band against fleet, with fleet marked inside or outside
-## the band as in every other test; a grey bar joins the two medians. `both` has
+## the band as in every other test; a bar joins the two medians. `both` has
 ## scenario, eir, metric, model, mid and (IBM rows) lo, hi; `scenarios` lists the
-## row labels top to bottom.
-IMPACT_KEYS <- c("IBM", "fleet inside the IBM band", "fleet outside it")
+## row labels top to bottom, and a blank label leaves a blank row.
+IMPACT_KEYS <- c("IBM median", "fleet inside the IBM band", "fleet outside it")
 IMPACT_NOTE <- "A grey bar joins the IBM's median to fleet's."
-fig_impact <- function(both, scenarios, title, subtitle, caption) {
-  out <- outside_cells(both)
-  both$key <- ifelse(both$model == "IBM", IMPACT_KEYS[1], IMPACT_KEYS[2])
-  hit <- paste(both$scenario, both$eir, both$metric) %in% paste(out$scenario, out$eir, out$metric)
-  both$key[both$model == "fleet" & hit] <- IMPACT_KEYS[3]
+## The same layout serves any change measured against a reference run -- a
+## parameter draw against the default parameters, say -- given its own `x_lab`
+## and `x_scale`; `scales = "free_x"` gives each outcome its own x range.
+fig_impact <- function(both, scenarios, title, subtitle, caption,
+                       x_lab = "reduction relative to baseline", x_scale = NULL,
+                       scales = "fixed") {
+  ## a fleet point is hollow only where it is shown to be inside its cell's band:
+  ## a cell with no band to test against is not drawn as a pass
+  fl <- fleet_cells(both)
+  ok <- paste(fl$scenario, fl$eir, fl$metric)[!is.na(fl$inside) & fl$inside]
+  both$key <- ifelse(both$model == "IBM", IMPACT_KEYS[1],
+                     ifelse(paste(both$scenario, both$eir, both$metric) %in% ok,
+                            IMPACT_KEYS[2], IMPACT_KEYS[3]))
   both$key <- factor(both$key, levels = IMPACT_KEYS)
   seg <- both |> dplyr::select(scenario, eir, metric, model, mid) |>
     tidyr::pivot_wider(names_from = model, values_from = mid)
-  xmin <- min(-0.04, floor(min(c(both$lo, both$mid), na.rm = TRUE) * 20) / 20 - 0.03)
+  if (is.null(x_scale)) {
+    xmin <- min(-0.04, floor(min(c(both$lo, both$mid), na.rm = TRUE) * 20) / 20 - 0.03)
+    x_scale <- scale_x_continuous(labels = scales::label_percent(style_negative = "minus"),
+                                  breaks = seq(0, 1, 0.5), minor_breaks = seq(-0.25, 1, 0.25),
+                                  limits = c(xmin, 1.02), expand = expansion(mult = 0.02))
+  }
   kv <- function(...) setNames(c(...), IMPACT_KEYS)
+  ## Layer order as everywhere: the band at the bottom, then the bar joining the
+  ## medians, then the points. The band carries its own key, as the IBM's band
+  ## does in every other figure, through an alpha scale of one level.
   ggplot(both, aes(y = scenario)) +
     geom_vline(xintercept = 0, colour = AXIS, linewidth = 0.5) +
-    geom_segment(data = seg, aes(x = IBM, xend = fleet, yend = scenario), colour = GRID,
-                 linewidth = 2.2, lineend = "round") +
-    geom_linerange(data = both[both$model == "IBM", ], aes(xmin = lo, xmax = hi),
-                   colour = COL[["IBM"]], linewidth = IBM_BAR_W, alpha = IBM_BAR_A) +
-    geom_point(aes(x = mid, colour = key, shape = key, fill = key), size = 2.8, stroke = 0.6) +
-    facet_grid(eir ~ metric, labeller = labeller(metric = strip_lines)) +
+    geom_linerange(data = both[both$model == "IBM", ], aes(xmin = lo, xmax = hi, alpha = DEV_BAND),
+                   colour = COL[["IBM"]], linewidth = IBM_BAR_W) +
+    geom_segment(data = seg, aes(x = IBM, xend = fleet, yend = scenario), colour = MUTED,
+                 linewidth = 0.8, lineend = "round") +
+    ## show.legend on: since ggplot2 3.5 a layer draws keys only for the levels
+    ## in its data, which left "fleet outside it" a bare label whenever fleet was
+    ## inside every band. Off for alpha, or the band's key gains a point.
+    geom_point(aes(x = mid, colour = key, shape = key, fill = key), size = 2.8, stroke = 0.6,
+               show.legend = c(colour = TRUE, fill = TRUE, shape = TRUE, alpha = FALSE)) +
+    facet_grid(eir ~ metric, scales = scales, labeller = labeller(metric = strip_lines)) +
+    scale_alpha_manual(values = setNames(IBM_BAR_A, DEV_BAND), limits = DEV_BAND, name = NULL) +
     scale_colour_manual(values = kv(COL[["IBM"]], COL[["fleet"]], COL[["fleet"]]),
                         limits = IMPACT_KEYS, name = NULL) +
     scale_fill_manual(values = kv(COL[["IBM"]], SURFACE, COL[["fleet"]]),
                       limits = IMPACT_KEYS, name = NULL) +
     scale_shape_manual(values = kv(21, 24, 24), limits = IMPACT_KEYS, name = NULL) +
-    guides(colour = guide_legend(override.aes = list(size = 2.6))) +
-    scale_x_continuous(labels = scales::label_percent(style_negative = "minus"),
-                       breaks = seq(0, 1, 0.5), minor_breaks = seq(-0.25, 1, 0.25),
-                       limits = c(xmin, 1.02), expand = expansion(mult = 0.02)) +
+    guides(alpha = guide_legend(order = 1, override.aes = list(colour = COL[["IBM"]],
+                                                               linewidth = IBM_BAR_W)),
+           colour = guide_legend(order = 2, override.aes = list(size = 2.6)),
+           fill = guide_legend(order = 2), shape = guide_legend(order = 2)) +
+    x_scale +
     scale_y_discrete(limits = rev(unname(scenarios)), expand = expansion(add = 0.7)) +
     coord_cartesian(clip = "off") +
-    labs(title = title, subtitle = subtitle, x = "reduction relative to baseline", y = NULL,
+    labs(title = title, subtitle = subtitle, x = x_lab, y = NULL,
          caption = caption) +
     theme_cmp() + theme(panel.grid.major.y = element_blank(), axis.line.x = element_blank(),
                         axis.text.y = element_text(size = rel(0.9), lineheight = 0.95, hjust = 1),
@@ -435,11 +479,12 @@ fig_impact <- function(both, scenarios, title, subtitle, caption) {
 ## article). Every figure is shown at the article's column width, so the text is
 ## set in proportion to the canvas -- 13 pt per 10 inches -- and a 14-inch figure
 ## reads at the size of a 10-inch one.
-save_fig <- function(g, name, width, height, dpi = 200) {
+## `dirs` sends a smoke run's figure somewhere else at the same text size.
+save_fig <- function(g, name, width, height, dpi = 200,
+                     dirs = file.path(fc_root(), c("man/figures", "vignettes"))) {
   sz <- theme(text = element_text(size = 13 * width / 10))
   g <- if (inherits(g, "patchwork")) g & sz else g + sz
-  for (dir in c("man/figures", "vignettes")) {
-    d <- file.path(fc_root(), dir)
+  for (d in dirs) {
     dir.create(d, recursive = TRUE, showWarnings = FALSE)
     f <- file.path(d, paste0("cmp_", name, ".png"))
     ggsave(f, g, width = width, height = height, dpi = dpi, device = ragg::agg_png,

@@ -181,6 +181,26 @@ summarise_run_pv <- function(df, years, tags = AGE_TAGS) {
 tag_parts <- function(r, nm, model, rep)
   lapply(r, function(x) if (is.null(x)) NULL else cbind(scenario = nm, model = model, rep = rep, x))
 
+## ---- one parameter draw (validations/04-parameter-draws) ------------------------
+## One of malariasimulation's 1,000 draws of the core parameters from the model
+## fit's joint posterior, at one transmission level: set_parameter_draw() on the
+## parasite's base list -- before set_equilibrium(), as it must be -- over the
+## EIR grid's horizon. Draw 0 is the default parameters, the reference each
+## draw's change is measured from; `...` overrides parameters before
+## set_equilibrium(), for diagnose.R's probes. A builder rather than entries in
+## `scenarios`, so the scenario digest below, and the IBM rows stamped with it,
+## are untouched; the draws suite stamps its own.
+draw_scenario <- function(d, E, ...) {
+  p <- if (d == 0) base_params() else set_parameter_draw(base_params(), d)
+  ov <- list(...); p[names(ov)] <- ov
+  list(p = set_equilibrium(p, init_EIR = E), eir = E, years = BURN_Y + 3L, draw = d)
+}
+## vectorised, as int_scenario() is
+draw_scenario_name <- function(d, E) {
+  n <- max(length(d), length(E)); d <- rep_len(d, n); E <- rep_len(E, n)
+  ifelse(d == 0, sprintf("default_eir_%g", E), sprintf("draw_%d_eir_%g", d, E))
+}
+
 ## ---- provenance ---------------------------------------------------------------
 ## A hash of what the IBM was actually run on. The committed IBM rows stay valid
 ## for any fleet-side change -- the IBM does not depend on fleet -- but they go

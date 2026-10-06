@@ -158,7 +158,7 @@ test_that("the articles cite only claims in the register, and carry no placehold
     txt <- paste(readLines(f, warn = FALSE), collapse = "\n")
     cited <- regmatches(txt, gregexpr("`[a-z0-9]+(-[a-z0-9]+)+`", txt))[[1]]
     cited <- unique(gsub("`", "", cited))
-    looks_like <- grepl("-(eir|pv)$|^(age-profile|intervention|real-settings|population|seed)-", cited)
+    looks_like <- grepl("-(eir|pv)$|^(age-profile|intervention|real-settings|population|seed|parameter)-", cited)
     expect_true(all(cited[looks_like] %in% ids),
                 info = paste(basename(f), "cites", paste(setdiff(cited[looks_like], ids), collapse = ", ")))
     # an unfilled placeholder: an upper-case token with an underscore, outside code

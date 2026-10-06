@@ -38,10 +38,10 @@ headline_md <- function(claims) {
 
 # Register order is display order everywhere. The claims are written in the
 # order they are meant to be read -- transmission, clinical burden, severe
-# burden, how each is distributed by age, interventions, real settings, then the
-# checks that support all of it -- so re-sorting by status here would put the
-# list, the table and the article's sections in three different orders from the
-# register all three are generated from.
+# burden, how each is distributed by age, interventions, real settings, the
+# parameter posterior, then the checks that support all of it -- so re-sorting
+# by status here would put the list, the table and the article's sections in
+# three different orders from the register all three are generated from.
 claim_link <- function(claims, link_prefix)
   if (is.null(link_prefix)) sprintf("`%s`", claims$id) else
     sprintf("[`%s`](%s#%s)", claims$id, link_prefix, claims$id)
@@ -49,7 +49,7 @@ claim_link <- function(claims, link_prefix)
 #' The evidence article a claim is presented on
 #'
 #' Each parasite has an evidence page of its own, so a reader after the vivax
-#' results does not scroll past eleven falciparum claims to reach them, and the
+#' results does not scroll past the falciparum claims to reach them, and the
 #' two sets of verdicts are never read as one.
 #'
 #' @param parasite character vector of `"falciparum"` or `"vivax"`, as
