@@ -44,19 +44,28 @@ test_that("the register quotes the committed cells", {
 test_that("the refused draws are the ones the sweep could not run, and none was chosen", {
   needs_results()
   sweep <- rd("fleet_sweep.csv"); refused <- rd("refused.csv"); draws <- rd("draws.csv")
-  expect_setequal(refused$draw, sweep$draw[sweep$eir == 20 & is.na(sweep$clin_all)])
+  expect_setequal(paste(refused$draw, refused$eir),
+                  with(sweep[is.na(sweep$clin_all), ], paste(draw, eir)))
   expect_false(any(draws$draw %in% refused$draw))
-  for (d in refused$draw) expect_match(the_claim()$note, as.character(d), fixed = TRUE)
+  for (d in unique(refused$draw)) expect_match(the_claim()$note, as.character(d), fixed = TRUE)
 })
 
-test_that("the selection rule reproduces the chosen draws from the sweep", {
+test_that("each chosen draw sits at its percentile of the sweep", {
   needs_results()
   sweep <- rd("fleet_sweep.csv"); draws <- rd("draws.csv")
-  ran <- sweep[sweep$eir == 20 & !is.na(sweep$clin_all), ]
-  pick <- integer()
-  for (m in c("clin_all", "sev_all")) for (q in c(0.05, 0.25, 0.75, 0.95)) {
-    left <- ran[!ran$draw %in% pick, ]
-    pick <- c(pick, left$draw[which.min(abs(left[[m]] - stats::quantile(ran[[m]], q)))])
+  ran <- sweep[sweep$eir == 20 & !sweep$draw %in% sweep$draw[is.na(sweep$clin_all)], ]
+  # one distinct draw for each outcome and percentile select.R chooses on
+  expect_setequal(paste(draws$chosen_for, draws$quantile),
+                  paste(rep(c("clin_all", "sev_all"), each = 4), c(0.05, 0.25, 0.75, 0.95)))
+  expect_equal(anyDuplicated(draws$draw), 0L)
+  # each within select.R's PICK_TOL, a quarter of a percentile point, of its
+  # target among the draws fleet runs, and carrying the sweep's values
+  for (i in seq_len(nrow(draws))) {
+    v <- ran[[draws$chosen_for[i]]]
+    row <- ran[ran$draw == draws$draw[i], ]
+    expect_equal(nrow(row), 1L)
+    expect_lte(abs(100 * mean(v <= row[[draws$chosen_for[i]]]) - 100 * draws$quantile[i]), 0.25)
+    expect_equal(unlist(row[c("b0", "clin_all", "sev_all")]),
+                 unlist(draws[i, c("b0", "clin_all", "sev_all")]), ignore_attr = TRUE)
   }
-  expect_identical(as.integer(pick), as.integer(draws$draw))
 })

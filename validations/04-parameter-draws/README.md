@@ -19,16 +19,20 @@ claim in the register runs at the default parameters. This one asks whether a
 draw does the same thing to the outcomes in both models.
 
 **Which draws.** `select.R` runs fleet at all 1,000 draws for a year from the
-seed, at EIR 3, 20 and 120. At EIR 20 it keeps the draws nearest the 5th, 25th,
-75th and 95th percentiles of all-age clinical incidence, and the same for
+seed, at EIR 3, 20 and 120. At EIR 20 it chooses the draws nearest the 5th,
+25th, 75th and 95th percentiles of all-age clinical incidence, and the same for
 all-age severe incidence: eight draws, in `results/draws.csv`. Choosing on the
 burden puts the test where the posterior moves the outcomes most. Choosing on
 fleet's outputs rather than the IBM's is a design choice, not part of the
 test. `results/draws_coverage.csv` gives each draw's percentile at every EIR
 and outcome. Chosen at EIR 20, the eight span less of the posterior elsewhere,
-and less of prevalence, which they were not chosen on. Once `draws.csv` exists,
-`select.R` refuses to change it unless `CMP_RESELECT=1` is set, because the IBM
-rows belong to those draws.
+and less of prevalence, which they were not chosen on. The IBM rows belong to
+the draws in `draws.csv`, so once it exists `select.R` keeps them while each
+sits within a quarter of a percentile point of its target. A thousand draws
+sit a tenth of a point apart, and which one is nearest a percentile moves with
+the smallest change to the pool; a draw a fraction of a point off tests what
+the nearest one would. Further off, `select.R` stops, and `CMP_RESELECT=1`
+replaces the draws, after which `run.R` has to be run again.
 
 **The runs.** `run.R` runs each draw at EIR 3, 20 and 120 exactly as the EIR
 grid in `validations/02-scenarios` is run: the same base parameter list, the
@@ -77,14 +81,13 @@ severe-incidence gap: the spread of severe-disease immunity within a cell, which
 fleet does not carry for P. falciparum. Results are in
 `results/diagnose_uv.csv`.
 
-**Draws fleet refuses.** Before a run, fleet checks that no age group can lose
-more people in a day than it holds. That check bounds a day's infections by
-`b0`, as if everyone were bitten every day. At a `b0` above about 0.94, that
-bound plus the ageing out of the default grid's 16.6-day infant groups exceeds
-1, and fleet stops, naming the group. The bound tightens as the grid is
-refined. Two of the 1,000 draws are refused this way on the default grid.
-`select.R` lists them, with their `b0`, in `results/refused.csv`, and they are
-not candidates.
+**Draws fleet refuses.** fleet stops a run in which an age group would lose
+more people in a day than it holds: before the run for the exits that do not
+depend on transmission, and as it runs for infection, which does. On the
+default grid it runs all 1,000 draws at EIR 3, 20 and 120, including the two
+with the highest `b0`, draws 410 (0.96) and 464 (0.99). `select.R` would list
+a draw fleet stops, with the EIR and fleet's reason, in `results/refused.csv`,
+which is empty, and a draw stopped at any EIR would not be a candidate.
 
 **Smoke.** `CMP_SMOKE=1` runs one draw, two IBM replicates, a four-year horizon,
 into `results/smoke/`. `assess.R` and `render.R` follow it under the same flag.
@@ -95,7 +98,7 @@ from `CMP_SMOKE=1 Rscript validations/02-scenarios/run.R`.
 
 | File | What it does |
 | --- | --- |
-| `select.R` | fleet at all 1,000 draws at EIR 3, 20 and 120. Writes `results/draws.csv` (the eight chosen, at EIR 20), `results/fleet_sweep.csv`, `results/draws_coverage.csv` and `results/refused.csv`. Requires fleet 0.0.0.9004 or later. |
+| `select.R` | fleet at all 1,000 draws at EIR 3, 20 and 120. Writes `results/draws.csv` (the eight chosen, at EIR 20), `results/fleet_sweep.csv`, `results/draws_coverage.csv` and `results/refused.csv`. Requires fleet 0.0.0.9005 or later. |
 | `run.R` | Both models at each draw and EIR, and fleet at the default parameters. Writes `results/rep_eq.csv`, `results/rep_timing.csv`, `results/ibm_reference.json` and `results/fleet_reference.json`. `CMP_WORKERS` sets the pool (4 by default). `CMP_FLEET_ONLY=1` refreshes fleet's rows and keeps the IBM's. |
 | `assess.R` | Re-runs fleet against the committed IBM rows: its own, and the default-parameter rows in `02-scenarios`. Reports movement, the claim, the power test and the levels, and writes `results/draws_cells.csv` when the reference checks pass. Exits 1 if a change falls outside its band or cannot be scored, if the IBM rows are stale or do not match, or (`CMP_STRICT=1`) if anything moved. |
 | `render.R` | Draws `cmp_draws.png` from `results/draws_cells.csv`. |

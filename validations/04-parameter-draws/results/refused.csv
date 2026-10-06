@@ -1,3 +1,1 @@
-"draw","b0","refused"
-410,0.95886,"age group 10 ([149.318, 165.909) days) is too narrow for the daily clock: it would lose 0.0603 of its people a day to ageing and death on top of up to 0.959 to infection and progression, more than it holds. Widen it in `age_lower`."
-464,0.989847,"age group 10 ([149.318, 165.909) days) is too narrow for the daily clock: it would lose 0.0603 of its people a day to ageing and death on top of up to 0.99 to infection and progression, more than it holds. Widen it in `age_lower`."
+"draw","eir","b0","refused"

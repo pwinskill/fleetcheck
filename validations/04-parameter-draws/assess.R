@@ -297,10 +297,12 @@ for (m in names(MET)) {
   cat(sprintf("    %-20s fleet vs the IBM median %+5.1f%% to %+5.1f%%; outside the band at %d of %d\n",
               MET[[m]], rel[1], rel[2], sum(!x$level_inside, na.rm = TRUE), nrow(x)))
 }
-if (NROW(refused))
+if (NROW(refused)) {
+  r1 <- refused[!duplicated(refused$draw), ]          # a row per EIR it was refused at
   cat(sprintf("\n  fleet refuses %d of the 1,000 draws on its default age grid: %s (b0 %s)\n",
-              nrow(refused), paste(refused$draw, collapse = ", "),
-              paste(sprintf("%.3f", refused$b0), collapse = ", ")))
+              nrow(r1), paste(r1$draw, collapse = ", "),
+              paste(sprintf("%.3f", r1$b0), collapse = ", ")))
+}
 
 ## the cells, for render.R and the register -- not over rows the reference has
 ## disowned

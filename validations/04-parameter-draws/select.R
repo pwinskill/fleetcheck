@@ -21,11 +21,12 @@
 #   results/draws.csv            the draws chosen, which run.R reads
 #   results/fleet_sweep.csv      every draw at EIR 3, 20 and 120
 #   results/draws_coverage.csv   each chosen draw's percentile, by EIR and outcome
-#   results/refused.csv          the draws fleet will not run, with its reason
+#   results/refused.csv          any draw fleet stops, with the EIR and its reason
 #
-# The IBM rows in results/ belong to the draws in draws.csv, so this refuses to
-# change that file once it exists: a re-run must reproduce it, or be asked to
-# replace it with CMP_RESELECT=1, after which run.R has to be run again.
+# The IBM rows in results/ belong to the draws in draws.csv, so once that file
+# exists a re-run keeps its draws while each sits within a quarter of a
+# percentile point of its target, and stops otherwise. CMP_RESELECT=1 replaces
+# them, after which run.R has to be run again.
 
 ## No absolute paths anywhere in here. FLEET_LIB is prepended to the library
 ## path, for installations that do not pick up R_LIBS_USER (the Windows-arm64
@@ -44,10 +45,12 @@ Sys.setenv(FLEETCHECK_ROOT = ROOT)
 suppressMessages({library(malariasimulation); library(fleet)})
 suppressMessages(pkgload::load_all(ROOT, quiet = TRUE))
 ## 0.0.0.9004 follows a draw's iv0; an older fleet takes malariaEquilibrium's
-## default for it and moves severe incidence by up to 60% at some draws
-if (utils::packageVersion("fleet") < "0.0.0.9004")
-  stop("fleet ", utils::packageVersion("fleet"), " predates 0.0.0.9004, which reads ",
-       "a draw's iv0; install a current fleet.", call. = FALSE)
+## default for it and moves severe incidence by up to 60% at some draws.
+## 0.0.0.9005 runs draws 410 and 464, which an older fleet refused before the run
+## for their b0 near 1.
+if (utils::packageVersion("fleet") < "0.0.0.9005")
+  stop("fleet ", utils::packageVersion("fleet"), " predates 0.0.0.9005, which runs ",
+       "every draw; install a current fleet.", call. = FALSE)
 
 DDIR <- fc_results("04-parameter-draws"); dir.create(DDIR, showWarnings = FALSE, recursive = TRUE)
 N_WORKERS <- as.integer(Sys.getenv("CMP_WORKERS", "4"))
@@ -56,10 +59,10 @@ MET <- c("pfpr_2_10", "clin_0_5", "clin_all", "sev_all")
 EIRS <- c(3, 20, 120)
 
 ## fleet at one draw and EIR: a year from the seed, its mean. Only fleet's
-## daily-clock refusal is recorded as a refusal: fleet checks before it runs
-## that no age group can lose more than it holds in a day, bounding a day's
-## infections by b0, so a draw with b0 near 1 fails that check on the default
-## grid. Any other error is a fault, and stops the sweep.
+## daily-clock refusal is recorded as a refusal: fleet stops a run in which an
+## age group would lose more people in a day than it holds, before the run for
+## the exits that do not depend on transmission, and as it runs for infection,
+## which can depend on the EIR. Any other error is a fault, and stops the sweep.
 one_draw <- function(d, E) {
   p <- get_parameters(list(clinical_incidence_rendering_min_ages = c(0, 0),
                            clinical_incidence_rendering_max_ages = c(1825, 36500),
@@ -93,12 +96,13 @@ sweep <- do.call(rbind, parallel::parLapplyLB(cl, seq_len(nrow(jobs)),
                                               function(i) one_draw(jobs$draw[i], jobs$eir[i])))
 parallel::stopCluster(cl)
 
-## the refused draws, and why: the claim reports them. fleet's falciparum check
-## does not depend on the EIR, so EIR 20's are every EIR's.
-refused <- sweep[sweep$eir == 20 & !is.na(sweep$refused), c("draw", "b0", "refused")]
-log_msg("fleet refuses %d of 1,000 draws%s", nrow(refused),
-        if (nrow(refused)) paste0(": ", paste(refused$draw, collapse = ", ")) else "")
-ran20 <- sweep[sweep$eir == 20 & is.na(sweep$refused), ]
+## the refused draws, and why: the claim reports them. A refusal made as the run
+## goes can depend on the EIR, and run.R runs every chosen draw at all three, so
+## a draw refused at any EIR is not a candidate.
+refused <- sweep[!is.na(sweep$refused), c("draw", "eir", "b0", "refused")]
+log_msg("fleet refuses %d of 1,000 draws%s", length(unique(refused$draw)),
+        if (nrow(refused)) paste0(": ", paste(unique(refused$draw), collapse = ", ")) else "")
+ran20 <- sweep[sweep$eir == 20 & !sweep$draw %in% refused$draw, ]
 
 ## the draws nearest each percentile at EIR 20, outcome by outcome, without repeats
 QS <- c(0.05, 0.25, 0.75, 0.95)
@@ -113,14 +117,39 @@ pick <- merge(pick, ran20[c("draw", "b0", "clin_all", "sev_all")], by = "draw")
 pick <- pick[order(pick$chosen_for, pick$quantile), ]
 rownames(pick) <- NULL
 
-## The IBM rows belong to the draws already chosen: keep them unless asked
+## The IBM rows belong to the draws already chosen, so they are kept while each
+## still sits within PICK_TOL percentile points of its target among the draws
+## fleet runs at EIR 20. Which draw is nearest a percentile is not stable: a
+## thousand draws sit a tenth of a point apart, and the smallest change to the
+## pool moves it. A draw a fraction of a point off its percentile tests what the
+## nearest one would. Further off, or no longer run, stops the script;
+## CMP_RESELECT=1 replaces the draws, after which run.R has to be run again.
+PICK_TOL <- 0.25
 f_draws <- file.path(DDIR, "draws.csv")
 if (file.exists(f_draws) && !nzchar(Sys.getenv("CMP_RESELECT"))) {
   old <- read.csv(f_draws, stringsAsFactors = FALSE)
-  if (!identical(as.integer(old$draw), as.integer(pick$draw)))
-    stop("this sweep picks draws ", paste(pick$draw, collapse = ", "), " but results/draws.csv ",
-         "holds ", paste(old$draw, collapse = ", "), ", whose IBM rows run.R made. Set ",
-         "CMP_RESELECT=1 to replace them, then re-run run.R.", call. = FALSE)
+  kept <- merge(old[c("draw", "chosen_for", "quantile")],
+                ran20[c("draw", "b0", "clin_all", "sev_all")], by = "draw")
+  kept <- kept[order(kept$chosen_for, kept$quantile), ]
+  rownames(kept) <- NULL
+  at <- vapply(seq_len(nrow(kept)), function(i) {
+    v <- ran20[[kept$chosen_for[i]]]
+    100 * mean(v <= kept[[kept$chosen_for[i]]][i])
+  }, numeric(1))
+  off <- abs(at - 100 * kept$quantile)
+  gone <- setdiff(old$draw, kept$draw)
+  why <- c(if (length(gone)) paste0("fleet does not run draw(s) ", paste(gone, collapse = ", ")),
+           sprintf("draw %d, chosen for the %gth percentile of %s, sits at percentile %.1f",
+                   as.integer(kept$draw), 100 * kept$quantile, kept$chosen_for,
+                   at)[off > PICK_TOL])
+  if (length(why))
+    stop("results/draws.csv no longer holds the draws at its percentiles: ",
+         paste(why, collapse = "; "), ". This sweep's nearest draws are ",
+         paste(pick$draw, collapse = ", "), ". Set CMP_RESELECT=1 to replace them, then ",
+         "re-run run.R.", call. = FALSE)
+  log_msg("keeping draws %s: each within %.2f percentile points of its target (limit %g)",
+          paste(kept$draw, collapse = ", "), max(off), PICK_TOL)
+  pick <- kept
 }
 write.csv(round_sig(pick, 6), f_draws, row.names = FALSE)
 write.csv(round_sig(refused, 6), file.path(DDIR, "refused.csv"), row.names = FALSE)
