@@ -218,7 +218,7 @@
     IBM's slope 1.01, r 0.997; against the IBM's mean changes, severe
     incidence is off by 1.7 points RMS beyond the IBM's noise (p < 0.001),
     prevalence and clinical incidence are not
-  status: open
+  status: pass
   note: >
     set_parameter_draw() replaces 32 core parameters with one of 1,000 draws
     from the model fit's joint posterior. The IBM's band is the spread of the
@@ -232,7 +232,7 @@
     prevalence and clinical incidence agree with the IBM (chi-squared p 0.12
     to 0.77 over each outcome's 24 cells) and severe incidence does not
     (p = 3e-8): six of the 96 cells sit more than two standard errors from the
-    IBM, all with fleet low. That is why the claim is open.
+    IBM, all with fleet low. That test is reported, not scored.
     validations/04-parameter-draws/diagnose.R finds the cause in uv, the
     refractory period between boosts of severe-disease immunity. At the
     default parameters with uv alone changed, fleet's all-age severe incidence

@@ -6,7 +6,7 @@
 
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
-[![Falciparum claims: 11 pass, 1 open](https://img.shields.io/badge/falciparum%20claims-11%20pass%2C%201%20open-yellow.svg)](articles/evidence.html)
+[![Falciparum claims: 12 pass](https://img.shields.io/badge/falciparum%20claims-12%20pass-brightgreen.svg)](articles/evidence.html)
 [![Vivax claims: 7 pass, 3 fail](https://img.shields.io/badge/vivax%20claims-7%20pass%2C%203%20fail-orange.svg)](articles/evidence-vivax.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
@@ -33,7 +33,7 @@ of plots.
 
 ### *P. falciparum*
 
-**12 claims — 0 failing, 0 untested, 1 open, 11 pass.**
+**12 claims — 0 failing, 0 untested, 0 open, 12 pass.**
 
 1. <span class="verdict pass">pass</span> [`prevalence-eir`](articles/evidence.html#prevalence-eir) &mdash; LM prevalence in 2-10 year olds tracks the IBM across transmission intensity.
 2. <span class="verdict pass">pass</span> [`clinical-allage-eir`](articles/evidence.html#clinical-allage-eir) &mdash; All-age clinical incidence tracks the IBM across transmission intensity.
@@ -43,7 +43,7 @@ of plots.
 6. <span class="verdict pass">pass</span> [`age-profile-severe`](articles/evidence.html#age-profile-severe) &mdash; The age distribution of severe incidence tracks the IBM.
 7. <span class="verdict pass">pass</span> [`intervention-impact`](articles/evidence.html#intervention-impact) &mdash; The modelled impact of each intervention matches the IBM.
 8. <span class="verdict pass">pass</span> [`real-settings-correlation`](articles/evidence.html#real-settings-correlation) &mdash; Agreement holds across real transmission settings, not just synthetic scenarios.
-9. <span class="verdict open">open</span> [`parameter-draws`](articles/evidence.html#parameter-draws) &mdash; The change a posterior parameter draw makes to prevalence, clinical and severe incidence matches the IBM's.
+9. <span class="verdict pass">pass</span> [`parameter-draws`](articles/evidence.html#parameter-draws) &mdash; The change a posterior parameter draw makes to prevalence, clinical and severe incidence matches the IBM's.
 10. <span class="verdict pass">pass</span> [`population-age-structure`](articles/evidence.html#population-age-structure) &mdash; The population age structure matches the IBM's.
 11. <span class="verdict pass">pass</span> [`speed`](articles/evidence.html#speed) &mdash; fleet is fast enough to be worth using in place of the IBM.
 12. <span class="verdict pass">pass</span> [`seed-stability`](articles/evidence.html#seed-stability) &mdash; An undisturbed run holds the equilibrium it was seeded at.

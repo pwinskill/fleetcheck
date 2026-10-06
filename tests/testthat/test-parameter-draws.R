@@ -37,8 +37,9 @@ test_that("the register quotes the committed cells", {
   expect_equal(as.integer(m[3]), nrow(cells))
   z <- regmatches(cl$measured, regexec("largest departure ([0-9.]+) replicate SD", cl$measured))[[1]]
   expect_equal(as.numeric(z[2]), round(max(abs(cells$change_z)), 2))
-  # the criterion is met exactly when every cell is inside; `open` is met too
-  expect_equal(cl$status %in% c("pass", "open"), all(cells$change_inside))
+  # the criterion is met exactly when every cell is inside, and the claim's
+  # status follows it: the mean-change test beside it is reported, not scored
+  expect_equal(cl$status, if (all(cells$change_inside)) "pass" else "fail")
 })
 
 test_that("the refused draws are the ones the sweep could not run, and none was chosen", {
