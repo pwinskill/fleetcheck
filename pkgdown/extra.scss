@@ -358,7 +358,12 @@ main table thead th {
    block` is what makes overflow-x apply to a table), columns size to their
    content, and the two ends are held to one line so the browser hands the
    slack to the two prose columns in the middle. `min-width` stops it
-   collapsing back to even columns at narrow widths. */
+   collapsing back to even columns at narrow widths.
+
+   The rules below that are the scoreboard's alone find it as the table holding
+   verdict lozenges, `:has(.verdict)`. Counting five columns caught the speed
+   claim's six-column timing table too, pinned its last column over the one
+   before and stretched two of its number columns to 15rem. */
 main table {
   display: block;
   overflow-x: auto;
@@ -370,10 +375,10 @@ main table > tbody > tr > td { vertical-align: top; }
 /* pandoc writes a <col width> for every column, which overrides sizing to content */
 main table col { width: auto !important; }
 
-main table:has(thead th:nth-child(5)) > thead > tr > th:first-child,
-main table:has(thead th:nth-child(5)) > tbody > tr > td:first-child,
-main table:has(thead th:nth-child(5)) > thead > tr > th:last-child,
-main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child { white-space: nowrap; }
+main table:has(.verdict) > thead > tr > th:first-child,
+main table:has(.verdict) > tbody > tr > td:first-child,
+main table:has(.verdict) > thead > tr > th:last-child,
+main table:has(.verdict) > tbody > tr > td:last-child { white-space: nowrap; }
 
 /* Without a floor the table shrinks to whatever is available instead of
    scrolling, and "available" on a phone is 358px for five columns: the
@@ -385,10 +390,10 @@ main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child { white-space
    scrolling inside it. Widening the cells pushes the table's internal layout
    out while the block box stays put, which is the difference between a table
    that scrolls and a page that does. */
-main table:has(thead th:nth-child(5)) > thead > tr > th:nth-child(3),
-main table:has(thead th:nth-child(5)) > tbody > tr > td:nth-child(3),
-main table:has(thead th:nth-child(5)) > thead > tr > th:nth-child(4),
-main table:has(thead th:nth-child(5)) > tbody > tr > td:nth-child(4) {
+main table:has(.verdict) > thead > tr > th:nth-child(3),
+main table:has(.verdict) > tbody > tr > td:nth-child(3),
+main table:has(.verdict) > thead > tr > th:nth-child(4),
+main table:has(.verdict) > tbody > tr > td:nth-child(4) {
   min-width: 15rem;
 }
 
@@ -398,15 +403,15 @@ main table:has(thead th:nth-child(5)) > tbody > tr > td:nth-child(4) {
    a phone.
    border-collapse must be separate for a sticky table cell to stick at all, so
    the rules Bootstrap would have collapsed are drawn explicitly here. */
-main table:has(thead th:nth-child(5)) {
+main table:has(.verdict) {
   border-collapse: separate;
   border-spacing: 0;
 }
-main table:has(thead th:nth-child(5)) > tbody > tr > td {
+main table:has(.verdict) > tbody > tr > td {
   border-top: 1px solid var(--fc-border);
 }
-main table:has(thead th:nth-child(5)) > thead > tr > th,
-main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child {
+main table:has(.verdict) > thead > tr > th,
+main table:has(.verdict) > tbody > tr > td:last-child {
   position: sticky;
 }
 /* A pinned cell sits over scrolling content, so it needs its own background --
@@ -414,17 +419,46 @@ main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child {
    order would put a sticky cell above the text it covers on z-index: auto
    alone, but only by the letter of the spec: leaving it implicit let long rows
    render with the criterion showing straight through the pinned column. */
-main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child {
+main table:has(.verdict) > tbody > tr > td:last-child {
   background: var(--bs-body-bg, #fff);
   z-index: 1;
 }
-main table:has(thead th:nth-child(5)) > thead > tr > th { top: 0; z-index: 2; }
-main table:has(thead th:nth-child(5)) > thead > tr > th:last-child,
-main table:has(thead th:nth-child(5)) > tbody > tr > td:last-child {
+main table:has(.verdict) > thead > tr > th { top: 0; z-index: 2; }
+main table:has(.verdict) > thead > tr > th:last-child,
+main table:has(.verdict) > tbody > tr > td:last-child {
   right: 0;
   border-left: 1px solid var(--fc-border);
 }
-main table:has(thead th:nth-child(5)) > thead > tr > th:last-child { z-index: 3; }
+main table:has(.verdict) > thead > tr > th:last-child { z-index: 3; }
+
+/* A data table -- numbers in a grid, as in the speed claim's timings -- sizes
+   to its content, one line a row, figures aligned by digit. Its markdown wraps
+   it in a `::: {.fc-data}` div, which is the opt-in; the note under it is set
+   as a caption. */
+main .fc-data { margin: .4rem 0 1.4rem; }
+main .fc-data table {
+  width: auto;
+  font-size: .875rem;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  border-collapse: collapse;
+  margin-bottom: .6rem;
+}
+main .fc-data table > thead > tr > th,
+main .fc-data table > tbody > tr > td {
+  white-space: nowrap;
+  padding: .28rem .8rem;
+  vertical-align: baseline;
+}
+main .fc-data table > thead > tr > th:first-child,
+main .fc-data table > tbody > tr > td:first-child { padding-left: .5rem; }
+main .fc-data table > tbody > tr > td { border-top: 1px solid var(--fc-border); }
+main .fc-data p {
+  color: var(--fc-muted);
+  font-size: .86rem;
+  line-height: 1.55;
+  margin-bottom: 0;
+}
 
 /* The per-claim tables on the evidence page are two columns, label and value,
    and the value is a sentence: nowrap on the last column runs them off the

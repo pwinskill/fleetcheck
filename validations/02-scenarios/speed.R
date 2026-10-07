@@ -166,14 +166,18 @@ jsonlite::write_json(stamp(years = YEARS, eir = EIRS, populations = POPS,
 }
 
 ## ---- the table the speed claim shows --------------------------------------------------
-## seconds per simulated year, and each IBM cell's multiple of fleet's
-fmt_s <- function(x) ifelse(x < 0.1, sprintf("%.3f s", x), ifelse(x < 10, sprintf("%.2f s", x), sprintf("%.1f s", x)))
+## Seconds per simulated year, and each IBM cell's multiple of fleet's, as a
+## compact data table: the unit is said once above it, not in every cell, and
+## how it was made goes in a caption under it. The `.fc-data` div is what the
+## site's stylesheet sizes to content.
+fmt_n <- function(x) ifelse(x < 0.1, sprintf("%.3f", x), ifelse(x < 10, sprintf("%.2f", x), sprintf("%.1f", x)))
 fmt_x <- function(x) sprintf("%s×", formatC(round(x), big.mark = ",", format = "d"))
+people <- function(n) formatC(n, big.mark = ",", format = "d")
 tab <- do.call(rbind, lapply(split(speed, list(speed$setting, speed$eir), drop = TRUE), function(d) {
   f <- d[d$model == "fleet", ]; i <- d[d$model == "IBM", ]; i <- i[order(i$pop), ]
-  data.frame(setting = f$setting, eir = f$eir, fleet = fmt_s(f$s_per_year),
-             t(setNames(sprintf("%s (%s)", fmt_s(i$s_per_year), fmt_x(i$speedup)),
-                        sprintf("IBM, %s people", formatC(i$pop, big.mark = ",", format = "d")))),
+  data.frame(setting = f$setting, eir = f$eir, fleet = fmt_n(f$s_per_year),
+             t(setNames(sprintf("%s (%s)", fmt_n(i$s_per_year), fmt_x(i$speedup)),
+                        sprintf("IBM %s", people(i$pop)))),
              check.names = FALSE, stringsAsFactors = FALSE)
 }))
 tab <- tab[order(match(tab$setting, names(SETTINGS)), tab$eir), ]
@@ -186,23 +190,26 @@ rng <- function(x) {
   a <- f(min(x)); b <- f(max(x))
   if (a == b) paste(a, "s") else paste(a, "to", b, "s")
 }
-people <- function(n) formatC(n, big.mark = ",", format = "d")
 ibm_start <- if (length(POPS) > 1)
   sprintf("the IBM's %s at %s people and %s at %s",
           rng(speed$start_s[speed$model == "IBM" & speed$pop == min(POPS)]), people(min(POPS)),
           rng(speed$start_s[speed$model == "IBM" & speed$pop == max(POPS)]), people(max(POPS))) else
   sprintf("the IBM's %s at %s people",
           rng(speed$start_s[speed$model == "IBM"]), people(POPS))
-md <- c(sprintf(paste("Seconds per simulated year, one run of each model alone on one core (%s),",
-                      "over %d years from set_equilibrium()'s seed, start-up excluded: fleet's takes",
-                      "%s, %s. In brackets, the IBM's multiple of fleet's time; fleet's cost does not",
-                      "depend on the population. The seasonal programme is case management, bed nets,",
-                      "indoor spraying, SMC and RTS,S, running from the first day.",
-                      "`validations/02-scenarios/speed.R` makes this table."),
-                cpu, YEARS, rng(speed$start_s[speed$model == "fleet"]), ibm_start),
+md <- c("::: {.fc-data}",
+        "Seconds per simulated year; in brackets, the IBM's multiple of fleet's time.",
         "",
         paste0("| ", paste(names(tab), collapse = " | "), " |"),
         paste0("|", paste(c(":--", "--:", rep("--:", ncol(tab) - 2)), collapse = "|"), "|"),
-        apply(tab, 1, function(r) paste0("| ", paste(r, collapse = " | "), " |")))
+        apply(tab, 1, function(r) paste0("| ", paste(trimws(r), collapse = " | "), " |")),
+        "",
+        sprintf(paste("One run of each model, alone on one core (%s), over %d years from",
+                      "set_equilibrium()'s seed, start-up excluded: fleet's takes %s, %s. fleet's",
+                      "cost does not depend on the population. The seasonal programme is case",
+                      "management, bed nets, indoor spraying, SMC and RTS,S, running from the first",
+                      "day. `validations/02-scenarios/speed.R` makes this table."),
+                cpu, YEARS, rng(speed$start_s[speed$model == "fleet"]), ibm_start),
+        ":::")
 writeLines(md, TAB, useBytes = TRUE)
 cat(md, sep = "\n")
+
