@@ -484,82 +484,77 @@ the IBM 1.6 to 2.4 s at 10,000 people</p>
 <p class="claim-meta">
 tier 2 · <code>validations/02-scenarios</code>
 </p>
-<p>Seconds per simulated year, one run of each model alone on one core
-(Snapdragon X 12-core X1E80100 @ 3.40 GHz), over 10 years from
-set_equilibrium()’s seed, start-up excluded: fleet’s takes 0.060 to 0.14
-s, the IBM’s 0.74 to 0.96 s at 10,000 people and 3.0 to 3.6 s at 50,000.
-In brackets, the IBM’s multiple of fleet’s time; fleet’s cost does not
-depend on the population. The seasonal programme is case management, bed
-nets, indoor spraying, SMC and RTS,S, running from the first day.
-<code>validations/02-scenarios/speed.R</code> makes this table.</p>
-<table style="width:100%;" class="table">
-<colgroup>
-<col width="16%">
-<col width="16%">
-<col width="16%">
-<col width="16%">
-<col width="16%">
-<col width="16%">
-</colgroup>
+<div class="fc-data">
+<p>Seconds per simulated year; in brackets, the IBM’s multiple of
+fleet’s time.</p>
+<table class="table">
 <thead><tr class="header">
 <th align="left">setting</th>
 <th align="right">EIR</th>
 <th align="right">fleet</th>
-<th align="right">IBM, 10,000 people</th>
-<th align="right">IBM, 30,000 people</th>
-<th align="right">IBM, 50,000 people</th>
+<th align="right">IBM 10,000</th>
+<th align="right">IBM 30,000</th>
+<th align="right">IBM 50,000</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="left">nothing deployed</td>
 <td align="right">3</td>
-<td align="right">0.081 s</td>
-<td align="right">1.61 s (20×)</td>
-<td align="right">3.21 s (40×)</td>
-<td align="right">4.37 s (54×)</td>
+<td align="right">0.081</td>
+<td align="right">1.61 (20×)</td>
+<td align="right">3.21 (40×)</td>
+<td align="right">4.37 (54×)</td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="right">20</td>
-<td align="right">0.079 s</td>
-<td align="right">1.92 s (24×)</td>
-<td align="right">3.64 s (46×)</td>
-<td align="right">4.99 s (63×)</td>
+<td align="right">0.079</td>
+<td align="right">1.92 (24×)</td>
+<td align="right">3.64 (46×)</td>
+<td align="right">4.99 (63×)</td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
 <td align="right">120</td>
-<td align="right">0.075 s</td>
-<td align="right">2.01 s (27×)</td>
-<td align="right">4.85 s (65×)</td>
-<td align="right">7.03 s (94×)</td>
+<td align="right">0.075</td>
+<td align="right">2.01 (27×)</td>
+<td align="right">4.85 (65×)</td>
+<td align="right">7.03 (94×)</td>
 </tr>
 <tr class="even">
 <td align="left">seasonal programme</td>
 <td align="right">3</td>
-<td align="right">0.10 s</td>
-<td align="right">2.10 s (20×)</td>
-<td align="right">4.14 s (39×)</td>
-<td align="right">6.32 s (60×)</td>
+<td align="right">0.10</td>
+<td align="right">2.10 (20×)</td>
+<td align="right">4.14 (39×)</td>
+<td align="right">6.32 (60×)</td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
 <td align="right">20</td>
-<td align="right">0.095 s</td>
-<td align="right">2.18 s (23×)</td>
-<td align="right">4.96 s (52×)</td>
-<td align="right">7.78 s (82×)</td>
+<td align="right">0.095</td>
+<td align="right">2.18 (23×)</td>
+<td align="right">4.96 (52×)</td>
+<td align="right">7.78 (82×)</td>
 </tr>
 <tr class="even">
 <td align="left"></td>
 <td align="right">120</td>
-<td align="right">0.096 s</td>
-<td align="right">2.36 s (25×)</td>
-<td align="right">5.61 s (58×)</td>
-<td align="right">8.40 s (88×)</td>
+<td align="right">0.096</td>
+<td align="right">2.36 (25×)</td>
+<td align="right">5.61 (58×)</td>
+<td align="right">8.40 (88×)</td>
 </tr>
 </tbody>
 </table>
+<p>One run of each model, alone on one core (Snapdragon X 12-core
+X1E80100 @ 3.40 GHz), over 10 years from set_equilibrium()’s seed,
+start-up excluded: fleet’s takes 0.060 to 0.14 s, the IBM’s 0.74 to 0.96
+s at 10,000 people and 3.0 to 3.6 s at 50,000. fleet’s cost does not
+depend on the population. The seasonal programme is case management, bed
+nets, indoor spraying, SMC and RTS,S, running from the first day.
+<code>validations/02-scenarios/speed.R</code> makes this table.</p>
+</div>
 <p>Each run in the table starts from set_equilibrium()’s seed and is
 timed alone, start-up apart. Each fleet figure is one complete
 run_simulation_ode() call – inputs, seed, the run and its outputs – the
