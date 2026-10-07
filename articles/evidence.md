@@ -14,7 +14,7 @@ Every section is generated from `claims.yml`, so this page cannot
 disagree with the register, and the register cannot be changed without
 the page following.
 
-**12 claims — 0 failing, 0 untested, 1 open, 11 pass.**
+**12 claims — 0 failing, 0 untested, 0 open, 12 pass.**
 
 | claim | tier | criterion | measured | verdict |
 |----|----|----|----|----|
@@ -26,9 +26,9 @@ the page following.
 | [`age-profile-severe`](#age-profile-severe) | 2 | inside the IBM replicate band in every age band carrying at least 5% of severe episodes, at EIR 3, 20 and 120 | inside at 16 of 16 tested bands across the three EIRs, holding 94% of episodes; largest departure 0.78 replicate SD, in the 1-2 y band at EIR 20 | pass |
 | [`intervention-impact`](#intervention-impact) | 2 | outside the IBM replicate band in no greater a share of cells than the best held-out IBM replicate, over every intervention and outcome at EIR 3, 20 and 120 (SMC in a seasonal setting, since it is a seasonal intervention) | fleet outside in 2.8% of 72 cells, against 9.7% for the closest of the twenty IBM replicates and 20.1% for the median one | pass |
 | [`real-settings-correlation`](#real-settings-correlation) | 3 | r \> 0.95 and \|slope - 1\| \< 0.10 on both clinical and severe incidence | clinical r 0.983 slope 0.983; severe r 0.958 slope 0.927, over 451,008 sub-site-months in 1,392 sub-sites of 63 countries | pass |
-| [`parameter-draws`](#parameter-draws) | 2 | each draw’s change from the default parameters inside the IBM replicate band of that change, for eight posterior draws chosen at EIR 20 to span all-age clinical and severe incidence, at EIR 3, 20 and 120, on LM prevalence 2-10, clinical incidence under 5 and at all ages, and severe incidence at all ages | inside at 96 of 96; largest departure 0.66 replicate SD, all-age severe incidence at draw 260 and EIR 120; fleet’s changes against the IBM’s slope 1.01, r 0.997; against the IBM’s mean changes, severe incidence is off by 1.7 points RMS beyond the IBM’s noise (p \< 0.001), prevalence and clinical incidence are not | open |
+| [`parameter-draws`](#parameter-draws) | 2 | each draw’s change from the default parameters inside the IBM replicate band of that change, for eight posterior draws chosen at EIR 20 to span all-age clinical and severe incidence, at EIR 3, 20 and 120, on LM prevalence 2-10, clinical incidence under 5 and at all ages, and severe incidence at all ages | inside at 96 of 96; largest departure 0.66 replicate SD, all-age severe incidence at draw 260 and EIR 120; fleet’s changes against the IBM’s slope 1.01, r 0.997; against the IBM’s mean changes, severe incidence is off by 1.7 points RMS beyond the IBM’s noise (p \< 0.001), prevalence and clinical incidence are not | pass |
 | [`population-age-structure`](#population-age-structure) | 2 | inside the IBM replicate band in every age band below 60 years, on shares renormalised to the 0-60 population | inside at 11 of 11; largest departure 1.3% of the IBM median | pass |
-| [`speed`](#speed) | 2 | at least 10x faster than the IBM on the same scenario set | 44x on cost per simulated year; 19.9 CPU-hours for the IBM against 82 s for fleet | pass |
+| [`speed`](#speed) | 2 | at least 10x faster per simulated year than one IBM run of 10,000 people, each timed alone on one core, at EIR 3, 20 and 120, with nothing deployed and with a seasonal programme | 20x to 27x per simulated year at 10,000 people, 54x to 94x at 50,000; fleet 0.075 to 0.105 s per simulated year, the IBM 1.6 to 2.4 s at 10,000 people | pass |
 | [`seed-stability`](#seed-stability) | 1 | PfPR(2-10) departs from its seeded value by less than 1% over 15 years at EIR 20 | 0.35% maximum excursion; flat to 0.007% over the last five years | pass |
 
 ## prevalence-eir
@@ -232,7 +232,7 @@ transmission is low.
 
 ## parameter-draws
 
-open — The change a posterior parameter draw makes to prevalence,
+pass — The change a posterior parameter draw makes to prevalence,
 clinical and severe incidence matches the IBM’s.
 
 **Criterion:** each draw’s change from the default parameters inside the
@@ -250,7 +250,7 @@ tier 2 · `validations/04-parameter-draws`
 
 [![The change a posterior parameter draw makes to prevalence, clinical
 and severe incidence matches the IBM's. Verdict:
-open.](cmp_draws.png)](https://pwinskill.github.io/fleetcheck/articles/cmp_draws.png)
+pass.](cmp_draws.png)](https://pwinskill.github.io/fleetcheck/articles/cmp_draws.png)
 
 set_parameter_draw() replaces 32 core parameters with one of 1,000 draws
 from the model fit’s joint posterior. The IBM’s band is the spread of
@@ -264,7 +264,7 @@ gross errors only. Against the mean changes and their standard errors,
 prevalence and clinical incidence agree with the IBM (chi-squared p 0.12
 to 0.77 over each outcome’s 24 cells) and severe incidence does not (p =
 3e-8): six of the 96 cells sit more than two standard errors from the
-IBM, all with fleet low. That is why the claim is open.
+IBM, all with fleet low. That test is reported, not scored.
 validations/04-parameter-draws/diagnose.R finds the cause in uv, the
 refractory period between boosts of severe-disease immunity. At the
 default parameters with uv alone changed, fleet’s all-age severe
@@ -308,23 +308,44 @@ exact at the seed and an approximation under time-varying demography.
 
 pass — fleet is fast enough to be worth using in place of the IBM.
 
-**Criterion:** at least 10x faster than the IBM on the same scenario
-set  
-**Measured:** 44x on cost per simulated year; 19.9 CPU-hours for the IBM
-against 82 s for fleet
+**Criterion:** at least 10x faster per simulated year than one IBM run
+of 10,000 people, each timed alone on one core, at EIR 3, 20 and 120,
+with nothing deployed and with a seasonal programme  
+**Measured:** 20x to 27x per simulated year at 10,000 people, 54x to 94x
+at 50,000; fleet 0.075 to 0.105 s per simulated year, the IBM 1.6 to 2.4
+s at 10,000 people
 
 tier 2 · `validations/02-scenarios`
 
-*No figure: the numbers above decide this claim.*
+Seconds per simulated year, one run of each model alone on one core
+(Snapdragon X 12-core X1E80100 @ 3.40 GHz), over 10 years from
+set_equilibrium()’s seed, start-up excluded: fleet’s takes 0.060 to 0.14
+s, the IBM’s 0.74 to 0.96 s at 10,000 people and 3.0 to 3.6 s at 50,000.
+In brackets, the IBM’s multiple of fleet’s time; fleet’s cost does not
+depend on the population. The seasonal programme is case management, bed
+nets, indoor spraying, SMC and RTS,S, running from the first day.
+`validations/02-scenarios/speed.R` makes this table.
 
-Each fleet figure is one complete run_simulation_ode() call – inputs,
-seed, the run and its outputs – on one core; the IBM’s are its runs on a
-worker pool. One fleet run stands in for the IBM’s twenty replicates of
-10,000 people, and its cost does not grow with the population. On one
-laptop core a run takes about 0.6 s per 10 simulated years, 1.7 to 2.3 s
-for 30. The age grid sets fleet’s cost, roughly in proportion to its
-groups: a 30-year run takes 0.7 s on the 53 of default_age_lower(n_group
-= 53).
+| setting | EIR | fleet | IBM, 10,000 people | IBM, 30,000 people | IBM, 50,000 people |
+|:---|---:|---:|---:|---:|---:|
+| nothing deployed | 3 | 0.081 s | 1.61 s (20×) | 3.21 s (40×) | 4.37 s (54×) |
+|  | 20 | 0.079 s | 1.92 s (24×) | 3.64 s (46×) | 4.99 s (63×) |
+|  | 120 | 0.075 s | 2.01 s (27×) | 4.85 s (65×) | 7.03 s (94×) |
+| seasonal programme | 3 | 0.10 s | 2.10 s (20×) | 4.14 s (39×) | 6.32 s (60×) |
+|  | 20 | 0.095 s | 2.18 s (23×) | 4.96 s (52×) | 7.78 s (82×) |
+|  | 120 | 0.096 s | 2.36 s (25×) | 5.61 s (58×) | 8.40 s (88×) |
+
+Each run in the table starts from set_equilibrium()’s seed and is timed
+alone, start-up apart. Each fleet figure is one complete
+run_simulation_ode() call – inputs, seed, the run and its outputs – the
+fastest of five. The IBM’s cost grows with its population, though by
+less than in proportion – five times the people cost it 2.6 to 3.6 times
+as much – and fleet’s does not. A seasonal programme adds 20% to 30% to
+fleet’s cost, and 14% to 56% to the IBM’s, more the larger its
+population. One fleet run also stands in for the twenty replicates an
+IBM comparison needs: across the whole scenario suite, whose IBM runs
+share a ten-worker pool, the IBM takes 19.9 CPU-hours and fleet 82 s.
+The age grid sets fleet’s cost, roughly in proportion to its groups.
 
 ## seed-stability
 

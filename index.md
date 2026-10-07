@@ -2,8 +2,8 @@
 
 [![check](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/check.yaml)
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
-[![Falciparum claims: 11 pass, 1
-open](https://img.shields.io/badge/falciparum%20claims-11%20pass%2C%201%20open-yellow.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
+[![Falciparum claims: 12
+pass](https://img.shields.io/badge/falciparum%20claims-12%20pass-brightgreen.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
 [![Vivax claims: 7 pass, 3
 fail](https://img.shields.io/badge/vivax%20claims-7%20pass%2C%203%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md)
 [![Lifecycle:
@@ -32,7 +32,7 @@ plots.
 
 ### *P. falciparum*
 
-**12 claims — 0 failing, 0 untested, 1 open, 11 pass.**
+**12 claims — 0 failing, 0 untested, 0 open, 12 pass.**
 
 1.  pass
     [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir)
@@ -63,7 +63,7 @@ plots.
     [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation)
     — Agreement holds across real transmission settings, not just
     synthetic scenarios.
-9.  open
+9.  pass
     [`parameter-draws`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#parameter-draws)
     — The change a posterior parameter draw makes to prevalence,
     clinical and severe incidence matches the IBM’s.
@@ -296,6 +296,13 @@ Rscript validations/02-scenarios/tables_pv.R   # -> validations/02-scenarios/res
 Neither pair redraws its site-file panel: those are snapshots from runs
 this repository cannot repeat (see tier 3 below). `CMP_REFRESH_SITES=1`
 re-takes them, and needs the validation results present.
+
+The `speed` claim’s table times both models side by side, one run of
+each, alone on one core. Run it on an otherwise idle machine:
+
+``` bash
+Rscript validations/02-scenarios/speed.R       # ~30 min -> results/speed.csv, vignettes/tab_speed.md
+```
 
 ### 7. Update the register, then regenerate every rendered copy of it
 

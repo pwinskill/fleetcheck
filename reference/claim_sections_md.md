@@ -34,7 +34,10 @@ a character vector of markdown lines.
 ## Details
 
 A figure the register declares but the build does not have is shown as
-missing, loudly, rather than passed off as a claim with no figure.
+missing, loudly, rather than passed off as a claim with no figure. A
+claim may also declare a `table`, a markdown file beside the figures
+that its evidence script writes; it is shown under the figure, and
+missing in the same loud way.
 
 The figure is written as an `<img>` rather than `![alt](src)`: pandoc
 turns a markdown image into a `<figure>` and prints the alt text as a

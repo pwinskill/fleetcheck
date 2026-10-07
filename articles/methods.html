@@ -161,26 +161,29 @@ precision again.</p>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># tier 2, about two hours on ten cores</span></span>
 <span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co"># a few-minute end-to-end check of the same path</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>CMP_SMOKE<span class="ot">=</span><span class="dv">1</span> Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co"># the speed claim's table: both models, one run each, alone on one core (half an hour)</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>speed.R</span>
 <span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co"># the P. vivax suite: the same scripts, results in results/pv/</span></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>assess.R</span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>tables_pv.R</span>
-<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>render_pv.R</span>
-<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co"># parameter-draws: eight posterior draws at three EIRs, tier 2 (two hours on</span></span>
-<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co"># four workers); assess.R re-runs fleet alone against the committed IBM rows</span></span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>run.R</span>
-<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>assess.R</span>
-<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>render.R</span>
-<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co"># and what moves its severe-incidence gap: 40 IBM runs, fifteen minutes</span></span>
-<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>diagnose.R</span>
-<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a><span class="co"># tier 3, which needs the restricted site files</span></span>
-<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a>FLEET_VALIDATE<span class="ot">=</span><span class="er">/</span>path<span class="sc">/</span>to<span class="sc">/</span>site<span class="sc">-</span>files Rscript validations<span class="sc">/</span><span class="dv">03</span><span class="sc">-</span>real<span class="sc">-</span>settings<span class="sc">/</span>run.R</span>
-<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a>FLEET_VALIDATE<span class="ot">=</span><span class="er">/</span>path<span class="sc">/</span>to<span class="sc">/</span>site<span class="sc">-</span>files CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">03</span><span class="sc">-</span>real<span class="sc">-</span>settings<span class="sc">/</span>run.R</span></code></pre></div>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co"># a few-minute end-to-end check of the same path</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>CMP_SMOKE<span class="ot">=</span><span class="dv">1</span> Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co"># the P. vivax suite: the same scripts, results in results/pv/</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>assess.R</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>tables_pv.R</span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>render_pv.R</span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co"># parameter-draws: eight posterior draws at three EIRs, tier 2 (two hours on</span></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co"># four workers); assess.R re-runs fleet alone against the committed IBM rows</span></span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>run.R</span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>assess.R</span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>render.R</span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a><span class="co"># and what moves its severe-incidence gap: 40 IBM runs, fifteen minutes</span></span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>diagnose.R</span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a><span class="co"># tier 3, which needs the restricted site files</span></span>
+<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a>FLEET_VALIDATE<span class="ot">=</span><span class="er">/</span>path<span class="sc">/</span>to<span class="sc">/</span>site<span class="sc">-</span>files Rscript validations<span class="sc">/</span><span class="dv">03</span><span class="sc">-</span>real<span class="sc">-</span>settings<span class="sc">/</span>run.R</span>
+<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a>FLEET_VALIDATE<span class="ot">=</span><span class="er">/</span>path<span class="sc">/</span>to<span class="sc">/</span>site<span class="sc">-</span>files CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">03</span><span class="sc">-</span>real<span class="sc">-</span>settings<span class="sc">/</span>run.R</span></code></pre></div>
 <p>The vivax suite runs on its own transmission grid (EIR 0.3 to 30,
 where falciparum’s is 1 to 120), without SMC, PMC or RTS,S –
 <code>malariasimulation</code> cannot run chemoprevention under vivax,

@@ -84,7 +84,10 @@ note written against them reads as nonsense without them.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>A figure the register declares but the build does not have is shown as
-missing, loudly, rather than passed off as a claim with no figure.</p>
+missing, loudly, rather than passed off as a claim with no figure. A claim
+may also declare a <code>table</code>, a markdown file beside the figures that its
+evidence script writes; it is shown under the figure, and missing in the same
+loud way.</p>
 <p>The figure is written as an <code>&lt;img&gt;</code> rather than <code>![alt](src)</code>: pandoc turns a
 markdown image into a <code>&lt;figure&gt;</code> and prints the alt text as a caption, which
 put the claim on screen a second time directly under the heading that had
