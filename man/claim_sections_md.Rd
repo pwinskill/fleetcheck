@@ -25,7 +25,10 @@ note written against them reads as nonsense without them.
 }
 \details{
 A figure the register declares but the build does not have is shown as
-missing, loudly, rather than passed off as a claim with no figure.
+missing, loudly, rather than passed off as a claim with no figure. A claim
+may also declare a \code{table}, a markdown file beside the figures that its
+evidence script writes; it is shown under the figure, and missing in the same
+loud way.
 
 The figure is written as an \verb{<img>} rather than \verb{![alt](src)}: pandoc turns a
 markdown image into a \verb{<figure>} and prints the alt text as a caption, which

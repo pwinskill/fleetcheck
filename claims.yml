@@ -272,6 +272,7 @@
 
 - id: speed
   figure: ~
+  table: tab_speed.md
   claim: fleet is fast enough to be worth using in place of the IBM.
   criterion: at least 10x faster than the IBM on the same scenario set
   tier: 2
@@ -279,13 +280,20 @@
   measured: 44x on cost per simulated year; 19.9 CPU-hours for the IBM against 82 s for fleet
   status: pass
   note: >
-    Each fleet figure is one complete run_simulation_ode() call -- inputs,
-    seed, the run and its outputs -- on one core; the IBM's are its runs on a
-    worker pool. One fleet run stands in for the IBM's twenty replicates of
-    10,000 people, and its cost does not grow with the population. On one laptop
-    core a run takes about 0.6 s per 10 simulated years, 1.7 to 2.3 s for 30.
-    The age grid sets fleet's cost, roughly in proportion to its groups: a
-    30-year run takes 0.7 s on the 53 of default_age_lower(n_group = 53).
+    The measured figure is the scenario suite's whole cost. Each fleet figure
+    is one complete run_simulation_ode() call -- inputs, seed, the run and its
+    outputs -- on one core. The IBM's are its runs on a ten-worker pool, which
+    slows each run, and three of its scenarios carry the twelve age-profile
+    bands, which slow those further.
+    The table times the two side by side instead: one run of each, alone on
+    one core, start-up apart. At the suite's 10,000 people fleet is 20 to 27
+    times faster per simulated year. The IBM's cost grows with its population,
+    though by less than in proportion -- five times the people cost it 2.6 to
+    3.6 times as much -- and fleet's does not, so at 50,000 people the multiple
+    is 54 to 94. A seasonal programme adds 20% to 30% to fleet's cost, and
+    14% to 56% to the IBM's, more the larger its population.
+    One fleet run also stands in for the twenty replicates an IBM comparison
+    needs. The age grid sets fleet's cost, roughly in proportion to its groups.
 
 - id: seed-stability
   figure: ~

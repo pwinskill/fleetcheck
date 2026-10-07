@@ -20,6 +20,7 @@ This is the tier that is complete. Everything in the repository README's
 | `tables.R` | The numbers quoted in the articles, as markdown in `results/tables.md`. |
 | `render_pv.R`, `tables_pv.R` | The same for the *P. vivax* suite: `cmp_pv_*.png`, and `results/pv/tables.md`. |
 | `benchmark.R` | Indicative `fleet` run times for both parasites; writes `results/timing.csv`. ~25 min on an idle machine. |
+| `speed.R` | `fleet` against the IBM per simulated year, one run of each alone on one core: EIR 3, 20 and 120, the IBM at 10,000, 30,000 and 50,000 people, with nothing deployed and with a seasonal programme. Writes `results/speed.csv` and the `speed` claim's table, `vignettes/tab_speed.md`. ~30 min on an idle machine. |
 | `results/` | The committed summaries and their provenance stamps; the vivax suite's in `results/pv/`, written by the scripts above under `CMP_PARASITE=pv`. |
 
 Shared code lives outside this directory. The scenario definitions, `run_fleet()`

@@ -139,13 +139,30 @@ test_that("a claim's section shows its figure when there is one, and says so whe
   expect_false(any(grepl("*No figure:", md2, fixed = TRUE)))
 })
 
-test_that("every figure the register declares is in the articles' directory", {
+test_that("a claim's table is shown under it, in place of the no-figure line", {
+  d <- withr::local_tempdir()
+  writeLines(c("| a | b |", "|:--|--:|", "| 1 | 2 |"), file.path(d, "tab.md"))
+  cl <- read_claims(write_register(list(id = "tabled", table = "tab.md")))
+  md <- claim_sections_md(cl, fig_dir = d)
+  expect_true("| 1 | 2 |" %in% md)
+  # the table is the evidence shown, so the section does not say there is none
+  expect_false(any(grepl("*No figure:", md, fixed = TRUE)))
+  # a declared table the build lacks is shown as missing
+  miss <- read_claims(write_register(list(id = "lost", table = "gone.md")))
+  expect_warning(md2 <- claim_sections_md(miss, fig_dir = d), "declared but missing")
+  expect_true(any(grepl("Table missing", md2, fixed = TRUE)))
+  # and a claim without one reads as before
+  expect_identical(read_claims(write_register(list(id = "plain")))$table, "")
+})
+
+test_that("every figure and table the register declares is in the articles' directory", {
   cl <- read_claims(find_claims())
-  figs <- cl$figure[nzchar(cl$figure) & !cl$figure %in% c("NA", "~")]
+  shown <- c(cl$figure, cl$table)
+  shown <- shown[nzchar(shown) & !shown %in% c("NA", "~")]
   vdir <- file.path(dirname(find_claims()), "vignettes")
   skip_if_not(dir.exists(vdir), "no vignettes directory beside the register")
-  expect_true(all(file.exists(file.path(vdir, figs))),
-              info = paste("missing:", paste(figs[!file.exists(file.path(vdir, figs))],
+  expect_true(all(file.exists(file.path(vdir, shown))),
+              info = paste("missing:", paste(shown[!file.exists(file.path(vdir, shown))],
                                              collapse = ", ")))
 })
 

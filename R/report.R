@@ -70,7 +70,10 @@ evidence_page <- function(parasite)
 #' note written against them reads as nonsense without them.
 #'
 #' A figure the register declares but the build does not have is shown as
-#' missing, loudly, rather than passed off as a claim with no figure.
+#' missing, loudly, rather than passed off as a claim with no figure. A claim
+#' may also declare a `table`, a markdown file beside the figures that its
+#' evidence script writes; it is shown under the figure, and missing in the same
+#' loud way.
 #'
 #' The figure is written as an `<img>` rather than `![alt](src)`: pandoc turns a
 #' markdown image into a `<figure>` and prints the alt text as a caption, which
@@ -98,6 +101,8 @@ claim_sections_md <- function(claims, fig_dir = ".") {
     fig <- cl$figure
     has_fig <- nzchar(fig) && !fig %in% c("NA", "~")
     src <- if (identical(fig_dir, ".")) fig else file.path(fig_dir, fig)
+    tab <- if (is.null(cl$table)) "" else cl$table
+    has_tab <- !is.na(tab) && nzchar(tab) && !tab %in% c("NA", "~")
     word <- c(pass = "pass", open = "open", fail = "fail", undeclared = "untested")[[cl$status]]
     if (has_fig && file.exists(src)) {
       d <- if (requireNamespace("png", quietly = TRUE))
@@ -111,8 +116,19 @@ claim_sections_md <- function(claims, fig_dir = ".") {
       out <- c(out, sprintf(paste('<p class="figure-missing"><strong>Figure missing:</strong>',
                                   '<code>%s</code> is declared for this claim but is not in',
                                   'this build.</p>'), fig), "")
-    } else {
+    } else if (!has_tab) {
       out <- c(out, "*No figure: the numbers above decide this claim.*", "")
+    }
+    if (has_tab) {
+      tsrc <- if (identical(fig_dir, ".")) tab else file.path(fig_dir, tab)
+      if (file.exists(tsrc)) {
+        out <- c(out, readLines(tsrc, warn = FALSE, encoding = "UTF-8"), "")
+      } else {
+        warning("claim ", cl$id, ": table ", tab, " is declared but missing", call. = FALSE)
+        out <- c(out, sprintf(paste('<p class="figure-missing"><strong>Table missing:</strong>',
+                                    '<code>%s</code> is declared for this claim but is not in',
+                                    'this build.</p>'), tab), "")
+      }
     }
     if (nzchar(cl$note)) out <- c(out, cl$note, "")
   }

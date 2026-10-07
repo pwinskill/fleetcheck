@@ -230,6 +230,13 @@ Neither pair redraws its site-file panel: those are snapshots from runs this
 repository cannot repeat (see tier 3 below). `CMP_REFRESH_SITES=1` re-takes
 them, and needs the validation results present.
 
+The `speed` claim's table times both models side by side, one run of each,
+alone on one core. Run it on an otherwise idle machine:
+
+```bash
+Rscript validations/02-scenarios/speed.R       # ~30 min -> results/speed.csv, vignettes/tab_speed.md
+```
+
 ### 7. Update the register, then regenerate every rendered copy of it
 
 Edit `claims.yml` — the criterion, the measured value, the verdict — and then:
