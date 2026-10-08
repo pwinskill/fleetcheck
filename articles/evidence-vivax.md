@@ -36,7 +36,7 @@ the page following.
 | [`age-profile-clinical-pv`](#age-profile-clinical-pv) | 2 | inside the IBM replicate band in every age band carrying at least 5% of clinical episodes, at EIR 1, 3 and 10 | inside at 22 of 23 tested bands across the three EIRs, holding 90% of episodes; largest departure 1.30 replicate SD, in the 3-5 y band at EIR 10 | FAIL |
 | [`intervention-impact-pv`](#intervention-impact-pv) | 2 | outside the IBM replicate band in no greater a share of cells than the best held-out IBM replicate, over every intervention and outcome at EIR 1, 3 and 10 | fleet outside in 26.7% of 60 cells, against 8.3% for the closest of the twenty IBM replicates and 24.2% for the median one | FAIL |
 | [`population-age-structure-pv`](#population-age-structure-pv) | 2 | inside the IBM replicate band in every age band below 60 years, on shares renormalised to the 0-60 population | inside at 11 of 11 at EIR 3; largest departure 2.1% of the IBM median | pass |
-| [`speed-pv`](#speed-pv) | 2 | at least 10x faster than the IBM on the same scenario set | 1.07x on cost per simulated year; 9.5 CPU-hours for the IBM’s 440 runs against 26 minutes for fleet’s 22 | FAIL |
+| [`speed-pv`](#speed-pv) | 2 | at least 10x faster per simulated year than one IBM run of 10,000 people, each timed alone on one core, at EIR 1, 3 and 10, with nothing deployed and with a seasonal programme | 0.6x to 1.7x per simulated year at 10,000 people, 2.1x to 4.7x at 50,000; fleet 0.83 to 2.1 s per simulated year, the IBM 1.2 to 1.6 s at 10,000 people | FAIL |
 | [`seed-stability-pv`](#seed-stability-pv) | 1 | PvPR(2-10) flat to under 1% over the last five of 30 years, at EIR 0.3, 1, 3 and 10 | flat to 0.27% at EIR 0.3, 0.09% at 1, 0.007% at 3 and 0.001% at 10; settling 15%, 10%, 6% and 3% above the seeded PvPR | pass |
 
 ## prevalence-eir-pv
@@ -218,26 +218,49 @@ convention.
 
 FAIL — fleet is fast enough to be worth using in place of the IBM.
 
-**Criterion:** at least 10x faster than the IBM on the same scenario
-set  
-**Measured:** 1.07x on cost per simulated year; 9.5 CPU-hours for the
-IBM’s 440 runs against 26 minutes for fleet’s 22
+**Criterion:** at least 10x faster per simulated year than one IBM run
+of 10,000 people, each timed alone on one core, at EIR 1, 3 and 10, with
+nothing deployed and with a seasonal programme  
+**Measured:** 0.6x to 1.7x per simulated year at 10,000 people, 2.1x to
+4.7x at 50,000; fleet 0.83 to 2.1 s per simulated year, the IBM 1.2 to
+1.6 s at 10,000 people
 
 tier 2 · `validations/02-scenarios`
 
-*No figure: the numbers above decide this claim.*
+Seconds per simulated year; in brackets, the IBM’s multiple of fleet’s
+time.
 
-Per run, vivax fleet costs about two thirds of a 10,000-person IBM run:
-1.4 s per simulated year against 2.1 s, both on a shared worker pool.
-The hypnozoite dimension and the within-cell immunity spread make it
-about sixteen times a falciparum fleet run on the same 118-group grid,
-while the IBM costs about the same for either parasite. One fleet run
-still stands in for the twenty IBM replicates the comparison needs, and
-fleet’s cost does not grow with population, so the IBM arm here cost 22
-times fleet’s; but the criterion is per run, and per run fleet does not
-meet it. On one laptop core a vivax run takes about 9 s per 10 simulated
-years, 20 s with primaquine radical cure and 38 s with tafenoquine; a
-53-group grid runs 2.2 times as fast.
+| setting            | EIR | fleet |  IBM 10,000 |  IBM 30,000 |  IBM 50,000 |
+|:-------------------|----:|------:|------------:|------------:|------------:|
+| nothing deployed   |   1 |  0.83 | 1.18 (1.4×) | 2.22 (2.7×) | 3.34 (4.0×) |
+|                    |   3 |  0.94 | 1.44 (1.5×) | 2.63 (2.8×) | 3.70 (3.9×) |
+|                    |  10 |  0.94 | 1.56 (1.7×) | 3.01 (3.2×) | 4.39 (4.7×) |
+| seasonal programme |   1 |  1.97 | 1.38 (0.7×) | 2.71 (1.4×) | 4.49 (2.3×) |
+|                    |   3 |  2.10 | 1.28 (0.6×) | 2.71 (1.3×) | 4.41 (2.1×) |
+|                    |  10 |  2.05 | 1.17 (0.6×) | 3.48 (1.7×) | 5.13 (2.5×) |
+
+One run of each model, alone on one core (Snapdragon X 12-core X1E80100
+@ 3.40 GHz), over 10 years from set_equilibrium()’s seed, start-up
+excluded: fleet’s takes 0.67 to 1.5 s, the IBM’s 3.5 to 3.9 s at 10,000
+people and 7.7 to 8.4 s at 50,000. fleet’s cost does not depend on the
+population. The seasonal programme is case management with chloroquine
+and primaquine radical cure, bed nets and indoor spraying, running from
+the first day. `CMP_PARASITE=pv validations/02-scenarios/speed.R` makes
+this table.
+
+Each run in the table starts from set_equilibrium()’s seed and is timed
+alone, start-up apart. Each fleet figure is one complete
+run_simulation_ode() call, the fastest of two. With nothing deployed a
+vivax fleet run costs 10 to 12 times a falciparum one, for the
+hypnozoite dimension and the within-cell immunity spread, and the
+programme more than doubles it, mostly through primaquine radical cure’s
+liver-stage levels. The IBM costs a little less for vivax than for
+falciparum. So at 10,000 people fleet is 1.4 to 1.7 times faster with
+nothing deployed, and slower than the IBM under the programme. Its cost
+does not grow with the population, so at 50,000 people it is 2.1 to 4.7
+times faster. One fleet run also stands in for the twenty replicates an
+IBM comparison needs: across the vivax scenario suite, whose IBM runs
+share a worker pool, the IBM takes 9.5 CPU-hours and fleet 26 minutes.
 
 ## seed-stability-pv
 

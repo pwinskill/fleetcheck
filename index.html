@@ -245,8 +245,9 @@
 <span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/render_pv.R   <span class="co"># the vivax figures, cmp_pv_*.png</span></span>
 <span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/tables_pv.R   <span class="co"># -&gt; validations/02-scenarios/results/pv/tables.md</span></span></code></pre></div>
 <p>Neither pair redraws its site-file panel: those are snapshots from runs this repository cannot repeat (see tier 3 below). <code>CMP_REFRESH_SITES=1</code> re-takes them, and needs the validation results present.</p>
-<p>The <code>speed</code> claim’s table times both models side by side, one run of each, alone on one core. Run it on an otherwise idle machine:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/speed.R       <span class="co"># ~30 min -&gt; results/speed.csv, vignettes/tab_speed.md</span></span></code></pre></div>
+<p>The <code>speed</code> and <code>speed-pv</code> claims’ tables time both models side by side, one run of each, alone on one core. Run them on an otherwise idle machine:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/speed.R                   <span class="co"># ~15 min -&gt; results/speed.csv, vignettes/tab_speed.md</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="va">CMP_PARASITE</span><span class="op">=</span>pv <span class="ex">Rscript</span> validations/02-scenarios/speed.R   <span class="co"># ~25 min -&gt; results/pv/speed.csv, vignettes/tab_speed_pv.md</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_7-update-the-register-then-regenerate-every-rendered-copy-of-it">7. Update the register, then regenerate every rendered copy of it<a class="anchor" aria-label="anchor" href="#id_7-update-the-register-then-regenerate-every-rendered-copy-of-it"></a>
