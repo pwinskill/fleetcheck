@@ -106,8 +106,9 @@ Rscript validations/02-scenarios/assess.R
 # tier 2, about two hours on ten cores
 Rscript validations/02-scenarios/run.R
 
-# the speed claim's table: both models, one run each, alone on one core (half an hour)
-Rscript validations/02-scenarios/speed.R
+# the speed claims' tables: both models, one run each, alone on one core
+Rscript validations/02-scenarios/speed.R                   # a quarter of an hour
+CMP_PARASITE=pv Rscript validations/02-scenarios/speed.R   # the vivax table, about half an hour
 
 # a few-minute end-to-end check of the same path
 CMP_SMOKE=1 Rscript validations/02-scenarios/run.R

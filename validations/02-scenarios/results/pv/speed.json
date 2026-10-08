@@ -1,0 +1,22 @@
+{
+  "taken": "2026-10-08T08:26:21+0100",
+  "fleet": "0.0.0.9005",
+  "fleet_sha": null,
+  "fleet_built": "R 4.5.2; aarch64-w64-mingw32; 2026-10-06 13:23:14 UTC; windows",
+  "malariasimulation": "3.0.0",
+  "malariasimulation_sha": "5f63ccd",
+  "postie": "1.1.0",
+  "R": "4.5.2",
+  "platform": "aarch64-w64-mingw32",
+  "fleetcheck_sha": "e0609fa",
+  "years": 10,
+  "eir": [1, 3, 10],
+  "populations": [10000, 30000, 50000],
+  "fleet_repeats": 2,
+  "cpu": "Snapdragon X 12-core X1E80100 @ 3.40 GHz",
+  "cores": 12,
+  "settings": {
+    "none": "nothing deployed, no seasonality",
+    "programme": "seasonal; case management with chloroquine and primaquine radical cure, bed nets and indoor spraying"
+  }
+}

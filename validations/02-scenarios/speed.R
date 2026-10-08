@@ -2,27 +2,34 @@
 # depend on transmission, population size and what is deployed?
 #
 #   Rscript validations/02-scenarios/speed.R                    # a quarter of an hour, one core, idle machine
+#   CMP_PARASITE=pv Rscript validations/02-scenarios/speed.R    # the same for P. vivax, about half an hour
 #   CMP_TABLE_ONLY=1 Rscript validations/02-scenarios/speed.R   # seconds: the table from results/speed.csv
 #
-# One run of each model per cell of a small factorial: EIR 3, 20 and 120 (the
-# levels the shape claims are carried at), the IBM at 10,000, 30,000 and 50,000
-# people, and two settings -- nothing deployed and no seasonality, and a
-# seasonal programme with case management, bed nets, indoor spraying, SMC and
-# RTS,S, all running from the first day. fleet's cost does not depend on the
-# population (benchmark.R's population table), so fleet is run once per EIR
-# and setting: six fleet cells and eighteen IBM runs, no replicates.
+# One run of each model per cell of a small factorial: the three EIRs the
+# parasite's shape claims are carried at (3, 20 and 120 for P. falciparum; 1, 3
+# and 10 for P. vivax), the IBM at 10,000, 30,000 and 50,000 people, and two
+# settings -- nothing deployed and no seasonality, and a seasonal programme
+# running from the first day. fleet's cost does not depend on the population
+# (benchmark.R's population table), so fleet is run once per EIR and setting:
+# six fleet cells and eighteen IBM runs, no replicates.
+#
+# The falciparum programme is case management, bed nets, indoor spraying, SMC
+# and RTS,S. The vivax one is case management with chloroquine and primaquine
+# radical cure, bed nets and indoor spraying: malariasimulation 3.0.0 cannot
+# run chemoprevention under vivax, and its vaccines carry no vivax calibration.
 #
 # Every run is timed alone, one after another on one core, over ten years from
 # set_equilibrium()'s seed, as the whole call a user makes: run_simulation()
 # for the IBM, run_simulation_ode() for fleet, which builds its inputs, runs and
-# renders its outputs. fleet's figure is the fastest of five repeats, as in
-# benchmark.R, because anything else on the machine can only add time and a
-# fleet run is cheap enough to repeat. The IBM's is its single run, whose ten
-# years already average 3,650 days of work. Both render the EIR grid's output
-# bands.
+# renders its outputs. fleet's figure is the fastest of five repeats (two for
+# vivax, whose runs cost about twenty times as much), as in benchmark.R,
+# because anything else on the machine can only add time. The IBM's is its
+# single run, whose ten years already average 3,650 days of work. Both render
+# the EIR grid's output bands.
 #
-# Writes results/speed.csv, its provenance results/speed.json, and the table
-# the speed claim shows on the evidence page, vignettes/tab_speed.md.
+# Writes results/speed.csv (results/pv/ for vivax), its provenance speed.json,
+# and the table the speed claim shows on the evidence page,
+# vignettes/tab_speed.md (tab_speed_pv.md).
 
 ## No absolute paths anywhere in here. FLEET_LIB is prepended to the library
 ## path, for installations that do not pick up R_LIBS_USER (the Windows-arm64
@@ -47,35 +54,38 @@ if (requireNamespace("pkgload", quietly = TRUE) &&
 }
 log_msg <- function(...) cat(sprintf("[%s] %s\n", format(Sys.time(), "%H:%M:%S"), sprintf(...)))
 
-## the EIR grid's output bands, set_bands(), and nothing else from it
+## the EIR grid's output bands, set_bands(), and which parasite (CMP_PARASITE)
 source(file.path(ROOT, "validations", "_shared", "scenarios.R"))
-if (SP != "pf") stop("speed.R times P. falciparum; unset CMP_PARASITE.", call. = FALSE)
+PV <- SP == "pv"
 
-DDIR <- fc_results("02-scenarios")
-TAB <- file.path(ROOT, "vignettes", "tab_speed.md")
+DDIR <- if (PV) fc_results("02-scenarios", "pv") else fc_results("02-scenarios")
+TAB <- file.path(ROOT, "vignettes", if (PV) "tab_speed_pv.md" else "tab_speed.md")
 YEARS <- 10L
-EIRS <- PROFILE_EIR
+EIRS <- if (PV) PROFILE_EIR_PV else PROFILE_EIR
 POPS <- c(1e4, 3e4, 5e4)
-N_REP_FLEET <- 5L
+N_REP_FLEET <- if (PV) 2L else 5L
 ## CMP_SMOKE=1 -> one year, one population, one fleet repeat, into results/smoke/:
 ## a check that every cell builds and runs, never the claim's table
 if (SMOKE) {
   YEARS <- 1L; POPS <- 1e4; N_REP_FLEET <- 1L
-  DDIR <- file.path(DDIR, "smoke"); TAB <- file.path(DDIR, "tab_speed.md")
+  DDIR <- file.path(DDIR, "smoke"); TAB <- file.path(DDIR, basename(TAB))
   dir.create(DDIR, showWarnings = FALSE, recursive = TRUE)
 }
+PROGRAMME <- if (PV) "case management with chloroquine and primaquine radical cure, bed nets and indoor spraying" else
+  "case management, bed nets, indoor spraying, SMC and RTS,S"
 SETTINGS <- c(none = "nothing deployed, no seasonality",
-              programme = "seasonal; case management, bed nets, IRS, SMC and RTS,S")
+              programme = paste0("seasonal; ", PROGRAMME))
 
 ## ---- the two settings ----------------------------------------------------------------
-## The programme runs from the first day, so every timed year carries it:
-## AL for 60% of clinical cases; bed nets (80%) and IRS (80%) every three
-## years; SMC with SP-AQ, four monthly rounds a year to 3 months-5 years at 90%;
-## RTS,S through EPI at 5 months, 90%, with a booster.
+## The programme runs from the first day, so every timed year carries it: bed
+## nets (80%) and IRS (80%) every three years, and case management for 60% of
+## clinical cases -- AL for falciparum, chloroquine with primaquine radical cure
+## for vivax. Falciparum adds SMC with SP-AQ, four monthly rounds a year to 3
+## months-5 years at 90%, and RTS,S through EPI at 5 months, 90%, with a booster.
 programme <- function(p) {
   n <- ceiling(YEARS / 3); ts <- 1 + (seq_len(n) - 1) * 3 * 365
   m <- function(v) matrix(v, nrow = n, ncol = 1)
-  p <- set_drugs(p, list(AL_params, SP_AQ_params))
+  p <- set_drugs(p, if (PV) list(CQ_PQ_params_vivax) else list(AL_params, SP_AQ_params))
   p <- set_clinical_treatment(p, drug = 1, timesteps = 1, coverages = 0.6)
   p <- set_bednets(p, timesteps = ts, coverages = rep(0.8, n), retention = 5 * 365,
                    dn0 = matrix(0.387, n), rn = matrix(0.563, n), rnm = matrix(0.24, n),
@@ -83,6 +93,7 @@ programme <- function(p) {
   p <- set_spraying(p, timesteps = ts, coverages = rep(0.8, n),
                     ls_theta = m(2.025), ls_gamma = m(-0.009), ks_theta = m(-2.222),
                     ks_gamma = m(0.008), ms_theta = m(-1.232), ms_gamma = m(-0.009))
+  if (PV) return(p)
   rounds <- as.vector(sapply(seq_len(YEARS) - 1L, function(y) y * 365 + 200 + c(0, 30, 60, 90)))
   p <- set_smc(p, drug = 2, timesteps = rounds, coverages = rep(0.9, length(rounds)),
                min_ages = rep(round(0.25 * 365), length(rounds)),
@@ -94,7 +105,7 @@ programme <- function(p) {
 build <- function(setting, E, pop) {
   ov <- list(human_population = pop)
   if (setting == "programme") ov <- c(ov, list(model_seasonality = TRUE), SEASON)
-  p <- set_bands(get_parameters(ov))
+  p <- set_bands(get_parameters(ov, parasite = PARASITE))
   if (setting == "programme") p <- programme(p)
   set_equilibrium(p, init_EIR = E)
 }
@@ -171,7 +182,10 @@ jsonlite::write_json(stamp(years = YEARS, eir = EIRS, populations = POPS,
 ## how it was made goes in a caption under it. The `.fc-data` div is what the
 ## site's stylesheet sizes to content.
 fmt_n <- function(x) ifelse(x < 0.1, sprintf("%.3f", x), ifelse(x < 10, sprintf("%.2f", x), sprintf("%.1f", x)))
-fmt_x <- function(x) sprintf("%s×", formatC(round(x), big.mark = ",", format = "d"))
+## one decimal below 10, so a multiple under one -- fleet the slower -- reads as
+## what it is rather than rounding up to 1x
+fmt_x <- function(x) ifelse(x < 9.95, sprintf("%.1f×", x),
+                            sprintf("%s×", formatC(round(x), big.mark = ",", format = "d")))
 people <- function(n) formatC(n, big.mark = ",", format = "d")
 tab <- do.call(rbind, lapply(split(speed, list(speed$setting, speed$eir), drop = TRUE), function(d) {
   f <- d[d$model == "fleet", ]; i <- d[d$model == "IBM", ]; i <- i[order(i$pop), ]
@@ -205,10 +219,10 @@ md <- c("::: {.fc-data}",
         "",
         sprintf(paste("One run of each model, alone on one core (%s), over %d years from",
                       "set_equilibrium()'s seed, start-up excluded: fleet's takes %s, %s. fleet's",
-                      "cost does not depend on the population. The seasonal programme is case",
-                      "management, bed nets, indoor spraying, SMC and RTS,S, running from the first",
-                      "day. `validations/02-scenarios/speed.R` makes this table."),
-                cpu, YEARS, rng(speed$start_s[speed$model == "fleet"]), ibm_start),
+                      "cost does not depend on the population. The seasonal programme is %s,",
+                      "running from the first day. `%svalidations/02-scenarios/speed.R` makes this table."),
+                cpu, YEARS, rng(speed$start_s[speed$model == "fleet"]), ibm_start, PROGRAMME,
+                if (PV) "CMP_PARASITE=pv " else ""),
         ":::")
 writeLines(md, TAB, useBytes = TRUE)
 cat(md, sep = "\n")
