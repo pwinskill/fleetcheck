@@ -22,7 +22,7 @@
 # set_equilibrium()'s seed, as the whole call a user makes: run_simulation()
 # for the IBM, run_simulation_ode() for fleet, which builds its inputs, runs and
 # renders its outputs. fleet's figure is the fastest of five repeats (two for
-# vivax, whose runs cost about twenty times as much), as in benchmark.R,
+# vivax, whose runs cost about eight times as much), as in benchmark.R,
 # because anything else on the machine can only add time. The IBM's is its
 # single run, whose ten years already average 3,650 days of work. Both render
 # the EIR grid's output bands.

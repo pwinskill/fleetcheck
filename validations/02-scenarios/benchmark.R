@@ -2,6 +2,8 @@
 #
 #   Rscript validations/02-scenarios/benchmark.R          # ~25 min; writes validations/02-scenarios/results/timing.csv
 #                                           # and prints the markdown tables
+#   CMP_PARASITE=pv Rscript validations/02-scenarios/benchmark.R   # ~10 min: the vivax
+#                                           # table alone, its rows replaced in timing.csv
 #
 # Three questions a user actually has:
 #   1. How long does a run take, by scenario and horizon, for each parasite?
@@ -40,6 +42,8 @@ if (requireNamespace("pkgload", quietly = TRUE) &&
 ## No scenarios.R: this file builds its own parameter lists below, and used
 ## nothing that one defines.
 DDIR <- file.path(ROOT, "validations", "02-scenarios", "results")
+## CMP_PARASITE=pv -> only the vivax table, for a change to fleet's vivax block
+PV_ONLY <- identical(Sys.getenv("CMP_PARASITE"), "pv")
 N_REP <- 5L
 POP   <- 1e5                       # output scaling only; see the population table
 SEASON <- list(g0 = 0.285, g = c(-0.33, -0.13, 0.052), h = c(-0.35, 0.020, 0.10))
@@ -117,6 +121,7 @@ rows <- list()
 add_row <- function(...) rows[[length(rows) + 1L]] <<- data.frame(..., stringsAsFactors = FALSE)
 
 ## ---- table 1: scenario x horizon ---------------------------------------------
+if (!PV_ONLY) {
 log_msg("scenario x horizon: %d scenarios x %d horizons x %d reps",
         length(SCEN), length(YEARS), N_REP)
 for (nm in names(SCEN)) {
@@ -128,13 +133,15 @@ for (nm in names(SCEN)) {
     log_msg("  %-30s %2d y : %6.2f s", nm, y, sec)
   }
 }
+}
 
 ## ---- table 1b: P. vivax, scenario x horizon ------------------------------------
-## A vivax run costs about twenty times a falciparum one -- the hypnozoite-batch
+## A vivax run costs about thirteen times a falciparum one -- the hypnozoite-batch
 ## dimension and the immunity spread -- so two repeats rather than five; the
 ## minimum of two on an idle machine is already within a per cent or two.
-## Radical cure adds the liver-stage levels: four for primaquine, eleven for
-## tafenoquine.
+## Radical cure adds the day's radical-cure transfers and, for tafenoquine,
+## eleven liver-stage levels; primaquine's protection ends inside chloroquine's
+## blood-stage protection, so it has none.
 N_REP_PV <- 2L
 pv_p <- function(drugs = NULL, drug = 1L) {
   p <- get_parameters(list(human_population = POP), parasite = "vivax")
@@ -162,6 +169,7 @@ for (nm in names(SCEN_PV)) {
 }
 
 ## ---- table 2: population size (must be flat) ---------------------------------
+if (!PV_ONLY) {
 log_msg("population independence, 30-year seasonal run")
 for (pop in c(1e3, 1e4, 1e5, 1e6, 1e7)) {
   p <- set_equilibrium(base_p(TRUE, pop = pop), init_EIR = 20)
@@ -186,11 +194,19 @@ for (nm in names(PRESETS)) {
           settings = nm, seconds = sec)
   log_msg("  %-20s : %6.2f s", nm, sec)
 }
+}
 
 ## ---- write + print -----------------------------------------------------------
 timing <- do.call(rbind, rows)
 timing$seconds <- round(timing$seconds, 2)
 timing$s_per_year <- round(timing$seconds / timing$years, 3)
+## the vivax table alone replaces its own rows and keeps the rest
+if (PV_ONLY && file.exists(f <- file.path(DDIR, "timing.csv"))) {
+  old <- read.csv(f, stringsAsFactors = FALSE)
+  timing <- rbind(old[old$table != "scenario_pv", ], timing)
+  timing <- timing[order(match(timing$table, c("scenario", "scenario_pv", "population",
+                                               "settings"))), ]
+}
 write.csv(timing, file.path(DDIR, "timing.csv"), row.names = FALSE)
 
 md <- function(df) {

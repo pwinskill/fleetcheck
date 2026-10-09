@@ -1,6 +1,6 @@
 {
-  "generated": "2026-09-26T17:16:36+0100",
-  "fleet": "0.0.0.9003",
+  "generated": "2026-10-09T09:32:01+0100",
+  "fleet": "0.0.0.9006",
   "malariasimulation": "3.0.0",
   "years": 30,
   "runs": [
@@ -8,88 +8,88 @@
       "init_EIR": 0.3,
       "immunity_spread": true,
       "pvpr_2_10": {
-        "seed": 0.01434096,
-        "max_excursion": 0.21519785,
-        "final_departure": 0.14706957,
-        "last_five_year_range": 0.00273444
+        "seed": 0.01434102,
+        "max_excursion": 0.21529469,
+        "final_departure": 0.14707615,
+        "last_five_year_range": 0.00272821
       },
       "clinical_all": {
         "seed": 0.0006183,
-        "max_excursion": 0.23751849,
-        "final_departure": 0.16154989,
-        "last_five_year_range": 0.00264763
+        "max_excursion": 0.23756799,
+        "final_departure": 0.1615283,
+        "last_five_year_range": 0.00263965
       },
       "realised_EIR": {
-        "seed": 0.30067419,
-        "max_excursion": 0.25388419,
-        "final_departure": 0.17650985,
-        "last_five_year_range": 0.00194561
+        "seed": 0.30067498,
+        "max_excursion": 0.25398637,
+        "final_departure": 0.17650775,
+        "last_five_year_range": 0.00193825
       }
     },
     {
       "init_EIR": 1,
       "immunity_spread": true,
       "pvpr_2_10": {
-        "seed": 0.04043397,
-        "max_excursion": 0.13663869,
-        "final_departure": 0.09455222,
-        "last_five_year_range": 0.00087681
+        "seed": 0.04043554,
+        "max_excursion": 0.13757895,
+        "final_departure": 0.09509732,
+        "last_five_year_range": 0.00089484
       },
       "clinical_all": {
-        "seed": 0.00111168,
-        "max_excursion": 0.22400022,
-        "final_departure": 0.17666554,
-        "last_five_year_range": 0.00124845
+        "seed": 0.00111171,
+        "max_excursion": 0.22458661,
+        "final_departure": 0.17682062,
+        "last_five_year_range": 0.00127145
       },
       "realised_EIR": {
-        "seed": 1.00185737,
-        "max_excursion": 0.18390459,
-        "final_departure": 0.13519928,
-        "last_five_year_range": 0.0010412
+        "seed": 1.00188366,
+        "max_excursion": 0.18494742,
+        "final_departure": 0.13579926,
+        "last_five_year_range": 0.00105901
       }
     },
     {
       "init_EIR": 3,
       "immunity_spread": true,
       "pvpr_2_10": {
-        "seed": 0.08857836,
-        "max_excursion": 0.0715383,
-        "final_departure": 0.05564342,
-        "last_five_year_range": 0.00006689
+        "seed": 0.08858561,
+        "max_excursion": 0.07198588,
+        "final_departure": 0.05595186,
+        "last_five_year_range": 0.0000665
       },
       "clinical_all": {
-        "seed": 0.0015209,
-        "max_excursion": 0.22244052,
-        "final_departure": 0.22240884,
-        "last_five_year_range": 0.00038546
+        "seed": 0.00152106,
+        "max_excursion": 0.22211579,
+        "final_departure": 0.22208394,
+        "last_five_year_range": 0.00038763
       },
       "realised_EIR": {
-        "seed": 3.00478091,
-        "max_excursion": 0.10669606,
-        "final_departure": 0.09294585,
-        "last_five_year_range": 0.00010949
+        "seed": 3.00487719,
+        "max_excursion": 0.10717346,
+        "final_departure": 0.09329321,
+        "last_five_year_range": 0.00010922
       }
     },
     {
       "init_EIR": 10,
       "immunity_spread": true,
       "pvpr_2_10": {
-        "seed": 0.16952644,
-        "max_excursion": 0.03306851,
-        "final_departure": 0.02774401,
-        "last_five_year_range": 0.00001479
+        "seed": 0.16957979,
+        "max_excursion": 0.03432563,
+        "final_departure": 0.02878076,
+        "last_five_year_range": 0.0000152
       },
       "clinical_all": {
-        "seed": 0.00194268,
-        "max_excursion": 0.21894175,
-        "final_departure": 0.218915,
-        "last_five_year_range": 0.00029168
+        "seed": 0.00194357,
+        "max_excursion": 0.21794378,
+        "final_departure": 0.21791721,
+        "last_five_year_range": 0.00029018
       },
       "realised_EIR": {
-        "seed": 10.01300347,
-        "max_excursion": 0.05069535,
-        "final_departure": 0.04894108,
-        "last_five_year_range": 0.00005146
+        "seed": 10.01361521,
+        "max_excursion": 0.05191741,
+        "final_departure": 0.05006025,
+        "last_five_year_range": 0.00005285
       }
     }
   ],
@@ -97,23 +97,23 @@
     "init_EIR": 3,
     "immunity_spread": false,
     "pvpr_2_10": {
-      "seed": 0.0886813,
-      "max_excursion": 0.01282305,
-      "final_departure": -0.00682167,
-      "last_five_year_range": 0.00002058
+      "seed": 0.0886874,
+      "max_excursion": 0.01324922,
+      "final_departure": -0.00647164,
+      "last_five_year_range": 0.00002097
     },
     "clinical_all": {
-      "seed": 0.00154958,
-      "max_excursion": 0.01504151,
-      "final_departure": 0.00266628,
-      "last_five_year_range": 0.00007312
+      "seed": 0.00154953,
+      "max_excursion": 0.01539918,
+      "final_departure": 0.00264829,
+      "last_five_year_range": 0.00007366
     },
     "realised_EIR": {
-      "seed": 3.00592531,
-      "max_excursion": 0.01848465,
-      "final_departure": 0.00204142,
-      "last_five_year_range": 0.00003493
+      "seed": 3.0059923,
+      "max_excursion": 0.01895252,
+      "final_departure": 0.00243771,
+      "last_five_year_range": 0.00003554
     }
   },
-  "worst_last_five_year_range": 0.00273444
+  "worst_last_five_year_range": 0.00272821
 }
