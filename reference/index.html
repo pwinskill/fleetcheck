@@ -21,7 +21,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-evidence"><li><a class="dropdown-item" href="../articles/evidence.html">P. falciparum</a></li>
     <li><a class="dropdown-item" href="../articles/evidence-vivax.html">P. vivax</a></li>
   </ul></li>
-<li class="nav-item"><a class="nav-link" href="../articles/methods.html">How it is produced</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/methods.html">Methods</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -37,9 +37,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="the-claims-register">The claims register<a class="anchor" aria-label="anchor" href="#the-claims-register"></a></h2>
+      <h2 id="claims-register">Claims register<a class="anchor" aria-label="anchor" href="#claims-register"></a></h2>
 
-
+      <div class="section-desc"><p>Read, summarise and check <code>claims.yml</code>.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -55,70 +55,100 @@
 
         <dt>
 
+          <code><a href="find_claims.html">find_claims()</a></code>
+
+        </dt>
+        <dd>Locate the claims register</dd>
+
+        <dt>
+
           <code><a href="claims_summary.html">claims_summary()</a></code>
 
         </dt>
-        <dd>Counts by verdict</dd>
+        <dd>Count claims by verdict</dd>
 
         <dt>
 
           <code><a href="scoreboard.html">scoreboard()</a></code>
 
         </dt>
-        <dd>The scoreboard, as printable text</dd>
-
-        <dt>
-
-          <code><a href="claims_list_md.html">claims_list_md()</a></code>
-
-        </dt>
-        <dd>The register as a numbered list</dd>
-
-        <dt>
-
-          <code><a href="scoreboard_md.html">scoreboard_md()</a></code>
-
-        </dt>
-        <dd>The register as a markdown table</dd>
-
-        <dt>
-
-          <code><a href="badges_md.html">badges_md()</a></code>
-
-        </dt>
-        <dd>The README badge row</dd>
-
-        <dt>
-
-          <code><a href="verdict_html.html">verdict_html()</a></code>
-
-        </dt>
-        <dd>A verdict as its HTML lozenge</dd>
-
-        <dt>
-
-          <code><a href="evidence_page.html">evidence_page()</a></code>
-
-        </dt>
-        <dd>The evidence article a claim is presented on</dd>
-
-        <dt>
-
-          <code><a href="claim_sections_md.html">claim_sections_md()</a></code>
-
-        </dt>
-        <dd>The evidence article's section for each claim</dd>
+        <dd>Format the register as plain text</dd>
 
         <dt>
 
           <code><a href="check_claims.html">check_claims()</a></code>
 
         </dt>
-        <dd>Fail if the register has regressed</dd>
+        <dd>Fail if any claim has regressed</dd>
+      </dl></div><div class="section level2">
+      <h2 id="rendering-the-register">Rendering the register<a class="anchor" aria-label="anchor" href="#rendering-the-register"></a></h2>
+
+      <div class="section-desc"><p>Markdown and HTML for the README, the home page and the evidence articles.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="claims_list_md.html">claims_list_md()</a></code>
+
+        </dt>
+        <dd>Render the register as a numbered list</dd>
+
+        <dt>
+
+          <code><a href="scoreboard_md.html">scoreboard_md()</a></code>
+
+        </dt>
+        <dd>Render the register as a markdown table</dd>
+
+        <dt>
+
+          <code><a href="claim_sections_md.html">claim_sections_md()</a></code>
+
+        </dt>
+        <dd>Render one evidence-article section per claim</dd>
+
+        <dt>
+
+          <code><a href="badges_md.html">badges_md()</a></code>
+
+        </dt>
+        <dd>Render the README badge row</dd>
+
+        <dt>
+
+          <code><a href="verdict_html.html">verdict_html()</a></code>
+
+        </dt>
+        <dd>Format verdicts as HTML spans</dd>
+
+        <dt>
+
+          <code><a href="evidence_page.html">evidence_page()</a></code>
+
+        </dt>
+        <dd>Evidence article for each parasite</dd>
+
+        <dt>
+
+          <code><a href="md_cell.html">md_cell()</a></code>
+
+        </dt>
+        <dd>Escape text for a markdown table cell</dd>
+
+        <dt>
+
+          <code><a href="replace_block.html">replace_block()</a></code>
+
+        </dt>
+        <dd>Replace the text between marker comments</dd>
       </dl></div><div class="section level2">
       <h2 id="comparison-statistics">Comparison statistics<a class="anchor" aria-label="anchor" href="#comparison-statistics"></a></h2>
 
-      <div class="section-desc"><p>Every statistic quoted anywhere in this project. Defined once and unit-tested, so no two pieces of evidence can compute the same quantity two ways.</p></div>
+      <div class="section-desc"><p>Every statistic quoted in the evidence, defined once and unit-tested.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -137,14 +167,14 @@
           <code><a href="comparison-settings.html">BAND_K</a></code> <code><a href="comparison-settings.html">BURDEN_MIN</a></code>
 
         </dt>
-        <dd>How a replicate band and a burden floor are defined</dd>
+        <dd>Replicate band width and burden floor</dd>
 
         <dt>
 
           <code><a href="replicate_band.html">replicate_band()</a></code>
 
         </dt>
-        <dd>The band a set of replicates produces</dd>
+        <dd>Replicate band for one cell</dd>
 
         <dt>
 
@@ -158,21 +188,21 @@
           <code><a href="outside_rates.html">outside_rates()</a></code>
 
         </dt>
-        <dd>How often a candidate falls outside the replicate band, against the IBM</dd>
+        <dd>Out-of-band rates for a candidate and for held-out replicates</dd>
 
         <dt>
 
           <code><a href="band_position.html">band_position()</a></code> <code><a href="band_position.html">inside_band()</a></code>
 
         </dt>
-        <dd>Where a value sits relative to a replicate band</dd>
+        <dd>Position of a value relative to a band</dd>
 
         <dt>
 
           <code><a href="band_summary.html">band_summary()</a></code>
 
         </dt>
-        <dd>Summarise a set of band comparisons as a criterion outcome</dd>
+        <dd>Summarise a set of band comparisons</dd>
       </dl></div><div class="section level2">
       <h2 id="provenance-and-paths">Provenance and paths<a class="anchor" aria-label="anchor" href="#provenance-and-paths"></a></h2>
 
@@ -188,7 +218,7 @@
           <code><a href="stamp.html">stamp()</a></code>
 
         </dt>
-        <dd>Stamp an output with what produced it</dd>
+        <dd>Record what produced a result</dd>
 
         <dt>
 
@@ -202,39 +232,18 @@
           <code><a href="fc_root.html">fc_root()</a></code>
 
         </dt>
-        <dd>The repository root</dd>
+        <dd>Locate the fleetcheck checkout</dd>
 
         <dt>
 
           <code><a href="fc_results.html">fc_results()</a></code>
 
         </dt>
-        <dd>Where a validation keeps its committed results</dd>
-
-        <dt>
-
-          <code><a href="find_claims.html">find_claims()</a></code>
-
-        </dt>
-        <dd>Locate the claims register</dd>
-
-        <dt>
-
-          <code><a href="replace_block.html">replace_block()</a></code>
-
-        </dt>
-        <dd>Replace a marked block in a file</dd>
-
-        <dt>
-
-          <code><a href="md_cell.html">md_cell()</a></code>
-
-        </dt>
-        <dd>Make a string safe inside a markdown table cell</dd>
+        <dd>Path to a validation's results directory</dd>
       </dl></div><div class="section level2">
       <h2 id="scenario-constants">Scenario constants<a class="anchor" aria-label="anchor" href="#scenario-constants"></a></h2>
 
-      <div class="section-desc"><p>The settings the comparison scripts share. Exported so the scripts run against an installed package and not only under pkgload::load_all().</p></div>
+      <div class="section-desc"><p>Settings shared by the comparison scripts. Exported so the scripts also run against an installed package, not only under <code>pkgload::load_all()</code>.</p></div>
 
       <dl></dl></div><div class="section level2">
 

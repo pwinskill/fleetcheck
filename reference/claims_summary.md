@@ -1,6 +1,6 @@
-# Counts by verdict
+# Count claims by verdict
 
-Counts by verdict
+Count claims by verdict
 
 ## Usage
 
@@ -12,5 +12,9 @@ claims_summary(claims = read_claims())
 
 - claims:
 
-  as returned by
+  Data frame returned by
   [`read_claims()`](https://pwinskill.github.io/fleetcheck/reference/read_claims.md).
+
+## Value
+
+A named list of integer counts: `pass`, `open`, `fail` and `undeclared`.

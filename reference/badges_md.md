@@ -1,9 +1,11 @@
-# The README badge row
+# Render the README badge row
 
-The one badge worth having here reports the register, so it is generated
-from the register rather than typed: a hand-written "all claims pass"
-that outlived the failure it was written for is the exact drift this
-project exists to stop.
+The CI and pkgdown workflow badges, one claims badge per parasite, and
+the lifecycle and licence badges. A claims badge counts claims by
+verdict and links to that parasite's evidence article. It is green when
+every claim passes, yellow when any is open or untested and none fails,
+and orange when any fails. A register with no vivax claims gets a single
+badge labelled "claims".
 
 ## Usage
 
@@ -19,24 +21,17 @@ badges_md(
 
 - claims:
 
-  as returned by
+  Data frame returned by
   [`read_claims()`](https://pwinskill.github.io/fleetcheck/reference/read_claims.md).
 
 - repo:
 
-  `owner/name` on GitHub.
+  GitHub repository, as `"owner/name"`.
 
 - site:
 
-  the published site, used as the claims badge's target.
+  URL of the published site, with a trailing slash.
 
 ## Value
 
-a character vector of markdown lines, one badge each.
-
-## Details
-
-The static badges are emitted here too, rather than left in the markdown
-around a generated block, because a marker line splits a markdown
-paragraph. Badges written either side of one render as two rows with a
-gap between them.
+A character vector of markdown lines, one badge each.

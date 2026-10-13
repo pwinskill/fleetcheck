@@ -1,12 +1,15 @@
-# How often a candidate falls outside the replicate band, against the IBM
+# Out-of-band rates for a candidate and for held-out replicates
 
-"Inside the band in every cell" is a sensible bar over six cells, where
-a genuine replicate clears it about a quarter of the time. Over
-seventy-two it is not: a 1.28-sd band leaves a fifth of cells outside by
-construction, and no replicate clears it at all. The bar has to know how
-many cells it is being applied to, so it is taken from the IBM: hold
-each replicate out, score it against the other nineteen, and ask whether
-fleet is outside less often than the best of them.
+"Inside the band in every cell" is a workable bar over six cells, where
+a genuine replicate clears it about a quarter of the time, but not over
+72: a 1.28 SD band leaves a fifth of cells outside by construction, and
+no replicate clears it. This takes the bar from the IBM instead. Each
+replicate is held out and scored against the others, and the candidate
+is scored against the same reduced sets, so a claim can ask whether the
+candidate is outside less often than the best held-out replicate. That
+is stricter than treating the candidate as one more replicate: a
+deterministic model that tracks the centre should be outside far less
+often than a replicate, which scatters around it.
 
 ## Usage
 
@@ -18,26 +21,21 @@ outside_rates(replicates, candidate, k = BAND_K)
 
 - replicates:
 
-  a matrix, replicates in rows and cells in columns.
+  Matrix with replicates in rows and cells in columns; at least three
+  rows.
 
 - candidate:
 
-  the deterministic values, one per cell.
+  Numeric vector of deterministic values, one per cell.
 
 - k:
 
-  half-width in standard deviations; see
+  Half-width in standard deviations; see
   [BAND_K](https://pwinskill.github.io/fleetcheck/reference/comparison-settings.md).
 
 ## Value
 
-a list with `candidate`, the fraction of cells the candidate falls
-outside, and `held_out`, one such fraction per replicate scored against
-the others. Cells where the replicates carry no spread are dropped.
-
-## Details
-
-This is not the same as letting fleet wander as freely as a replicate. A
-replicate scatters around the centre; a deterministic model that tracks
-the centre should be outside far less often, and the comparison is
-against the best replicate rather than the typical one.
+A list with `candidate`, the median over held-out sets of the fraction
+of cells in which the candidate is outside the band, and `held_out`, the
+fraction for each replicate scored against the others. Cells in which
+the replicates have no spread, or any value is not finite, are dropped.

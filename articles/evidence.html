@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Validation evidence: P. falciparum • fleetcheck</title>
+<title>Evidence: P. falciparum • fleetcheck</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -15,7 +15,7 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><script src="../extra.js"></script><meta property="og:title" content="Validation evidence: P. falciparum">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><script src="../extra.js"></script><meta property="og:title" content="Evidence: P. falciparum">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -42,7 +42,7 @@
     <li><a class="dropdown-item" href="../articles/evidence-vivax.html">P. vivax</a></li>
   </ul>
 </li>
-<li class="nav-item"><a class="nav-link" href="../articles/methods.html">How it is produced</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/methods.html">Methods</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -62,7 +62,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Validation evidence: P. falciparum</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Evidence: P. falciparum</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/pwinskill/fleetcheck/blob/main/vignettes/evidence.Rmd" class="external-link"><code>vignettes/evidence.Rmd</code></a></small>
@@ -71,18 +71,16 @@
 
     
     
-<p>How closely does <code>fleet</code> reproduce
-<code>malariasimulation</code> for <em>P. falciparum</em>? Each claim
-below states the criterion that decides it, the value measured against
-that criterion, and a verdict. The order runs from transmission through
-clinical and severe burden to their age distributions, then
-interventions, real settings and the parameter posterior, with the
-demographic, performance and numerical checks that underwrite them at
-the end. The <em>P. vivax</em> claims are on <a href="evidence-vivax.html">a page of their own</a>.</p>
-<p>Every section is generated from <code>claims.yml</code>, so this page
-cannot disagree with the register, and the register cannot be changed
-without the page following.</p>
-<p><strong>12 claims — 0 failing, 0 untested, 0 open, 12
+<p>Each <em>P. falciparum</em> claim below gives the criterion that
+decides it, the value measured against that criterion, and a verdict.
+The claims run from transmission through clinical and severe burden to
+their age distributions, then interventions, real settings and the
+parameter posterior, followed by the demographic, performance and
+numerical checks that support them. The <em>P. vivax</em> claims are on
+<a href="evidence-vivax.html">their own page</a>.</p>
+<p>This page is generated from <code>claims.yml</code>. A claim’s tier
+is the cost of reproducing it; see <a href="methods.html#tiers">Methods</a>.</p>
+<p><strong>12 claims: 0 failing, 0 untested, 0 open, 12
 pass.</strong></p>
 <table class="table">
 <colgroup>
@@ -220,7 +218,7 @@ years</td>
 <div class="section level2">
 <h2 id="prevalence-eir">prevalence-eir<a class="anchor" aria-label="anchor" href="#prevalence-eir"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — LM prevalence in 2-10 year
+<p><span class="verdict pass">pass</span> LM prevalence in 2-10 year
 olds tracks the IBM across transmission intensity.</p>
 <p><strong>Criterion:</strong> inside the IBM replicate band at every
 EIR on the grid<br><strong>Measured:</strong> inside at 6 of 6; largest departure 1.1% of
@@ -233,7 +231,7 @@ tier 2 · <code>validations/02-scenarios</code>
 <div class="section level2">
 <h2 id="clinical-allage-eir">clinical-allage-eir<a class="anchor" aria-label="anchor" href="#clinical-allage-eir"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — All-age clinical incidence
+<p><span class="verdict pass">pass</span> All-age clinical incidence
 tracks the IBM across transmission intensity.</p>
 <p><strong>Criterion:</strong> inside the IBM replicate band at every
 EIR on the grid<br><strong>Measured:</strong> inside at 6 of 6; largest departure 1.8% of
@@ -252,7 +250,7 @@ band. validations/age-grid measures the grid’s share.</p>
 <div class="section level2">
 <h2 id="clinical-under5-eir">clinical-under5-eir<a class="anchor" aria-label="anchor" href="#clinical-under5-eir"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — Under-5 clinical incidence
+<p><span class="verdict pass">pass</span> Under-5 clinical incidence
 tracks the IBM across transmission intensity.</p>
 <p><strong>Criterion:</strong> inside the IBM replicate band at every
 EIR on the grid<br><strong>Measured:</strong> inside at 6 of 6; largest departure 1.1% of
@@ -267,7 +265,7 @@ outside the band; see clinical-allage-eir.</p>
 <div class="section level2">
 <h2 id="severe-allage-eir">severe-allage-eir<a class="anchor" aria-label="anchor" href="#severe-allage-eir"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — All-age severe incidence
+<p><span class="verdict pass">pass</span> All-age severe incidence
 tracks the IBM across transmission intensity.</p>
 <p><strong>Criterion:</strong> inside the IBM replicate band at every
 EIR on the grid<br><strong>Measured:</strong> inside at 6 of 6; largest departure 2.2% of
@@ -289,7 +287,7 @@ offset repeated at every point, which is why the offsets are given.</p>
 <div class="section level2">
 <h2 id="age-profile-clinical">age-profile-clinical<a class="anchor" aria-label="anchor" href="#age-profile-clinical"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — The age distribution of
+<p><span class="verdict pass">pass</span> The age distribution of
 clinical incidence tracks the IBM.</p>
 <p><strong>Criterion:</strong> inside the IBM replicate band in every
 age band carrying at least 5% of clinical episodes, at EIR 3, 20 and
@@ -312,8 +310,8 @@ here.</p>
 <div class="section level2">
 <h2 id="age-profile-severe">age-profile-severe<a class="anchor" aria-label="anchor" href="#age-profile-severe"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — The age distribution of
-severe incidence tracks the IBM.</p>
+<p><span class="verdict pass">pass</span> The age distribution of severe
+incidence tracks the IBM.</p>
 <p><strong>Criterion:</strong> inside the IBM replicate band in every
 age band carrying at least 5% of severe episodes, at EIR 3, 20 and
 120<br><strong>Measured:</strong> inside at 16 of 16 tested bands across the
@@ -331,7 +329,7 @@ not evidence of much.</p>
 <div class="section level2">
 <h2 id="intervention-impact">intervention-impact<a class="anchor" aria-label="anchor" href="#intervention-impact"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — The modelled impact of each
+<p><span class="verdict pass">pass</span> The modelled impact of each
 intervention matches the IBM.</p>
 <p><strong>Criterion:</strong> outside the IBM replicate band in no
 greater a share of cells than the best held-out IBM replicate, over
@@ -346,37 +344,37 @@ tier 2 · <code>validations/02-scenarios</code>
 <p>The bar is taken from the IBM because at 72 cells a fixed one cannot
 be: a 1.28 SD band leaves a fifth of cells outside by construction, and
 no replicate is inside all 72. fleet is outside less often than any of
-the twenty. Where fleet does sit outside, the size is small in both
-senses. It is outside in two cells, both bed nets, on prevalence at EIR
-20 and 120; on all-age clinical incidence at EIR 120 it sits 0.01 points
-inside. The worst is prevalence at EIR 120, where the IBM’s bed nets cut
-PfPR(2-10) by 27.5% and fleet’s by 25.4%: 2.1 percentage points of the
-reduction, 7.7% of the effect, the mark of population-averaged nets,
-which lose the correlation of each person’s protection across bites. The
-typical gap does not grow with transmission – a median of 0.39, 0.37 and
-0.49 percentage points at EIR 3, 20 and 120. Impact is a ratio of two
-runs sharing an age grid, so grid discretisation largely divides out:
-over twice the groups, 53 to 118, moved the worst excursion by 0.08
-points. SMC sends the clinical and detectable cases it treats through
-the treated state first, as the IBM does, so prevalence in the dosed
-band falls over the Tr stay rather than overnight; its protection is
-complete while it lasts, where the IBM’s is partial and fades. Perennial
-chemoprevention is the one intervention whose delivery the models cannot
-share. The IBM doses each child on reaching a dose age; fleet
-approximates that as monthly pulses over a 30-day band, which doses 8 to
-21 days late and overstates the infant benefit by about a tenth. The
-window is the three years after deployment. Over the arms’ last three
-years, against the three before deployment, PMC changes all-age severe
-incidence in fleet by -1.1% at EIR 3, +1.7% at EIR 20 and +7.6% at EIR
-120: the rebound of delayed immunity, pushing severe disease from
-infancy into the second and third years of life. The IBM’s medians have
-the same sign at all three (-5.2%, +3.1%, +4.2%), inside replicate bands
-too wide to say more.</p>
+the twenty. Where fleet does sit outside, the gap is small in absolute
+and relative terms. It is outside in two cells, both bed nets, on
+prevalence at EIR 20 and 120; on all-age clinical incidence at EIR 120
+it sits 0.01 points inside. The worst is prevalence at EIR 120, where
+the IBM’s bed nets cut PfPR(2-10) by 27.5% and fleet’s by 25.4%: 2.1
+percentage points of the reduction, 7.7% of the effect, the mark of
+population-averaged nets, which lose the correlation of each person’s
+protection across bites. The typical gap does not grow with
+transmission: a median of 0.39, 0.37 and 0.49 percentage points at EIR
+3, 20 and 120. Impact is a ratio of two runs sharing an age grid, so
+grid discretisation largely divides out: over twice the groups, 53 to
+118, moved the worst excursion by 0.08 points. SMC sends the clinical
+and detectable cases it treats through the treated state first, as the
+IBM does, so prevalence in the dosed band falls over the Tr stay rather
+than overnight; its protection is complete while it lasts, where the
+IBM’s is partial and fades. Perennial chemoprevention is the one
+intervention whose delivery the models cannot share. The IBM doses each
+child on reaching a dose age; fleet approximates that as monthly pulses
+over a 30-day band, which doses 8 to 21 days late and overstates the
+infant benefit by about a tenth. The window is the three years after
+deployment. Over the arms’ last three years, against the three before
+deployment, PMC changes all-age severe incidence in fleet by -1.1% at
+EIR 3, +1.7% at EIR 20 and +7.6% at EIR 120: the rebound of delayed
+immunity, pushing severe disease from infancy into the second and third
+years of life. The IBM’s medians have the same sign at all three (-5.2%,
++3.1%, +4.2%), inside replicate bands too wide to say more.</p>
 </div>
 <div class="section level2">
 <h2 id="real-settings-correlation">real-settings-correlation<a class="anchor" aria-label="anchor" href="#real-settings-correlation"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — Agreement holds across real
+<p><span class="verdict pass">pass</span> Agreement holds across real
 transmission settings, not just synthetic scenarios.</p>
 <p><strong>Criterion:</strong> r &gt; 0.95 and |slope - 1| &lt; 0.10 on
 both clinical and severe incidence<br><strong>Measured:</strong> clinical r 0.983 slope 0.983; severe r 0.958
@@ -402,7 +400,7 @@ transmission is low.</p>
 <div class="section level2">
 <h2 id="parameter-draws">parameter-draws<a class="anchor" aria-label="anchor" href="#parameter-draws"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — The change a posterior
+<p><span class="verdict pass">pass</span> The change a posterior
 parameter draw makes to prevalence, clinical and severe incidence
 matches the IBM’s.</p>
 <p><strong>Criterion:</strong> each draw’s change from the default
@@ -453,7 +451,7 @@ with the highest b0, draws 410 and 464 (0.96 and 0.99).</p>
 <div class="section level2">
 <h2 id="population-age-structure">population-age-structure<a class="anchor" aria-label="anchor" href="#population-age-structure"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — The population age structure
+<p><span class="verdict pass">pass</span> The population age structure
 matches the IBM’s.</p>
 <p><strong>Criterion:</strong> inside the IBM replicate band in every
 age band below 60 years, on shares renormalised to the 0-60
@@ -474,7 +472,7 @@ time-varying demography.</p>
 <div class="section level2">
 <h2 id="speed">speed<a class="anchor" aria-label="anchor" href="#speed"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — fleet is fast enough to be
+<p><span class="verdict pass">pass</span> fleet is fast enough to be
 worth using in place of the IBM.</p>
 <p><strong>Criterion:</strong> at least 10x faster per simulated year
 than one IBM run of 10,000 people, each timed alone on one core, at EIR
@@ -557,10 +555,10 @@ nets, indoor spraying, SMC and RTS,S, running from the first day.
 </div>
 <p>Each run in the table starts from set_equilibrium()’s seed and is
 timed alone, start-up apart. Each fleet figure is one complete
-run_simulation_ode() call – inputs, seed, the run and its outputs – the
-fastest of five. The IBM’s cost grows with its population, though by
-less than in proportion – five times the people cost it 2.6 to 3.6 times
-as much – and fleet’s does not. A seasonal programme adds 20% to 30% to
+run_simulation_ode() call (inputs, seed, the run and its outputs), the
+fastest of five. The IBM’s cost grows with its population, though less
+than in proportion (five times the people cost it 2.6 to 3.6 times as
+much), and fleet’s does not. A seasonal programme adds 20% to 30% to
 fleet’s cost, and 14% to 56% to the IBM’s, more the larger its
 population. One fleet run also stands in for the twenty replicates an
 IBM comparison needs: across the whole scenario suite, whose IBM runs
@@ -570,7 +568,7 @@ The age grid sets fleet’s cost, roughly in proportion to its groups.</p>
 <div class="section level2">
 <h2 id="seed-stability">seed-stability<a class="anchor" aria-label="anchor" href="#seed-stability"></a>
 </h2>
-<p><span class="verdict pass">pass</span> — An undisturbed run holds the
+<p><span class="verdict pass">pass</span> An undisturbed run holds the
 equilibrium it was seeded at.</p>
 <p><strong>Criterion:</strong> PfPR(2-10) departs from its seeded value
 by less than 1% over 15 years at EIR 20<br><strong>Measured:</strong> 0.35% maximum excursion; flat to 0.007% over
@@ -584,55 +582,10 @@ fleet’s own fixed point on the daily clock, so the run moves off it and
 settles 0.26% below it. The claim is about prevalence: incidence relaxes
 further, under-5 clinical incidence by -0.1% at EIR 1, +1.7% at EIR 20
 and +6.0% at EIR 120, nine-tenths of it within five years, so a
-comparison of incidence levels wants a burn-in (every tier-2 scenario
+comparison of incidence levels needs a burn-in (every tier-2 scenario
 has thirty years), as the IBM’s does.
 validations/01-seed-stability/run.R reproduces the prevalence
 figures.</p>
-</div>
-<div class="section level2">
-<h2 id="what-tier-means">What “tier” means<a class="anchor" aria-label="anchor" href="#what-tier-means"></a>
-</h2>
-<p>What it costs to reproduce a result is a property of that result, so
-it is recorded against every claim rather than stated once in prose.</p>
-<table class="table">
-<thead><tr class="header">
-<th>tier</th>
-<th>cost</th>
-<th>who can reproduce it</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>0</td>
-<td>seconds</td>
-<td>anyone, from the committed summaries</td>
-</tr>
-<tr class="even">
-<td>1</td>
-<td>minutes</td>
-<td>anyone; re-runs <code>fleet</code> only</td>
-</tr>
-<tr class="odd">
-<td>2</td>
-<td>~2 h</td>
-<td>anyone with about ten cores</td>
-</tr>
-<tr class="even">
-<td>3</td>
-<td>~30 min</td>
-<td>four cores, and inputs that are not redistributable</td>
-</tr>
-</tbody>
-</table>
-<p>Tier 3 is the 63-country site-file comparison. <strong>Its figures
-and statistics are public; the site files behind them are not.</strong>
-The constraint is the inputs rather than the compute: the sweep re-runs
-<code>fleet</code> only, because the IBM arm is the pre-run diagnostic
-shipped with each site file, so thirty minutes on four cores refreshes
-it. But the site files are not redistributable, so nobody outside the
-project can repeat it. That is a limitation of this evidence, not a
-property of the result, and
-<code>validations/03-real-settings/example-one-site.R</code> runs the
-same pipeline on a single sub-site for anyone who has one site file.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

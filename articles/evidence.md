@@ -1,20 +1,18 @@
-# Validation evidence: P. falciparum
+# Evidence: P. falciparum
 
-How closely does `fleet` reproduce `malariasimulation` for *P.
-falciparum*? Each claim below states the criterion that decides it, the
-value measured against that criterion, and a verdict. The order runs
+Each *P. falciparum* claim below gives the criterion that decides it,
+the value measured against that criterion, and a verdict. The claims run
 from transmission through clinical and severe burden to their age
 distributions, then interventions, real settings and the parameter
-posterior, with the demographic, performance and numerical checks that
-underwrite them at the end. The *P. vivax* claims are on [a page of
-their
-own](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md).
+posterior, followed by the demographic, performance and numerical checks
+that support them. The *P. vivax* claims are on [their own
+page](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md).
 
-Every section is generated from `claims.yml`, so this page cannot
-disagree with the register, and the register cannot be changed without
-the page following.
+This page is generated from `claims.yml`. A claim’s tier is the cost of
+reproducing it; see
+[Methods](https://pwinskill.github.io/fleetcheck/articles/methods.html#tiers).
 
-**12 claims — 0 failing, 0 untested, 0 open, 12 pass.**
+**12 claims: 0 failing, 0 untested, 0 open, 12 pass.**
 
 | claim | tier | criterion | measured | verdict |
 |----|----|----|----|----|
@@ -33,8 +31,8 @@ the page following.
 
 ## prevalence-eir
 
-pass — LM prevalence in 2-10 year olds tracks the IBM across
-transmission intensity.
+pass LM prevalence in 2-10 year olds tracks the IBM across transmission
+intensity.
 
 **Criterion:** inside the IBM replicate band at every EIR on the grid  
 **Measured:** inside at 6 of 6; largest departure 1.1% of the IBM
@@ -48,7 +46,7 @@ pass.](cmp_eir_pfpr_2_10.png)](https://pwinskill.github.io/fleetcheck/articles/c
 
 ## clinical-allage-eir
 
-pass — All-age clinical incidence tracks the IBM across transmission
+pass All-age clinical incidence tracks the IBM across transmission
 intensity.
 
 **Criterion:** inside the IBM replicate band at every EIR on the grid  
@@ -70,7 +68,7 @@ validations/age-grid measures the grid’s share.
 
 ## clinical-under5-eir
 
-pass — Under-5 clinical incidence tracks the IBM across transmission
+pass Under-5 clinical incidence tracks the IBM across transmission
 intensity.
 
 **Criterion:** inside the IBM replicate band at every EIR on the grid  
@@ -88,7 +86,7 @@ outside the band; see clinical-allage-eir.
 
 ## severe-allage-eir
 
-pass — All-age severe incidence tracks the IBM across transmission
+pass All-age severe incidence tracks the IBM across transmission
 intensity.
 
 **Criterion:** inside the IBM replicate band at every EIR on the grid  
@@ -113,7 +111,7 @@ offset repeated at every point, which is why the offsets are given.
 
 ## age-profile-clinical
 
-pass — The age distribution of clinical incidence tracks the IBM.
+pass The age distribution of clinical incidence tracks the IBM.
 
 **Criterion:** inside the IBM replicate band in every age band carrying
 at least 5% of clinical episodes, at EIR 3, 20 and 120  
@@ -137,7 +135,7 @@ here.
 
 ## age-profile-severe
 
-pass — The age distribution of severe incidence tracks the IBM.
+pass The age distribution of severe incidence tracks the IBM.
 
 **Criterion:** inside the IBM replicate band in every age band carrying
 at least 5% of severe episodes, at EIR 3, 20 and 120  
@@ -157,7 +155,7 @@ evidence of much.
 
 ## intervention-impact
 
-pass — The modelled impact of each intervention matches the IBM.
+pass The modelled impact of each intervention matches the IBM.
 
 **Criterion:** outside the IBM replicate band in no greater a share of
 cells than the best held-out IBM replicate, over every intervention and
@@ -174,36 +172,36 @@ pass.](cmp_int_impact.png)](https://pwinskill.github.io/fleetcheck/articles/cmp_
 The bar is taken from the IBM because at 72 cells a fixed one cannot be:
 a 1.28 SD band leaves a fifth of cells outside by construction, and no
 replicate is inside all 72. fleet is outside less often than any of the
-twenty. Where fleet does sit outside, the size is small in both senses.
-It is outside in two cells, both bed nets, on prevalence at EIR 20 and
-120; on all-age clinical incidence at EIR 120 it sits 0.01 points
-inside. The worst is prevalence at EIR 120, where the IBM’s bed nets cut
-PfPR(2-10) by 27.5% and fleet’s by 25.4%: 2.1 percentage points of the
-reduction, 7.7% of the effect, the mark of population-averaged nets,
-which lose the correlation of each person’s protection across bites. The
-typical gap does not grow with transmission – a median of 0.39, 0.37 and
-0.49 percentage points at EIR 3, 20 and 120. Impact is a ratio of two
-runs sharing an age grid, so grid discretisation largely divides out:
-over twice the groups, 53 to 118, moved the worst excursion by 0.08
-points. SMC sends the clinical and detectable cases it treats through
-the treated state first, as the IBM does, so prevalence in the dosed
-band falls over the Tr stay rather than overnight; its protection is
-complete while it lasts, where the IBM’s is partial and fades. Perennial
-chemoprevention is the one intervention whose delivery the models cannot
-share. The IBM doses each child on reaching a dose age; fleet
-approximates that as monthly pulses over a 30-day band, which doses 8 to
-21 days late and overstates the infant benefit by about a tenth. The
-window is the three years after deployment. Over the arms’ last three
-years, against the three before deployment, PMC changes all-age severe
-incidence in fleet by -1.1% at EIR 3, +1.7% at EIR 20 and +7.6% at EIR
-120: the rebound of delayed immunity, pushing severe disease from
-infancy into the second and third years of life. The IBM’s medians have
-the same sign at all three (-5.2%, +3.1%, +4.2%), inside replicate bands
-too wide to say more.
+twenty. Where fleet does sit outside, the gap is small in absolute and
+relative terms. It is outside in two cells, both bed nets, on prevalence
+at EIR 20 and 120; on all-age clinical incidence at EIR 120 it sits 0.01
+points inside. The worst is prevalence at EIR 120, where the IBM’s bed
+nets cut PfPR(2-10) by 27.5% and fleet’s by 25.4%: 2.1 percentage points
+of the reduction, 7.7% of the effect, the mark of population-averaged
+nets, which lose the correlation of each person’s protection across
+bites. The typical gap does not grow with transmission: a median of
+0.39, 0.37 and 0.49 percentage points at EIR 3, 20 and 120. Impact is a
+ratio of two runs sharing an age grid, so grid discretisation largely
+divides out: over twice the groups, 53 to 118, moved the worst excursion
+by 0.08 points. SMC sends the clinical and detectable cases it treats
+through the treated state first, as the IBM does, so prevalence in the
+dosed band falls over the Tr stay rather than overnight; its protection
+is complete while it lasts, where the IBM’s is partial and fades.
+Perennial chemoprevention is the one intervention whose delivery the
+models cannot share. The IBM doses each child on reaching a dose age;
+fleet approximates that as monthly pulses over a 30-day band, which
+doses 8 to 21 days late and overstates the infant benefit by about a
+tenth. The window is the three years after deployment. Over the arms’
+last three years, against the three before deployment, PMC changes
+all-age severe incidence in fleet by -1.1% at EIR 3, +1.7% at EIR 20 and
++7.6% at EIR 120: the rebound of delayed immunity, pushing severe
+disease from infancy into the second and third years of life. The IBM’s
+medians have the same sign at all three (-5.2%, +3.1%, +4.2%), inside
+replicate bands too wide to say more.
 
 ## real-settings-correlation
 
-pass — Agreement holds across real transmission settings, not just
+pass Agreement holds across real transmission settings, not just
 synthetic scenarios.
 
 **Criterion:** r \> 0.95 and \|slope - 1\| \< 0.10 on both clinical and
@@ -232,8 +230,8 @@ transmission is low.
 
 ## parameter-draws
 
-pass — The change a posterior parameter draw makes to prevalence,
-clinical and severe incidence matches the IBM’s.
+pass The change a posterior parameter draw makes to prevalence, clinical
+and severe incidence matches the IBM’s.
 
 **Criterion:** each draw’s change from the default parameters inside the
 IBM replicate band of that change, for eight posterior draws chosen at
@@ -285,7 +283,7 @@ with the highest b0, draws 410 and 464 (0.96 and 0.99).
 
 ## population-age-structure
 
-pass — The population age structure matches the IBM’s.
+pass The population age structure matches the IBM’s.
 
 **Criterion:** inside the IBM replicate band in every age band below 60
 years, on shares renormalised to the 0-60 population  
@@ -306,7 +304,7 @@ exact at the seed and an approximation under time-varying demography.
 
 ## speed
 
-pass — fleet is fast enough to be worth using in place of the IBM.
+pass fleet is fast enough to be worth using in place of the IBM.
 
 **Criterion:** at least 10x faster per simulated year than one IBM run
 of 10,000 people, each timed alone on one core, at EIR 3, 20 and 120,
@@ -339,10 +337,10 @@ indoor spraying, SMC and RTS,S, running from the first day.
 
 Each run in the table starts from set_equilibrium()’s seed and is timed
 alone, start-up apart. Each fleet figure is one complete
-run_simulation_ode() call – inputs, seed, the run and its outputs – the
-fastest of five. The IBM’s cost grows with its population, though by
-less than in proportion – five times the people cost it 2.6 to 3.6 times
-as much – and fleet’s does not. A seasonal programme adds 20% to 30% to
+run_simulation_ode() call (inputs, seed, the run and its outputs), the
+fastest of five. The IBM’s cost grows with its population, though less
+than in proportion (five times the people cost it 2.6 to 3.6 times as
+much), and fleet’s does not. A seasonal programme adds 20% to 30% to
 fleet’s cost, and 14% to 56% to the IBM’s, more the larger its
 population. One fleet run also stands in for the twenty replicates an
 IBM comparison needs: across the whole scenario suite, whose IBM runs
@@ -351,7 +349,7 @@ The age grid sets fleet’s cost, roughly in proportion to its groups.
 
 ## seed-stability
 
-pass — An undisturbed run holds the equilibrium it was seeded at.
+pass An undisturbed run holds the equilibrium it was seeded at.
 
 **Criterion:** PfPR(2-10) departs from its seeded value by less than 1%
 over 15 years at EIR 20  
@@ -367,28 +365,6 @@ own fixed point on the daily clock, so the run moves off it and settles
 0.26% below it. The claim is about prevalence: incidence relaxes
 further, under-5 clinical incidence by -0.1% at EIR 1, +1.7% at EIR 20
 and +6.0% at EIR 120, nine-tenths of it within five years, so a
-comparison of incidence levels wants a burn-in (every tier-2 scenario
+comparison of incidence levels needs a burn-in (every tier-2 scenario
 has thirty years), as the IBM’s does.
 validations/01-seed-stability/run.R reproduces the prevalence figures.
-
-## What “tier” means
-
-What it costs to reproduce a result is a property of that result, so it
-is recorded against every claim rather than stated once in prose.
-
-| tier | cost    | who can reproduce it                                |
-|------|---------|-----------------------------------------------------|
-| 0    | seconds | anyone, from the committed summaries                |
-| 1    | minutes | anyone; re-runs `fleet` only                        |
-| 2    | ~2 h    | anyone with about ten cores                         |
-| 3    | ~30 min | four cores, and inputs that are not redistributable |
-
-Tier 3 is the 63-country site-file comparison. **Its figures and
-statistics are public; the site files behind them are not.** The
-constraint is the inputs rather than the compute: the sweep re-runs
-`fleet` only, because the IBM arm is the pre-run diagnostic shipped with
-each site file, so thirty minutes on four cores refreshes it. But the
-site files are not redistributable, so nobody outside the project can
-repeat it. That is a limitation of this evidence, not a property of the
-result, and `validations/03-real-settings/example-one-site.R` runs the
-same pipeline on a single sub-site for anyone who has one site file.

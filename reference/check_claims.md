@@ -1,8 +1,10 @@
-# Fail if the register has regressed
+# Fail if any claim has regressed
 
-For CI. `undeclared` does not fail – a claim with no criterion is a gap
-in the register, not a regression – but it is always reported, so the
-count cannot quietly grow.
+Prints
+[`scoreboard()`](https://pwinskill.github.io/fleetcheck/reference/scoreboard.md),
+then signals an error if a claim with status `fail` is not in
+`allow_fail`. An `undeclared` claim is a gap in the register rather than
+a regression, so it is reported but does not fail. CI runs this.
 
 ## Usage
 
@@ -14,10 +16,14 @@ check_claims(claims = read_claims(), allow_fail = character())
 
 - claims:
 
-  as returned by
+  Data frame returned by
   [`read_claims()`](https://pwinskill.github.io/fleetcheck/reference/read_claims.md).
 
 - allow_fail:
 
-  claim ids whose failure is known and accepted, each of which must
-  carry a `note` explaining why it is tolerated.
+  Ids of claims whose failure is accepted. Each must exist in the
+  register and have a `note` explaining why, or the call is an error.
+
+## Value
+
+`claims`, invisibly.

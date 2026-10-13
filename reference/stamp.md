@@ -1,12 +1,10 @@
-# Stamp an output with what produced it
+# Record what produced a result
 
-Every result written by this project carries one of these. It exists
-because `fleet`'s own snapshots had the provenance inverted: the
-25-minute comparison recorded the malariasimulation version, the R
-version, the replicate count and a digest of the scenarios, while the
-seven-hour site-file run – the one nobody can repeat – recorded only a
-date and a fleet version. The tier that cannot be re-run is the tier
-that most needs to say what made it.
+Every result written by fleetcheck's validation scripts carries a stamp.
+Commits are read from the `RemoteSha` or `GithubSHA1` field that
+`remotes`, `pak` and `devtools` write when installing from GitHub; a
+package installed from a local source tree has neither, so its commit is
+`NA` and `fleet`'s `Built` field shows when and on what it was built.
 
 ## Usage
 
@@ -18,8 +16,13 @@ stamp(...)
 
 - ...:
 
-  extra fields to record (replicate counts, grids, input versions).
+  Extra named fields to record, such as replicate counts, grids or input
+  versions.
 
 ## Value
 
-a named list, safe to write as JSON alongside the result.
+A named list, suitable for writing as JSON beside the result: `taken`
+(the time), `fleet`, `fleet_sha`, `fleet_built`, `malariasimulation`,
+`malariasimulation_sha`, `postie` (versions and seven-character
+commits), `R`, `platform`, `fleetcheck_sha` (the checkout's commit),
+then the fields in `...`. Anything unavailable is `NA`.

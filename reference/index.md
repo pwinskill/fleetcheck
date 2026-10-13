@@ -1,73 +1,78 @@
 # Package index
 
-## The claims register
+## Claims register
+
+Read, summarise and check `claims.yml`.
 
 - [`read_claims()`](https://pwinskill.github.io/fleetcheck/reference/read_claims.md)
   : Read the claims register
+- [`find_claims()`](https://pwinskill.github.io/fleetcheck/reference/find_claims.md)
+  : Locate the claims register
 - [`claims_summary()`](https://pwinskill.github.io/fleetcheck/reference/claims_summary.md)
-  : Counts by verdict
+  : Count claims by verdict
 - [`scoreboard()`](https://pwinskill.github.io/fleetcheck/reference/scoreboard.md)
-  : The scoreboard, as printable text
-- [`claims_list_md()`](https://pwinskill.github.io/fleetcheck/reference/claims_list_md.md)
-  : The register as a numbered list
-- [`scoreboard_md()`](https://pwinskill.github.io/fleetcheck/reference/scoreboard_md.md)
-  : The register as a markdown table
-- [`badges_md()`](https://pwinskill.github.io/fleetcheck/reference/badges_md.md)
-  : The README badge row
-- [`verdict_html()`](https://pwinskill.github.io/fleetcheck/reference/verdict_html.md)
-  : A verdict as its HTML lozenge
-- [`evidence_page()`](https://pwinskill.github.io/fleetcheck/reference/evidence_page.md)
-  : The evidence article a claim is presented on
-- [`claim_sections_md()`](https://pwinskill.github.io/fleetcheck/reference/claim_sections_md.md)
-  : The evidence article's section for each claim
+  : Format the register as plain text
 - [`check_claims()`](https://pwinskill.github.io/fleetcheck/reference/check_claims.md)
-  : Fail if the register has regressed
+  : Fail if any claim has regressed
+
+## Rendering the register
+
+Markdown and HTML for the README, the home page and the evidence
+articles.
+
+- [`claims_list_md()`](https://pwinskill.github.io/fleetcheck/reference/claims_list_md.md)
+  : Render the register as a numbered list
+- [`scoreboard_md()`](https://pwinskill.github.io/fleetcheck/reference/scoreboard_md.md)
+  : Render the register as a markdown table
+- [`claim_sections_md()`](https://pwinskill.github.io/fleetcheck/reference/claim_sections_md.md)
+  : Render one evidence-article section per claim
+- [`badges_md()`](https://pwinskill.github.io/fleetcheck/reference/badges_md.md)
+  : Render the README badge row
+- [`verdict_html()`](https://pwinskill.github.io/fleetcheck/reference/verdict_html.md)
+  : Format verdicts as HTML spans
+- [`evidence_page()`](https://pwinskill.github.io/fleetcheck/reference/evidence_page.md)
+  : Evidence article for each parasite
+- [`md_cell()`](https://pwinskill.github.io/fleetcheck/reference/md_cell.md)
+  : Escape text for a markdown table cell
+- [`replace_block()`](https://pwinskill.github.io/fleetcheck/reference/replace_block.md)
+  : Replace the text between marker comments
 
 ## Comparison statistics
 
-Every statistic quoted anywhere in this project. Defined once and
-unit-tested, so no two pieces of evidence can compute the same quantity
-two ways.
+Every statistic quoted in the evidence, defined once and unit-tested.
 
 - [`agreement()`](https://pwinskill.github.io/fleetcheck/reference/agreement.md)
   : Agreement between two models on the same quantity
 - [`BAND_K`](https://pwinskill.github.io/fleetcheck/reference/comparison-settings.md)
   [`BURDEN_MIN`](https://pwinskill.github.io/fleetcheck/reference/comparison-settings.md)
-  : How a replicate band and a burden floor are defined
+  : Replicate band width and burden floor
 - [`replicate_band()`](https://pwinskill.github.io/fleetcheck/reference/replicate_band.md)
-  : The band a set of replicates produces
+  : Replicate band for one cell
 - [`band_z()`](https://pwinskill.github.io/fleetcheck/reference/band_z.md)
   : Standardised departure from a set of replicates
 - [`outside_rates()`](https://pwinskill.github.io/fleetcheck/reference/outside_rates.md)
-  : How often a candidate falls outside the replicate band, against the
-  IBM
+  : Out-of-band rates for a candidate and for held-out replicates
 - [`band_position()`](https://pwinskill.github.io/fleetcheck/reference/band_position.md)
   [`inside_band()`](https://pwinskill.github.io/fleetcheck/reference/band_position.md)
-  : Where a value sits relative to a replicate band
+  : Position of a value relative to a band
 - [`band_summary()`](https://pwinskill.github.io/fleetcheck/reference/band_summary.md)
-  : Summarise a set of band comparisons as a criterion outcome
+  : Summarise a set of band comparisons
 
 ## Provenance and paths
 
 - [`stamp()`](https://pwinskill.github.io/fleetcheck/reference/stamp.md)
-  : Stamp an output with what produced it
+  : Record what produced a result
 - [`round_sig()`](https://pwinskill.github.io/fleetcheck/reference/round_sig.md)
   : Round the numeric columns of a data frame
 - [`fc_root()`](https://pwinskill.github.io/fleetcheck/reference/fc_root.md)
-  : The repository root
+  : Locate the fleetcheck checkout
 - [`fc_results()`](https://pwinskill.github.io/fleetcheck/reference/fc_results.md)
-  : Where a validation keeps its committed results
-- [`find_claims()`](https://pwinskill.github.io/fleetcheck/reference/find_claims.md)
-  : Locate the claims register
-- [`replace_block()`](https://pwinskill.github.io/fleetcheck/reference/replace_block.md)
-  : Replace a marked block in a file
-- [`md_cell()`](https://pwinskill.github.io/fleetcheck/reference/md_cell.md)
-  : Make a string safe inside a markdown table cell
+  : Path to a validation's results directory
 
 ## Scenario constants
 
-The settings the comparison scripts share. Exported so the scripts run
-against an installed package and not only under pkgload::load_all().
+Settings shared by the comparison scripts. Exported so the scripts also
+run against an installed package, not only under `pkgload::load_all()`.
 
 - [`VDIR()`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)
   [`BURN_Y`](https://pwinskill.github.io/fleetcheck/reference/scenario-constants.md)

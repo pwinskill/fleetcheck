@@ -1,8 +1,7 @@
-# The evidence article a claim is presented on
+# Evidence article for each parasite
 
-Each parasite has an evidence page of its own, so a reader after the
-vivax results does not scroll past the falciparum claims to reach them,
-and the two sets of verdicts are never read as one.
+Each parasite has its own evidence article, so the two sets of verdicts
+are never read as one.
 
 ## Usage
 
@@ -14,10 +13,11 @@ evidence_page(parasite)
 
 - parasite:
 
-  character vector of `"falciparum"` or `"vivax"`, as
-  [`read_claims()`](https://pwinskill.github.io/fleetcheck/reference/read_claims.md)
-  returns it.
+  Character vector of `"falciparum"` or `"vivax"`, as in the `parasite`
+  column returned by
+  [`read_claims()`](https://pwinskill.github.io/fleetcheck/reference/read_claims.md).
 
 ## Value
 
-the article's file name for each element.
+A character vector of article file names: `"evidence-vivax.html"` for
+`"vivax"` and `"evidence.html"` for anything else.

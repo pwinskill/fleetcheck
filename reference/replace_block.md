@@ -1,8 +1,8 @@
-# Replace a marked block in a file
+# Replace the text between marker comments
 
-Rewrites whatever sits between `<!-- BEGIN name -->` and
-`<!-- END name -->`. The markers stay, so the file can be regenerated
-any number of times and a CI job can fail when the tree comes out dirty.
+Replaces the lines between `<!-- BEGIN name -->` and `<!-- END name -->`
+with `lines`, surrounded by a blank line on each side. The markers are
+kept, so repeated calls with the same `lines` leave the file unchanged.
 
 ## Usage
 
@@ -14,24 +14,22 @@ replace_block(path, name, lines, write = TRUE)
 
 - path:
 
-  file to edit.
+  Path to the file.
 
 - name:
 
-  marker name.
+  Marker name. Each marker must occur exactly once, `BEGIN` before
+  `END`, or the call is an error.
 
 - lines:
 
-  replacement content.
+  Character vector of replacement lines.
 
 - write:
 
-  actually write. `FALSE` reports what would change and leaves the file
-  alone — which is what a staleness check needs. The first version of
-  this wrote before it reported, so running the check dirtied the very
-  tree it was checking, and a failing CI job left the working copy
-  modified.
+  If `FALSE`, report whether the file would change without writing it,
+  as a staleness check needs.
 
 ## Value
 
-`TRUE` if the file changed, or would have.
+`TRUE` if the file changed (or would change), otherwise `FALSE`.

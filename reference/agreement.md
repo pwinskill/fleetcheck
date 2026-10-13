@@ -1,10 +1,6 @@
 # Agreement between two models on the same quantity
 
-Every comparison statistic quoted anywhere in this project comes from
-here. That is the point of the file: the severe-immunity figures in
-`fleet`'s own documentation drifted apart because the same quantity was
-derived twice in two articles, and both derivations turned out to be
-wrong. One definition, unit-tested, imported everywhere.
+Agreement between two models on the same quantity
 
 ## Usage
 
@@ -16,22 +12,24 @@ agreement(reference, candidate, na.rm = TRUE)
 
 - reference:
 
-  numeric, the model being compared against (the IBM).
+  Numeric vector from the reference model (the IBM).
 
 - candidate:
 
-  numeric, the model under test (fleet). Same length.
+  Numeric vector from the model under test (`fleet`), the same length as
+  `reference`.
 
 - na.rm:
 
-  drop pairs where either value is missing.
+  If `TRUE`, drop pairs in which either value is not finite.
 
 ## Value
 
-a one-row data frame: n, cor, rmse, bias, rel_bias, slope. `bias` is the
-mean signed difference in the units of the quantity; `rel_bias` is that
-divided by the mean of `reference`, so +0.087 means the candidate runs
-8.7% high. `slope` is the OLS slope of candidate on reference, which is
-not the same statement as `rel_bias` and can disagree with it: a slope
-of 1 with a positive bias is a constant offset, a slope above 1 with
-zero bias is a fan.
+A one-row data frame with columns `n`, `cor`, `rmse`, `bias`, `rel_bias`
+and `slope`. `bias` is the mean signed difference, in the units of the
+quantity; `rel_bias` is `bias` divided by the mean of `reference`, so
+0.087 means the candidate runs 8.7% high. `slope` is the OLS slope of
+`candidate` on `reference`, which can disagree with `rel_bias`: a slope
+of 1 with a positive bias is a constant offset, and a slope above 1 with
+zero bias is a fan. With fewer than two pairs every statistic is `NA`,
+and `cor` is `NA` when either input has no variance.

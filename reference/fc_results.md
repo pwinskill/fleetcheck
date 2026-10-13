@@ -1,6 +1,6 @@
-# Where a validation keeps its committed results
+# Path to a validation's results directory
 
-Where a validation keeps its committed results
+Path to a validation's results directory
 
 ## Usage
 
@@ -12,8 +12,14 @@ fc_results(validation, ...)
 
 - validation:
 
-  directory name under `validations/`.
+  Directory name under `validations/`, for example `"02-scenarios"`.
 
 - ...:
 
-  path components below `results/`.
+  Path components below `results/`.
+
+## Value
+
+A path under
+[`fc_root()`](https://pwinskill.github.io/fleetcheck/reference/fc_root.md).
+Its existence is not checked.

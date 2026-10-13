@@ -4,202 +4,155 @@
 [![pkgdown](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/pwinskill/fleetcheck/actions/workflows/pkgdown.yaml)
 [![Falciparum claims: 12
 pass](https://img.shields.io/badge/falciparum%20claims-12%20pass-brightgreen.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
-[![Vivax claims: 7 pass, 3
-fail](https://img.shields.io/badge/vivax%20claims-7%20pass%2C%203%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md)
+[![Vivax claims: 8 pass, 2
+fail](https://img.shields.io/badge/vivax%20claims-8%20pass%2C%202%20fail-orange.svg)](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License:
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
 
-> How closely does [`fleet`](https://github.com/pwinskill/fleet)
-> reproduce
-> [`malariasimulation`](https://github.com/mrc-ide/malariasimulation)?
+fleetcheck measures how closely the
+[`fleet`](https://github.com/pwinskill/fleet) mean-field model
+reproduces the
+[`malariasimulation`](https://github.com/mrc-ide/malariasimulation)
+individual-based model (IBM) of *P. falciparum* and *P. vivax* malaria.
 
-**This measures agreement between two models, not agreement with data.**
-It is a twin-fidelity check. `fleet` inherits its epidemiological
-standing from the IBM, and inherits it only as far as the gap measured
-here is small relative to the IBM’s own uncertainty. Nothing on this
-page is validation against observation.
+It is a twin-fidelity check: it measures agreement between two models,
+not agreement with data. `fleet` inherits its epidemiological standing
+from the IBM only as far as the gap measured here is small relative to
+the IBM’s own uncertainty, and a faithful reproduction of the IBM
+reproduces its biases too. Nothing here is validation against
+observation.
 
-## The register
+## Claims register
 
-Every claim `fleet` makes about agreeing with the IBM lives in
-[`claims.yml`](https://github.com/pwinskill/fleetcheck/blob/main/claims.yml),
-with the criterion that decides it, the measured value, and a verdict.
-The register is the point of the repository: a reader should meet the
-verdict before the figures, not be left to infer it from a wall of
-plots.
+Each claim `fleet` makes about agreeing with the IBM is recorded in
+[`claims.yml`](https://github.com/pwinskill/fleetcheck/blob/main/claims.yml)
+with the criterion that decides it, the value measured against that
+criterion, and a verdict.
 
 ### *P. falciparum*
 
-**12 claims — 0 failing, 0 untested, 0 open, 12 pass.**
+**12 claims: 0 failing, 0 untested, 0 open, 12 pass.**
 
 1.  pass
-    [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir)
-    — LM prevalence in 2-10 year olds tracks the IBM across transmission
+    [`prevalence-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#prevalence-eir):
+    LM prevalence in 2-10 year olds tracks the IBM across transmission
     intensity.
 2.  pass
-    [`clinical-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-allage-eir)
-    — All-age clinical incidence tracks the IBM across transmission
+    [`clinical-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-allage-eir):
+    All-age clinical incidence tracks the IBM across transmission
     intensity.
 3.  pass
-    [`clinical-under5-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-under5-eir)
-    — Under-5 clinical incidence tracks the IBM across transmission
+    [`clinical-under5-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#clinical-under5-eir):
+    Under-5 clinical incidence tracks the IBM across transmission
     intensity.
 4.  pass
-    [`severe-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#severe-allage-eir)
-    — All-age severe incidence tracks the IBM across transmission
+    [`severe-allage-eir`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#severe-allage-eir):
+    All-age severe incidence tracks the IBM across transmission
     intensity.
 5.  pass
-    [`age-profile-clinical`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-clinical)
-    — The age distribution of clinical incidence tracks the IBM.
+    [`age-profile-clinical`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-clinical):
+    The age distribution of clinical incidence tracks the IBM.
 6.  pass
-    [`age-profile-severe`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-severe)
-    — The age distribution of severe incidence tracks the IBM.
+    [`age-profile-severe`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#age-profile-severe):
+    The age distribution of severe incidence tracks the IBM.
 7.  pass
-    [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact)
-    — The modelled impact of each intervention matches the IBM.
+    [`intervention-impact`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#intervention-impact):
+    The modelled impact of each intervention matches the IBM.
 8.  pass
-    [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation)
-    — Agreement holds across real transmission settings, not just
+    [`real-settings-correlation`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#real-settings-correlation):
+    Agreement holds across real transmission settings, not just
     synthetic scenarios.
 9.  pass
-    [`parameter-draws`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#parameter-draws)
-    — The change a posterior parameter draw makes to prevalence,
-    clinical and severe incidence matches the IBM’s.
+    [`parameter-draws`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#parameter-draws):
+    The change a posterior parameter draw makes to prevalence, clinical
+    and severe incidence matches the IBM’s.
 10. pass
-    [`population-age-structure`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#population-age-structure)
-    — The population age structure matches the IBM’s.
+    [`population-age-structure`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#population-age-structure):
+    The population age structure matches the IBM’s.
 11. pass
-    [`speed`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#speed)
-    — fleet is fast enough to be worth using in place of the IBM.
+    [`speed`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#speed):
+    fleet is fast enough to be worth using in place of the IBM.
 12. pass
-    [`seed-stability`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#seed-stability)
-    — An undisturbed run holds the equilibrium it was seeded at.
+    [`seed-stability`](https://pwinskill.github.io/fleetcheck/articles/evidence.html#seed-stability):
+    An undisturbed run holds the equilibrium it was seeded at.
 
 ### *P. vivax*
 
-**10 claims — 3 failing, 0 untested, 0 open, 7 pass.**
+**10 claims: 2 failing, 0 untested, 0 open, 8 pass.**
 
 1.  pass
-    [`prevalence-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#prevalence-eir-pv)
-    — LM prevalence in 2-10 year olds tracks the IBM across transmission
+    [`prevalence-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#prevalence-eir-pv):
+    LM prevalence in 2-10 year olds tracks the IBM across transmission
     intensity.
 2.  pass
-    [`clinical-allage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#clinical-allage-eir-pv)
-    — All-age clinical incidence tracks the IBM across transmission
+    [`clinical-allage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#clinical-allage-eir-pv):
+    All-age clinical incidence tracks the IBM across transmission
     intensity.
 3.  pass
-    [`clinical-under5-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#clinical-under5-eir-pv)
-    — Under-5 clinical incidence tracks the IBM across transmission
+    [`clinical-under5-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#clinical-under5-eir-pv):
+    Under-5 clinical incidence tracks the IBM across transmission
     intensity.
 4.  pass
-    [`relapse-allage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#relapse-allage-eir-pv)
-    — All-age relapse incidence tracks the IBM across transmission
+    [`relapse-allage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#relapse-allage-eir-pv):
+    All-age relapse incidence tracks the IBM across transmission
     intensity.
 5.  pass
-    [`hypnozoite-carriage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#hypnozoite-carriage-eir-pv)
-    — The share of people carrying hypnozoites tracks the IBM across
+    [`hypnozoite-carriage-eir-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#hypnozoite-carriage-eir-pv):
+    The share of people carrying hypnozoites tracks the IBM across
     transmission intensity.
-6.  FAIL
-    [`age-profile-clinical-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#age-profile-clinical-pv)
-    — The age distribution of clinical incidence tracks the IBM.
+6.  pass
+    [`age-profile-clinical-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#age-profile-clinical-pv):
+    The age distribution of clinical incidence tracks the IBM.
 7.  FAIL
-    [`intervention-impact-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#intervention-impact-pv)
-    — The modelled impact of each intervention, radical cure included,
+    [`intervention-impact-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#intervention-impact-pv):
+    The modelled impact of each intervention, radical cure included,
     matches the IBM.
 8.  pass
-    [`population-age-structure-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#population-age-structure-pv)
-    — The population age structure matches the IBM’s.
+    [`population-age-structure-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#population-age-structure-pv):
+    The population age structure matches the IBM’s.
 9.  FAIL
-    [`speed-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#speed-pv)
-    — fleet is fast enough to be worth using in place of the IBM.
+    [`speed-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#speed-pv):
+    fleet is fast enough to be worth using in place of the IBM.
 10. pass
-    [`seed-stability-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#seed-stability-pv)
-    — An undisturbed run settles to a steady state, off the equilibrium
-    it was seeded at, as the IBM’s does.
+    [`seed-stability-pv`](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.html#seed-stability-pv):
+    An undisturbed run settles to a steady state, off the equilibrium it
+    was seeded at, as the IBM’s does.
 
-The criterion each claim was judged against, the number measured against
-it, and the figure it rests on are on the evidence pages, one for [*P.
+The criterion, measured value and figure for each claim are on the
+evidence pages for [*P.
 falciparum*](https://pwinskill.github.io/fleetcheck/articles/evidence.md)
-and one for [*P.
-vivax*](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md),
-with one section per claim.
+and [*P.
+vivax*](https://pwinskill.github.io/fleetcheck/articles/evidence-vivax.md).
 
-Regenerated from
-[`claims.yml`](https://github.com/pwinskill/fleetcheck/blob/main/claims.yml)
-by `report/make_scoreboard.R`; CI fails if it is stale. From R,
-[`fleetcheck::scoreboard()`](https://pwinskill.github.io/fleetcheck/reference/scoreboard.md)
-and
-[`fleetcheck::read_claims()`](https://pwinskill.github.io/fleetcheck/reference/read_claims.md)
-give the same thing as data rather than as a page.
+The claims ask whether `fleet` tracks the IBM: shape, direction, and
+agreement within the IBM’s own stochastic spread. A mean-field model and
+an individual-based model sit a few per cent apart for structural
+reasons; where that matters, it is noted against the claim it affects.
 
-[`check_claims()`](https://pwinskill.github.io/fleetcheck/reference/check_claims.md)
-fails in CI on anything failing that is not listed in `allow_fail`, and
-an `allow_fail` entry with no explanatory note is itself an error: a
-tolerated failure has to say why it is tolerated.
+The list above is generated from `claims.yml` by
+`report/make_scoreboard.R`.
 
-**These claims ask whether `fleet` tracks the IBM** — shape, direction,
-and agreement inside the IBM’s own stochastic spread. A mean-field model
-and an individual-based one sit a few per cent apart for structural
-reasons; where that matters it is noted against the claim it bears on.
+## Installation
 
-A criterion is drawn from the mechanism rather than from the observed
-number: *inside the IBM replicate band*, because that band is the noise
-floor a deterministic model should land inside, not *at five of six
-EIRs* because five is what happened.
-
-## Tiers
-
-What it costs to reproduce a result is a property of the result, so it
-is recorded against every claim rather than mentioned in prose.
-
-| tier | cost    | who can reproduce it                             |
-|------|---------|--------------------------------------------------|
-| 0    | seconds | anyone, from committed summaries                 |
-| 1    | minutes | anyone; re-runs `fleet` only                     |
-| 2    | ~2 h    | anyone with about 10 cores                       |
-| 3    | ~30 min | 4 cores, and inputs that are not redistributable |
-
-Tier 3 is the 63-country site-file comparison. **Its figures and
-statistics are public; the site files behind them are not.** The code
-that produces them is here and can be read, audited and run — the
-constraint is the inputs, not the compute. It re-runs `fleet` only,
-because the IBM arm is the pre-run diagnostic shipped with each site
-file, so thirty minutes on four cores refreshes it.
-`validations/03-real-settings/example-one-site.R` demonstrates the same
-pipeline on a single sub-site for anyone who has one site file.
-
-## Running it yourself
-
-Every command below is run **from the root of this repository**. No
-script has a hardcoded path — each finds the checkout by walking up to
-the `DESCRIPTION` — so they work from any working directory and on
-anyone’s machine.
-
-Work down the list. Each step is useful on its own, and the later ones
-cost more.
-
-### 1. Get the code
+fleetcheck is not on CRAN. It is used from a clone of the repository:
 
 ``` bash
 git clone https://github.com/pwinskill/fleetcheck.git
 cd fleetcheck
 ```
 
-### 2. Install what you need for the tier you want
-
-**Tier 0 only** (read the verdicts, check the register is consistent —
-no models run, a few seconds):
+Reading and checking the register needs only:
 
 ``` r
 
 install.packages(c("yaml", "pkgload", "devtools"))
 ```
 
-**Tier 1 and 2** (re-run the models) additionally need `fleet`, the IBM,
-and the output post-processor. `fleet` pulls `dust2`, `monty` and
-`malariaEquilibrium` with it, and compiles C++, so allow some time:
+Re-running the models also needs `fleet`, `malariasimulation` and the
+output post-processor `postie`. `fleet` compiles C++ and installs
+`dust2`, `monty` and `malariaEquilibrium` with it.
 
 ``` r
 
@@ -210,15 +163,21 @@ remotes::install_github("mrc-ide/postie")
 remotes::install_deps(dependencies = TRUE)
 ```
 
-### 3. Read the verdicts without running anything — tier 0, seconds
+## Usage
 
-``` bash
-Rscript -e 'pkgload::load_all(quiet = TRUE); writeLines(scoreboard())'
+From the repository root, read the register as text or as a data frame,
+without running any model:
+
+``` r
+
+pkgload::load_all()
+writeLines(scoreboard())
+subset(read_claims(), status != "pass")
 ```
 
-This prints the same list as the top of this page, straight from
-`claims.yml`. To check the register is internally consistent and that
-nothing has regressed — which is what CI does:
+CI runs the unit tests, which include static checks of the validation
+scripts, and checks that the rendered copies of the register match
+`claims.yml` and that no claim has regressed. This takes seconds:
 
 ``` bash
 Rscript -e 'devtools::test()'
@@ -226,197 +185,18 @@ Rscript report/make_scoreboard.R --check
 Rscript -e 'pkgload::load_all(quiet = TRUE); check_claims()'
 ```
 
-### 4. Check whether a change to `fleet` has moved anything — tier 1, minutes
+[`check_claims()`](https://pwinskill.github.io/fleetcheck/reference/check_claims.md)
+fails on any failing claim not listed in its `allow_fail` argument, and
+an `allow_fail` entry whose claim has no explanatory `note` is itself an
+error.
 
-**This is the one to run often.** It re-runs `fleet` alone against the
-committed IBM rows. The IBM does not depend on `fleet`, so its rows stay
-valid for any `fleet`-side change and there is no reason to spend two
-hours re-running it.
+After a change to `fleet`, re-run `fleet` alone against the committed
+IBM results. This takes minutes and is the check to run most often:
 
 ``` bash
 Rscript validations/02-scenarios/assess.R
 ```
 
-It answers two questions separately, because they mean different things.
-*Did anything move?* — `fleet` now against `fleet`’s committed rows. *Is
-the match still good?* — `fleet` now against the IBM medians and
-replicate bands (median ± 1.28 SD), at the thresholds the claims rest
-on. Only the second fails the run by default. It exits non-zero on
-drift, so it works in CI.
-
-``` bash
-CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R   # a subset, seconds
-CMP_STRICT=1 Rscript validations/02-scenarios/assess.R          # also fail if ANY number moved
-```
-
-### 5. Re-run the whole comparison — tier 2, ~2 h on 10 cores
-
-Try the smoke path first. It runs every scenario end to end at a 4-year
-horizon with one replicate, in about two minutes, and writes to
-`validations/02-scenarios/results/smoke/` so it cannot touch the
-committed results:
-
-``` bash
-CMP_SMOKE=1 Rscript validations/02-scenarios/run.R
-```
-
-Then the real thing. It runs the IBM `N_REP` times per scenario on a
-PSOCK cluster (ten workers, or fewer with `CMP_WORKERS`) and re-stamps
-`ibm_reference.json`:
-
-``` bash
-Rscript validations/02-scenarios/run.R
-```
-
-If you changed `fleet` and only need `fleet`’s rows refreshed, keep the
-IBM’s:
-
-``` bash
-CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R   # minutes
-```
-
-The *P. vivax* suite is the same scripts under `CMP_PARASITE=pv`, with
-its results in `validations/02-scenarios/results/pv/`:
-
-``` bash
-CMP_PARASITE=pv Rscript validations/02-scenarios/run.R
-CMP_PARASITE=pv CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R
-CMP_PARASITE=pv Rscript validations/02-scenarios/assess.R
-```
-
-### 6. Redraw the figures and tables — seconds
-
-``` bash
-Rscript validations/02-scenarios/render.R      # cmp_*.png -> man/figures/ and vignettes/
-Rscript validations/02-scenarios/tables.R      # -> validations/02-scenarios/results/tables.md
-Rscript validations/02-scenarios/render_pv.R   # the vivax figures, cmp_pv_*.png
-Rscript validations/02-scenarios/tables_pv.R   # -> validations/02-scenarios/results/pv/tables.md
-```
-
-Neither pair redraws its site-file panel: those are snapshots from runs
-this repository cannot repeat (see tier 3 below). `CMP_REFRESH_SITES=1`
-re-takes them, and needs the validation results present.
-
-The `speed` and `speed-pv` claims’ tables time both models side by side,
-one run of each, alone on one core. Run them on an otherwise idle
-machine:
-
-``` bash
-Rscript validations/02-scenarios/speed.R                   # ~15 min -> results/speed.csv, vignettes/tab_speed.md
-CMP_PARASITE=pv Rscript validations/02-scenarios/speed.R   # ~25 min -> results/pv/speed.csv, vignettes/tab_speed_pv.md
-```
-
-### 7. Update the register, then regenerate every rendered copy of it
-
-Edit `claims.yml` — the criterion, the measured value, the verdict — and
-then:
-
-``` bash
-Rscript report/make_scoreboard.R
-```
-
-That rewrites the register list in `README.md`, in `pkgdown/index.md`
-and in `inst/claims.yml` from the register. Never edit those copies by
-hand: CI runs the same script with `--check` and fails if they do not
-match.
-
-### 8. Rebuild the site
-
-``` bash
-Rscript -e 'pkgdown::build_site()'
-```
-
-### What the environment variables do
-
-| variable | what it does |
-|----|----|
-| `CMP_PARASITE=pv` | the *P. vivax* suite, or the vivax arm of tier 3, in place of falciparum |
-| `CMP_SMOKE=1` | 4-year, 1-replicate end-to-end check into `results/smoke/` |
-| `CMP_ONLY=a,b` | run or check only these scenarios, merging into the existing CSVs |
-| `CMP_FLEET_ONLY=1` | re-run `fleet`’s rows only, keeping the committed IBM rows |
-| `CMP_STRICT=1` | make `assess.R` fail on *any* movement, not just on lost agreement |
-| `CMP_REFRESH_SITES=1` | re-take the tier-3 site snapshot from a local validation checkout |
-| `FLEET_VALIDATE` | where those site-file results live (default: `../fleet_validate`) |
-| `FLEET_LIB` | an extra library path, prepended — for installs that miss `R_LIBS_USER` |
-| `FLEETCHECK_ROOT` | the checkout root, for a cluster job that runs from elsewhere |
-
-### What you need inputs for
-
-**Tier 3, the 63-country site-file comparison, runs from this repository
-— but only if you have the malariaverse site files, which are not
-redistributable.** The constraint is the inputs, not the compute: the
-sweep re-runs `fleet` alone, because the IBM arm is the pre-run
-diagnostic shipped with each site file, so it is about thirty minutes on
-four cores.
-
-``` bash
-FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
-Rscript validations/03-real-settings/assess.R
-```
-
-The *P. vivax* arm is the same pair under `CMP_PARASITE=pv`: the vivax
-sub-sites of the countries with vivax transmission, up to ten per
-country, with results in `validations/03-real-settings/results/pv/`.
-
-Its figures and statistics are public and committed here; the runs
-behind them are not. `claims.yml` marks those claims `tier: 3` so the
-cost is attached to the claim rather than buried in prose.
-
-Without the site files you can still run the *method*, on any one
-sub-site you have a file for.
-`validations/03-real-settings/example-one-site.R` is the same pipeline —
-subset the site file, convert ITN usage to a distribution, build the
-parameter list, seed both models off it, reduce both through `postie`,
-and score with the same
-[`agreement()`](https://pwinskill.github.io/fleetcheck/reference/agreement.md)
-the register uses — applied to a single sub-site in about two minutes:
-
-``` bash
-FLEET_VALIDATE=/path/to/fleet_validate   Rscript validations/03-real-settings/example-one-site.R BFA
-```
-
-`validations/03-real-settings/README.md` walks through each step and
-says which details are load-bearing. Read the shape of the output rather
-than its third decimal: one sub-site against one IBM replicate is a
-check that the pipeline runs, not evidence about the model.
-
-Tier 2, in `validations/02-scenarios/`, is what steps 4 to 6 exercise.
-`validations/04-parameter-draws/` is tier 2 as well: eight of
-`set_parameter_draw()`’s posterior draws at three EIRs, for
-`parameter-draws`. It has the same scripts — `run.R` for both models
-(about two hours on four workers), `assess.R` to re-run `fleet` against
-the committed IBM rows, `render.R` for its figure — and `select.R`,
-which chooses the draws, and `diagnose.R`, which tests what moves its
-severe-incidence gap. `Rscript validations/01-seed-stability/run.R` (a
-few minutes, `fleet` only) reproduces `seed-stability` and
-`seed-stability-pv`, and writes `results/seed_stability.json` and
-`results/seed_stability_pv.json`.
-
-## Layout
-
-    R/            metrics, provenance, the claims register  (tested)
-    validations/  one directory per body of evidence
-    report/       the site: the register first, evidence behind it
-    claims.yml    the register
-
-`R/metrics.R` holds every comparison statistic, defined once and
-unit-tested, so no two pieces of evidence can compute the same statistic
-two ways.
-
-`R/provenance.R` stamps every result with the `fleet` and
-`malariasimulation` versions, the commits they were installed from, the
-R version and the date, and holds the rounding rule the stored summaries
-are written under. The tier that is hardest to re-run, the site-file
-sweep, most needs to say what made it, so its stamp carries the `fleet`
-version, the age grid and the mosquito sub-step count as well.
-
-## Status
-
-The register, the tested metrics layer and every tier are in place.
-**Tier 1**, `validations/01-seed-stability/`, runs in seconds. **Tier
-2**, the scenario comparison in `validations/02-scenarios/` and the
-parameter-draws comparison in `validations/04-parameter-draws/`, runs
-end to end and has a few-minute smoke path; CI checks its scripts and
-the register’s verdicts without re-running it. **Tier 3** runs from here
-too — `run.R`, `assess.R` and `diagnose.R` — given the site files it
-cannot ship.
+[Methods](https://pwinskill.github.io/fleetcheck/articles/methods.md)
+describes how claims are decided, and how to re-run each body of
+evidence, redraw the figures and update the register.

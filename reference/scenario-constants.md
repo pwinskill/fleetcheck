@@ -1,8 +1,8 @@
 # Shared scenario constants
 
-The settings every comparison script has to agree on, in one place so
-they cannot drift apart between the script that runs the IBM and the
-script that plots the result.
+Settings that every comparison script must agree on, defined once so the
+script that runs the IBM and the script that plots the result cannot
+differ.
 
 ## Usage
 
@@ -80,14 +80,14 @@ An object of class `integer` of length 1.
 
 - `VDIR()`:
 
-  directory holding the optional site-file validation results, which
-  live in their own checkout beside this one. Override with the
-  `FLEET_VALIDATE` environment variable. The site figure and its table
-  are skipped when it is absent.
+  Directory holding the optional site-file validation results, in their
+  own checkout beside this one (`../fleet_validate`). The
+  `FLEET_VALIDATE` environment variable overrides it. The site figure
+  and its table are skipped when the directory is absent.
 
 - `BURN_Y`:
 
-  IBM burn-in years before observation or intervention.
+  IBM burn-in, in years, before observation or intervention.
 
 - `POP`:
 
@@ -99,34 +99,35 @@ An object of class `integer` of length 1.
 
 - `AGE_EDGES`:
 
-  age-profile band edges, in years.
+  Age-profile band edges, in years.
 
 - `SEASON`:
 
-  Fourier coefficients for the seasonal rainfall profile.
+  Fourier coefficients of the seasonal rainfall profile.
 
 - `EIR_GRID`:
 
-  the transmission-intensity grid.
+  Transmission-intensity (EIR) grid.
 
 - `EIR_REF`:
 
-  reference EIR for age profiles and interventions.
+  Reference EIR for age profiles and interventions.
 
 - `PROFILE_EIR`:
 
-  the low / reference / high transmission levels that shape claims are
-  carried at.
+  Low, reference and high EIRs at which the age-profile and intervention
+  claims are tested.
 
 - `INT_LABELS`, `TS_LABELS`:
 
-  display labels, in display order.
+  Display labels, in display order.
 
 - `EIR_GRID_PV`, `EIR_REF_PV`, `PROFILE_EIR_PV`, `INT_LABELS_PV`:
 
-  the same for the P. vivax suite, which runs on its own lower grid and
-  without chemoprevention or vaccines.
+  The same for the *P. vivax* suite, which has its own lower grid and no
+  chemoprevention or vaccines.
 
 - `TS_YEARS`, `TS_NET_EVERY`:
 
-  long-horizon programme timings.
+  Years followed after deployment, and years between net campaigns, in
+  the long-horizon programme scenarios.

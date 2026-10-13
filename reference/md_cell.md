@@ -1,8 +1,7 @@
-# Make a string safe inside a markdown table cell
+# Escape text for a markdown table cell
 
-A criterion is written for a human, so it can contain anything – and one
-of them is `|slope - 1| < 0.10`, whose pipes silently split the row into
-extra columns. Newlines do the same to the table.
+Escapes `|`, which would otherwise split the row (as in the criterion
+`|slope - 1| < 0.10`), and replaces line breaks with a space.
 
 ## Usage
 
@@ -14,4 +13,8 @@ md_cell(x)
 
 - x:
 
-  character vector.
+  Character vector.
+
+## Value
+
+`x`, escaped.

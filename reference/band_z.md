@@ -1,8 +1,6 @@
 # Standardised departure from a set of replicates
 
-The headroom figure the band test cannot report: four claims read
-"inside at 6 of 6" while sitting at 0.34, 0.59, 0.61 and 0.73 standard
-deviations.
+Standardised departure from a set of replicates
 
 ## Usage
 
@@ -14,13 +12,13 @@ band_z(value, x)
 
 - value:
 
-  numeric, the candidate value.
+  Candidate value, a numeric scalar.
 
 - x:
 
-  numeric, the replicate values for the same cell.
+  Numeric vector of replicate values for the same cell.
 
 ## Value
 
-the signed departure in replicate standard deviations, `NA` when the
-replicates carry no spread.
+`value` minus the replicate median, in replicate standard deviations.
+`NA` when the replicates have no spread.

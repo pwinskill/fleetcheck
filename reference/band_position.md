@@ -1,11 +1,7 @@
-# Where a value sits relative to a replicate band
+# Position of a value relative to a band
 
-The IBM is stochastic, so the question is never "are the two numbers
-equal" but "is the deterministic one inside the spread the stochastic
-one produces". Returns 0 when inside, and otherwise the signed distance
-outside expressed as a fraction of the edge it crossed – so -0.0024
-reads as "0.24% below the lower edge", which is how the results are
-quoted.
+`band_position()` measures how far a value lies outside a band;
+`inside_band()` tests whether it lies inside.
 
 ## Usage
 
@@ -19,8 +15,18 @@ inside_band(value, lower, upper)
 
 - value:
 
-  numeric, the candidate value.
+  Numeric vector of candidate values.
 
 - lower, upper:
 
-  numeric, the band edges (e.g. 10th and 90th percentiles).
+  Numeric vectors of band edges, the same length as `value`, for example
+  from
+  [`replicate_band()`](https://pwinskill.github.io/fleetcheck/reference/replicate_band.md).
+  It is an error if `lower` exceeds `upper`.
+
+## Value
+
+`band_position()`: 0 where `value` is inside the band (edges included),
+and otherwise the signed distance outside as a fraction of the edge
+crossed, so -0.0024 means 0.24% below the lower edge. `inside_band()`: a
+logical vector.

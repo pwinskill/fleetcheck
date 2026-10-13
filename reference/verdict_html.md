@@ -1,10 +1,8 @@
-# A verdict as its HTML lozenge
+# Format verdicts as HTML spans
 
-Exported so the evidence article does not keep a second copy of the map.
-It did, in different case, so the same claim read `pass` in the
-scoreboard and `PASS` in its own section – and the quiet-pass /
-shouted-FAIL contrast, which is how the table shows what needs
-attention, was flattened in the sections.
+Each span has class `verdict` and a class for the status, which the
+site's stylesheet colours. The text is `pass`, `open`, `FAIL` or
+`UNTESTED`, so the verdict remains readable where the class is ignored.
 
 ## Usage
 
@@ -16,8 +14,9 @@ verdict_html(status)
 
 - status:
 
-  one of `pass`, `open`, `fail`, `undeclared`.
+  Character vector of statuses: `"pass"`, `"open"`, `"fail"` or
+  `"undeclared"`. Any other value is an error.
 
 ## Value
 
-one span per status.
+A character vector with one span per element of `status`.

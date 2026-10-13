@@ -1,135 +1,269 @@
-# How it is produced
+# Methods
 
-## What this measures, and what it does not
+## Claims and criteria
 
-`fleetcheck` measures how closely
-[`fleet`](https://pwinskill.github.io/fleet) reproduces
-`malariasimulation`. **It is a twin-fidelity check, not validation
-against data.** Every number here compares two models to each other;
-none compares either to an observation.
+The unit of evidence is a claim, not a scenario. Each claim has a
+criterion that decides it and a verdict, so the result is a decision
+rather than a number to interpret. A claim can fail, and two currently
+do.
 
-That matters for how far the result carries. `fleet` inherits its
-epidemiological standing from the IBM, and inherits it only as far as
-the gap measured here is small relative to the IBM’s own uncertainty
-against data. A result that reproduces the IBM faithfully reproduces its
-biases too.
+Criteria are drawn from the mechanism rather than from the result:
+“inside the IBM replicate band”, because that band is the noise floor a
+deterministic model should land inside, not “at five of six EIRs”,
+because five is what came out. The replicate band is the IBM median plus
+or minus 1.28 standard deviations across replicates, the 10-90% interval
+of a normal distribution. It adapts as the comparison gets harder:
+splitting the IBM by age thins its counts and widens its spread, so the
+test becomes more forgiving where the reference is less certain, and the
+measured value records this rather than hiding it.
 
-## Organised by claim
+Claims about how a burden is distributed by age are scored only on the
+age bands carrying at least 5% of it. The notes on those claims say what
+the exclusion costs.
 
-The unit is a claim, not a scenario. Each one carries the criterion that
-decides it and a verdict, so a reader meets a decision rather than a
-number to interpret. A claim can fail, and three currently do.
+## Statistics
 
-A criterion drawn from the mechanism is worth more than one drawn from
-the result. *Inside the IBM replicate band*, because that band is the
-noise floor a deterministic model ought to land inside; not *at five of
-six EIRs*, because five is what happened to come out. The band also does
-the right thing as the comparison gets harder: splitting the IBM by age
-thins its counts and widens its own spread, so the test becomes
-forgiving exactly where the yardstick becomes uncertain — and says so in
-the measured value rather than hiding it.
-
-## One definition of each statistic
-
-`R/metrics.R` holds every comparison statistic used anywhere in the
-project, unit-tested.
+Every comparison statistic is defined once, in `R/metrics.R`, and
+unit-tested.
 [`agreement()`](https://pwinskill.github.io/fleetcheck/reference/agreement.md)
-returns `cor`, `rmse`, `bias`, `rel_bias` and `slope` together, because
-a slope of 1 with a positive bias is a constant offset while a slope
-above 1 with no bias is a fan, and quoting one of them alone hides which
-you have.
+returns correlation, RMSE, bias, relative bias and slope together,
+because a slope of 1 with a positive bias is a constant offset while a
+slope above 1 with no bias is a fan, and either statistic alone hides
+which.
+[`replicate_band()`](https://pwinskill.github.io/fleetcheck/reference/replicate_band.md)
+defines the band named in the criteria of 17 claims;
 [`band_summary()`](https://pwinskill.github.io/fleetcheck/reference/band_summary.md)
-answers “inside the IBM replicate band”, which is the criterion 17
-claims in the register are decided by.
+scores a set of cells against it, and
+[`outside_rates()`](https://pwinskill.github.io/fleetcheck/reference/outside_rates.md)
+sets the bar for claims tested over many cells.
 
-So the figure and the table built from the same results cannot disagree:
+Because figures and tables use the same functions, they cannot disagree:
 the site-file correlation in `render.R`’s figure and in `tables.R`’s
 table both come from
 [`agreement()`](https://pwinskill.github.io/fleetcheck/reference/agreement.md).
 
-## Provenance
+## Provenance and precision
 
 [`stamp()`](https://pwinskill.github.io/fleetcheck/reference/stamp.md)
-records, on every result: the `fleet` and `malariasimulation` versions
+records, with every result, the `fleet` and `malariasimulation` versions
 and the commits they were installed from, the R version, the platform,
-the date, and whatever the run wants to add. A package installed from a
-local source tree has no commit to record and the field is `null`;
-`Built` is recorded beside it so that case still says when and on what.
+the date, and any fields the run adds. A package installed from a local
+source tree has no commit to record, so that field is `null`; `fleet`’s
+`Built` field is recorded beside it to show when and on what it was
+built.
 
-The tier that is hardest to re-run is the one that most needs to say
-what made it, so the site-file statistics also record the age grid and
-the mosquito sub-step count they were measured at.
+The site-file statistics also record the age grid and the mosquito
+sub-step count they were measured at. Their snapshot carries two stamps,
+which are not interchangeable. `run` records the site-file sweep,
+including the `fleet` version that produced the per-country results, and
+changes only when the sweep is repeated. `summarised` records the pass
+that reduces those results to the four numbers on this site; it takes
+seconds and can be repeated at any later version. A single stamp would
+report today’s `fleet` against numbers from months earlier.
 
-The site-file snapshot carries two stamps and they are not
-interchangeable. `run` is the site-file sweep — the `fleet` version its
-per-country results were produced at — and is only changed when that
-sweep is actually repeated. `summarised` is the seconds-long pass that
-turns those results into the four numbers on this site, and can happen
-at any later version. A single stamp would report today’s `fleet` over
-numbers from months ago.
+Simulation output is quoted to three or four significant figures.
+`run.R` rounds the stored summaries to six with
+[`round_sig()`](https://pwinskill.github.io/fleetcheck/reference/round_sig.md)
+as it writes them, so a re-run cannot store full precision again. One
+file keeps full precision: `rep_eq.csv`, which the drift check in
+`assess.R` compares against at a tolerance of 1e-6.
 
-## Stored precision
+## Tiers
 
-Simulation output is quoted to three or four significant figures
-wherever it is reported. `run.R` rounds the stored summaries to six as
-it writes, with nothing lost that anyone reads. One file keeps full
-precision: `rep_eq.csv`, which the drift check asserts against at 1e-6.
+Each claim records a tier: the cost of reproducing it.
 
-The rounding lives in the code that writes the files,
-[`round_sig()`](https://pwinskill.github.io/fleetcheck/reference/round_sig.md),
-so a re-run cannot quietly store full precision again.
+| Tier | Cost | Who can reproduce it |
+|----|----|----|
+| 0 | seconds | anyone, from the committed summaries |
+| 1 | minutes | anyone; re-runs `fleet` only |
+| 2 | about 2 hours | anyone with about 10 cores |
+| 3 | about 30 minutes | anyone with 4 cores and the site files, which are not redistributable |
 
-## Reproducing a claim
+These costs are for *P. falciparum*. For *P. vivax*, tier 1 takes a few
+minutes and tier 2 about an hour.
 
-``` r
-# tier 1, a few minutes (both parasites)
-Rscript validations/01-seed-stability/run.R
+Tier 3 is the 63-country site-file comparison. Its figures and
+statistics are public, but the site files behind them are not
+redistributable, so nobody outside the project can repeat it: a
+limitation of the evidence, not a property of the result. The constraint
+is the inputs rather than the compute: the sweep re-runs `fleet` only,
+because the IBM arm is the pre-run diagnostic shipped with each site
+file.
 
-# fleet against the committed IBM rows, minutes
-Rscript validations/02-scenarios/assess.R
+## Reproducing the results
 
-# tier 2, about two hours on ten cores
-Rscript validations/02-scenarios/run.R
+Installation, the tier-0 checks and the `fleet`-only drift check are in
+the
+[README](https://pwinskill.github.io/fleetcheck/index.html#installation).
+Paths below are relative to the repository root. No script has a
+hardcoded path: each finds the checkout by walking up to `DESCRIPTION`,
+so it runs from any working directory.
 
-# the speed claims' tables: both models, one run each, alone on one core
-Rscript validations/02-scenarios/speed.R                   # a quarter of an hour
-CMP_PARASITE=pv Rscript validations/02-scenarios/speed.R   # the vivax table, about half an hour
+`R/` holds the unit-tested package code listed in the
+[reference](https://pwinskill.github.io/fleetcheck/reference/index.md).
+`validations/` has one directory per body of evidence, with its scripts
+and committed results; `01-seed-stability` to `04-parameter-draws` each
+have a README with script-level detail. Raw model output is never
+committed, only summaries and their stamps.
 
-# a few-minute end-to-end check of the same path
+### Scenario comparison
+
+`validations/02-scenarios/` runs every scenario through both models on
+the same parameter list. Its `assess.R` re-runs `fleet` alone against
+the committed IBM rows, which stay valid for any change to `fleet`
+because the IBM does not depend on it. It reports two things separately:
+whether anything moved (`fleet` now against `fleet`’s committed rows),
+and whether the match still holds (`fleet` against the IBM medians and
+replicate bands, at the thresholds the claims rest on). Only the second
+fails the run by default, with exit status 1, so the script can gate CI.
+
+``` bash
+CMP_ONLY=eir_20,smc Rscript validations/02-scenarios/assess.R   # a subset, seconds
+CMP_STRICT=1 Rscript validations/02-scenarios/assess.R          # also fail if any number moved
+```
+
+Before re-running both models, run the smoke path. It runs every
+scenario end to end at a 4-year horizon with one replicate, in about two
+minutes, and writes to `validations/02-scenarios/results/smoke/`, so it
+cannot touch the committed results.
+
+``` bash
 CMP_SMOKE=1 Rscript validations/02-scenarios/run.R
+```
 
-# the P. vivax suite: the same scripts, results in results/pv/
+The full run takes about two hours on ten cores. It runs the IBM `N_REP`
+times per scenario on a PSOCK cluster of ten workers (fewer with
+`CMP_WORKERS`) and re-stamps `ibm_reference.json`. After a change to
+`fleet` alone, `CMP_FLEET_ONLY=1` refreshes `fleet`’s rows in minutes
+and keeps the IBM’s.
+
+``` bash
+Rscript validations/02-scenarios/run.R
+CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R
+```
+
+The *P. vivax* suite is the same scripts under `CMP_PARASITE=pv`, with
+results in `validations/02-scenarios/results/pv/`. It runs on its own
+transmission grid (EIR 0.3 to 30, against 1 to 120 for falciparum),
+without SMC, PMC or RTS,S, and with radical cure in their place:
+`malariasimulation` cannot run chemoprevention under vivax, and its
+vaccines carry no vivax calibration.
+
+``` bash
 CMP_PARASITE=pv Rscript validations/02-scenarios/run.R
+CMP_PARASITE=pv CMP_FLEET_ONLY=1 Rscript validations/02-scenarios/run.R
 CMP_PARASITE=pv Rscript validations/02-scenarios/assess.R
-Rscript validations/02-scenarios/tables_pv.R
-Rscript validations/02-scenarios/render_pv.R
+```
 
-# parameter-draws: eight posterior draws at three EIRs, tier 2 (two hours on
-# four workers); assess.R re-runs fleet alone against the committed IBM rows
+The `speed` and `speed-pv` tables time both models side by side, one run
+of each, alone on one core. Run them on an otherwise idle machine:
+
+``` bash
+Rscript validations/02-scenarios/speed.R                   # about 15 min: results/speed.csv, vignettes/tab_speed.md
+CMP_PARASITE=pv Rscript validations/02-scenarios/speed.R   # about 25 min: results/pv/speed.csv, vignettes/tab_speed_pv.md
+```
+
+The figures and tables are redrawn from the committed results in
+seconds, without running a model:
+
+``` bash
+Rscript validations/02-scenarios/render.R      # cmp_*.png into man/figures/ and vignettes/
+Rscript validations/02-scenarios/tables.R      # validations/02-scenarios/results/tables.md
+Rscript validations/02-scenarios/render_pv.R   # the vivax figures, cmp_pv_*.png
+Rscript validations/02-scenarios/tables_pv.R   # validations/02-scenarios/results/pv/tables.md
+```
+
+Neither pair redraws its site-file panel, which is a snapshot of tier-3
+results that cannot be repeated without the site files.
+`CMP_REFRESH_SITES=1` re-takes the snapshot from the tier-3 results in
+`validations/03-real-settings/results/raw/`.
+
+### Seed stability and parameter draws
+
+`validations/01-seed-stability/run.R` reproduces `seed-stability` and
+`seed-stability-pv` in a few minutes, running `fleet` only, and writes
+`results/seed_stability.json` and `results/seed_stability_pv.json`.
+
+`validations/04-parameter-draws/` is also tier 2: eight of
+`set_parameter_draw()`’s posterior draws at three EIRs, for
+`parameter-draws`. `select.R` chooses the draws. `run.R` runs both
+models, in about two hours on four workers; `assess.R` re-runs `fleet`
+alone against the committed IBM rows; `render.R` draws the figure.
+`diagnose.R` tests what moves the severe-incidence gap, with 40 IBM runs
+in about fifteen minutes.
+
+``` bash
+Rscript validations/01-seed-stability/run.R
 Rscript validations/04-parameter-draws/run.R
 Rscript validations/04-parameter-draws/assess.R
 Rscript validations/04-parameter-draws/render.R
-# and what moves its severe-incidence gap: 40 IBM runs, fifteen minutes
 Rscript validations/04-parameter-draws/diagnose.R
+```
 
-# tier 3, which needs the restricted site files
+### Site-file comparison
+
+Tier 3 runs from this repository given the malariaverse site files,
+located by `FLEET_VALIDATE`:
+
+``` bash
 FLEET_VALIDATE=/path/to/site-files Rscript validations/03-real-settings/run.R
-FLEET_VALIDATE=/path/to/site-files CMP_PARASITE=pv Rscript validations/03-real-settings/run.R
+Rscript validations/03-real-settings/assess.R
 ```
 
-The vivax suite runs on its own transmission grid (EIR 0.3 to 30, where
-falciparum’s is 1 to 120), without SMC, PMC or RTS,S –
-`malariasimulation` cannot run chemoprevention under vivax, and its
-vaccines carry no vivax calibration – and with radical cure in their
-place. A vivax run of `fleet` costs about twenty times a falciparum one,
-so tier 3 represents each country by at most ten sub-sites, spread
-evenly across its vivax EIR range.
+The *P. vivax* arm is the same pair under `CMP_PARASITE=pv`, with
+results in `validations/03-real-settings/results/pv/`. A vivax run of
+`fleet` costs about thirteen times a falciparum one, so each country is
+represented by at most ten sub-sites, spread evenly across its vivax EIR
+range. `diagnose.R` draws every sub-site’s monthly clinical series, IBM
+against `fleet`, as a PDF for investigating where they disagree; its
+output is not committed.
 
-The register itself is data, so it can be queried rather than read:
+With a single site file, `example-one-site.R` runs the same pipeline on
+one sub-site in about two minutes: it subsets the site file, converts
+ITN usage to a distribution, builds the parameter list, seeds both
+models from it, reduces both through `postie`, and scores them with the
+same
+[`agreement()`](https://pwinskill.github.io/fleetcheck/reference/agreement.md)
+the register uses. One sub-site against one IBM replicate shows that the
+pipeline runs; it is not evidence about the model, so read the shape of
+the output rather than its third decimal.
+`validations/03-real-settings/README.md` describes each step and the
+details that matter.
 
-``` r
-
-library(fleetcheck)
-scoreboard()
-subset(read_claims(), status != "pass")
+``` bash
+FLEET_VALIDATE=/path/to/fleet_validate Rscript validations/03-real-settings/example-one-site.R BFA
 ```
+
+### Updating the register
+
+Edit `claims.yml` (the criterion, the measured value, the verdict), then
+regenerate its rendered copies:
+
+``` bash
+Rscript report/make_scoreboard.R
+```
+
+This rewrites the register list and badges in `README.md`,
+`pkgdown/index.md` (generated from `README.md`) and `inst/claims.yml`.
+Do not edit those copies by hand: CI runs the same script with `--check`
+and fails if they do not match. The evidence articles read `claims.yml`
+when the site is built:
+
+``` bash
+Rscript -e 'pkgdown::build_site()'
+```
+
+### Environment variables
+
+| Variable | Effect |
+|----|----|
+| `CMP_PARASITE=pv` | run the *P. vivax* suite, or the vivax arm of tier 3, instead of *P. falciparum* |
+| `CMP_SMOKE=1` | 4-year, one-replicate end-to-end check, written to `results/smoke/` |
+| `CMP_ONLY=a,b` | run or check only these scenarios (countries in tier 3), merging into the existing results |
+| `CMP_FLEET_ONLY=1` | re-run `fleet`’s rows only, keeping the committed IBM rows |
+| `CMP_STRICT=1` | make `assess.R` fail on any movement, not only on lost agreement |
+| `CMP_WORKERS` | worker pool size for `run.R` (default 10 in `02-scenarios`, 4 in `04-parameter-draws`) |
+| `CMP_REFRESH_SITES=1` | re-take the site-file snapshot behind the tier-3 figure panels and tables |
+| `FLEET_VALIDATE` | location of the site files; required by the tier-3 sweep, and `../fleet_validate`, beside the checkout, by default elsewhere |
+| `FLEET_LIB` | library path prepended to [`.libPaths()`](https://rdrr.io/r/base/libPaths.html), for installations that do not pick up `R_LIBS_USER` |
+| `FLEETCHECK_ROOT` | the checkout root, for a job that runs from outside it |

@@ -1,11 +1,8 @@
-# The scoreboard, as printable text
+# Format the register as plain text
 
-Claims are listed in register order, which is the order they are meant
-to be read in: transmission, then clinical burden, then severe, then how
-each is distributed by age, then interventions, real settings and the
-parameter posterior, and the checks that support all of it last. What is
-unresolved is carried by the count on the first line and by the verdict
-against each row, not by moving rows about.
+A line of counts by verdict, then one line per claim giving its verdict,
+tier, id and measured value. Claims are in register order, not sorted by
+verdict.
 
 ## Usage
 
@@ -17,5 +14,10 @@ scoreboard(claims = read_claims())
 
 - claims:
 
-  as returned by
+  Data frame returned by
   [`read_claims()`](https://pwinskill.github.io/fleetcheck/reference/read_claims.md).
+
+## Value
+
+A character vector of lines, for
+[`writeLines()`](https://rdrr.io/r/base/writeLines.html).

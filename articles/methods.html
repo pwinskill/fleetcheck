@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>How it is produced • fleetcheck</title>
+<title>Methods • fleetcheck</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -15,7 +15,7 @@
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><script src="../extra.js"></script><meta property="og:title" content="How it is produced">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><script src="../extra.js"></script><meta property="og:title" content="Methods">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -42,7 +42,7 @@
     <li><a class="dropdown-item" href="../articles/evidence-vivax.html">P. vivax</a></li>
   </ul>
 </li>
-<li class="active nav-item"><a class="nav-link" href="../articles/methods.html">How it is produced</a></li>
+<li class="active nav-item"><a class="nav-link" href="../articles/methods.html">Methods</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -62,7 +62,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>How it is produced</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Methods</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/pwinskill/fleetcheck/blob/main/vignettes/methods.Rmd" class="external-link"><code>vignettes/methods.Rmd</code></a></small>
@@ -72,132 +72,318 @@
     
     
 <div class="section level2">
-<h2 id="what-this-measures-and-what-it-does-not">What this measures, and what it does not<a class="anchor" aria-label="anchor" href="#what-this-measures-and-what-it-does-not"></a>
+<h2 id="claims-and-criteria">Claims and criteria<a class="anchor" aria-label="anchor" href="#claims-and-criteria"></a>
 </h2>
-<p><code>fleetcheck</code> measures how closely <a href="https://pwinskill.github.io/fleet" class="external-link"><code>fleet</code></a>
-reproduces <code>malariasimulation</code>. <strong>It is a twin-fidelity
-check, not validation against data.</strong> Every number here compares
-two models to each other; none compares either to an observation.</p>
-<p>That matters for how far the result carries. <code>fleet</code>
-inherits its epidemiological standing from the IBM, and inherits it only
-as far as the gap measured here is small relative to the IBM’s own
-uncertainty against data. A result that reproduces the IBM faithfully
-reproduces its biases too.</p>
+<p>The unit of evidence is a claim, not a scenario. Each claim has a
+criterion that decides it and a verdict, so the result is a decision
+rather than a number to interpret. A claim can fail, and two currently
+do.</p>
+<p>Criteria are drawn from the mechanism rather than from the result:
+“inside the IBM replicate band”, because that band is the noise floor a
+deterministic model should land inside, not “at five of six EIRs”,
+because five is what came out. The replicate band is the IBM median plus
+or minus 1.28 standard deviations across replicates, the 10-90% interval
+of a normal distribution. It adapts as the comparison gets harder:
+splitting the IBM by age thins its counts and widens its spread, so the
+test becomes more forgiving where the reference is less certain, and the
+measured value records this rather than hiding it.</p>
+<p>Claims about how a burden is distributed by age are scored only on
+the age bands carrying at least 5% of it. The notes on those claims say
+what the exclusion costs.</p>
 </div>
 <div class="section level2">
-<h2 id="organised-by-claim">Organised by claim<a class="anchor" aria-label="anchor" href="#organised-by-claim"></a>
+<h2 id="statistics">Statistics<a class="anchor" aria-label="anchor" href="#statistics"></a>
 </h2>
-<p>The unit is a claim, not a scenario. Each one carries the criterion
-that decides it and a verdict, so a reader meets a decision rather than
-a number to interpret. A claim can fail, and three currently do.</p>
-<p>A criterion drawn from the mechanism is worth more than one drawn
-from the result. <em>Inside the IBM replicate band</em>, because that
-band is the noise floor a deterministic model ought to land inside; not
-<em>at five of six EIRs</em>, because five is what happened to come out.
-The band also does the right thing as the comparison gets harder:
-splitting the IBM by age thins its counts and widens its own spread, so
-the test becomes forgiving exactly where the yardstick becomes uncertain
-— and says so in the measured value rather than hiding it.</p>
-</div>
-<div class="section level2">
-<h2 id="one-definition-of-each-statistic">One definition of each statistic<a class="anchor" aria-label="anchor" href="#one-definition-of-each-statistic"></a>
-</h2>
-<p><code>R/metrics.R</code> holds every comparison statistic used
-anywhere in the project, unit-tested. <code><a href="../reference/agreement.html">agreement()</a></code> returns
-<code>cor</code>, <code>rmse</code>, <code>bias</code>,
-<code>rel_bias</code> and <code>slope</code> together, because a slope
-of 1 with a positive bias is a constant offset while a slope above 1
-with no bias is a fan, and quoting one of them alone hides which you
-have. <code><a href="../reference/band_summary.html">band_summary()</a></code> answers “inside the IBM replicate
-band”, which is the criterion 17 claims in the register are decided
-by.</p>
-<p>So the figure and the table built from the same results cannot
+<p>Every comparison statistic is defined once, in
+<code>R/metrics.R</code>, and unit-tested. <code><a href="../reference/agreement.html">agreement()</a></code>
+returns correlation, RMSE, bias, relative bias and slope together,
+because a slope of 1 with a positive bias is a constant offset while a
+slope above 1 with no bias is a fan, and either statistic alone hides
+which. <code><a href="../reference/replicate_band.html">replicate_band()</a></code> defines the band named in the
+criteria of 17 claims; <code><a href="../reference/band_summary.html">band_summary()</a></code> scores a set of cells
+against it, and <code><a href="../reference/outside_rates.html">outside_rates()</a></code> sets the bar for claims
+tested over many cells.</p>
+<p>Because figures and tables use the same functions, they cannot
 disagree: the site-file correlation in <code>render.R</code>’s figure
 and in <code>tables.R</code>’s table both come from
 <code><a href="../reference/agreement.html">agreement()</a></code>.</p>
 </div>
 <div class="section level2">
-<h2 id="provenance">Provenance<a class="anchor" aria-label="anchor" href="#provenance"></a>
+<h2 id="provenance-and-precision">Provenance and precision<a class="anchor" aria-label="anchor" href="#provenance-and-precision"></a>
 </h2>
-<p><code><a href="../reference/stamp.html">stamp()</a></code> records, on every result: the <code>fleet</code>
-and <code>malariasimulation</code> versions and the commits they were
-installed from, the R version, the platform, the date, and whatever the
-run wants to add. A package installed from a local source tree has no
-commit to record and the field is <code>null</code>; <code>Built</code>
-is recorded beside it so that case still says when and on what.</p>
-<p>The tier that is hardest to re-run is the one that most needs to say
-what made it, so the site-file statistics also record the age grid and
-the mosquito sub-step count they were measured at.</p>
-<p>The site-file snapshot carries two stamps and they are not
-interchangeable. <code>run</code> is the site-file sweep — the
-<code>fleet</code> version its per-country results were produced at —
-and is only changed when that sweep is actually repeated.
-<code>summarised</code> is the seconds-long pass that turns those
-results into the four numbers on this site, and can happen at any later
-version. A single stamp would report today’s <code>fleet</code> over
-numbers from months ago.</p>
+<p><code><a href="../reference/stamp.html">stamp()</a></code> records, with every result, the
+<code>fleet</code> and <code>malariasimulation</code> versions and the
+commits they were installed from, the R version, the platform, the date,
+and any fields the run adds. A package installed from a local source
+tree has no commit to record, so that field is <code>null</code>;
+<code>fleet</code>’s <code>Built</code> field is recorded beside it to
+show when and on what it was built.</p>
+<p>The site-file statistics also record the age grid and the mosquito
+sub-step count they were measured at. Their snapshot carries two stamps,
+which are not interchangeable. <code>run</code> records the site-file
+sweep, including the <code>fleet</code> version that produced the
+per-country results, and changes only when the sweep is repeated.
+<code>summarised</code> records the pass that reduces those results to
+the four numbers on this site; it takes seconds and can be repeated at
+any later version. A single stamp would report today’s
+<code>fleet</code> against numbers from months earlier.</p>
+<p>Simulation output is quoted to three or four significant figures.
+<code>run.R</code> rounds the stored summaries to six with
+<code><a href="../reference/round_sig.html">round_sig()</a></code> as it writes them, so a re-run cannot store
+full precision again. One file keeps full precision:
+<code>rep_eq.csv</code>, which the drift check in <code>assess.R</code>
+compares against at a tolerance of 1e-6.</p>
 </div>
 <div class="section level2">
-<h2 id="stored-precision">Stored precision<a class="anchor" aria-label="anchor" href="#stored-precision"></a>
+<h2 id="tiers">Tiers<a class="anchor" aria-label="anchor" href="#tiers"></a>
 </h2>
-<p>Simulation output is quoted to three or four significant figures
-wherever it is reported. <code>run.R</code> rounds the stored summaries
-to six as it writes, with nothing lost that anyone reads. One file keeps
-full precision: <code>rep_eq.csv</code>, which the drift check asserts
-against at 1e-6.</p>
-<p>The rounding lives in the code that writes the files,
-<code><a href="../reference/round_sig.html">round_sig()</a></code>, so a re-run cannot quietly store full
-precision again.</p>
+<p>Each claim records a tier: the cost of reproducing it.</p>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>Tier</th>
+<th>Cost</th>
+<th>Who can reproduce it</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>seconds</td>
+<td>anyone, from the committed summaries</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>minutes</td>
+<td>anyone; re-runs <code>fleet</code> only</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>about 2 hours</td>
+<td>anyone with about 10 cores</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>about 30 minutes</td>
+<td>anyone with 4 cores and the site files, which are not
+redistributable</td>
+</tr>
+</tbody>
+</table>
+<p>These costs are for <em>P. falciparum</em>. For <em>P. vivax</em>,
+tier 1 takes a few minutes and tier 2 about an hour.</p>
+<p>Tier 3 is the 63-country site-file comparison. Its figures and
+statistics are public, but the site files behind them are not
+redistributable, so nobody outside the project can repeat it: a
+limitation of the evidence, not a property of the result. The constraint
+is the inputs rather than the compute: the sweep re-runs
+<code>fleet</code> only, because the IBM arm is the pre-run diagnostic
+shipped with each site file.</p>
 </div>
 <div class="section level2">
-<h2 id="reproducing-a-claim">Reproducing a claim<a class="anchor" aria-label="anchor" href="#reproducing-a-claim"></a>
+<h2 id="reproducing-the-results">Reproducing the results<a class="anchor" aria-label="anchor" href="#reproducing-the-results"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># tier 1, a few minutes (both parasites)</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">01</span><span class="sc">-</span>seed<span class="sc">-</span>stability<span class="sc">/</span>run.R</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># fleet against the committed IBM rows, minutes</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>assess.R</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># tier 2, about two hours on ten cores</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co"># the speed claims' tables: both models, one run each, alone on one core</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>speed.R                   <span class="co"># a quarter of an hour</span></span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>speed.R   <span class="co"># the vivax table, about half an hour</span></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co"># a few-minute end-to-end check of the same path</span></span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>CMP_SMOKE<span class="ot">=</span><span class="dv">1</span> Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="co"># the P. vivax suite: the same scripts, results in results/pv/</span></span>
-<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>run.R</span>
-<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>assess.R</span>
-<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>tables_pv.R</span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">02</span><span class="sc">-</span>scenarios<span class="sc">/</span>render_pv.R</span>
-<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co"># parameter-draws: eight posterior draws at three EIRs, tier 2 (two hours on</span></span>
-<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co"># four workers); assess.R re-runs fleet alone against the committed IBM rows</span></span>
-<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>run.R</span>
-<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>assess.R</span>
-<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>render.R</span>
-<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a><span class="co"># and what moves its severe-incidence gap: 40 IBM runs, fifteen minutes</span></span>
-<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a>Rscript validations<span class="sc">/</span><span class="dv">04</span><span class="sc">-</span>parameter<span class="sc">-</span>draws<span class="sc">/</span>diagnose.R</span>
-<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a><span class="co"># tier 3, which needs the restricted site files</span></span>
-<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a>FLEET_VALIDATE<span class="ot">=</span><span class="er">/</span>path<span class="sc">/</span>to<span class="sc">/</span>site<span class="sc">-</span>files Rscript validations<span class="sc">/</span><span class="dv">03</span><span class="sc">-</span>real<span class="sc">-</span>settings<span class="sc">/</span>run.R</span>
-<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a>FLEET_VALIDATE<span class="ot">=</span><span class="er">/</span>path<span class="sc">/</span>to<span class="sc">/</span>site<span class="sc">-</span>files CMP_PARASITE<span class="ot">=</span>pv Rscript validations<span class="sc">/</span><span class="dv">03</span><span class="sc">-</span>real<span class="sc">-</span>settings<span class="sc">/</span>run.R</span></code></pre></div>
-<p>The vivax suite runs on its own transmission grid (EIR 0.3 to 30,
-where falciparum’s is 1 to 120), without SMC, PMC or RTS,S –
+<p>Installation, the tier-0 checks and the <code>fleet</code>-only drift
+check are in the <a href="../index.html#installation">README</a>. Paths
+below are relative to the repository root. No script has a hardcoded
+path: each finds the checkout by walking up to <code>DESCRIPTION</code>,
+so it runs from any working directory.</p>
+<p><code>R/</code> holds the unit-tested package code listed in the <a href="../reference/index.html">reference</a>. <code>validations/</code>
+has one directory per body of evidence, with its scripts and committed
+results; <code>01-seed-stability</code> to
+<code>04-parameter-draws</code> each have a README with script-level
+detail. Raw model output is never committed, only summaries and their
+stamps.</p>
+<div class="section level3">
+<h3 id="scenario-comparison">Scenario comparison<a class="anchor" aria-label="anchor" href="#scenario-comparison"></a>
+</h3>
+<p><code>validations/02-scenarios/</code> runs every scenario through
+both models on the same parameter list. Its <code>assess.R</code>
+re-runs <code>fleet</code> alone against the committed IBM rows, which
+stay valid for any change to <code>fleet</code> because the IBM does not
+depend on it. It reports two things separately: whether anything moved
+(<code>fleet</code> now against <code>fleet</code>’s committed rows),
+and whether the match still holds (<code>fleet</code> against the IBM
+medians and replicate bands, at the thresholds the claims rest on). Only
+the second fails the run by default, with exit status 1, so the script
+can gate CI.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="va">CMP_ONLY</span><span class="op">=</span>eir_20,smc <span class="ex">Rscript</span> validations/02-scenarios/assess.R   <span class="co"># a subset, seconds</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="va">CMP_STRICT</span><span class="op">=</span>1 <span class="ex">Rscript</span> validations/02-scenarios/assess.R          <span class="co"># also fail if any number moved</span></span></code></pre></div>
+<p>Before re-running both models, run the smoke path. It runs every
+scenario end to end at a 4-year horizon with one replicate, in about two
+minutes, and writes to
+<code>validations/02-scenarios/results/smoke/</code>, so it cannot touch
+the committed results.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="va">CMP_SMOKE</span><span class="op">=</span>1 <span class="ex">Rscript</span> validations/02-scenarios/run.R</span></code></pre></div>
+<p>The full run takes about two hours on ten cores. It runs the IBM
+<code>N_REP</code> times per scenario on a PSOCK cluster of ten workers
+(fewer with <code>CMP_WORKERS</code>) and re-stamps
+<code>ibm_reference.json</code>. After a change to <code>fleet</code>
+alone, <code>CMP_FLEET_ONLY=1</code> refreshes <code>fleet</code>’s rows
+in minutes and keeps the IBM’s.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/run.R</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="va">CMP_FLEET_ONLY</span><span class="op">=</span>1 <span class="ex">Rscript</span> validations/02-scenarios/run.R</span></code></pre></div>
+<p>The <em>P. vivax</em> suite is the same scripts under
+<code>CMP_PARASITE=pv</code>, with results in
+<code>validations/02-scenarios/results/pv/</code>. It runs on its own
+transmission grid (EIR 0.3 to 30, against 1 to 120 for falciparum),
+without SMC, PMC or RTS,S, and with radical cure in their place:
 <code>malariasimulation</code> cannot run chemoprevention under vivax,
-and its vaccines carry no vivax calibration – and with radical cure in
-their place. A vivax run of <code>fleet</code> costs about twenty times
-a falciparum one, so tier 3 represents each country by at most ten
-sub-sites, spread evenly across its vivax EIR range.</p>
-<p>The register itself is data, so it can be queried rather than
-read:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pwinskill.github.io/fleetcheck">fleetcheck</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/scoreboard.html">scoreboard</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="../reference/read_claims.html">read_claims</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">status</span> <span class="op">!=</span> <span class="st">"pass"</span><span class="op">)</span></span></code></pre></div>
+and its vaccines carry no vivax calibration.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="va">CMP_PARASITE</span><span class="op">=</span>pv <span class="ex">Rscript</span> validations/02-scenarios/run.R</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="va">CMP_PARASITE</span><span class="op">=</span>pv <span class="va">CMP_FLEET_ONLY</span><span class="op">=</span>1 <span class="ex">Rscript</span> validations/02-scenarios/run.R</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="va">CMP_PARASITE</span><span class="op">=</span>pv <span class="ex">Rscript</span> validations/02-scenarios/assess.R</span></code></pre></div>
+<p>The <code>speed</code> and <code>speed-pv</code> tables time both
+models side by side, one run of each, alone on one core. Run them on an
+otherwise idle machine:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/speed.R                   <span class="co"># about 15 min: results/speed.csv, vignettes/tab_speed.md</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="va">CMP_PARASITE</span><span class="op">=</span>pv <span class="ex">Rscript</span> validations/02-scenarios/speed.R   <span class="co"># about 25 min: results/pv/speed.csv, vignettes/tab_speed_pv.md</span></span></code></pre></div>
+<p>The figures and tables are redrawn from the committed results in
+seconds, without running a model:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/render.R      <span class="co"># cmp_*.png into man/figures/ and vignettes/</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/tables.R      <span class="co"># validations/02-scenarios/results/tables.md</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/render_pv.R   <span class="co"># the vivax figures, cmp_pv_*.png</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="ex">Rscript</span> validations/02-scenarios/tables_pv.R   <span class="co"># validations/02-scenarios/results/pv/tables.md</span></span></code></pre></div>
+<p>Neither pair redraws its site-file panel, which is a snapshot of
+tier-3 results that cannot be repeated without the site files.
+<code>CMP_REFRESH_SITES=1</code> re-takes the snapshot from the tier-3
+results in <code>validations/03-real-settings/results/raw/</code>.</p>
+</div>
+<div class="section level3">
+<h3 id="seed-stability-and-parameter-draws">Seed stability and parameter draws<a class="anchor" aria-label="anchor" href="#seed-stability-and-parameter-draws"></a>
+</h3>
+<p><code>validations/01-seed-stability/run.R</code> reproduces
+<code>seed-stability</code> and <code>seed-stability-pv</code> in a few
+minutes, running <code>fleet</code> only, and writes
+<code>results/seed_stability.json</code> and
+<code>results/seed_stability_pv.json</code>.</p>
+<p><code>validations/04-parameter-draws/</code> is also tier 2: eight of
+<code>set_parameter_draw()</code>’s posterior draws at three EIRs, for
+<code>parameter-draws</code>. <code>select.R</code> chooses the draws.
+<code>run.R</code> runs both models, in about two hours on four workers;
+<code>assess.R</code> re-runs <code>fleet</code> alone against the
+committed IBM rows; <code>render.R</code> draws the figure.
+<code>diagnose.R</code> tests what moves the severe-incidence gap, with
+40 IBM runs in about fifteen minutes.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">Rscript</span> validations/01-seed-stability/run.R</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="ex">Rscript</span> validations/04-parameter-draws/run.R</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="ex">Rscript</span> validations/04-parameter-draws/assess.R</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="ex">Rscript</span> validations/04-parameter-draws/render.R</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="ex">Rscript</span> validations/04-parameter-draws/diagnose.R</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="site-file-comparison">Site-file comparison<a class="anchor" aria-label="anchor" href="#site-file-comparison"></a>
+</h3>
+<p>Tier 3 runs from this repository given the malariaverse site files,
+located by <code>FLEET_VALIDATE</code>:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="va">FLEET_VALIDATE</span><span class="op">=</span>/path/to/site-files <span class="ex">Rscript</span> validations/03-real-settings/run.R</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="ex">Rscript</span> validations/03-real-settings/assess.R</span></code></pre></div>
+<p>The <em>P. vivax</em> arm is the same pair under
+<code>CMP_PARASITE=pv</code>, with results in
+<code>validations/03-real-settings/results/pv/</code>. A vivax run of
+<code>fleet</code> costs about thirteen times a falciparum one, so each
+country is represented by at most ten sub-sites, spread evenly across
+its vivax EIR range. <code>diagnose.R</code> draws every sub-site’s
+monthly clinical series, IBM against <code>fleet</code>, as a PDF for
+investigating where they disagree; its output is not committed.</p>
+<p>With a single site file, <code>example-one-site.R</code> runs the
+same pipeline on one sub-site in about two minutes: it subsets the site
+file, converts ITN usage to a distribution, builds the parameter list,
+seeds both models from it, reduces both through <code>postie</code>, and
+scores them with the same <code><a href="../reference/agreement.html">agreement()</a></code> the register uses.
+One sub-site against one IBM replicate shows that the pipeline runs; it
+is not evidence about the model, so read the shape of the output rather
+than its third decimal.
+<code>validations/03-real-settings/README.md</code> describes each step
+and the details that matter.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="va">FLEET_VALIDATE</span><span class="op">=</span>/path/to/fleet_validate <span class="ex">Rscript</span> validations/03-real-settings/example-one-site.R BFA</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="updating-the-register">Updating the register<a class="anchor" aria-label="anchor" href="#updating-the-register"></a>
+</h3>
+<p>Edit <code>claims.yml</code> (the criterion, the measured value, the
+verdict), then regenerate its rendered copies:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="ex">Rscript</span> report/make_scoreboard.R</span></code></pre></div>
+<p>This rewrites the register list and badges in <code>README.md</code>,
+<code>pkgdown/index.md</code> (generated from <code>README.md</code>)
+and <code>inst/claims.yml</code>. Do not edit those copies by hand: CI
+runs the same script with <code>--check</code> and fails if they do not
+match. The evidence articles read <code>claims.yml</code> when the site
+is built:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'pkgdown::build_site()'</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="environment-variables">Environment variables<a class="anchor" aria-label="anchor" href="#environment-variables"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Variable</th>
+<th>Effect</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>CMP_PARASITE=pv</code></td>
+<td>run the <em>P. vivax</em> suite, or the vivax arm of tier 3, instead
+of <em>P. falciparum</em>
+</td>
+</tr>
+<tr class="even">
+<td><code>CMP_SMOKE=1</code></td>
+<td>4-year, one-replicate end-to-end check, written to
+<code>results/smoke/</code>
+</td>
+</tr>
+<tr class="odd">
+<td><code>CMP_ONLY=a,b</code></td>
+<td>run or check only these scenarios (countries in tier 3), merging
+into the existing results</td>
+</tr>
+<tr class="even">
+<td><code>CMP_FLEET_ONLY=1</code></td>
+<td>re-run <code>fleet</code>’s rows only, keeping the committed IBM
+rows</td>
+</tr>
+<tr class="odd">
+<td><code>CMP_STRICT=1</code></td>
+<td>make <code>assess.R</code> fail on any movement, not only on lost
+agreement</td>
+</tr>
+<tr class="even">
+<td><code>CMP_WORKERS</code></td>
+<td>worker pool size for <code>run.R</code> (default 10 in
+<code>02-scenarios</code>, 4 in <code>04-parameter-draws</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>CMP_REFRESH_SITES=1</code></td>
+<td>re-take the site-file snapshot behind the tier-3 figure panels and
+tables</td>
+</tr>
+<tr class="even">
+<td><code>FLEET_VALIDATE</code></td>
+<td>location of the site files; required by the tier-3 sweep, and
+<code>../fleet_validate</code>, beside the checkout, by default
+elsewhere</td>
+</tr>
+<tr class="odd">
+<td><code>FLEET_LIB</code></td>
+<td>library path prepended to <code><a href="https://rdrr.io/r/base/libPaths.html" class="external-link">.libPaths()</a></code>, for
+installations that do not pick up <code>R_LIBS_USER</code>
+</td>
+</tr>
+<tr class="even">
+<td><code>FLEETCHECK_ROOT</code></td>
+<td>the checkout root, for a job that runs from outside it</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
