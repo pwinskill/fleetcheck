@@ -14,8 +14,8 @@
 # offset is noted against the claims it bears on rather than scored as one.
 #
 # "the IBM replicate band" is the median plus or minus 1.28 standard deviations
-# across replicates -- the same 10-90% interval these criteria always named,
-# read from every replicate instead of from two order statistics. Sample
+# across replicates: the same 10-90% interval these criteria always named,
+# estimated from every replicate instead of from two order statistics. Sample
 # percentiles from twenty points are biased about 10% inward and their width
 # drifts with the replicate count; this does not. fleetcheck::replicate_band()
 # is the definition, and the figures draw it.
@@ -150,14 +150,15 @@
     a 1.28 SD band leaves a fifth of cells outside by construction, and no
     replicate is inside all 72. fleet is outside less often than any of the
     twenty.
-    Where fleet does sit outside, the size is small in both senses. It is
+    Where fleet does sit outside, the gap is small in absolute and relative
+    terms. It is
     outside in two cells, both bed nets, on prevalence at EIR 20 and 120; on
     all-age clinical incidence at EIR 120 it sits 0.01 points inside. The
     worst is prevalence at EIR 120, where the IBM's bed nets cut PfPR(2-10) by
     27.5% and fleet's by 25.4%: 2.1 percentage points of the reduction, 7.7% of
     the effect, the mark of population-averaged nets, which lose the
     correlation of each person's protection across bites. The typical gap does
-    not grow with transmission -- a median of 0.39, 0.37 and 0.49 percentage
+    not grow with transmission: a median of 0.39, 0.37 and 0.49 percentage
     points at EIR 3, 20 and 120.
     Impact is a ratio of two runs sharing an age grid, so grid discretisation
     largely divides out: over twice the groups, 53 to 118, moved the worst
@@ -287,10 +288,10 @@
   note: >
     Each run in the table starts from set_equilibrium()'s seed and is timed
     alone, start-up apart. Each fleet figure is one complete
-    run_simulation_ode() call -- inputs, seed, the run and its outputs -- the
-    fastest of five. The IBM's cost grows with its population, though by less
-    than in proportion -- five times the people cost it 2.6 to 3.6 times as
-    much -- and fleet's does not. A seasonal programme adds 20% to 30% to
+    run_simulation_ode() call (inputs, seed, the run and its outputs), the
+    fastest of five. The IBM's cost grows with its population, though less
+    than in proportion (five times the people cost it 2.6 to 3.6 times as
+    much), and fleet's does not. A seasonal programme adds 20% to 30% to
     fleet's cost, and 14% to 56% to the IBM's, more the larger its population.
     One fleet run also stands in for the twenty replicates an IBM comparison
     needs: across the whole scenario suite, whose IBM runs share a ten-worker
@@ -309,7 +310,7 @@
     below it. The claim is about prevalence: incidence relaxes further, under-5
     clinical incidence by -0.1% at EIR 1, +1.7% at EIR 20 and +6.0% at EIR 120,
     nine-tenths of it within five years, so a comparison of incidence levels
-    wants a burn-in (every tier-2 scenario has thirty years), as the IBM's does.
+    needs a burn-in (every tier-2 scenario has thirty years), as the IBM's does.
     validations/01-seed-stability/run.R reproduces the prevalence figures.
   measured: 0.35% maximum excursion; flat to 0.007% over the last five years
   status: pass
@@ -372,7 +373,7 @@
     population, which in the IBM leaves out its 0.7% over 100 and in fleet
     holds everyone, so fleet reads about 0.7% low by construction; most of its
     shortfall from EIR 1 up is that. Dividing both by the whole population
-    wants the IBM rows re-summarised, at the vivax suite's next IBM run.
+    needs the IBM rows re-summarised, at the vivax suite's next IBM run.
 
 - id: hypnozoite-carriage-eir-pv
   parasite: vivax
@@ -432,8 +433,8 @@
     on an empty bitten set, which is right for falciparum and wrong for a
     relapse, which needs no bite. Spraying makes days with no infectious bite
     across the whole 10,000-person population common, every relapse is lost on
-    them, and the IBM eliminates vivax -- every replicate at EIR 1 and 3, 13 of
-    20 at EIR 10 -- where fleet, relapsing every day, keeps it. The other four
+    them, and the IBM eliminates vivax (every replicate at EIR 1 and 3, 13 of
+    20 at EIR 10) where fleet, relapsing every day, keeps it. The other four
     are bed nets at EIR 1, where the IBM's nets cut every outcome 6 to 9 points
     more than fleet's: nets kill mosquitoes as well as deflecting them, and at
     EIR 1 that leaves days with no infectious bite too. A patched copy of
@@ -482,15 +483,15 @@
     alone, start-up apart. Each fleet figure is one complete
     run_simulation_ode() call, the fastest of two. With nothing deployed a
     vivax fleet run costs about eight times a falciparum one, for the
-    hypnozoite dimension -- eight levels for the eleven batch counts
-    (vignette("model", package = "fleet"), V.1) -- and the within-cell immunity
+    hypnozoite dimension (eight levels for the eleven batch counts;
+    vignette("model", package = "fleet"), V.1) and the within-cell immunity
     spread, and the programme adds 42 to 45%, most of it primaquine radical
     cure's daily transfers. The IBM costs a little less for vivax than for
     falciparum. So at 10,000 people fleet is 1.8 to 2.5 times faster with
     nothing deployed and 1.3 to 1.4 times faster under the programme. Its cost
     does not grow with the population, so at 50,000 people it is 4.5 to 7.3
-    times faster. One fleet
-    run also stands in for the twenty replicates an IBM comparison needs:
+    times faster. One fleet run also stands in for the twenty replicates an
+    IBM comparison needs:
     across the vivax scenario suite, whose IBM runs share a worker pool, the
     IBM takes 9.5 CPU-hours and fleet 20 minutes.
 
@@ -516,8 +517,8 @@
     realised EIR ends 18%, 13% and 8% above init_EIR at EIR 0.3, 1 and 3,
     against fleet's 18%, 14% and 9%. The control says why: with
     immunity_spread = FALSE fleet holds its seed at EIR 3 to within 1.3%. So
-    every vivax comparison is made after a 30-year burn-in in both models --
-    long enough at EIR 0.3, where settling takes over two decades -- and a vivax
-    run started from set_equilibrium() wants one.
+    every vivax comparison is made after a 30-year burn-in in both models
+    (long enough at EIR 0.3, where settling takes over two decades), and a
+    vivax run started from set_equilibrium() needs one.
     validations/01-seed-stability/run.R reproduces the figures.
 

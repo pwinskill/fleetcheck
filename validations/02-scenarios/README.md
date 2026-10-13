@@ -7,8 +7,8 @@ seeded at the `malariaEquilibrium` fixed point. Rendering age bands are set once
 on the shared parameter list so both models emit identical `n_detect_lm_*` /
 `n_age_*` / `n_inc_*` columns, and one summariser reduces both.
 
-This is the tier that is complete. Everything in the repository README's
-"Running it yourself", steps 4 to 6, exercises the scripts here.
+This is the tier that is complete. The "Scenario comparison" section of the
+Methods article (`vignettes/methods.Rmd`) covers the scripts here.
 
 ## Files
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/report.R
 \name{badges_md}
 \alias{badges_md}
-\title{The README badge row}
+\title{Render the README badge row}
 \usage{
 badges_md(
   claims = read_claims(),
@@ -11,22 +11,20 @@ badges_md(
 )
 }
 \arguments{
-\item{claims}{as returned by \code{\link[=read_claims]{read_claims()}}.}
+\item{claims}{Data frame returned by \code{\link[=read_claims]{read_claims()}}.}
 
-\item{repo}{\code{owner/name} on GitHub.}
+\item{repo}{GitHub repository, as \code{"owner/name"}.}
 
-\item{site}{the published site, used as the claims badge's target.}
+\item{site}{URL of the published site, with a trailing slash.}
 }
 \value{
-a character vector of markdown lines, one badge each.
+A character vector of markdown lines, one badge each.
 }
 \description{
-The one badge worth having here reports the register, so it is generated from
-the register rather than typed: a hand-written "all claims pass" that outlived
-the failure it was written for is the exact drift this project exists to stop.
-}
-\details{
-The static badges are emitted here too, rather than left in the markdown
-around a generated block, because a marker line splits a markdown paragraph.
-Badges written either side of one render as two rows with a gap between them.
+The CI and pkgdown workflow badges, one claims badge per parasite, and the
+lifecycle and licence badges. A claims badge counts claims by verdict and
+links to that parasite's evidence article. It is green when every claim
+passes, yellow when any is open or untested and none fails, and orange when
+any fails. A register with no vivax claims gets a single badge labelled
+"claims".
 }

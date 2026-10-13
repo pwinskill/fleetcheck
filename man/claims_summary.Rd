@@ -2,13 +2,17 @@
 % Please edit documentation in R/claims.R
 \name{claims_summary}
 \alias{claims_summary}
-\title{Counts by verdict}
+\title{Count claims by verdict}
 \usage{
 claims_summary(claims = read_claims())
 }
 \arguments{
-\item{claims}{as returned by \code{\link[=read_claims]{read_claims()}}.}
+\item{claims}{Data frame returned by \code{\link[=read_claims]{read_claims()}}.}
+}
+\value{
+A named list of integer counts: \code{pass}, \code{open}, \code{fail} and
+\code{undeclared}.
 }
 \description{
-Counts by verdict
+Count claims by verdict
 }

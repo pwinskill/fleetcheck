@@ -59,7 +59,7 @@ test_that("an unresolved verdict is not set in a lighter type than a pass", {
   expect_equal(verdict("untested"), '<span class="verdict untested">UNTESTED</span>')
   expect_equal(verdict("passing"), '<span class="verdict pass">pass</span>')
   # and the summary counts in the same order the rows are in
-  expect_match(md[1], "^\\*\\*3 claims — 1 failing, 1 untested, 0 open, 1 pass\\.\\*\\*$")
+  expect_match(md[1], "^\\*\\*3 claims: 1 failing, 1 untested, 0 open, 1 pass\\.\\*\\*$")
   # Colour is a stylesheet's job and must never be the only signal: each verdict
   # carries its own word, so the column survives greyscale, a terminal, and
   # GitHub, which strips the class and keeps the text.

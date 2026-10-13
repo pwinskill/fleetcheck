@@ -1,15 +1,12 @@
-# The site. The verdict first: a reader should meet it before the figures,
-# which is the whole reason this repository is organised by claim.
 url: https://pwinskill.github.io/fleetcheck
 
 # Not on CRAN and no released version, so the navbar's version badge says so
-# rather than showing a bare number with an empty tooltip.
+# rather than showing a bare number.
 development:
   mode: unreleased
 
-# `navbar-bg` has to be set at compile time, not in extra.scss: Bootstrap picks
-# the light or dark hamburger icon from it while compiling, and a stylesheet
-# cannot reach that decision. Everything else about the theme is in
+# `navbar-bg` has to be set here, not in extra.scss: Bootstrap chooses the light
+# or dark menu icon from it at compile time. The rest of the theme is in
 # pkgdown/extra.scss, which is shared with fleet.
 template:
   bootstrap: 5
@@ -32,45 +29,47 @@ navbar:
       - text: P. vivax
         href: articles/evidence-vivax.html
     methods:
-      text: How it is produced
+      text: Methods
       href: articles/methods.html
 
-# Same sidebar structure as fleet's, so the two front pages read the same way.
-# The glance text carries no counts: the badge row and the register already
-# carry them, and a third hand-written copy is the drift this project exists to
-# stop.
+# Same sidebar structure as fleet's. The glance text carries no counts: the
+# badges and the register already do.
 home:
-  title: fleetcheck • does fleet reproduce malariasimulation?
+  title: How closely fleet reproduces malariasimulation
   description: >
     A register of claims about how closely the fleet mean-field model
     reproduces the malariasimulation individual-based model of Plasmodium
     falciparum and P. vivax malaria, each with the criterion that decides it,
-    the number measured against it, and a verdict.
+    the value measured against it, and a verdict.
   sidebar:
     structure: [glance, links, citation, license, authors, dev]
     components:
       glance:
         title: At a glance
         text: >
-          A **twin-fidelity check**, not a validation against data. Every claim
-          carries the criterion that decides it and what it costs to reproduce,
-          from seconds to about two hours on ten cores.
+          A twin-fidelity check: agreement between two models, not validation
+          against data. Each claim records the criterion that decides it and
+          the cost of reproducing it, from seconds to about two hours on ten
+          cores.
 
 reference:
-- title: The claims register
-  contents: [read_claims, claims_summary, scoreboard, claims_list_md, scoreboard_md,
-             badges_md, verdict_html, evidence_page, claim_sections_md, check_claims]
+- title: Claims register
+  desc: Read, summarise and check `claims.yml`.
+  contents: [read_claims, find_claims, claims_summary, scoreboard, check_claims]
+- title: Rendering the register
+  desc: >
+    Markdown and HTML for the README, the home page and the evidence articles.
+  contents: [claims_list_md, scoreboard_md, claim_sections_md, badges_md,
+             verdict_html, evidence_page, md_cell, replace_block]
 - title: Comparison statistics
   desc: >
-    Every statistic quoted anywhere in this project. Defined once and
-    unit-tested, so no two pieces of evidence can compute the same quantity two
-    ways.
+    Every statistic quoted in the evidence, defined once and unit-tested.
   contents: [agreement, comparison-settings, replicate_band, band_z, outside_rates,
              band_position, band_summary]
 - title: Provenance and paths
-  contents: [stamp, round_sig, fc_root, fc_results, find_claims, replace_block, md_cell]
+  contents: [stamp, round_sig, fc_root, fc_results]
 - title: Scenario constants
   desc: >
-    The settings the comparison scripts share. Exported so the scripts run
-    against an installed package and not only under pkgload::load_all().
+    Settings shared by the comparison scripts. Exported so the scripts also run
+    against an installed package, not only under `pkgload::load_all()`.
   contents: [scenario-constants, int_scenario]

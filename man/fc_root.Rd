@@ -2,21 +2,19 @@
 % Please edit documentation in R/root.R
 \name{fc_root}
 \alias{fc_root}
-\title{The repository root}
+\title{Locate the fleetcheck checkout}
 \usage{
 fc_root(start = getwd())
 }
 \arguments{
-\item{start}{directory to search upward from.}
+\item{start}{Directory to search upward from.}
 }
 \value{
-an absolute path.
+The absolute path of the checkout. It is an error if none is found.
 }
 \description{
-The ported comparison code was written as scripts that a runner \code{source()}d
-after setting \code{ROOT}. As package code there is no runner, so the root has to
-resolve when it is \emph{called} rather than when the package loads. This walks up
-from the working directory looking for the DESCRIPTION, and honours
-\code{FLEETCHECK_ROOT} when set — for a cluster job that runs from somewhere else
-entirely.
+Returns the \code{FLEETCHECK_ROOT} environment variable if it is set, for a job
+that runs from outside the checkout. Otherwise searches \code{start} and each
+parent directory for a \code{DESCRIPTION} file for the fleetcheck package. The
+root is resolved when called, not when the package loads.
 }

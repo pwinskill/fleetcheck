@@ -2,23 +2,24 @@
 % Please edit documentation in R/metrics.R
 \name{replicate_band}
 \alias{replicate_band}
-\title{The band a set of replicates produces}
+\title{Replicate band for one cell}
 \usage{
 replicate_band(x, k = BAND_K, na.rm = TRUE)
 }
 \arguments{
-\item{x}{numeric, the replicate values for one cell.}
+\item{x}{Numeric vector of replicate values for one cell.}
 
-\item{k}{half-width in standard deviations; see \link{BAND_K}.}
+\item{k}{Half-width in standard deviations; see \link{BAND_K}.}
 
-\item{na.rm}{drop missing replicates.}
+\item{na.rm}{If \code{TRUE}, drop replicates that are not finite.}
 }
 \value{
-a one-row data frame with \code{centre}, \code{scale}, \code{lower} and \code{upper}.
-The centre is the median, which is what the figures draw and what survives
-the skew in cells holding few episodes; over the cells that carry the
-claims the median and the mean agree to 0.02 standard deviations.
+A one-row data frame with \code{centre} (the median), \code{scale} (the
+standard deviation), \code{lower} and \code{upper} (\code{centre} minus and plus \code{k * scale}). All are \code{NA} with fewer than two replicates. The median is used
+because it is what the figures draw and it is robust to the skew in cells
+holding few episodes; over the cells the claims rest on, median and mean
+agree to 0.02 standard deviations.
 }
 \description{
-The band a set of replicates produces
+Replicate band for one cell
 }

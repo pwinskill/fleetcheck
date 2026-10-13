@@ -2,21 +2,25 @@
 % Please edit documentation in R/provenance.R
 \name{stamp}
 \alias{stamp}
-\title{Stamp an output with what produced it}
+\title{Record what produced a result}
 \usage{
 stamp(...)
 }
 \arguments{
-\item{...}{extra fields to record (replicate counts, grids, input versions).}
+\item{...}{Extra named fields to record, such as replicate counts, grids or
+input versions.}
 }
 \value{
-a named list, safe to write as JSON alongside the result.
+A named list, suitable for writing as JSON beside the result:
+\code{taken} (the time), \code{fleet}, \code{fleet_sha}, \code{fleet_built},
+\code{malariasimulation}, \code{malariasimulation_sha}, \code{postie} (versions and
+seven-character commits), \code{R}, \code{platform}, \code{fleetcheck_sha} (the
+checkout's commit), then the fields in \code{...}. Anything unavailable is \code{NA}.
 }
 \description{
-Every result written by this project carries one of these. It exists because
-\code{fleet}'s own snapshots had the provenance inverted: the 25-minute comparison
-recorded the malariasimulation version, the R version, the replicate count
-and a digest of the scenarios, while the seven-hour site-file run -- the one
-nobody can repeat -- recorded only a date and a fleet version. The tier that
-cannot be re-run is the tier that most needs to say what made it.
+Every result written by fleetcheck's validation scripts carries a stamp.
+Commits are read from the \code{RemoteSha} or \code{GithubSHA1} field that \code{remotes},
+\code{pak} and \code{devtools} write when installing from GitHub; a package installed
+from a local source tree has neither, so its commit is \code{NA} and \code{fleet}'s
+\code{Built} field shows when and on what it was built.
 }

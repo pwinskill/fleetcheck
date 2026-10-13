@@ -7,11 +7,19 @@
 read_claims(path = find_claims())
 }
 \arguments{
-\item{path}{path to \code{claims.yml}.}
+\item{path}{Path to \code{claims.yml}.}
 }
 \value{
-a data frame, one row per claim.
+A data frame with one row per claim, in register order, and columns
+\code{id}, \code{claim}, \code{criterion}, \code{tier} (integer), \code{evidence}, \code{figure},
+\code{table}, \code{measured}, \code{status}, \code{note} and \code{parasite}. An absent \code{figure},
+\code{table} or \code{note} is \code{""}, and an absent \code{parasite} is \code{"falciparum"}.
 }
 \description{
-Read the claims register
+Parses \code{claims.yml} and validates it. Each claim must have a non-blank \code{id},
+\code{claim}, \code{criterion}, \code{measured}, \code{status} and \code{tier}. \code{status} must be
+\code{pass}, \code{fail}, \code{open} or \code{undeclared}; \code{tier} an integer from 0 to 3; and
+\code{parasite}, if given, \code{falciparum} or \code{vivax}. Ids must be unique, and an
+\code{undeclared} claim must have \verb{NONE DECLARED} in its criterion. A violation,
+or an empty register, is an error.
 }

@@ -90,30 +90,31 @@ TS_YEARS
 TS_NET_EVERY
 }
 \description{
-The settings every comparison script has to agree on, in one place so they
-cannot drift apart between the script that runs the IBM and the script that
-plots the result.
+Settings that every comparison script must agree on, defined once so the
+script that runs the IBM and the script that plots the result cannot differ.
 }
 \details{
 \describe{
-\item{\code{VDIR()}}{directory holding the optional site-file validation
-results, which live in their own checkout beside this one. Override with
-the \code{FLEET_VALIDATE} environment variable. The site figure and its table
-are skipped when it is absent.}
-\item{\code{BURN_Y}}{IBM burn-in years before observation or intervention.}
+\item{\code{VDIR()}}{Directory holding the optional site-file validation
+results, in their own checkout beside this one (\code{../fleet_validate}).
+The \code{FLEET_VALIDATE} environment variable overrides it. The site figure
+and its table are skipped when the directory is absent.}
+\item{\code{BURN_Y}}{IBM burn-in, in years, before observation or
+intervention.}
 \item{\code{POP}}{IBM human population.}
 \item{\code{N_REP}}{IBM replicates per scenario.}
-\item{\code{AGE_EDGES}}{age-profile band edges, in years.}
-\item{\code{SEASON}}{Fourier coefficients for the seasonal rainfall profile.}
-\item{\code{EIR_GRID}}{the transmission-intensity grid.}
-\item{\code{EIR_REF}}{reference EIR for age profiles and interventions.}
-\item{\code{PROFILE_EIR}}{the low / reference / high transmission levels that
-shape claims are carried at.}
-\item{\code{INT_LABELS}, \code{TS_LABELS}}{display labels, in display order.}
-\item{\code{EIR_GRID_PV}, \code{EIR_REF_PV}, \code{PROFILE_EIR_PV}, \code{INT_LABELS_PV}}{the
-same for the P. vivax suite, which runs on its own lower grid and without
+\item{\code{AGE_EDGES}}{Age-profile band edges, in years.}
+\item{\code{SEASON}}{Fourier coefficients of the seasonal rainfall profile.}
+\item{\code{EIR_GRID}}{Transmission-intensity (EIR) grid.}
+\item{\code{EIR_REF}}{Reference EIR for age profiles and interventions.}
+\item{\code{PROFILE_EIR}}{Low, reference and high EIRs at which the age-profile
+and intervention claims are tested.}
+\item{\code{INT_LABELS}, \code{TS_LABELS}}{Display labels, in display order.}
+\item{\code{EIR_GRID_PV}, \code{EIR_REF_PV}, \code{PROFILE_EIR_PV}, \code{INT_LABELS_PV}}{The
+same for the \emph{P. vivax} suite, which has its own lower grid and no
 chemoprevention or vaccines.}
-\item{\code{TS_YEARS}, \code{TS_NET_EVERY}}{long-horizon programme timings.}
+\item{\code{TS_YEARS}, \code{TS_NET_EVERY}}{Years followed after deployment, and
+years between net campaigns, in the long-horizon programme scenarios.}
 }
 }
 \keyword{datasets}

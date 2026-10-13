@@ -1,14 +1,12 @@
-#' The repository root
+#' Locate the fleetcheck checkout
 #'
-#' The ported comparison code was written as scripts that a runner `source()`d
-#' after setting `ROOT`. As package code there is no runner, so the root has to
-#' resolve when it is *called* rather than when the package loads. This walks up
-#' from the working directory looking for the DESCRIPTION, and honours
-#' `FLEETCHECK_ROOT` when set — for a cluster job that runs from somewhere else
-#' entirely.
+#' Returns the `FLEETCHECK_ROOT` environment variable if it is set, for a job
+#' that runs from outside the checkout. Otherwise searches `start` and each
+#' parent directory for a `DESCRIPTION` file for the fleetcheck package. The
+#' root is resolved when called, not when the package loads.
 #'
-#' @param start directory to search upward from.
-#' @return an absolute path.
+#' @param start Directory to search upward from.
+#' @return The absolute path of the checkout. It is an error if none is found.
 #' @export
 fc_root <- function(start = getwd()) {
   env <- Sys.getenv("FLEETCHECK_ROOT")
@@ -27,10 +25,12 @@ fc_root <- function(start = getwd()) {
   }
 }
 
-#' Where a validation keeps its committed results
+#' Path to a validation's results directory
 #'
-#' @param validation directory name under `validations/`.
-#' @param ... path components below `results/`.
+#' @param validation Directory name under `validations/`, for example
+#'   `"02-scenarios"`.
+#' @param ... Path components below `results/`.
+#' @return A path under [fc_root()]. Its existence is not checked.
 #' @export
 fc_results <- function(validation, ...) {
   file.path(fc_root(), "validations", validation, "results", ...)

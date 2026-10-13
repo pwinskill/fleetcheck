@@ -2,16 +2,23 @@
 % Please edit documentation in R/metrics.R
 \name{band_summary}
 \alias{band_summary}
-\title{Summarise a set of band comparisons as a criterion outcome}
+\title{Summarise a set of band comparisons}
 \usage{
 band_summary(value, lower, upper)
 }
 \arguments{
-\item{value, lower, upper}{as for \code{\link[=band_position]{band_position()}}.}
+\item{value}{Numeric vector of candidate values.}
+
+\item{lower, upper}{Numeric vectors of band edges, the same length as
+\code{value}, for example from \code{\link[=replicate_band]{replicate_band()}}. It is an error if \code{lower}
+exceeds \code{upper}.}
 }
 \value{
-a list with \code{n}, \code{n_inside}, and \code{worst}, the largest excursion.
+A list with \code{n}, the number of cells; \code{n_inside}, the number inside
+the band; \code{n_missing}, the number with a missing value or edge; and
+\code{worst}, the \code{\link[=band_position]{band_position()}} of largest magnitude (0 when every scored
+cell is inside, \code{NA} when none can be scored).
 }
 \description{
-Summarise a set of band comparisons as a criterion outcome
+Scores the criterion "inside the IBM replicate band" over a set of cells.
 }

@@ -2,19 +2,19 @@
 % Please edit documentation in R/report.R
 \name{evidence_page}
 \alias{evidence_page}
-\title{The evidence article a claim is presented on}
+\title{Evidence article for each parasite}
 \usage{
 evidence_page(parasite)
 }
 \arguments{
-\item{parasite}{character vector of \code{"falciparum"} or \code{"vivax"}, as
-\code{\link[=read_claims]{read_claims()}} returns it.}
+\item{parasite}{Character vector of \code{"falciparum"} or \code{"vivax"}, as in the
+\code{parasite} column returned by \code{\link[=read_claims]{read_claims()}}.}
 }
 \value{
-the article's file name for each element.
+A character vector of article file names: \code{"evidence-vivax.html"}
+for \code{"vivax"} and \code{"evidence.html"} for anything else.
 }
 \description{
-Each parasite has an evidence page of its own, so a reader after the vivax
-results does not scroll past the falciparum claims to reach them, and the
-two sets of verdicts are never read as one.
+Each parasite has its own evidence article, so the two sets of verdicts are
+never read as one.
 }

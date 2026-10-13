@@ -1,14 +1,24 @@
-#' Stamp an output with what produced it
+# fleet's own snapshots once had their provenance inverted: the 25-minute
+# comparison recorded the malariasimulation version, the R version, the
+# replicate count and a digest of the scenarios, while the seven-hour site-file
+# run, the one nobody can repeat, recorded only a date and a fleet version. The
+# tier that cannot be re-run is the one that most needs to say what made it.
+
+#' Record what produced a result
 #'
-#' Every result written by this project carries one of these. It exists because
-#' `fleet`'s own snapshots had the provenance inverted: the 25-minute comparison
-#' recorded the malariasimulation version, the R version, the replicate count
-#' and a digest of the scenarios, while the seven-hour site-file run -- the one
-#' nobody can repeat -- recorded only a date and a fleet version. The tier that
-#' cannot be re-run is the tier that most needs to say what made it.
+#' Every result written by fleetcheck's validation scripts carries a stamp.
+#' Commits are read from the `RemoteSha` or `GithubSHA1` field that `remotes`,
+#' `pak` and `devtools` write when installing from GitHub; a package installed
+#' from a local source tree has neither, so its commit is `NA` and `fleet`'s
+#' `Built` field shows when and on what it was built.
 #'
-#' @param ... extra fields to record (replicate counts, grids, input versions).
-#' @return a named list, safe to write as JSON alongside the result.
+#' @param ... Extra named fields to record, such as replicate counts, grids or
+#'   input versions.
+#' @return A named list, suitable for writing as JSON beside the result:
+#'   `taken` (the time), `fleet`, `fleet_sha`, `fleet_built`,
+#'   `malariasimulation`, `malariasimulation_sha`, `postie` (versions and
+#'   seven-character commits), `R`, `platform`, `fleetcheck_sha` (the
+#'   checkout's commit), then the fields in `...`. Anything unavailable is `NA`.
 #' @export
 stamp <- function(...) {
   pkg_version <- function(p) {
@@ -63,22 +73,20 @@ git_sha <- function(path = ".") {
   if (length(out) != 1L || !nzchar(out)) NA_character_ else out
 }
 
+# Called where the files are written, not applied once by hand afterwards. It
+# was applied by hand once: the next run of run.R wrote full precision again and
+# rep_monthly.csv went back from 6.4 MB to 19.9 MB without anything noticing.
+
 #' Round the numeric columns of a data frame
 #'
-#' Simulation output is quoted to three or four significant figures anywhere it
-#' is reported and was stored at fifteen, which is most of the size of the
-#' committed summaries and none of the information in them.
+#' The validation scripts call this as they write their summaries. Simulation
+#' output is quoted to three or four significant figures, so storing fifteen
+#' adds size and no information.
 #'
-#' This is exported and called at the point the files are written, not applied
-#' once by hand afterwards. It was applied by hand once: the next run of
-#' `run.R` wrote full precision again and `rep_monthly.csv` went back from
-#' 6.4 MB to 19.9 MB without anything noticing. A rule about stored precision
-#' has to live in the code that stores it.
-#'
-#' @param x a data frame.
-#' @param digits significant figures, or `NULL` to leave `x` alone --
-#'   which is what anything a tolerance is asserted against needs.
-#' @return `x` with its numeric columns rounded.
+#' @param x A data frame.
+#' @param digits Significant figures, or `NULL` to return `x` unchanged, as
+#'   files that a tolerance is asserted against need.
+#' @return `x` with its numeric columns rounded with [signif()].
 #' @export
 round_sig <- function(x, digits = 6) {
   if (is.null(digits)) return(x)

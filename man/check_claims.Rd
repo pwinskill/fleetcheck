@@ -2,18 +2,21 @@
 % Please edit documentation in R/claims.R
 \name{check_claims}
 \alias{check_claims}
-\title{Fail if the register has regressed}
+\title{Fail if any claim has regressed}
 \usage{
 check_claims(claims = read_claims(), allow_fail = character())
 }
 \arguments{
-\item{claims}{as returned by \code{\link[=read_claims]{read_claims()}}.}
+\item{claims}{Data frame returned by \code{\link[=read_claims]{read_claims()}}.}
 
-\item{allow_fail}{claim ids whose failure is known and accepted, each of
-which must carry a \code{note} explaining why it is tolerated.}
+\item{allow_fail}{Ids of claims whose failure is accepted. Each must exist in
+the register and have a \code{note} explaining why, or the call is an error.}
+}
+\value{
+\code{claims}, invisibly.
 }
 \description{
-For CI. \code{undeclared} does not fail -- a claim with no criterion is a gap in
-the register, not a regression -- but it is always reported, so the count
-cannot quietly grow.
+Prints \code{\link[=scoreboard]{scoreboard()}}, then signals an error if a claim with status \code{fail}
+is not in \code{allow_fail}. An \code{undeclared} claim is a gap in the register rather
+than a regression, so it is reported but does not fail. CI runs this.
 }

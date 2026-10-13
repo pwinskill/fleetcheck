@@ -2,41 +2,29 @@
 % Please edit documentation in R/report.R
 \name{claim_sections_md}
 \alias{claim_sections_md}
-\title{The evidence article's section for each claim}
+\title{Render one evidence-article section per claim}
 \usage{
 claim_sections_md(claims, fig_dir = ".")
 }
 \arguments{
-\item{claims}{as returned by \code{\link[=read_claims]{read_claims()}}, filtered to the page's claims.}
+\item{claims}{Data frame returned by \code{\link[=read_claims]{read_claims()}}, filtered to the
+article's claims.}
 
-\item{fig_dir}{where the figures are, relative to the article.}
+\item{fig_dir}{Directory holding the figures and tables, relative to the
+article.}
 }
 \value{
-a character vector of markdown lines.
+A character vector of markdown lines.
 }
 \description{
-A heading, the verdict and the claim, the criterion that decides it and what
-was measured against it, what the result cost to produce and where its code
-is, the one figure that is evidence for the claim, and the note. Both
-evidence articles render their sections with this, so the two cannot drift
-apart in how a claim is presented. The criterion and the measurement are
-repeated from the table because a README link lands on the section, and a
-note written against them reads as nonsense without them.
+Each section has a level-2 heading whose anchor is the claim id, followed by
+the verdict and the claim, the criterion and measured value, the tier and
+evidence directory, the claim's figure, its table if it declares one, and its
+note. Both evidence articles use this, so they present claims identically.
 }
 \details{
-A figure the register declares but the build does not have is shown as
-missing, loudly, rather than passed off as a claim with no figure. A claim
-may also declare a \code{table}, a markdown file beside the figures that its
-evidence script writes; it is shown under the figure, and missing in the same
-loud way.
-
-The figure is written as an \verb{<img>} rather than \verb{![alt](src)}: pandoc turns a
-markdown image into a \verb{<figure>} and prints the alt text as a caption, which
-put the claim on screen a second time directly under the heading that had
-just said it. The alt text is the claim and its verdict, because an empty alt
-tells a screen reader the image is decorative, on a page whose entire content
-is evidence, and the claim alone would state as true what may have failed.
-Width and height are given so the browser reserves the space before the image
-arrives; without them a deep link to a claim, which is how the README and the
-front page arrive, jumps to a position that then moves as the images load.
+A figure is written as an HTML \verb{<img>} whose alt text is the claim and its
+verdict, with its width and height when the png package can read it. A
+declared figure or table that is not in \code{fig_dir} is shown as missing, with a
+warning. A claim with neither says that the numbers above decide it.
 }

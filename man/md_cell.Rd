@@ -2,15 +2,17 @@
 % Please edit documentation in R/report.R
 \name{md_cell}
 \alias{md_cell}
-\title{Make a string safe inside a markdown table cell}
+\title{Escape text for a markdown table cell}
 \usage{
 md_cell(x)
 }
 \arguments{
-\item{x}{character vector.}
+\item{x}{Character vector.}
+}
+\value{
+\code{x}, escaped.
 }
 \description{
-A criterion is written for a human, so it can contain anything -- and one of
-them is \verb{|slope - 1| < 0.10}, whose pipes silently split the row into extra
-columns. Newlines do the same to the table.
+Escapes \code{|}, which would otherwise split the row (as in the criterion
+\verb{|slope - 1| < 0.10}), and replaces line breaks with a space.
 }

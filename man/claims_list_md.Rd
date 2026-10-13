@@ -2,24 +2,24 @@
 % Please edit documentation in R/report.R
 \name{claims_list_md}
 \alias{claims_list_md}
-\title{The register as a numbered list}
+\title{Render the register as a numbered list}
 \usage{
 claims_list_md(claims = read_claims(), link_prefix = NULL)
 }
 \arguments{
-\item{claims}{as returned by \code{\link[=read_claims]{read_claims()}}.}
+\item{claims}{Data frame returned by \code{\link[=read_claims]{read_claims()}}.}
 
-\item{link_prefix}{prefix for the per-claim anchors, e.g. \code{"evidence.html"}.
-\code{""} links to anchors on the same page, which is what the evidence article
-itself needs. \code{NULL} renders the ids as plain code, with no links at all.}
+\item{link_prefix}{Link target for each claim id, to which \verb{#<id>} is
+appended: for example \code{"evidence.html"}, or \code{""} for an anchor on the same
+page. A single string or one per claim. \code{NULL} renders the ids as code
+without links.}
 }
 \value{
-a character vector of markdown lines.
+A character vector of markdown lines.
 }
 \description{
-What README and the site's front page carry. A reader arriving there wants to
-know what was compared and how it came out; the criterion each claim was
-judged against and the number that met it are a level of detail below that,
-and they live in the table on the evidence page. Printing both put every one
-of those sentences on the site twice.
+The form used in \code{README.md} and on the site's home page: verdict, id and
+claim, in register order. The criterion and measured value are left to the
+evidence articles. When the register holds claims for both parasites, each
+parasite gets its own heading, count line and numbering.
 }

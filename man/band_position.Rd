@@ -3,21 +3,26 @@
 \name{band_position}
 \alias{band_position}
 \alias{inside_band}
-\title{Where a value sits relative to a replicate band}
+\title{Position of a value relative to a band}
 \usage{
 band_position(value, lower, upper)
 
 inside_band(value, lower, upper)
 }
 \arguments{
-\item{value}{numeric, the candidate value.}
+\item{value}{Numeric vector of candidate values.}
 
-\item{lower, upper}{numeric, the band edges (e.g. 10th and 90th percentiles).}
+\item{lower, upper}{Numeric vectors of band edges, the same length as
+\code{value}, for example from \code{\link[=replicate_band]{replicate_band()}}. It is an error if \code{lower}
+exceeds \code{upper}.}
+}
+\value{
+\code{band_position()}: 0 where \code{value} is inside the band (edges
+included), and otherwise the signed distance outside as a fraction of the
+edge crossed, so -0.0024 means 0.24\% below the lower edge.
+\code{inside_band()}: a logical vector.
 }
 \description{
-The IBM is stochastic, so the question is never "are the two numbers equal"
-but "is the deterministic one inside the spread the stochastic one produces".
-Returns 0 when inside, and otherwise the signed distance outside expressed as
-a fraction of the edge it crossed -- so -0.0024 reads as "0.24\% below the
-lower edge", which is how the results are quoted.
+\code{band_position()} measures how far a value lies outside a band;
+\code{inside_band()} tests whether it lies inside.
 }

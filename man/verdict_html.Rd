@@ -2,19 +2,19 @@
 % Please edit documentation in R/report.R
 \name{verdict_html}
 \alias{verdict_html}
-\title{A verdict as its HTML lozenge}
+\title{Format verdicts as HTML spans}
 \usage{
 verdict_html(status)
 }
 \arguments{
-\item{status}{one of \code{pass}, \code{open}, \code{fail}, \code{undeclared}.}
+\item{status}{Character vector of statuses: \code{"pass"}, \code{"open"}, \code{"fail"} or
+\code{"undeclared"}. Any other value is an error.}
 }
 \value{
-one span per status.
+A character vector with one span per element of \code{status}.
 }
 \description{
-Exported so the evidence article does not keep a second copy of the map. It
-did, in different case, so the same claim read \code{pass} in the scoreboard and
-\code{PASS} in its own section -- and the quiet-pass / shouted-FAIL contrast, which
-is how the table shows what needs attention, was flattened in the sections.
+Each span has class \code{verdict} and a class for the status, which the site's
+stylesheet colours. The text is \code{pass}, \code{open}, \code{FAIL} or \code{UNTESTED}, so the
+verdict remains readable where the class is ignored.
 }

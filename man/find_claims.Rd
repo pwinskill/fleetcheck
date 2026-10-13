@@ -7,16 +7,13 @@
 find_claims(start = getwd())
 }
 \arguments{
-\item{start}{directory to search upward from.}
+\item{start}{Directory to search upward from.}
 }
 \value{
-a path to a readable \code{claims.yml}.
+The path to \code{claims.yml}. It is an error if none is found.
 }
 \description{
-Walks up from \code{start} looking for \code{claims.yml}, then falls back to the copy
-shipped inside the installed package. The fallback is not a nicety: the
-register is \code{.Rbuildignore}d, so under \verb{R CMD check} the source copy is not
-there at all, and without this every test that reads it fails while
-\code{devtools::test()} in the source tree passes. Same shape as the incident this
-project exists to document -- a green suite over a broken artefact.
+Searches \code{start} and each parent directory for \code{claims.yml}, then falls back
+to the copy installed with the package. The source copy is excluded by
+\code{.Rbuildignore}, so under \verb{R CMD check} the installed copy is the one found.
 }

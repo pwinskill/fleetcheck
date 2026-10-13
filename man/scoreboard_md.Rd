@@ -2,25 +2,23 @@
 % Please edit documentation in R/report.R
 \name{scoreboard_md}
 \alias{scoreboard_md}
-\title{The register as a markdown table}
+\title{Render the register as a markdown table}
 \usage{
 scoreboard_md(claims = read_claims(), link_prefix = NULL)
 }
 \arguments{
-\item{claims}{as returned by \code{\link[=read_claims]{read_claims()}}.}
+\item{claims}{Data frame returned by \code{\link[=read_claims]{read_claims()}}.}
 
-\item{link_prefix}{prefix for the per-claim anchors, e.g. \code{"evidence.html"}.
-\code{""} links to anchors on the same page, which is what the evidence article
-itself needs. \code{NULL} renders the ids as plain code, with no links at all.}
+\item{link_prefix}{Link target for each claim id, to which \verb{#<id>} is
+appended: for example \code{"evidence.html"}, or \code{""} for an anchor on the same
+page. A single string or one per claim. \code{NULL} renders the ids as code
+without links.}
 }
 \value{
-a character vector of markdown lines.
+A character vector of markdown lines.
 }
 \description{
-What the evidence article carries, above the section for each claim. This is
-where the detail lives: the criterion, what was measured against it, and the
-verdict. Rendered by \code{report/make_scoreboard.R} and by the
-article itself, never typed by hand -- a scoreboard maintained in prose
-alongside a register in YAML is two copies of the same facts, and this
-project exists partly because of what that did to \code{fleet}'s documentation.
+A count line followed by a table of id, tier, criterion, measured value and
+verdict, one row per claim in register order. Each evidence article carries
+this above its claim sections.
 }

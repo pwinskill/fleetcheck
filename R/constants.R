@@ -15,29 +15,30 @@
 
 #' Shared scenario constants
 #'
-#' The settings every comparison script has to agree on, in one place so they
-#' cannot drift apart between the script that runs the IBM and the script that
-#' plots the result.
+#' Settings that every comparison script must agree on, defined once so the
+#' script that runs the IBM and the script that plots the result cannot differ.
 #'
 #' \describe{
-#'   \item{`VDIR()`}{directory holding the optional site-file validation
-#'     results, which live in their own checkout beside this one. Override with
-#'     the `FLEET_VALIDATE` environment variable. The site figure and its table
-#'     are skipped when it is absent.}
-#'   \item{`BURN_Y`}{IBM burn-in years before observation or intervention.}
+#'   \item{`VDIR()`}{Directory holding the optional site-file validation
+#'     results, in their own checkout beside this one (`../fleet_validate`).
+#'     The `FLEET_VALIDATE` environment variable overrides it. The site figure
+#'     and its table are skipped when the directory is absent.}
+#'   \item{`BURN_Y`}{IBM burn-in, in years, before observation or
+#'     intervention.}
 #'   \item{`POP`}{IBM human population.}
 #'   \item{`N_REP`}{IBM replicates per scenario.}
-#'   \item{`AGE_EDGES`}{age-profile band edges, in years.}
-#'   \item{`SEASON`}{Fourier coefficients for the seasonal rainfall profile.}
-#'   \item{`EIR_GRID`}{the transmission-intensity grid.}
-#'   \item{`EIR_REF`}{reference EIR for age profiles and interventions.}
-#'   \item{`PROFILE_EIR`}{the low / reference / high transmission levels that
-#'     shape claims are carried at.}
-#'   \item{`INT_LABELS`, `TS_LABELS`}{display labels, in display order.}
-#'   \item{`EIR_GRID_PV`, `EIR_REF_PV`, `PROFILE_EIR_PV`, `INT_LABELS_PV`}{the
-#'     same for the P. vivax suite, which runs on its own lower grid and without
+#'   \item{`AGE_EDGES`}{Age-profile band edges, in years.}
+#'   \item{`SEASON`}{Fourier coefficients of the seasonal rainfall profile.}
+#'   \item{`EIR_GRID`}{Transmission-intensity (EIR) grid.}
+#'   \item{`EIR_REF`}{Reference EIR for age profiles and interventions.}
+#'   \item{`PROFILE_EIR`}{Low, reference and high EIRs at which the age-profile
+#'     and intervention claims are tested.}
+#'   \item{`INT_LABELS`, `TS_LABELS`}{Display labels, in display order.}
+#'   \item{`EIR_GRID_PV`, `EIR_REF_PV`, `PROFILE_EIR_PV`, `INT_LABELS_PV`}{The
+#'     same for the *P. vivax* suite, which has its own lower grid and no
 #'     chemoprevention or vaccines.}
-#'   \item{`TS_YEARS`, `TS_NET_EVERY`}{long-horizon programme timings.}
+#'   \item{`TS_YEARS`, `TS_NET_EVERY`}{Years followed after deployment, and
+#'     years between net campaigns, in the long-horizon programme scenarios.}
 #' }
 #'
 #' @name scenario-constants
@@ -83,23 +84,26 @@ EIR_REF  <- 20                  # reference transmission for age profiles + inte
 #' @export
 PROFILE_EIR <- c(3, EIR_REF, 120)
 
+# The naming rule is here, rather than written out in the runner and again in
+# the renderer, because those two files never load each other: the runner needs
+# malariasimulation attached and the renderer refuses to require it. Two copies
+# of a naming rule that cannot be checked against each other is how a figure
+# comes to plot a scenario the runner never produced.
+
 #' Intervention scenario names across the transmission grid
 #'
-#' Each intervention is run at every EIR in [PROFILE_EIR]. The run at `EIR_REF`
-#' keeps the bare name, so the scenario names that predate the grid still mean
-#' what they meant; the others carry an `_e<EIR>` suffix.
+#' Each intervention is run at every EIR in [PROFILE_EIR]. The run at the
+#' reference EIR keeps the bare intervention name, so names that predate the
+#' grid keep their meaning; the others carry an `_e<EIR>` suffix.
+#' `int_scenario()` builds names and `int_parts()` splits them.
 #'
-#' The convention is here, rather than written out in the runner and again in
-#' the renderer, because those two files never load each other: the runner needs
-#' malariasimulation attached and the renderer refuses to require it. Two copies
-#' of a naming rule that cannot be checked against each other is how a figure
-#' comes to plot a scenario the runner never produced.
-#'
-#' @param intervention one of `names(INT_LABELS)`.
-#' @param eir transmission intensity.
-#' @param scenario scenario names, as they appear in the saved CSVs.
-#' @return `int_scenario()` a character vector of scenario names;
-#'   `int_parts()` a data frame with `intervention` and `eir` columns.
+#' @param intervention Intervention names, from `names(INT_LABELS)` or
+#'   `names(INT_LABELS_PV)`.
+#' @param eir Transmission intensities. `intervention` and `eir` are recycled
+#'   to a common length.
+#' @param scenario Scenario names, as they appear in the saved CSVs.
+#' @return `int_scenario()`: a character vector of scenario names.
+#'   `int_parts()`: a data frame with columns `intervention` and `eir`.
 #' @examples
 #' int_scenario("nets", PROFILE_EIR)
 #' int_parts(c("nets", "nets_e3", "nets_e120"))
@@ -117,8 +121,8 @@ int_scenario <- function(intervention, eir, ref = EIR_REF) {
 }
 
 #' @rdname int_scenario
-#' @param ref the reference EIR whose runs carry the bare name: [EIR_REF] for
-#'   the falciparum suite, [EIR_REF_PV] for the vivax one.
+#' @param ref Reference EIR, whose runs carry the bare name: [EIR_REF] for the
+#'   *P. falciparum* suite, [EIR_REF_PV] for the *P. vivax* suite.
 #' @export
 int_parts <- function(scenario, ref = EIR_REF) {
   has <- grepl("_e[0-9.]+$", scenario)

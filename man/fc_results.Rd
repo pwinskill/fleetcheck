@@ -2,15 +2,19 @@
 % Please edit documentation in R/root.R
 \name{fc_results}
 \alias{fc_results}
-\title{Where a validation keeps its committed results}
+\title{Path to a validation's results directory}
 \usage{
 fc_results(validation, ...)
 }
 \arguments{
-\item{validation}{directory name under \verb{validations/}.}
+\item{validation}{Directory name under \verb{validations/}, for example
+\code{"02-scenarios"}.}
 
-\item{...}{path components below \verb{results/}.}
+\item{...}{Path components below \verb{results/}.}
+}
+\value{
+A path under \code{\link[=fc_root]{fc_root()}}. Its existence is not checked.
 }
 \description{
-Where a validation keeps its committed results
+Path to a validation's results directory
 }

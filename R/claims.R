@@ -1,7 +1,17 @@
 #' Read the claims register
 #'
-#' @param path path to `claims.yml`.
-#' @return a data frame, one row per claim.
+#' Parses `claims.yml` and validates it. Each claim must have a non-blank `id`,
+#' `claim`, `criterion`, `measured`, `status` and `tier`. `status` must be
+#' `pass`, `fail`, `open` or `undeclared`; `tier` an integer from 0 to 3; and
+#' `parasite`, if given, `falciparum` or `vivax`. Ids must be unique, and an
+#' `undeclared` claim must have `NONE DECLARED` in its criterion. A violation,
+#' or an empty register, is an error.
+#'
+#' @param path Path to `claims.yml`.
+#' @return A data frame with one row per claim, in register order, and columns
+#'   `id`, `claim`, `criterion`, `tier` (integer), `evidence`, `figure`,
+#'   `table`, `measured`, `status`, `note` and `parasite`. An absent `figure`,
+#'   `table` or `note` is `""`, and an absent `parasite` is `"falciparum"`.
 #' @export
 read_claims <- function(path = find_claims()) {
   raw <- yaml::read_yaml(path)
@@ -67,15 +77,12 @@ read_claims <- function(path = find_claims()) {
 
 #' Locate the claims register
 #'
-#' Walks up from `start` looking for `claims.yml`, then falls back to the copy
-#' shipped inside the installed package. The fallback is not a nicety: the
-#' register is `.Rbuildignore`d, so under `R CMD check` the source copy is not
-#' there at all, and without this every test that reads it fails while
-#' `devtools::test()` in the source tree passes. Same shape as the incident this
-#' project exists to document -- a green suite over a broken artefact.
+#' Searches `start` and each parent directory for `claims.yml`, then falls back
+#' to the copy installed with the package. The source copy is excluded by
+#' `.Rbuildignore`, so under `R CMD check` the installed copy is the one found.
 #'
-#' @param start directory to search upward from.
-#' @return a path to a readable `claims.yml`.
+#' @param start Directory to search upward from.
+#' @return The path to `claims.yml`. It is an error if none is found.
 #' @export
 find_claims <- function(start = getwd()) {
   d <- normalizePath(start, "/", mustWork = FALSE)
@@ -92,8 +99,11 @@ find_claims <- function(start = getwd()) {
        ", and none shipped with the installed package.", call. = FALSE)
 }
 
-#' Counts by verdict
-#' @param claims as returned by [read_claims()].
+#' Count claims by verdict
+#'
+#' @param claims Data frame returned by [read_claims()].
+#' @return A named list of integer counts: `pass`, `open`, `fail` and
+#'   `undeclared`.
 #' @export
 claims_summary <- function(claims = read_claims()) {
   levels <- c("pass", "open", "fail", "undeclared")
@@ -101,15 +111,14 @@ claims_summary <- function(claims = read_claims()) {
   as.list(tab)
 }
 
-#' The scoreboard, as printable text
+#' Format the register as plain text
 #'
-#' Claims are listed in register order, which is the order they are meant to be
-#' read in: transmission, then clinical burden, then severe, then how each is
-#' distributed by age, then interventions, real settings and the parameter
-#' posterior, and the checks that support all of it last. What is unresolved is carried by the count on the
-#' first line and by the verdict against each row, not by moving rows about.
+#' A line of counts by verdict, then one line per claim giving its verdict,
+#' tier, id and measured value. Claims are in register order, not sorted by
+#' verdict.
 #'
-#' @param claims as returned by [read_claims()].
+#' @param claims Data frame returned by [read_claims()].
+#' @return A character vector of lines, for [writeLines()].
 #' @export
 scoreboard <- function(claims = read_claims()) {
   s <- claims_summary(claims)
@@ -124,15 +133,16 @@ scoreboard <- function(claims = read_claims()) {
     "", lines)
 }
 
-#' Fail if the register has regressed
+#' Fail if any claim has regressed
 #'
-#' For CI. `undeclared` does not fail -- a claim with no criterion is a gap in
-#' the register, not a regression -- but it is always reported, so the count
-#' cannot quietly grow.
+#' Prints [scoreboard()], then signals an error if a claim with status `fail`
+#' is not in `allow_fail`. An `undeclared` claim is a gap in the register rather
+#' than a regression, so it is reported but does not fail. CI runs this.
 #'
-#' @param claims as returned by [read_claims()].
-#' @param allow_fail claim ids whose failure is known and accepted, each of
-#'   which must carry a `note` explaining why it is tolerated.
+#' @param claims Data frame returned by [read_claims()].
+#' @param allow_fail Ids of claims whose failure is accepted. Each must exist in
+#'   the register and have a `note` explaining why, or the call is an error.
+#' @return `claims`, invisibly.
 #' @export
 check_claims <- function(claims = read_claims(), allow_fail = character()) {
   writeLines(scoreboard(claims))

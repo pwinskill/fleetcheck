@@ -10,30 +10,26 @@ int_scenario(intervention, eir, ref = EIR_REF)
 int_parts(scenario, ref = EIR_REF)
 }
 \arguments{
-\item{intervention}{one of \code{names(INT_LABELS)}.}
+\item{intervention}{Intervention names, from \code{names(INT_LABELS)} or
+\code{names(INT_LABELS_PV)}.}
 
-\item{eir}{transmission intensity.}
+\item{eir}{Transmission intensities. \code{intervention} and \code{eir} are recycled
+to a common length.}
 
-\item{ref}{the reference EIR whose runs carry the bare name: \link{EIR_REF} for
-the falciparum suite, \link{EIR_REF_PV} for the vivax one.}
+\item{ref}{Reference EIR, whose runs carry the bare name: \link{EIR_REF} for the
+\emph{P. falciparum} suite, \link{EIR_REF_PV} for the \emph{P. vivax} suite.}
 
-\item{scenario}{scenario names, as they appear in the saved CSVs.}
+\item{scenario}{Scenario names, as they appear in the saved CSVs.}
 }
 \value{
-\code{int_scenario()} a character vector of scenario names;
-\code{int_parts()} a data frame with \code{intervention} and \code{eir} columns.
+\code{int_scenario()}: a character vector of scenario names.
+\code{int_parts()}: a data frame with columns \code{intervention} and \code{eir}.
 }
 \description{
-Each intervention is run at every EIR in \link{PROFILE_EIR}. The run at \code{EIR_REF}
-keeps the bare name, so the scenario names that predate the grid still mean
-what they meant; the others carry an \verb{_e<EIR>} suffix.
-}
-\details{
-The convention is here, rather than written out in the runner and again in
-the renderer, because those two files never load each other: the runner needs
-malariasimulation attached and the renderer refuses to require it. Two copies
-of a naming rule that cannot be checked against each other is how a figure
-comes to plot a scenario the runner never produced.
+Each intervention is run at every EIR in \link{PROFILE_EIR}. The run at the
+reference EIR keeps the bare intervention name, so names that predate the
+grid keep their meaning; the others carry an \verb{_e<EIR>} suffix.
+\code{int_scenario()} builds names and \code{int_parts()} splits them.
 }
 \examples{
 int_scenario("nets", PROFILE_EIR)

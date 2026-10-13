@@ -2,34 +2,34 @@
 % Please edit documentation in R/metrics.R
 \name{outside_rates}
 \alias{outside_rates}
-\title{How often a candidate falls outside the replicate band, against the IBM}
+\title{Out-of-band rates for a candidate and for held-out replicates}
 \usage{
 outside_rates(replicates, candidate, k = BAND_K)
 }
 \arguments{
-\item{replicates}{a matrix, replicates in rows and cells in columns.}
+\item{replicates}{Matrix with replicates in rows and cells in columns; at
+least three rows.}
 
-\item{candidate}{the deterministic values, one per cell.}
+\item{candidate}{Numeric vector of deterministic values, one per cell.}
 
-\item{k}{half-width in standard deviations; see \link{BAND_K}.}
+\item{k}{Half-width in standard deviations; see \link{BAND_K}.}
 }
 \value{
-a list with \code{candidate}, the fraction of cells the candidate falls
-outside, and \code{held_out}, one such fraction per replicate scored against
-the others. Cells where the replicates carry no spread are dropped.
+A list with \code{candidate}, the median over held-out sets of the
+fraction of cells in which the candidate is outside the band, and
+\code{held_out}, the fraction for each replicate scored against the others.
+Cells in which the replicates have no spread, or any value is not finite,
+are dropped.
 }
 \description{
-"Inside the band in every cell" is a sensible bar over six cells, where a
-genuine replicate clears it about a quarter of the time. Over seventy-two it
-is not: a 1.28-sd band leaves a fifth of cells outside by construction, and
-no replicate clears it at all. The bar has to know how many cells it is
-being applied to, so it is taken from the IBM: hold each replicate out,
-score it against the other nineteen, and ask whether fleet is outside less
-often than the best of them.
-}
-\details{
-This is not the same as letting fleet wander as freely as a replicate. A
-replicate scatters around the centre; a deterministic model that tracks the
-centre should be outside far less often, and the comparison is against the
-best replicate rather than the typical one.
+"Inside the band in every cell" is a workable bar over six cells, where a
+genuine replicate clears it about a quarter of the time, but not over 72: a
+1.28 SD band leaves a fifth of cells outside by construction, and no
+replicate clears it. This takes the bar from the IBM instead. Each replicate
+is held out and scored against the others, and the candidate is scored
+against the same reduced sets, so a claim can ask whether the candidate is
+outside less often than the best held-out replicate. That is stricter than
+treating the candidate as one more replicate: a deterministic model that
+tracks the centre should be outside far less often than a replicate, which
+scatters around it.
 }

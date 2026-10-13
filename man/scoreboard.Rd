@@ -2,17 +2,18 @@
 % Please edit documentation in R/claims.R
 \name{scoreboard}
 \alias{scoreboard}
-\title{The scoreboard, as printable text}
+\title{Format the register as plain text}
 \usage{
 scoreboard(claims = read_claims())
 }
 \arguments{
-\item{claims}{as returned by \code{\link[=read_claims]{read_claims()}}.}
+\item{claims}{Data frame returned by \code{\link[=read_claims]{read_claims()}}.}
+}
+\value{
+A character vector of lines, for \code{\link[=writeLines]{writeLines()}}.
 }
 \description{
-Claims are listed in register order, which is the order they are meant to be
-read in: transmission, then clinical burden, then severe, then how each is
-distributed by age, then interventions, real settings and the parameter
-posterior, and the checks that support all of it last. What is unresolved is carried by the count on the
-first line and by the verdict against each row, not by moving rows about.
+A line of counts by verdict, then one line per claim giving its verdict,
+tier, id and measured value. Claims are in register order, not sorted by
+verdict.
 }

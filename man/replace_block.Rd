@@ -2,27 +2,26 @@
 % Please edit documentation in R/report.R
 \name{replace_block}
 \alias{replace_block}
-\title{Replace a marked block in a file}
+\title{Replace the text between marker comments}
 \usage{
 replace_block(path, name, lines, write = TRUE)
 }
 \arguments{
-\item{path}{file to edit.}
+\item{path}{Path to the file.}
 
-\item{name}{marker name.}
+\item{name}{Marker name. Each marker must occur exactly once, \code{BEGIN} before
+\code{END}, or the call is an error.}
 
-\item{lines}{replacement content.}
+\item{lines}{Character vector of replacement lines.}
 
-\item{write}{actually write. \code{FALSE} reports what would change and leaves the
-file alone — which is what a staleness check needs. The first version of
-this wrote before it reported, so running the check dirtied the very tree it
-was checking, and a failing CI job left the working copy modified.}
+\item{write}{If \code{FALSE}, report whether the file would change without
+writing it, as a staleness check needs.}
 }
 \value{
-\code{TRUE} if the file changed, or would have.
+\code{TRUE} if the file changed (or would change), otherwise \code{FALSE}.
 }
 \description{
-Rewrites whatever sits between \verb{<!-- BEGIN name -->} and \verb{<!-- END name -->}.
-The markers stay, so the file can be regenerated any number of times and a
-CI job can fail when the tree comes out dirty.
+Replaces the lines between \verb{<!-- BEGIN name -->} and \verb{<!-- END name -->}
+with \code{lines}, surrounded by a blank line on each side. The markers are kept,
+so repeated calls with the same \code{lines} leave the file unchanged.
 }

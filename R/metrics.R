@@ -1,21 +1,22 @@
+# Every comparison statistic quoted in this project comes from this file. The
+# severe-immunity figures in fleet's own documentation once drifted apart
+# because the same quantity was derived twice, in two articles, and both
+# derivations were wrong. One definition, unit-tested, used everywhere.
+
 #' Agreement between two models on the same quantity
 #'
-#' Every comparison statistic quoted anywhere in this project comes from here.
-#' That is the point of the file: the severe-immunity figures in `fleet`'s own
-#' documentation drifted apart because the same quantity was derived twice in
-#' two articles, and both derivations turned out to be wrong. One definition,
-#' unit-tested, imported everywhere.
-#'
-#' @param reference numeric, the model being compared against (the IBM).
-#' @param candidate numeric, the model under test (fleet). Same length.
-#' @param na.rm drop pairs where either value is missing.
-#' @return a one-row data frame: n, cor, rmse, bias, rel_bias, slope.
-#'   `bias` is the mean signed difference in the units of the quantity;
-#'   `rel_bias` is that divided by the mean of `reference`, so +0.087 means
-#'   the candidate runs 8.7% high. `slope` is the OLS slope of candidate on
-#'   reference, which is not the same statement as `rel_bias` and can disagree
-#'   with it: a slope of 1 with a positive bias is a constant offset, a slope
-#'   above 1 with zero bias is a fan.
+#' @param reference Numeric vector from the reference model (the IBM).
+#' @param candidate Numeric vector from the model under test (`fleet`), the
+#'   same length as `reference`.
+#' @param na.rm If `TRUE`, drop pairs in which either value is not finite.
+#' @return A one-row data frame with columns `n`, `cor`, `rmse`, `bias`,
+#'   `rel_bias` and `slope`. `bias` is the mean signed difference, in the units
+#'   of the quantity; `rel_bias` is `bias` divided by the mean of `reference`,
+#'   so 0.087 means the candidate runs 8.7% high. `slope` is the OLS slope of
+#'   `candidate` on `reference`, which can disagree with `rel_bias`: a slope of
+#'   1 with a positive bias is a constant offset, and a slope above 1 with zero
+#'   bias is a fan. With fewer than two pairs every statistic is `NA`, and `cor`
+#'   is `NA` when either input has no variance.
 #' @export
 agreement <- function(reference, candidate, na.rm = TRUE) {
   stopifnot(is.numeric(reference), is.numeric(candidate),
@@ -45,25 +46,26 @@ agreement <- function(reference, candidate, na.rm = TRUE) {
   )
 }
 
-#' How a replicate band and a burden floor are defined
+#' Replicate band width and burden floor
 #'
-#' `BAND_K` is 1.28 because +-1.28 standard deviations is the 10-90% interval of
-#' a normal: the band means the same thing it always did, it is just estimated
-#' from all the replicates instead of from two order statistics. Measured over
-#' the 91 tier-2 cells, the percentile band moves more under a jackknife (0.074
+#' `BAND_K` (1.28) is the half-width of the IBM replicate band in standard
+#' deviations. Plus or minus 1.28 standard deviations is the 10-90% interval of
+#' a normal distribution, so the band estimates the interval the claims name
+#' from every replicate rather than from two order statistics. Measured over the
+#' 91 tier-2 cells, the percentile band moves more under a jackknife (0.074
 #' against 0.072 standard deviations) and is about 10% narrower than the
 #' interval it estimates, because sample percentiles from twenty points are
-#' biased inward. Its width also drifts with the replicate count -- 2.06, 2.24,
-#' 2.32 at n = 8, 14, 20 -- where this one holds at 2.49, 2.54, 2.56.
+#' biased inward. Its width also drifts with the replicate count (2.06, 2.24 and
+#' 2.32 at n = 8, 14 and 20) where this band holds at 2.49, 2.54 and 2.56.
 #'
-#' `BURDEN_MIN` is the share of an outcome a cell must carry to be tested. A
-#' claim about how a burden is distributed is not informative about bands that
-#' carry almost none of it, and those bands carry the most replicate noise. At
-#' 5% the tested cells still hold 94% of episodes. The cost is real and is
-#' recorded against the claims that use it: a defect confined to the oldest ages
-#' would not be caught.
+#' `BURDEN_MIN` (0.05) is the share of an outcome a cell must carry to be
+#' tested by a claim about how that outcome is distributed. Cells carrying
+#' almost none of it say little about the distribution and carry the most
+#' replicate noise. At 5% the tested cells still hold 94% of episodes; the cost,
+#' recorded against the claims that use it, is that a defect confined to the
+#' oldest ages would not be caught.
 #'
-#' @format numeric.
+#' @format A numeric scalar.
 #' @name comparison-settings
 #' @rdname comparison-settings
 #' @export
@@ -73,15 +75,17 @@ BAND_K <- 1.28
 #' @export
 BURDEN_MIN <- 0.05
 
-#' The band a set of replicates produces
+#' Replicate band for one cell
 #'
-#' @param x numeric, the replicate values for one cell.
-#' @param k half-width in standard deviations; see [BAND_K].
-#' @param na.rm drop missing replicates.
-#' @return a one-row data frame with `centre`, `scale`, `lower` and `upper`.
-#'   The centre is the median, which is what the figures draw and what survives
-#'   the skew in cells holding few episodes; over the cells that carry the
-#'   claims the median and the mean agree to 0.02 standard deviations.
+#' @param x Numeric vector of replicate values for one cell.
+#' @param k Half-width in standard deviations; see [BAND_K].
+#' @param na.rm If `TRUE`, drop replicates that are not finite.
+#' @return A one-row data frame with `centre` (the median), `scale` (the
+#'   standard deviation), `lower` and `upper` (`centre` minus and plus `k *
+#'   scale`). All are `NA` with fewer than two replicates. The median is used
+#'   because it is what the figures draw and it is robust to the skew in cells
+#'   holding few episodes; over the cells the claims rest on, median and mean
+#'   agree to 0.02 standard deviations.
 #' @export
 replicate_band <- function(x, k = BAND_K, na.rm = TRUE) {
   stopifnot(is.numeric(x), length(k) == 1L, is.numeric(k), is.finite(k), k > 0)
@@ -94,15 +98,15 @@ replicate_band <- function(x, k = BAND_K, na.rm = TRUE) {
              lower = centre - k * scale, upper = centre + k * scale)
 }
 
+# The headroom a band test cannot report: four claims once read "inside at 6 of
+# 6" while sitting at 0.34, 0.59, 0.61 and 0.73 standard deviations.
+
 #' Standardised departure from a set of replicates
 #'
-#' The headroom figure the band test cannot report: four claims read "inside at
-#' 6 of 6" while sitting at 0.34, 0.59, 0.61 and 0.73 standard deviations.
-#'
-#' @param value numeric, the candidate value.
-#' @param x numeric, the replicate values for the same cell.
-#' @return the signed departure in replicate standard deviations, `NA` when the
-#'   replicates carry no spread.
+#' @param value Candidate value, a numeric scalar.
+#' @param x Numeric vector of replicate values for the same cell.
+#' @return `value` minus the replicate median, in replicate standard
+#'   deviations. `NA` when the replicates have no spread.
 #' @export
 band_z <- function(value, x) {
   b <- replicate_band(x)
@@ -110,27 +114,28 @@ band_z <- function(value, x) {
   (value - b$centre) / b$scale
 }
 
-#' How often a candidate falls outside the replicate band, against the IBM
+#' Out-of-band rates for a candidate and for held-out replicates
 #'
-#' "Inside the band in every cell" is a sensible bar over six cells, where a
-#' genuine replicate clears it about a quarter of the time. Over seventy-two it
-#' is not: a 1.28-sd band leaves a fifth of cells outside by construction, and
-#' no replicate clears it at all. The bar has to know how many cells it is
-#' being applied to, so it is taken from the IBM: hold each replicate out,
-#' score it against the other nineteen, and ask whether fleet is outside less
-#' often than the best of them.
+#' "Inside the band in every cell" is a workable bar over six cells, where a
+#' genuine replicate clears it about a quarter of the time, but not over 72: a
+#' 1.28 SD band leaves a fifth of cells outside by construction, and no
+#' replicate clears it. This takes the bar from the IBM instead. Each replicate
+#' is held out and scored against the others, and the candidate is scored
+#' against the same reduced sets, so a claim can ask whether the candidate is
+#' outside less often than the best held-out replicate. That is stricter than
+#' treating the candidate as one more replicate: a deterministic model that
+#' tracks the centre should be outside far less often than a replicate, which
+#' scatters around it.
 #'
-#' This is not the same as letting fleet wander as freely as a replicate. A
-#' replicate scatters around the centre; a deterministic model that tracks the
-#' centre should be outside far less often, and the comparison is against the
-#' best replicate rather than the typical one.
-#'
-#' @param replicates a matrix, replicates in rows and cells in columns.
-#' @param candidate the deterministic values, one per cell.
-#' @param k half-width in standard deviations; see [BAND_K].
-#' @return a list with `candidate`, the fraction of cells the candidate falls
-#'   outside, and `held_out`, one such fraction per replicate scored against
-#'   the others. Cells where the replicates carry no spread are dropped.
+#' @param replicates Matrix with replicates in rows and cells in columns; at
+#'   least three rows.
+#' @param candidate Numeric vector of deterministic values, one per cell.
+#' @param k Half-width in standard deviations; see [BAND_K].
+#' @return A list with `candidate`, the median over held-out sets of the
+#'   fraction of cells in which the candidate is outside the band, and
+#'   `held_out`, the fraction for each replicate scored against the others.
+#'   Cells in which the replicates have no spread, or any value is not finite,
+#'   are dropped.
 #' @export
 outside_rates <- function(replicates, candidate, k = BAND_K) {
   replicates <- as.matrix(replicates)
@@ -154,16 +159,19 @@ outside_rates <- function(replicates, candidate, k = BAND_K) {
          frac(replicates[i, ], replicates[-i, , drop = FALSE]), 0))
 }
 
-#' Where a value sits relative to a replicate band
+#' Position of a value relative to a band
 #'
-#' The IBM is stochastic, so the question is never "are the two numbers equal"
-#' but "is the deterministic one inside the spread the stochastic one produces".
-#' Returns 0 when inside, and otherwise the signed distance outside expressed as
-#' a fraction of the edge it crossed -- so -0.0024 reads as "0.24% below the
-#' lower edge", which is how the results are quoted.
+#' `band_position()` measures how far a value lies outside a band;
+#' `inside_band()` tests whether it lies inside.
 #'
-#' @param value numeric, the candidate value.
-#' @param lower,upper numeric, the band edges (e.g. 10th and 90th percentiles).
+#' @param value Numeric vector of candidate values.
+#' @param lower,upper Numeric vectors of band edges, the same length as
+#'   `value`, for example from [replicate_band()]. It is an error if `lower`
+#'   exceeds `upper`.
+#' @return `band_position()`: 0 where `value` is inside the band (edges
+#'   included), and otherwise the signed distance outside as a fraction of the
+#'   edge crossed, so -0.0024 means 0.24% below the lower edge.
+#'   `inside_band()`: a logical vector.
 #' @export
 band_position <- function(value, lower, upper) {
   stopifnot(length(value) == length(lower), length(value) == length(upper))
@@ -179,10 +187,15 @@ inside_band <- function(value, lower, upper) {
   band_position(value, lower, upper) == 0
 }
 
-#' Summarise a set of band comparisons as a criterion outcome
+#' Summarise a set of band comparisons
 #'
-#' @param value,lower,upper as for [band_position()].
-#' @return a list with `n`, `n_inside`, and `worst`, the largest excursion.
+#' Scores the criterion "inside the IBM replicate band" over a set of cells.
+#'
+#' @inheritParams band_position
+#' @return A list with `n`, the number of cells; `n_inside`, the number inside
+#'   the band; `n_missing`, the number with a missing value or edge; and
+#'   `worst`, the [band_position()] of largest magnitude (0 when every scored
+#'   cell is inside, `NA` when none can be scored).
 #' @export
 band_summary <- function(value, lower, upper) {
   pos <- band_position(value, lower, upper)

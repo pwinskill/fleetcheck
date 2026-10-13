@@ -1,11 +1,11 @@
 ---
-title: "Validation evidence: P. falciparum"
+title: "Evidence: P. falciparum"
 output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Validation evidence: P. falciparum}
+  %\VignetteIndexEntry{Evidence: P. falciparum}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,16 +18,15 @@ claims <- fleetcheck::read_claims(if (file.exists("../claims.yml")) "../claims.y
 claims <- claims[claims$parasite == "falciparum", ]
 ```
 
-How closely does `fleet` reproduce `malariasimulation` for *P. falciparum*? Each
-claim below states the criterion that decides it, the value measured against
-that criterion, and a verdict. The order runs from transmission through clinical
-and severe burden to their age distributions, then interventions, real settings
-and the parameter posterior, with the demographic, performance and numerical
-checks that underwrite them at the end. The *P. vivax* claims are on [a page of their
-own](evidence-vivax.html).
+Each *P. falciparum* claim below gives the criterion that decides it, the value
+measured against that criterion, and a verdict. The claims run from transmission
+through clinical and severe burden to their age distributions, then
+interventions, real settings and the parameter posterior, followed by the
+demographic, performance and numerical checks that support them. The
+*P. vivax* claims are on [their own page](evidence-vivax.html).
 
-Every section is generated from `claims.yml`, so this page cannot disagree with
-the register, and the register cannot be changed without the page following.
+This page is generated from `claims.yml`. A claim's tier is the cost of
+reproducing it; see [Methods](methods.html#tiers).
 
 ```{r scoreboard, results = "asis"}
 # link_prefix = "" links each id to its own section on this page
@@ -37,25 +36,3 @@ cat(fleetcheck::scoreboard_md(claims, link_prefix = ""), sep = "\n")
 ```{r sections, results = "asis"}
 cat(fleetcheck::claim_sections_md(claims), sep = "\n")
 ```
-
-## What "tier" means
-
-What it costs to reproduce a result is a property of that result, so it is
-recorded against every claim rather than stated once in prose.
-
-| tier | cost | who can reproduce it |
-| --- | --- | --- |
-| 0 | seconds | anyone, from the committed summaries |
-| 1 | minutes | anyone; re-runs `fleet` only |
-| 2 | ~2 h | anyone with about ten cores |
-| 3 | ~30 min | four cores, and inputs that are not redistributable |
-
-Tier 3 is the 63-country site-file comparison. **Its figures and statistics are
-public; the site files behind them are not.** The constraint is the inputs
-rather than the compute: the sweep re-runs `fleet` only, because the IBM arm is
-the pre-run diagnostic shipped with each site file, so thirty minutes on four
-cores refreshes it. But the site files are not redistributable, so nobody
-outside the project can repeat it. That is a limitation of this evidence, not a
-property of the result, and
-`validations/03-real-settings/example-one-site.R` runs the same pipeline on a
-single sub-site for anyone who has one site file.

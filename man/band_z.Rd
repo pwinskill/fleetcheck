@@ -7,15 +7,14 @@
 band_z(value, x)
 }
 \arguments{
-\item{value}{numeric, the candidate value.}
+\item{value}{Candidate value, a numeric scalar.}
 
-\item{x}{numeric, the replicate values for the same cell.}
+\item{x}{Numeric vector of replicate values for the same cell.}
 }
 \value{
-the signed departure in replicate standard deviations, \code{NA} when the
-replicates carry no spread.
+\code{value} minus the replicate median, in replicate standard
+deviations. \code{NA} when the replicates have no spread.
 }
 \description{
-The headroom figure the band test cannot report: four claims read "inside at
-6 of 6" while sitting at 0.34, 0.59, 0.61 and 0.73 standard deviations.
+Standardised departure from a set of replicates
 }
