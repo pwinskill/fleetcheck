@@ -9,7 +9,7 @@ fail](https://img.shields.io/badge/vivax%20claims-8%20pass%2C%202%20fail-orange.
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License:
-MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
+MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE.md)
 
 fleetcheck measures how closely the
 [`fleet`](https://github.com/pwinskill/fleet) mean-field model

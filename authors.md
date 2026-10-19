@@ -2,7 +2,7 @@
 
 ## Authors
 
-- **Peter Winskill**. Author, maintainer.
+- **Peter Winskill**. Author, maintainer, copyright holder.
 
 ## Citation
 
