@@ -2,7 +2,7 @@ Package: fleetcheck
 Title: Twin-Fidelity Checks for the fleet Malaria Model
 Version: 0.0.0.9000
 Authors@R: person("Peter", "Winskill", email = "p.winskill@imperial.ac.uk",
-                  role = c("aut", "cre"))
+                  role = c("aut", "cre", "cph"))
 Description: Measures how closely the fleet mean-field model reproduces the
     malariasimulation individual-based model. Holds the claims register, the
     comparison statistics, and the code that produces the evidence behind each

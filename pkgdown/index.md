@@ -9,7 +9,7 @@
 [![Falciparum claims: 12 pass](https://img.shields.io/badge/falciparum%20claims-12%20pass-brightgreen.svg)](articles/evidence.html)
 [![Vivax claims: 8 pass, 2 fail](https://img.shields.io/badge/vivax%20claims-8%20pass%2C%202%20fail-orange.svg)](articles/evidence-vivax.html)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pwinskill/fleetcheck/blob/main/LICENSE.md)
 
 <!-- END badges -->
 

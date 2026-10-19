@@ -270,7 +270,7 @@ badges_md <- function(claims = read_claims(),
           shield("lifecycle", "experimental", "orange"),
           "https://lifecycle.r-lib.org/articles/stages.html#experimental"),
     badge("License: MIT", shield("license", "MIT", "blue"),
-          sprintf("https://github.com/%s/blob/main/LICENSE", repo)))
+          sprintf("https://github.com/%s/blob/main/LICENSE.md", repo)))
 }
 
 #' Replace the text between marker comments
